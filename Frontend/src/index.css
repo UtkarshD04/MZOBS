@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+/* ============================================================
+   MZOBS DESIGN SYSTEM — theme tokens
+   Colors resolve automatically via light-dark(): OS preference by
+   default, explicit override via [data-theme] wins in both directions.
+============================================================ */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --color-bg: light-dark(#ffffff, #0a0e17);
+  --color-bg-secondary: light-dark(#fafafa, #0d111c);
+  --color-surface: light-dark(#ffffff, #121826);
+  --color-surface-hover: light-dark(#f5f6f8, #19212f);
+  --color-surface-sunken: light-dark(#f3f4f6, #161d2b);
+
+  --color-ink: light-dark(#111827, #f2f3f5);
+  --color-ink-secondary: light-dark(#6b7280, #9aa2b1);
+  --color-ink-tertiary: light-dark(#9ca3af, #6b7383);
+
+  --color-border: light-dark(#e5e7eb, #232b3d);
+  --color-border-strong: light-dark(#d9dce3, #2e374c);
+
+  --color-navy-950: #0c1224;
+  --color-navy-900: #111a33;
+  --color-navy-700: light-dark(#2b3e68, #8aa0e6);
+  --color-navy: light-dark(#1c2b4e, #6e86d6);
+  --color-navy-hover: light-dark(#152140, #7e96e0);
+  --color-navy-tint: light-dark(#eef1f8, rgba(110, 134, 214, 0.14));
+  --color-navy-tint-strong: light-dark(#e2e7f3, rgba(110, 134, 214, 0.22));
+  --color-navy-ring: light-dark(rgba(28, 43, 78, 0.16), rgba(110, 134, 214, 0.28));
+
+  --color-gold: light-dark(#c68a1f, #e3ac3d);
+  --color-gold-strong: light-dark(#9a6b14, #f0c267);
+  --color-gold-dot: light-dark(#e3a62f, #e3ac3d);
+  --color-gold-tint: light-dark(#fbf3de, rgba(227, 172, 61, 0.14));
+
+  --color-green: light-dark(#15803d, #3fbe77);
+  --color-green-dot: light-dark(#22a55a, #3fbe77);
+  --color-green-tint: light-dark(#eaf7ef, rgba(63, 190, 119, 0.14));
+
+  --color-red: light-dark(#b42318, #f0645f);
+  --color-red-dot: light-dark(#e5484d, #f0645f);
+  --color-red-tint: light-dark(#fdf0ee, rgba(240, 100, 95, 0.14));
+
+  --color-gray-tint: light-dark(#f3f4f6, rgba(154, 162, 177, 0.12));
+  --color-gray-dot: light-dark(#9ca3af, #7a8194);
+
+  --color-violet: light-dark(#6d4fc7, #a594ff);
+  --color-violet-dot: light-dark(#7c5fd6, #a594ff);
+  --color-violet-tint: light-dark(#f1eefc, rgba(165, 148, 255, 0.16));
+
+  --color-teal: light-dark(#0e8a78, #3fd9c4);
+  --color-teal-dot: light-dark(#149684, #3fd9c4);
+  --color-teal-tint: light-dark(#e3f7f3, rgba(63, 217, 196, 0.16));
+
+  --color-amber: light-dark(#c2540c, #f0894a);
+  --color-amber-dot: light-dark(#d5610f, #f0894a);
+  --color-amber-tint: light-dark(#fbeee3, rgba(240, 137, 74, 0.16));
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --shadow-xs: 0 1px 2px light-dark(rgba(17, 24, 39, 0.04), rgba(0, 0, 0, 0.3));
+  --shadow-sm: 0 1px 3px light-dark(rgba(17, 24, 39, 0.06), rgba(0, 0, 0, 0.4)), 0 1px 2px light-dark(rgba(17, 24, 39, 0.04), rgba(0, 0, 0, 0.3));
+  --shadow-md: 0 8px 24px -4px light-dark(rgba(17, 24, 39, 0.08), rgba(0, 0, 0, 0.45)), 0 2px 6px light-dark(rgba(17, 24, 39, 0.05), rgba(0, 0, 0, 0.3));
+  --shadow-lg: 0 24px 56px -12px light-dark(rgba(17, 24, 39, 0.16), rgba(0, 0, 0, 0.55)), 0 4px 12px light-dark(rgba(17, 24, 39, 0.06), rgba(0, 0, 0, 0.3));
+  --shadow-navy: 0 6px 16px -4px light-dark(rgba(28, 43, 78, 0.32), rgba(110, 134, 214, 0.35));
+
+  --ease-out-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: light dark;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+@property --pct {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  ::selection {
+    background: var(--color-navy-tint-strong);
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: 99px;
+    border: 2.5px solid var(--color-bg);
+    transition: background 0.2s;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ink-tertiary);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-navy);
+    outline-offset: 2px;
+    border-radius: 6px;
+    transition: outline-offset 0.15s var(--ease-out-premium);
+  }
+}
+
+@layer utilities {
+  .ring-progress {
+    --pct: 0;
+    --size: 64px;
+    --thick: 7px;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+    background: conic-gradient(var(--color-navy) calc(var(--pct) * 1%), var(--color-surface-sunken) 0);
+    transition: --pct 1.1s var(--ease-out-premium);
+  }
+  .ring-progress.hero {
+    background: conic-gradient(from -90deg, var(--color-navy), var(--color-gold-dot) calc(var(--pct) * 1%), var(--color-surface-sunken) calc(var(--pct) * 1%));
+  }
+  .ring-progress::before {
+    content: "";
+    position: absolute;
+    inset: var(--thick);
+    border-radius: 50%;
+    background: var(--color-surface);
+    box-shadow: inset 0 1px 3px light-dark(rgba(17, 24, 39, 0.05), rgba(0, 0, 0, 0.3));
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+@keyframes dotPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(198, 138, 31, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(198, 138, 31, 0);
+  }
+}
+@keyframes blobPulse {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.06) translate(-1.5%, 1.5%);
+  }
+}
+@keyframes confettiOut {
+  to {
+    transform: translate(var(--dx), var(--dy)) rotate(220deg);
+    opacity: 0;
+  }
+}
+.confetti-piece {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  left: 50%;
+  top: 56px;
+  animation: confettiOut 0.85s var(--ease-out-premium) forwards;
+  pointer-events: none;
+}
+.notif-dot {
+  animation: dotPulse 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
