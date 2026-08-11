@@ -16,6 +16,7 @@ import Badge from '../components/ui/Badge'
 import Avatar from '../components/ui/Avatar'
 import CountUp from '../components/ui/CountUp'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
+import CandidateJourneySection from '../components/sections/CandidateJourneySection'
 
 const STATS = [
   [12400, '+', 'Profiles verified'],
@@ -24,11 +25,11 @@ const STATS = [
 ]
 
 const FEATURES = [
-  { icon: FileText, title: 'Resume Center', desc: 'Your resume rebuilt and reviewed by placement experts, not a template generator.' },
-  { icon: Video, title: 'Mock Interviews', desc: 'Practice with real interviewers so the actual one feels like a formality.' },
-  { icon: GraduationCap, title: 'Guided Training', desc: 'Two-week focused tracks built around the roles that are actually hiring.' },
-  { icon: Briefcase, title: 'Job Matching', desc: 'Curated openings filtered to your track — no scrolling through noise.' },
-  { icon: Sparkles, title: 'Application Tracking', desc: 'One dashboard for every application, interview and offer status.' },
+  { icon: FileText, title: 'Resume Center', desc: 'Your resume rebuilt and reviewed by placement experts, not a template generator.', image: '/images/services/service-pipeline.jpg' },
+  { icon: Video, title: 'Mock Interviews', desc: 'Practice with real interviewers so the actual one feels like a formality.', image: '/images/services/service-interviews.jpg' },
+  { icon: GraduationCap, title: 'Guided Training', desc: 'Two-week focused tracks built around the roles that are actually hiring.', image: '/images/services/service-pipeline.jpg' },
+  { icon: Briefcase, title: 'Job Matching', desc: 'Curated openings filtered to your track — no scrolling through noise.', image: '/images/services/service-matching.jpg' },
+  { icon: Sparkles, title: 'Application Tracking', desc: 'One dashboard for every application, interview and offer status.', image: '/images/services/service-analytics.jpg' },
 ]
 
 const STEPS = [
@@ -130,14 +131,29 @@ export default function Home() {
           </StaggerItem>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {FEATURES.map(({ icon: Icon, title, desc }) => (
+            {FEATURES.map(({ icon: Icon, title, desc, image }) => (
               <StaggerItem key={title}>
-                <Card hover pad className="h-full">
-                  <div className="w-10 h-10 rounded-lg bg-navy-tint text-navy flex items-center justify-center mb-4">
-                    <Icon size={18} />
+                <Card hover className="h-full overflow-hidden flex flex-col group border border-border">
+                  {image && (
+                    <div className="h-32 w-full overflow-hidden relative bg-slate-100">
+                      <img
+                        src={image}
+                        alt={title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
+                      <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex items-center justify-center text-navy">
+                        <Icon size={16} />
+                      </div>
+                    </div>
+                  )}
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-[15px] font-semibold">{title}</h3>
+                      <p className="text-[13.5px] text-ink-secondary mt-1.5 leading-relaxed">{desc}</p>
+                    </div>
                   </div>
-                  <h3 className="text-[15px] font-semibold">{title}</h3>
-                  <p className="text-[13.5px] text-ink-secondary mt-1.5 leading-relaxed">{desc}</p>
                 </Card>
               </StaggerItem>
             ))}
@@ -145,42 +161,8 @@ export default function Home() {
         </StaggerGroup>
       </section>
 
-      {/* How it works */}
-      <section id="how-it-works" className="bg-bg-secondary border-y border-border">
-        <div className="max-w-6xl mx-auto px-6 py-20">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight">How it works</h2>
-            <p className="text-ink-secondary text-[14.5px] mt-2.5">Four steps from sign-up to signed offer.</p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {STEPS.map((s, i) => (
-              <div key={s.n} className="relative">
-                <Card pad className="h-full">
-                  <span className="text-xs font-bold text-gold-strong tracking-wide">{s.n}</span>
-                  <h3 className="text-[14.5px] font-semibold mt-2">{s.title}</h3>
-                  <p className="text-[13px] text-ink-secondary mt-1.5 leading-relaxed">{s.desc}</p>
-                </Card>
-                {i < STEPS.length - 1 && (
-                  <ArrowRight size={16} className="hidden lg:block absolute top-1/2 -right-[22px] -translate-y-1/2 text-ink-tertiary" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonial */}
-      <section id="story" className="max-w-4xl mx-auto px-6 py-20 text-center">
-        <p className="text-[19px] sm:text-[22px] leading-relaxed font-medium tracking-tight text-ink">"{QUOTE}"</p>
-        <div className="flex items-center justify-center gap-2.5 mt-6">
-          <Avatar initials={AUTHOR.initials} size="md" gold />
-          <div className="text-left">
-            <div className="text-[13.5px] font-semibold">{AUTHOR.name}</div>
-            <div className="text-xs text-ink-tertiary">{AUTHOR.role}</div>
-          </div>
-        </div>
-      </section>
+      {/* Candidate Journey Section */}
+      <CandidateJourneySection />
 
       {/* CTA banner */}
       <section className="max-w-6xl mx-auto px-6 pb-20">

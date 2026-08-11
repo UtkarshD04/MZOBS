@@ -26,18 +26,34 @@ export default function ExpertiseGrid() {
               return (
                 <div
                   key={i}
-                  className="bg-white rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+                  className="bg-white rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-800 mb-4 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                    <Icon size={20} strokeWidth={1.8} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-[#0B1220] mb-2 group-hover:text-blue-900 transition-colors">
-                      {service.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                      {service.desc}
-                    </p>
+                  {service.image && (
+                    <div className="h-36 w-full overflow-hidden relative bg-slate-100">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
+                      
+                      {/* Icon overlay on top right */}
+                      <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-sm flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all duration-300">
+                        <Icon size={18} strokeWidth={1.8} />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-base font-bold text-[#0B1220] mb-1.5 group-hover:text-blue-900 transition-colors">
+                        {service.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        {service.desc}
+                      </p>
+                    </div>
                   </div>
                 </div>
               )
