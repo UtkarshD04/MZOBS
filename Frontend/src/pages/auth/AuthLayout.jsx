@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Avatar from '../../components/ui/Avatar'
 import CountUp from '../../components/ui/CountUp'
@@ -84,15 +85,15 @@ export default function AuthLayout({ children, quote = DEFAULT_QUOTE, author = D
         <footer className="relative w-full max-w-[400px] pt-8 flex items-center justify-between gap-4 flex-wrap">
           <span className="text-xs text-ink-tertiary">© {new Date().getFullYear()} Mzobs</span>
           <div className="flex items-center gap-4">
-            <a href="#privacy" className="text-xs text-ink-tertiary hover:text-navy transition-colors duration-200">
+            <Link to="#privacy" className="text-xs text-ink-tertiary hover:text-navy transition-colors duration-200">
               Privacy
-            </a>
-            <a href="#terms" className="text-xs text-ink-tertiary hover:text-navy transition-colors duration-200">
+            </Link>
+            <Link to="#terms" className="text-xs text-ink-tertiary hover:text-navy transition-colors duration-200">
               Terms
-            </a>
-            <a href="#support" className="text-xs text-ink-tertiary hover:text-navy transition-colors duration-200">
+            </Link>
+            <Link to="#support" className="text-xs text-ink-tertiary hover:text-navy transition-colors duration-200">
               Support
-            </a>
+            </Link>
           </div>
         </footer>
       </div>

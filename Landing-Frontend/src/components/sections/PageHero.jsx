@@ -1,30 +1,43 @@
-import { motion } from 'framer-motion'
-import Photo from './Photo'
-import { cn } from '../../lib/utils'
+import PillButton from '../ui/PillButton'
+import { HERO_DATA } from '../../lib/content'
 
-export default function PageHero({ size = 'md', kicker, title, subtitle, actions, photoIcon, photoTone = 'mixed' }) {
-  const isLg = size === 'lg'
-
+export default function PageHero() {
   return (
-    <section className={cn('relative overflow-hidden bg-navy-950 text-white flex items-center', isLg ? 'min-h-[620px]' : 'min-h-[320px]')}>
-      <Photo icon={photoIcon} tone={photoTone} fill rounded="none" className="opacity-60" />
-      <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/85 to-navy-950/55" />
-      <div
-        className="absolute inset-0 opacity-40"
-        style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px)',
-          backgroundSize: '26px 26px',
-          maskImage: 'radial-gradient(circle at 20% 30%, #000 0%, transparent 65%)',
-        }}
-      />
+    <section id="home" className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#0B1220] pt-28 pb-20 px-6 md:px-12">
+      {/* Background Image with Dark Gradient Mask */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={HERO_DATA.bgImage}
+          alt="Stratwell Consulting Workspace"
+          className="w-full h-full object-cover object-center brightness-[0.55] contrast-[1.1]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220] via-[#0B1220]/40 to-[#0B1220]/60" />
+      </div>
 
-      <div className={cn('relative max-w-6xl mx-auto px-6 w-full', isLg ? 'py-24' : 'py-16')}>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-xl">
-          {kicker && <span className="inline-block text-[11.5px] font-bold tracking-[0.14em] uppercase text-gold-dot mb-4">{kicker}</span>}
-          <h1 className={cn('font-heading font-bold tracking-tight leading-[1.1]', isLg ? 'text-[clamp(2rem,5vw,3.25rem)]' : 'text-[clamp(1.75rem,4vw,2.5rem)]')}>{title}</h1>
-          {subtitle && <p className="text-white/70 text-[15.5px] mt-5 leading-relaxed">{subtitle}</p>}
-          {actions && <div className="flex items-center gap-3 mt-8 flex-wrap">{actions}</div>}
-        </motion.div>
+      {/* Hero Content Grid */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid md:grid-cols-12 gap-8 items-end">
+        {/* Left Headline */}
+        <div className="md:col-span-7 space-y-2">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-sans font-bold text-white tracking-tight leading-[1.1]">
+            {HERO_DATA.titleLine1} <br />
+            <span className="font-serif italic font-normal text-white/90">
+              {HERO_DATA.titleItalic}
+            </span> <br />
+            {HERO_DATA.titleLine2}
+          </h1>
+        </div>
+
+        {/* Right Copy & CTA */}
+        <div className="md:col-span-5 space-y-6 md:pl-6 pb-2">
+          <p className="text-base sm:text-lg text-slate-200 leading-relaxed font-normal">
+            {HERO_DATA.subtitle}
+          </p>
+          <div>
+            <PillButton href="#contact" variant="white">
+              {HERO_DATA.ctaText}
+            </PillButton>
+          </div>
+        </div>
       </div>
     </section>
   )

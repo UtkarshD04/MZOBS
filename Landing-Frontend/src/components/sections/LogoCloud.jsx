@@ -1,17 +1,96 @@
-import SectionHeading from './SectionHeading'
+import SectionBadge from '../ui/SectionBadge'
+import { TRUSTED_LOGOS_DATA } from '../../lib/content'
 
-// Placeholder wordmarks (see src/lib/content.js TRUSTED_LOGOS) — swap for real
-// client logo SVGs when available, same grid.
-export default function LogoCloud({ eyebrow = 'TRUSTED BY', title = 'Companies Hiring on Mzobs', logos }) {
+function LogoSvg({ variant }) {
+  switch (variant) {
+    case 1:
+      return (
+        <div className="flex items-center gap-2 font-bold text-slate-800 text-sm tracking-tight">
+          <div className="w-5 h-5 rounded-md bg-blue-900 flex items-center justify-center text-white text-[10px]">S</div>
+          <span>Logoipsum</span>
+        </div>
+      )
+    case 2:
+      return (
+        <div className="flex items-center gap-2 font-semibold text-slate-800 text-sm">
+          <div className="w-5 h-5 rounded-full border-2 border-blue-900 flex items-center justify-center text-[9px] font-bold text-blue-900">+</div>
+          <span>logo <span className="font-bold">ipsum</span></span>
+        </div>
+      )
+    case 3:
+      return (
+        <div className="flex items-center gap-2 font-black text-slate-900 text-xs tracking-wider uppercase">
+          <span className="bg-slate-900 text-white px-1.5 py-0.5 rounded text-[9px]">LOG</span>
+          <span>IPSUM</span>
+        </div>
+      )
+    case 4:
+      return (
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full bg-blue-950" />
+          <span className="font-bold text-slate-900 text-sm">logoipsum</span>
+        </div>
+      )
+    case 5:
+      return (
+        <div className="font-serif font-bold text-slate-900 text-sm tracking-widest uppercase">
+          LOGOIPSUM
+        </div>
+      )
+    case 6:
+      return (
+        <div className="flex items-center gap-2 font-bold text-slate-800 text-sm">
+          <div className="w-4 h-4 rotate-45 border-2 border-blue-900 bg-blue-100" />
+          <span>logoipsum</span>
+        </div>
+      )
+    case 7:
+      return (
+        <div className="flex items-center gap-2 text-slate-900 text-sm font-medium">
+          <div className="grid grid-cols-2 gap-0.5 w-4 h-4">
+            <div className="bg-blue-900 rounded-xs" />
+            <div className="bg-blue-600 rounded-xs" />
+            <div className="bg-blue-400 rounded-xs" />
+            <div className="bg-blue-900 rounded-xs" />
+          </div>
+          <span className="font-bold">logoipsum</span>
+        </div>
+      )
+    case 8:
+    default:
+      return (
+        <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
+          <div className="w-5 h-5 rounded-full border-2 border-blue-900 flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-blue-900" />
+          </div>
+          <span>Logoipsum</span>
+        </div>
+      )
+  }
+}
+
+export default function LogoCloud() {
   return (
-    <section className="bg-bg-secondary border-y border-border">
-      <div className="max-w-6xl mx-auto px-6 py-16 sm:py-20">
-        <SectionHeading eyebrow={eyebrow} title={title} className="mb-10" />
+    <section className="bg-[#EEF3F8] py-20 px-6 md:px-12 border-t border-slate-200/50">
+      <div className="max-w-7xl mx-auto space-y-12">
+        {/* Section Header */}
+        <div className="text-center">
+          <SectionBadge label={TRUSTED_LOGOS_DATA.badge} />
+          <h2 className="text-3xl sm:text-4xl font-serif font-normal text-[#0B1220] tracking-tight">
+            {TRUSTED_LOGOS_DATA.title}
+          </h2>
+        </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-60">
-          {logos.map((logo) => (
-            <div key={logo} className="h-16 rounded-lg border border-border-strong bg-surface flex items-center justify-center px-3">
-              <span className="text-[13px] font-bold tracking-tight text-ink-secondary text-center">{logo}</span>
+        {/* 8 Logo Cards Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+          {TRUSTED_LOGOS_DATA.logos.map((logo, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center min-h-[90px] group"
+            >
+              <div className="opacity-75 group-hover:opacity-100 transition-opacity">
+                <LogoSvg variant={logo.variant} />
+              </div>
             </div>
           ))}
         </div>

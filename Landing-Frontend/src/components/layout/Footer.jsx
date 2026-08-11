@@ -1,109 +1,88 @@
-import { Link } from 'react-router-dom'
-import { Mail, MapPin, Phone } from 'lucide-react'
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6'
-import Button, { goldSolidClass } from '../ui/Button'
-import { NAV_LINKS } from '../../lib/content'
-import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from '../../lib/config'
-import { cn } from '../../lib/utils'
-
-const SOCIALS = [
-  { label: 'Facebook', icon: FaFacebookF, href: 'https://facebook.com' },
-  { label: 'Instagram', icon: FaInstagram, href: 'https://instagram.com' },
-  { label: 'LinkedIn', icon: FaLinkedinIn, href: 'https://linkedin.com' },
-  { label: 'X (Twitter)', icon: FaXTwitter, href: 'https://x.com' },
-]
+import { FOOTER_DATA } from '../../lib/content'
 
 export default function Footer() {
   return (
-    <footer className="bg-navy-950 text-white">
-      <div className="max-w-6xl mx-auto px-6 py-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
-        <div>
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-[30px] h-[30px] rounded-[9px] bg-gradient-to-br from-navy-700 to-navy flex items-center justify-center text-sm font-extrabold text-white shadow-navy">M</div>
-            <span className="text-[17px] font-bold">Mzobs</span>
-          </Link>
-          <p className="text-[13px] text-white/60 mt-4 leading-relaxed max-w-[220px]">
-            Verified job seekers meet verified employers — one platform, both sides of hiring.
-          </p>
-          <div className="flex items-center gap-2.5 mt-5">
-            {SOCIALS.map((s) => (
+    <footer className="bg-[#0B1220] text-white pt-20 pb-12 px-6 md:px-12 border-t border-white/10">
+      <div className="max-w-7xl mx-auto space-y-16">
+        {/* Main Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+          {/* Brand Column */}
+          <div className="md:col-span-5 space-y-6">
+            <a href="#home" className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white font-serif font-bold text-xl">
+                S
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-lg leading-tight tracking-tight">{FOOTER_DATA.logoText}</span>
+                <span className="text-[9px] tracking-[0.2em] text-white/70 uppercase font-medium">{FOOTER_DATA.logoSub}</span>
+              </div>
+            </a>
+
+            <p className="text-sm text-slate-400 leading-relaxed font-normal max-w-md">
+              {FOOTER_DATA.desc}
+            </p>
+
+            <div>
               <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={s.label}
-                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/80 hover:bg-white/20 hover:text-white transition-colors duration-200"
+                href="#contact"
+                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-white text-[#0B1220] text-xs font-semibold hover:bg-slate-200 transition-colors shadow-sm"
               >
-                <s.icon size={13} />
+                {FOOTER_DATA.ctaText}
               </a>
-            ))}
+            </div>
           </div>
-          <Button to="/contact" variant="primary" size="sm" pill className={cn(goldSolidClass, 'mt-6')}>
-            Contact Us
-          </Button>
+
+          {/* Menu Column */}
+          <div className="md:col-span-2 space-y-4">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider">{FOOTER_DATA.menuTitle}</h4>
+            <ul className="space-y-2.5 text-xs text-slate-400">
+              {FOOTER_DATA.menuItems.map((item, idx) => (
+                <li key={idx}>
+                  <a href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-white transition-colors">
+                    {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Socials Column */}
+          <div className="md:col-span-2 space-y-4">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider">{FOOTER_DATA.socialsTitle}</h4>
+            <ul className="space-y-2.5 text-xs text-slate-400">
+              {FOOTER_DATA.socialsItems.map((item, idx) => (
+                <li key={idx}>
+                  <a href="#" className="hover:text-white transition-colors">
+                    {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Details Column */}
+          <div className="md:col-span-3 space-y-4">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider">{FOOTER_DATA.contactTitle}</h4>
+            <div className="space-y-2.5 text-xs text-slate-400 leading-relaxed">
+              <p className="hover:text-white transition-colors cursor-pointer">{FOOTER_DATA.phone}</p>
+              <p className="hover:text-white transition-colors cursor-pointer">{FOOTER_DATA.email}</p>
+              <p className="pt-1">{FOOTER_DATA.address}</p>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <h3 className="text-[13px] font-bold uppercase tracking-wide text-white/50 mb-4">Menu</h3>
-          <ul className="flex flex-col gap-3">
-            {NAV_LINKS.map((l) => (
-              <li key={l.to}>
-                <Link to={l.to} className="text-[13.5px] text-white/70 hover:text-white transition-colors duration-200">
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link to="/contact" className="text-[13.5px] text-white/70 hover:text-white transition-colors duration-200">
-                Contact Us
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-[13px] font-bold uppercase tracking-wide text-white/50 mb-4">Socials</h3>
-          <ul className="flex flex-col gap-3">
-            {SOCIALS.map((s) => (
-              <li key={s.label}>
-                <a href={s.href} target="_blank" rel="noreferrer" className="text-[13.5px] text-white/70 hover:text-white transition-colors duration-200">
-                  {s.label}
+        {/* Bottom Sub-Footer Bar */}
+        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-normal">
+          <p>{FOOTER_DATA.copyright}</p>
+          <div className="flex items-center gap-4">
+            {FOOTER_DATA.rightLinks.map((link, i) => (
+              <span key={i} className="flex items-center gap-4">
+                <a href="#" className="hover:text-slate-300 transition-colors">
+                  {link}
                 </a>
-              </li>
+                {i < FOOTER_DATA.rightLinks.length - 1 && <span className="text-slate-700">|</span>}
+              </span>
             ))}
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-[13px] font-bold uppercase tracking-wide text-white/50 mb-4">Contact</h3>
-          <ul className="flex flex-col gap-3 text-[13.5px] text-white/70">
-            <li className="flex items-center gap-2">
-              <Phone size={14} className="text-gold-dot flex-shrink-0" /> {CONTACT_PHONE}
-            </li>
-            <li className="flex items-center gap-2">
-              <Mail size={14} className="text-gold-dot flex-shrink-0" /> {CONTACT_EMAIL}
-            </li>
-            <li className="flex items-start gap-2">
-              <MapPin size={14} className="text-gold-dot flex-shrink-0 mt-0.5" /> <span>{CONTACT_ADDRESS}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between gap-4 flex-wrap text-xs text-white/50">
-          <span>© {new Date().getFullYear()} Mzobs. All rights reserved.</span>
-          <div className="flex items-center gap-5">
-            <a href="#privacy" className="hover:text-white transition-colors duration-200">
-              Privacy Policy
-            </a>
-            <a href="#terms" className="hover:text-white transition-colors duration-200">
-              Terms
-            </a>
-            <a href="#careers" className="hover:text-white transition-colors duration-200">
-              Careers
-            </a>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft, Briefcase, CalendarPlus, Download, ExternalLink, GraduationCap, Mail, MapPin, Phone,
   ThumbsDown, ThumbsUp, Wallet, FileText, Award, FolderGit2,
@@ -193,9 +193,9 @@ export default function CandidateProfile() {
               <InfoRow icon={Award} label="Certificates" value={`${candidate.certificates} verified`} />
               {candidate.hasVideoIntro && <InfoRow icon={FileText} label="Video Introduction" value="Available" />}
               {candidate.hasPortfolio && candidate.portfolioLink ? (
-                <a href={`https://${candidate.portfolioLink}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[13px] font-semibold text-navy hover:underline mt-1">
+                <Link to={`https://${candidate.portfolioLink}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[13px] font-semibold text-navy hover:underline mt-1">
                   <ExternalLink size={14} /> {candidate.portfolioLink}
-                </a>
+                </Link>
               ) : (
                 <span className="text-[12.5px] text-ink-tertiary">No portfolio shared</span>
               )}
