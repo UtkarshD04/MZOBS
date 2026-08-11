@@ -27,7 +27,7 @@ export default function ApproachSection() {
           <div className="lg:col-span-5 min-h-[420px] rounded-3xl overflow-hidden shadow-md border border-slate-200/60 group">
             <img
               src={APPROACH_DATA.image}
-              alt="Our Approach in Action"
+              alt="How Mzobs verifies every hire"
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
             />
           </div>

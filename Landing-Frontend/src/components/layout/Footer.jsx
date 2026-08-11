@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="md:col-span-5 space-y-6">
             <a href="#home" className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white font-serif font-bold text-xl">
-                S
+                M
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-lg leading-tight tracking-tight">{FOOTER_DATA.logoText}</span>
