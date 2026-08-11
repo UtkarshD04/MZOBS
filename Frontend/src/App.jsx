@@ -16,7 +16,6 @@ import Onboarding from './pages/Onboarding'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import ResumeCenter from './pages/ResumeCenter'
-import SkillAssessment from './pages/SkillAssessment'
 import MockInterview from './pages/MockInterview'
 import Training from './pages/Training'
 import JobMatching from './pages/JobMatching'
@@ -44,7 +43,6 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="resume" element={<ResumeCenter />} />
-          <Route path="assessment" element={<SkillAssessment />} />
           <Route path="interview" element={<MockInterview />} />
           <Route path="training" element={<Training />} />
           <Route path="jobs" element={<JobMatching />} />

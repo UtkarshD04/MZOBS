@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   User,
   FileText,
-  ListChecks,
   Video,
   GraduationCap,
   Briefcase,
@@ -26,7 +25,6 @@ const verification = [
   { to: '/app/profile', label: 'Profile', icon: User },
   { to: '/app/resume', label: 'Resume Center', icon: FileText },
   { to: '/app/interview', label: 'Mock Interview', icon: Video },
-  { to: '/app/assessment', label: 'Skill Assessment', icon: ListChecks },
   { to: '/app/training', label: 'Training', icon: GraduationCap },
 ]
 const placement = [

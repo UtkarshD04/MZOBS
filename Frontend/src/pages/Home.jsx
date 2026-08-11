@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   FileText,
   GraduationCap,
-  ListChecks,
   ShieldCheck,
   Sparkles,
   Video,
@@ -26,7 +25,6 @@ const STATS = [
 
 const FEATURES = [
   { icon: FileText, title: 'Resume Center', desc: 'Your resume rebuilt and reviewed by placement experts, not a template generator.' },
-  { icon: ListChecks, title: 'Skill Assessment', desc: 'Benchmark yourself against the exact requirements employers screen for.' },
   { icon: Video, title: 'Mock Interviews', desc: 'Practice with real interviewers so the actual one feels like a formality.' },
   { icon: GraduationCap, title: 'Guided Training', desc: 'Two-week focused tracks built around the roles that are actually hiring.' },
   { icon: Briefcase, title: 'Job Matching', desc: 'Curated openings filtered to your track — no scrolling through noise.' },
