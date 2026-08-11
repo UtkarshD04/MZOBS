@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Banknote, Building2, FileSearch, ShieldCheck, Users, Video } from 'lucide-react'
 import Card from '../../components/ui/Card'
@@ -15,18 +15,17 @@ const STATS = [
 ]
 
 const MODULES = [
-  { icon: Users, title: 'Candidate Desk', desc: 'Verify profiles, track subscriptions and manage the candidate pipeline end to end.' },
-  { icon: FileSearch, title: 'Resume Queue', desc: 'Every resume is reviewed and rebuilt by ops before it reaches an employer.' },
-  { icon: Video, title: 'Mock Interviews', desc: 'Schedule and score mock interviews ahead of the real employer round.' },
-  { icon: Building2, title: 'Company & Requirements', desc: 'Manage employer accounts, open requirements and candidate dispatch.' },
-  { icon: Banknote, title: 'Payments', desc: 'Track subscription and placement revenue across the funnel.' },
-  { icon: ShieldCheck, title: 'Team & Access', desc: 'Control who on the ops team can see and act on what.' },
+  { icon: FileSearch, title: 'Resume Desk', desc: 'Review, edit and approve candidate resumes submitted for verification.' },
+  { icon: Video, title: 'Interview Desk', desc: 'Schedule panel interviews, log scores and place candidates into skill tracks.' },
+  { icon: Users, title: 'Candidates Desk', desc: 'Directory of all enrolled candidates, their verification states and resume links.' },
+  { icon: Building2, title: 'Employers Desk', desc: 'Manage registered employers, post requirements on their behalf and match candidates.' },
+  { icon: Banknote, title: 'Accounts & Fees', desc: 'Track candidate program fees, employer subscriptions and invoice states.' },
 ]
 
-const QUOTE = 'Every resume, every company, every rupee moves through this desk. Nothing reaches an employer that our team has not personally verified first.'
-const AUTHOR = { initials: 'IB', name: 'Ishaan Bhatia', role: 'Operations Manager, Mzobs' }
+const QUOTE = 'Mzobs lets our team operate with structure. Candidates get verified properly, and employers get candidates who are actually trained for their exact roles.'
+const AUTHOR = { initials: 'OP', name: 'Operations Team', role: 'Mzobs Management Portal' }
 
-export default function Home() {
+export default function MzobsHome() {
   const navigate = useNavigate()
 
   return (
@@ -41,8 +40,8 @@ export default function Home() {
           </div>
 
           <nav className="hidden md:flex items-center gap-7 text-[13.5px] font-medium text-ink-secondary">
-            <a href="#modules" className="hover:text-ink transition-colors duration-200">Desks</a>
-            <a href="#story" className="hover:text-ink transition-colors duration-200">Why it exists</a>
+            <Link to="#modules" className="hover:text-ink transition-colors duration-200">Desks</Link>
+            <Link to="#story" className="hover:text-ink transition-colors duration-200">Why it exists</Link>
           </nav>
 
           <Button variant="primary" size="md" onClick={() => navigate('/login')}>
@@ -157,8 +156,8 @@ export default function Home() {
             <span className="text-xs text-ink-tertiary">© {new Date().getFullYear()} Mzobs · Internal Operations Portal</span>
           </div>
           <div className="flex items-center gap-5 flex-wrap text-xs text-ink-tertiary">
-            <a href="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</a>
-            <a href="#terms" className="hover:text-navy transition-colors duration-200">Terms</a>
+            <Link to="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</Link>
+            <Link to="#terms" className="hover:text-navy transition-colors duration-200">Terms</Link>
           </div>
         </div>
       </footer>

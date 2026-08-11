@@ -56,9 +56,9 @@ export default function Home() {
           </div>
 
           <nav className="hidden md:flex items-center gap-7 text-[13.5px] font-medium text-ink-secondary">
-            <a href="#features" className="hover:text-ink transition-colors duration-200">Features</a>
-            <a href="#how-it-works" className="hover:text-ink transition-colors duration-200">How it works</a>
-            <a href="#story" className="hover:text-ink transition-colors duration-200">Success stories</a>
+            <Link to="#features" className="hover:text-ink transition-colors duration-200">Features</Link>
+            <Link to="#how-it-works" className="hover:text-ink transition-colors duration-200">How it works</Link>
+            <Link to="#story" className="hover:text-ink transition-colors duration-200">Success stories</Link>
           </nav>
 
           <div className="flex items-center gap-2.5">
@@ -203,10 +203,10 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-5 flex-wrap text-xs text-ink-tertiary">
             <Link to="/login" className="hover:text-navy transition-colors duration-200">Sign in</Link>
-            <a href="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</a>
-            <a href="#terms" className="hover:text-navy transition-colors duration-200">Terms</a>
+            <Link to="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</Link>
+            <Link to="#terms" className="hover:text-navy transition-colors duration-200">Terms</Link>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 size={13} className="text-green" /> Hiring for your company? <a href="/employer/login" className="text-navy font-semibold hover:underline">Employer Portal</a>
+              <CheckCircle2 size={13} className="text-green" /> Hiring for your company? <Link to="/employer/login" className="text-navy font-semibold hover:underline">Employer Portal</Link>
             </span>
           </div>
         </div>

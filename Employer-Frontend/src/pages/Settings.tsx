@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { AlertTriangle, KeyRound, Save, ShieldCheck, Smartphone } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
@@ -112,7 +113,7 @@ export default function Settings() {
         <CardHead><CardTitle>Workspace</CardTitle></CardHead>
         <CardBody className="text-[12.5px] text-ink-secondary leading-relaxed">
           Company-level settings — locations, hiring contacts and verification — are managed from your{' '}
-          <a href="/company" className="text-navy font-semibold hover:underline">Company Profile</a> page.
+          <Link to="/company" className="text-navy font-semibold hover:underline">Company Profile</Link> page.
         </CardBody>
       </Card>
 

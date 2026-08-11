@@ -1,127 +1,287 @@
 import {
-  Briefcase,
-  CalendarCheck2,
-  CheckCircle2,
-  ClipboardList,
-  FileCheck2,
-  FileText,
-  GraduationCap,
-  Headphones,
-  ListChecks,
-  ShieldCheck,
   Target,
-  Trophy,
-  UserPlus,
-  Users2,
-  Video,
+  Settings,
+  Sparkles,
+  BarChart3,
+  Lightbulb,
+  BarChart2,
+  Rocket,
+  ShieldCheck,
+  Briefcase,
+  Users2
 } from 'lucide-react'
 
 export const NAV_LINKS = [
-  { label: 'Home', to: '/' },
-  { label: 'About Us', to: '/about' },
-  { label: 'Employees', to: '/employees' },
-  { label: 'Employers', to: '/employers' },
+  { label: 'Home', href: '#home', to: '/' },
+  { label: 'Services', href: '#services', to: '/services' },
+  { label: 'About Us', href: '#who-we-are', to: '/about' },
+  { label: 'Case Studies', href: '#case-studies', to: '/case-studies' },
+  { label: 'FAQs', href: '#faqs', to: '/faqs' },
 ]
 
-// ---- Stats -----------------------------------------------------------
-export const HOME_STATS = [
-  { value: 12400, suffix: '+', label: 'Verified job seekers' },
-  { value: 340, suffix: '+', label: 'Companies hiring' },
-  { value: 96, suffix: '%', label: 'Would recommend Mzobs' },
-  { display: '18 days', label: 'Avg. time to offer' },
-]
-
-export const EMPLOYEE_STATS = [
-  { value: 12400, suffix: '+', label: 'Profiles verified' },
-  { value: 3180, suffix: '+', label: 'Interviews arranged' },
-  { value: 96, suffix: '%', label: 'Would recommend' },
-]
-
-export const EMPLOYER_STATS = [
-  { display: '12,400+', label: 'Verified candidates' },
-  { display: '340+', label: 'Companies hiring' },
-  { display: '18 days', label: 'Avg. time to offer' },
-]
-
-// ---- Feature grids -----------------------------------------------------
-export const HOME_FEATURES = [
-  { icon: ShieldCheck, title: 'Verified Profiles', desc: 'Every job seeker and every company is screened by our team before they meet each other.' },
-  { icon: Target, title: 'Fast Matching', desc: 'Curated matches on both sides — no keyword-stuffed noise to dig through.' },
-  { icon: CalendarCheck2, title: 'Structured Interviews', desc: 'One shared pipeline to schedule, track and score every interview.' },
-  { icon: Headphones, title: 'Dedicated Support', desc: 'A real operations team behind every profile, every requirement, every hire.' },
-]
-
-export const EMPLOYEE_FEATURES = [
-  { icon: FileText, title: 'Resume Center', desc: 'Your resume rebuilt and reviewed by placement experts, not a template generator.' },
-  { icon: ListChecks, title: 'Skill Assessment', desc: 'Benchmark yourself against the exact requirements employers screen for.' },
-  { icon: Video, title: 'Mock Interviews', desc: 'Practice with real interviewers so the actual one feels like a formality.' },
-  { icon: Briefcase, title: 'Job Matching', desc: 'Curated openings filtered to your track — no scrolling through noise.' },
-]
-
-export const EMPLOYER_FEATURES = [
-  { icon: Users2, title: 'Verified Candidate Pipeline', desc: 'Every profile is screened and resume-checked by our operations team before it reaches you.' },
-  { icon: Briefcase, title: 'Batch Hiring', desc: 'Fill dozens of roles at once with candidates matched to your requirement, not keyword-searched.' },
-  { icon: CalendarCheck2, title: 'Structured Interviews', desc: 'Schedule, track and score interviews from one pipeline — no spreadsheets, no lost feedback.' },
-  { icon: FileCheck2, title: 'Offer Management', desc: 'Issue, track and manage offers with full visibility into acceptance and onboarding status.' },
-]
-
-// ---- Approach / how-it-works steps -------------------------------------
-export const HOME_STEPS = [
-  { n: '01', icon: UserPlus, title: 'Sign Up', desc: 'Create a profile as a job seeker, or list your company as a hiring employer.' },
-  { n: '02', icon: ShieldCheck, title: 'Get Verified', desc: 'Our operations team reviews and verifies every profile and every requirement.' },
-  { n: '03', icon: Target, title: 'Get Matched', desc: 'Job seekers are matched to roles; employers are matched to screened candidates.' },
-  { n: '04', icon: Trophy, title: 'Succeed', desc: 'Land the offer, or make the hire — with support until it is signed.' },
-]
-
-export const EMPLOYEE_STEPS = [
-  { n: '01', icon: UserPlus, title: 'Create your profile', desc: 'Sign up and tell us your target role, experience and availability.' },
-  { n: '02', icon: ShieldCheck, title: 'Get verified', desc: 'Our team reviews and rebuilds your resume so it clears the first screen.' },
-  { n: '03', icon: GraduationCap, title: 'Train & practice', desc: 'Work through your track and sit mock interviews with real feedback.' },
-  { n: '04', icon: CheckCircle2, title: 'Get placed', desc: 'Apply to matched openings and track every interview to offer.' },
-]
-
-export const EMPLOYER_STEPS = [
-  { n: '01', icon: ClipboardList, title: 'Share your requirement', desc: 'Tell us the role, seniority and skills you need — we take it from there.' },
-  { n: '02', icon: Users2, title: 'Review verified candidates', desc: 'Receive a shortlist that has already cleared our screening and resume review.' },
-  { n: '03', icon: CalendarCheck2, title: 'Interview & decide', desc: 'Run structured interviews and track feedback in one shared pipeline.' },
-  { n: '04', icon: FileCheck2, title: 'Extend the offer', desc: 'Manage the offer, acceptance and onboarding handoff without leaving the portal.' },
-]
-
-// ---- Testimonials --------------------------------------------------------
-export const EMPLOYEE_TESTIMONIAL = {
-  quote:
-    "Mzobs didn't just help me find a job — my resume was rebuilt by an expert, I trained for two weeks, and I walked into my interview actually prepared.",
-  name: 'Rohit Kulkarni',
-  role: 'Placed as Business Analyst, Razorpay',
-  initials: 'RK',
+export const HERO_DATA = {
+  titleLine1: "Strategy That",
+  titleItalic: "Powers Your Next",
+  titleLine2: "Level of Growth.",
+  subtitle: "We help businesses unlock opportunities, scale faster, and achieve measurable results through data-driven strategies.",
+  ctaText: "Book a Consultation",
+  bgImage: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2000&q=85"
 }
 
-export const EMPLOYER_TESTIMONIAL = {
-  quote:
-    'We used to spend weeks sifting resumes that went nowhere. With Mzobs, every candidate we interview is already pre-verified — our time-to-offer dropped by more than half.',
-  name: 'Rhea Kapoor',
-  role: 'Head of Talent, Solace Technologies',
-  initials: 'RK',
+export const WHO_WE_ARE_DATA = {
+  badge: "WHO WE ARE",
+  statement: [
+    { text: "Stratwell Consulting is a " },
+    { text: "results-driven", italic: true },
+    { text: " business consultancy " },
+    { text: "helping", italic: true },
+    { text: " leaders " },
+    { text: "navigate", italic: true },
+    { text: " complexity, " },
+    { text: "refine", italic: true },
+    { text: " strategy, and " },
+    { text: "achieve", italic: true },
+    { text: " sustainable growth." }
+  ],
+  stats: [
+    {
+      number: "92%",
+      label: "Of clients report measurable performance improvements within 1 year."
+    },
+    {
+      number: "$50M+",
+      label: "In revenue growth generated across client portfolios in the last 3 years."
+    },
+    {
+      number: "100+",
+      label: "Businesses advised across industries from tech startups to established enterprises."
+    },
+    {
+      number: "15+",
+      label: "Years of combined expertise guiding business strategy and execution."
+    }
+  ]
 }
 
-export const HOME_TESTIMONIALS = [
-  EMPLOYEE_TESTIMONIAL,
-  EMPLOYER_TESTIMONIAL,
-  {
-    quote: 'What stood out was how fast everything moved once we were verified — from first call to signed offer took less than three weeks.',
-    name: 'Ananya Iyer',
-    role: 'Placed as Product Designer, BluePeak',
-    initials: 'AI',
-  },
-]
+export const SERVICES_DATA = {
+  badge: "OUR SERVICES",
+  titlePrefix: "Our ",
+  titleItalic: "Expertise",
+  services: [
+    {
+      icon: Target,
+      title: "Business Strategy",
+      desc: "Set the right direction with market insights and actionable roadmaps."
+    },
+    {
+      icon: Settings,
+      title: "Operations Optimization",
+      desc: "Streamline workflows, cut costs, and boost efficiency."
+    },
+    {
+      icon: Sparkles,
+      title: "Digital Transformation",
+      desc: "Set the right direction with market insights and actionable roadmaps."
+    },
+    {
+      icon: BarChart3,
+      title: "Financial Advisory",
+      desc: "Improve performance, reduce risk, and unlock growth capital."
+    }
+  ],
+  featuredCard: {
+    titlePrefix: "Start Your ",
+    titleItalic: "Growth Journey",
+    ctaText: "Get In Touch",
+    bgImage: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=85"
+  }
+}
 
-// ---- About page ------------------------------------------------------
+export const CASE_STUDIES_DATA = {
+  badge: "CASE STUDIES",
+  titlePrefix: "Proven ",
+  titleItalic: "Results",
+  titleSuffix: " Across Industries",
+  items: [
+    {
+      id: "saas-startup",
+      tags: ["BUSINESS STRATEGY", "SAAS STARTUP"],
+      title: "Helped a SaaS startup grow revenue 65% in 12 months.",
+      italicWords: "grow revenue",
+      desc: "We helped a fast-growing SaaS company refine its go-to-market strategy, resulting in a 65% increase in ARR in 12 months.",
+      bgImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=85"
+    },
+    {
+      id: "manufacturing",
+      tags: ["OPERATIONS OPTIMIZATION", "MANUFACTURING"],
+      title: "20% Cost Savings & Efficiency",
+      italicWords: null,
+      desc: "Through a detailed operations audit, process redesign, and automation of key workflows, we reduced overhead by 20% while improving on-time delivery rates and overall efficiency.",
+      bgImage: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=85"
+    },
+    {
+      id: "e-commerce",
+      tags: ["FINANCIAL ADVISORY", "E-COMMERCE"],
+      title: "Transforming Financial Strategy for Sustainable Growth",
+      italicWords: "Financial Strategy",
+      desc: "A leading consulting firm helped a mid-market enterprise optimize finances, improve cash flow, and implement strategic investments, resulting in increased profitability and long-term business roadmap.",
+      bgImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=85"
+    }
+  ]
+}
+
+export const TESTIMONIALS_DATA = {
+  badge: "TESTIMONIALS",
+  titlePrefix: "What ",
+  titleItalic: "Our Clients",
+  titleSuffix: " Say",
+  items: [
+    {
+      id: 1,
+      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=85",
+      quote: "Stratwell provided key strategic insights that allowed us to double our operational speed in under 6 months.",
+      name: "Sarah Jenkins",
+      title: "VP Operations, Apex"
+    },
+    {
+      id: 2,
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=85",
+      quote: "Stratwell gave us clarity when we needed it most and results that exceeded expectations.",
+      name: "Mike Scott",
+      title: "COO, Tech"
+    },
+    {
+      id: 3,
+      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=85",
+      quote: "Working with them gave us back valuable time, reduced expenses, and simplified everything.",
+      name: "Anna White",
+      title: "CEO, Nexa Group"
+    },
+    {
+      id: 4,
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=85",
+      quote: "They transformed our work by streamlining operations, boosting efficiency, and delivering results.",
+      name: "Mario Fotiou",
+      title: "CFO, Constructo"
+    },
+    {
+      id: 5,
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=85",
+      quote: "What impressed me most was how quickly they understood our industry and delivered immediate value.",
+      name: "John Smith",
+      title: "CEO, Innovate"
+    }
+  ]
+}
+
+export const OUR_GOAL_DATA = {
+  badge: "OUR GOAL",
+  titlePrefix: "Transforming ",
+  titleItalic: "Strategy",
+  titleSuffix: " into Results",
+  desc: "Our team brings together expertise in strategy, operations, finance, and digital transformation, with one shared mission: to simplify complexity and deliver results that last. Whether it's entering new markets, streamlining processes, or guiding organizational change, we focus on creating solutions that are practical, actionable, and aligned with your goals.",
+  ctaText: "Meet Our Team",
+  image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=85"
+}
+
+export const APPROACH_DATA = {
+  badge: "OUR APPROACH",
+  heading: [
+    { text: "At Stratwell Consulting, we believe that " },
+    { text: "strategy", italic: true },
+    { text: " should do more than " },
+    { text: "sit on paper", italic: true },
+    { text: " — it should drive " },
+    { text: "measurable", italic: true },
+    { text: " change." }
+  ],
+  image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=85",
+  steps: [
+    {
+      num: "01",
+      icon: Lightbulb,
+      title: "Understand",
+      desc: "We immerse ourselves in your business to uncover challenges and opportunities."
+    },
+    {
+      num: "02",
+      icon: BarChart2,
+      title: "Strategize",
+      desc: "We design tailored strategies that align with your goals and available resources."
+    },
+    {
+      num: "03",
+      icon: Rocket,
+      title: "Implement",
+      desc: "We guide execution to ensure solutions are practical, effective, and scalable."
+    },
+    {
+      num: "04",
+      icon: Target,
+      title: "Measure",
+      desc: "We monitor performance, refine processes, and deliver clear, tangible results."
+    }
+  ]
+}
+
+export const TRUSTED_LOGOS_DATA = {
+  badge: "WE WORK WITH",
+  title: "Trusted By",
+  logos: [
+    { name: "Logoipsum", variant: 1 },
+    { name: "logo ipsum", variant: 2 },
+    { name: "LOGOIPSUM", variant: 3 },
+    { name: "logoipsum", variant: 4 },
+    { name: "LOGOIPSUM", variant: 5 },
+    { name: "logoipsum", variant: 6 },
+    { name: "logoipsum", variant: 7 },
+    { name: "Logoipsum", variant: 8 }
+  ]
+}
+
+export const CTA_BAND_DATA = {
+  titlePrefix: "Ready to ",
+  titleItalic: "Transform",
+  titleSuffix: " Your Business?",
+  desc: "Schedule a free consultation and discover how Stratwell Consulting can streamline your operations, optimize performance, and deliver measurable results.",
+  ctaText: "Get Started Today",
+  bgImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=85"
+}
+
+export const FOOTER_DATA = {
+  logoText: "Stratwell",
+  logoSub: "CONSULTING",
+  desc: "Stratwell Consulting helps businesses streamline operations, optimize performance, and achieve measurable growth.",
+  ctaText: "Contact Us",
+  menuTitle: "Menu",
+  menuItems: ["Home", "Services", "About Us", "Case Studies", "FAQs", "Contact"],
+  socialsTitle: "Socials",
+  socialsItems: ["Instagram", "Facebook", "LinkedIn", "Twitter (X)"],
+  contactTitle: "Contact",
+  phone: "+1 (555) 087-6543",
+  email: "contact@stratwellconsulting.com",
+  address: "450 Stratwell Avenue, Suite 500, Boston, MA 02110, USA",
+  copyright: "© 2026 Stratwell Consulting Framer Template",
+  rightLinks: ["Privacy Policy", "Built in Framer", "Created by Champion"]
+}
+
+// Legacy exports compatibility
+export const HOME_STATS = WHO_WE_ARE_DATA.stats.map(s => ({ value: s.number, label: s.label }))
+export const EMPLOYEE_STATS = HOME_STATS
+export const EMPLOYER_STATS = HOME_STATS
+export const HOME_FEATURES = SERVICES_DATA.services
+export const EMPLOYEE_FEATURES = SERVICES_DATA.services
+export const EMPLOYER_FEATURES = SERVICES_DATA.services
+export const HOME_STEPS = APPROACH_DATA.steps
+export const EMPLOYEE_STEPS = APPROACH_DATA.steps
+export const EMPLOYER_STEPS = APPROACH_DATA.steps
 export const TEAM = [
-  { name: 'Ishaan Verma', role: 'Co-Founder & CEO', initials: 'IV' },
-  { name: 'Priya Nair', role: 'Co-Founder & Head of Operations', initials: 'PN' },
-  { name: 'Arjun Malhotra', role: 'Head of Candidate Success', initials: 'AM' },
-  { name: 'Sana Sheikh', role: 'Head of Employer Partnerships', initials: 'SS' },
+  { name: 'Sarah Jenkins', role: 'VP Operations', initials: 'SJ' },
+  { name: 'Mike Scott', role: 'COO', initials: 'MS' },
+  { name: 'Anna White', role: 'CEO', initials: 'AW' },
+  { name: 'Mario Fotiou', role: 'CFO', initials: 'MF' }
 ]
-
-// Placeholder wordmarks — swap for real client logos (SVGs) when available.
-export const TRUSTED_LOGOS = ['Northwind Labs', 'Solace Technologies', 'BluePeak', 'Corewave', 'Ferrovia', 'Lumen Analytics', 'Vertex Systems', 'Anchorpoint']
+export const TRUSTED_LOGOS = TRUSTED_LOGOS_DATA.logos.map(l => l.name)
+export const EMPLOYEE_TESTIMONIAL = TESTIMONIALS_DATA.items[0]
+export const EMPLOYER_TESTIMONIAL = TESTIMONIALS_DATA.items[1]
+export const HOME_TESTIMONIALS = TESTIMONIALS_DATA.items

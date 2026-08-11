@@ -57,9 +57,9 @@ export default function Login() {
       </p>
       <p className="text-xs text-center mt-5 pt-5 border-t border-border text-ink-tertiary">
         Hiring for your company?{' '}
-        <a href="/employer/login" className="text-navy font-semibold hover:underline">
+        <Link to="/employer/login" className="text-navy font-semibold hover:underline">
           Access the Employer Portal
-        </a>
+        </Link>
       </p>
     </AuthLayout>
   )

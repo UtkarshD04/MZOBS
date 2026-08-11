@@ -46,15 +46,15 @@ export default function Home() {
           </div>
 
           <nav className="hidden md:flex items-center gap-7 text-[13.5px] font-medium text-ink-secondary">
-            <a href="#features" className="hover:text-ink transition-colors duration-200">Platform</a>
-            <a href="#how-it-works" className="hover:text-ink transition-colors duration-200">How it works</a>
-            <a href="#story" className="hover:text-ink transition-colors duration-200">Customers</a>
+            <Link to="#features" className="hover:text-ink transition-colors duration-200">Platform</Link>
+            <Link to="#how-it-works" className="hover:text-ink transition-colors duration-200">How it works</Link>
+            <Link to="#story" className="hover:text-ink transition-colors duration-200">Customers</Link>
           </nav>
 
           <div className="flex items-center gap-2.5">
-            <a href="mailto:hiring@mzobs.com" className="hidden sm:inline-flex">
+            <Link to="mailto:hiring@mzobs.com" className="hidden sm:inline-flex">
               <Button variant="ghost" size="md">Talk to us</Button>
-            </a>
+            </Link>
             <Button variant="primary" size="md" onClick={() => navigate('/login')}>
               Sign in <ArrowRight size={15} />
             </Button>
@@ -94,11 +94,11 @@ export default function Home() {
               <Button variant="primary" size="lg" onClick={() => navigate('/login')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
                 Sign in to your portal <ArrowRight size={16} />
               </Button>
-              <a href="mailto:hiring@mzobs.com">
+              <Link to="mailto:hiring@mzobs.com">
                 <Button variant="secondary" size="lg" className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25">
                   Talk to our team
                 </Button>
-              </a>
+              </Link>
             </div>
 
             <div className="flex items-center justify-center gap-9 mt-14 flex-wrap">
@@ -180,11 +180,11 @@ export default function Home() {
             <Button variant="primary" size="lg" onClick={() => navigate('/login')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
               Sign in <ArrowRight size={16} />
             </Button>
-            <a href="mailto:hiring@mzobs.com">
+            <Link to="mailto:hiring@mzobs.com">
               <Button variant="secondary" size="lg" className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25">
                 Talk to our team
               </Button>
-            </a>
+            </Link>
           </div>
         </Card>
       </section>
@@ -198,9 +198,9 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-5 flex-wrap text-xs text-ink-tertiary">
             <Link to="/login" className="hover:text-navy transition-colors duration-200">Sign in</Link>
-            <a href="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</a>
-            <a href="#terms" className="hover:text-navy transition-colors duration-200">Terms</a>
-            <a href="mailto:hiring@mzobs.com" className="hover:text-navy transition-colors duration-200">Contact sales</a>
+            <Link to="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</Link>
+            <Link to="#terms" className="hover:text-navy transition-colors duration-200">Terms</Link>
+            <Link to="mailto:hiring@mzobs.com" className="hover:text-navy transition-colors duration-200">Contact sales</Link>
           </div>
         </div>
       </footer>
