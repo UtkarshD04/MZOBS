@@ -75,22 +75,26 @@ export const SERVICES_DATA = {
     {
       icon: Target,
       title: "Verified Candidate Pipeline",
-      desc: "Every profile is screened and resume-checked by our team before it reaches an employer."
+      desc: "Every profile is screened and resume-checked by our team before it reaches an employer.",
+      image: "/images/services/service-pipeline.jpg"
     },
     {
       icon: Settings,
       title: "Guided Job Matching",
-      desc: "Curated openings filtered to your track — no scrolling through noise."
+      desc: "Curated openings filtered to your track — no scrolling through noise.",
+      image: "/images/services/service-matching.jpg"
     },
     {
       icon: Sparkles,
       title: "Structured Interviews",
-      desc: "Schedule, track and score interviews from one shared pipeline."
+      desc: "Schedule, track and score interviews from one shared pipeline.",
+      image: "/images/services/service-interviews.jpg"
     },
     {
       icon: BarChart3,
       title: "Offer & Hiring Analytics",
-      desc: "Track offers, acceptance and time-to-fill with full visibility."
+      desc: "Track offers, acceptance and time-to-fill with full visibility.",
+      image: "/images/services/service-analytics.jpg"
     }
   ],
   featuredCard: {

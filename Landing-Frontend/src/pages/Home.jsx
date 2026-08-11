@@ -1,9 +1,8 @@
 import Navbar from '../components/layout/Navbar'
 import PageHero from '../components/sections/PageHero'
 import WhoWeAre from '../components/sections/WhoWeAre'
+import CandidateJourneySection from '../components/sections/CandidateJourneySection'
 import ExpertiseGrid from '../components/sections/ExpertiseGrid'
-import CaseStudiesSection from '../components/sections/CaseStudiesSection'
-import TestimonialsSection from '../components/sections/TestimonialsSection'
 import OurGoalSection from '../components/sections/OurGoalSection'
 import ApproachSection from '../components/sections/ApproachSection'
 import LogoCloud from '../components/sections/LogoCloud'
@@ -24,16 +23,13 @@ export default function Home() {
       {/* 3. Who We Are / Statement & Stats */}
       <WhoWeAre />
 
-      {/* 4. Our Expertise / Services */}
+      {/* 4. Candidate Journey Artwork Section */}
+      <CandidateJourneySection />
+
+      {/* 5. Our Expertise / Services */}
       <ExpertiseGrid />
 
-      {/* 5. Case Studies / Proven Results */}
-      <CaseStudiesSection />
-
-      {/* 6. Testimonials / What Our Clients Say */}
-      <TestimonialsSection />
-
-      {/* 7. Our Goal / Transforming Strategy into Results */}
+      {/* 6. Our Goal / Transforming Strategy into Results */}
       <OurGoalSection />
 
       {/* 8. Our Approach / 4 Steps */}

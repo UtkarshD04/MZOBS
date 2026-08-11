@@ -3,6 +3,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import PageHero from '../components/sections/PageHero'
 import StatStrip from '../components/sections/StatStrip'
+import CandidateJourneySection from '../components/sections/CandidateJourneySection'
 import ExpertiseGrid from '../components/sections/ExpertiseGrid'
 import OurGoalSection from '../components/sections/OurGoalSection'
 import ApproachSection from '../components/sections/ApproachSection'
@@ -40,6 +41,8 @@ export default function Employee() {
       />
 
       <StatStrip stats={EMPLOYEE_STATS} />
+
+      <CandidateJourneySection />
 
       <ExpertiseGrid
         eyebrow="Why Job Seekers Choose Mzobs"
