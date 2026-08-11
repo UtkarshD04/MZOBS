@@ -13,7 +13,7 @@ import Footer from '../components/layout/Footer'
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#EEF3F8] text-[#0B1220] font-sans antialiased selection:bg-blue-200">
-      <title>Stratwell Consulting — Strategy That Powers Growth</title>
+      <title>Mzobs — Hiring, Built Right From Both Sides</title>
       
       {/* 1. Navbar */}
       <Navbar />

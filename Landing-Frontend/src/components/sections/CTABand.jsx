@@ -9,7 +9,7 @@ export default function CTABand() {
           {/* Background Image */}
           <img
             src={CTA_BAND_DATA.bgImage}
-            alt="Ready to Transform Your Business"
+            alt="Ready to get hired or hire faster"
             className="w-full h-full absolute inset-0 object-cover object-center brightness-[0.5] group-hover:scale-105 transition-transform duration-700"
           />
 

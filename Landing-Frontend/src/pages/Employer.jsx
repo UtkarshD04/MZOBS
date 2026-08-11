@@ -5,6 +5,7 @@ import PageHero from '../components/sections/PageHero'
 import StatStrip from '../components/sections/StatStrip'
 import ExpertiseGrid from '../components/sections/ExpertiseGrid'
 import ApproachSteps from '../components/sections/ApproachSteps'
+import PricingSection from '../components/sections/PricingSection'
 import TestimonialRow from '../components/sections/TestimonialRow'
 import LogoCloud from '../components/sections/LogoCloud'
 import CTABand from '../components/sections/CTABand'
@@ -63,6 +64,8 @@ export default function Employer() {
       />
 
       <ApproachSteps eyebrow="How It Works" title="Four Steps To Your Next Hire" subtitle="From open requirement to signed offer." steps={EMPLOYER_STEPS} />
+
+      <PricingSection />
 
       <TestimonialRow eyebrow="Customer Stories" title="What Employers Say" testimonials={[EMPLOYER_TESTIMONIAL]} />
 

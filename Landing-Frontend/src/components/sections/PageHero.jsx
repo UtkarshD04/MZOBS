@@ -8,7 +8,7 @@ export default function PageHero() {
       <div className="absolute inset-0 z-0">
         <img
           src={HERO_DATA.bgImage}
-          alt="Stratwell Consulting Workspace"
+          alt="Mzobs hiring platform"
           className="w-full h-full object-cover object-center brightness-[0.55] contrast-[1.1]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220] via-[#0B1220]/40 to-[#0B1220]/60" />

@@ -33,7 +33,7 @@ export default function OurGoalSection() {
         <div className="lg:col-span-6 min-h-[380px] sm:min-h-[440px] rounded-3xl overflow-hidden shadow-md border border-slate-200/60 group">
           <img
             src={OUR_GOAL_DATA.image}
-            alt="Transforming Strategy into Results"
+            alt="Turning hiring into a fair match"
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
           />
         </div>

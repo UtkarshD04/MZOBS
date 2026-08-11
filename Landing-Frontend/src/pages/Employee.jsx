@@ -4,13 +4,13 @@ import Footer from '../components/layout/Footer'
 import PageHero from '../components/sections/PageHero'
 import StatStrip from '../components/sections/StatStrip'
 import ExpertiseGrid from '../components/sections/ExpertiseGrid'
-import ApproachSteps from '../components/sections/ApproachSteps'
-import TestimonialRow from '../components/sections/TestimonialRow'
+import OurGoalSection from '../components/sections/OurGoalSection'
+import ApproachSection from '../components/sections/ApproachSection'
 import LogoCloud from '../components/sections/LogoCloud'
 import CTABand from '../components/sections/CTABand'
 import Button, { goldSolidClass } from '../components/ui/Button'
 import { EMPLOYEE_LOGIN_URL, EMPLOYEE_REGISTER_URL } from '../lib/config'
-import { EMPLOYEE_FEATURES, EMPLOYEE_STATS, EMPLOYEE_STEPS, EMPLOYEE_TESTIMONIAL, TRUSTED_LOGOS } from '../lib/content'
+import { EMPLOYEE_FEATURES, EMPLOYEE_STATS, TRUSTED_LOGOS } from '../lib/content'
 
 export default function Employee() {
   return (
@@ -55,9 +55,9 @@ export default function Employee() {
         ctaHref={EMPLOYEE_REGISTER_URL}
       />
 
-      <ApproachSteps eyebrow="How It Works" title="Four Steps To Placed" subtitle="From sign-up to signed offer." steps={EMPLOYEE_STEPS} />
+      <OurGoalSection />
 
-      <TestimonialRow eyebrow="Success Stories" title="What Job Seekers Say" testimonials={[EMPLOYEE_TESTIMONIAL]} />
+      <ApproachSection />
 
       <LogoCloud eyebrow="Recently Placed At" title="Our Candidates Work At" logos={TRUSTED_LOGOS} />
 
