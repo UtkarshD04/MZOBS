@@ -70,8 +70,8 @@ export default function About() {
             <Button to="/employees" variant="primary" size="lg" pill className={goldSolidClass}>
               For Employees
             </Button>
-            <Button to="/employers" variant="secondary" size="lg" pill className="bg-white/10 border-white/20 text-white hover:bg-white/15">
-              For Employers
+            <Button href="#contact" variant="secondary" size="lg" pill className="bg-white/10 border-white/20 text-white hover:bg-white/15">
+              Contact Us
             </Button>
           </>
         }
