@@ -9,31 +9,23 @@ export default function ApproachSection() {
         <div className="max-w-4xl space-y-6">
           <SectionBadge label={APPROACH_DATA.badge} />
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-medium text-[#0B1220] leading-[1.3] tracking-tight">
-            {APPROACH_DATA.heading.map((item, idx) =>
-              item.italic ? (
-                <span key={idx} className="font-serif italic font-normal text-blue-950 px-1">
-                  {item.text}
-                </span>
-              ) : (
-                <span key={idx}>{item.text}</span>
-              )
-            )}
+            {APPROACH_DATA.title}
           </h2>
         </div>
 
         {/* 2-Column Grid */}
         <div className="grid lg:grid-cols-12 gap-8 items-stretch">
-          {/* Left Large Photo Container */}
-          <div className="lg:col-span-5 min-h-[420px] rounded-3xl overflow-hidden shadow-md border border-slate-200/60 group">
+          {/* Left Visual Card Container */}
+          <div className="lg:col-span-6 min-h-[380px] sm:min-h-[440px] rounded-3xl overflow-hidden shadow-md border border-slate-200/60 bg-white group">
             <img
               src={APPROACH_DATA.image}
-              alt="How Mzobs verifies every hire"
+              alt="How Mzobs verifies every hire - Fairer process, better hires"
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
             />
           </div>
 
           {/* Right 4 Stacked Step Cards */}
-          <div className="lg:col-span-7 flex flex-col gap-4 justify-between">
+          <div className="lg:col-span-6 flex flex-col gap-4 justify-between">
             {APPROACH_DATA.steps.map((step, i) => {
               const Icon = step.icon
               return (
