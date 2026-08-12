@@ -31,12 +31,6 @@ export default function CTABand({
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220] via-[#0B1220]/60 to-transparent" />
 
           {/* Glass Card Overlay Box */}
-<<<<<<< Updated upstream
-          <div className="relative z-10 h-full flex flex-col justify-end p-8 sm:p-14 max-w-3xl space-y-6">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight leading-tight">
-              {title || CTA_BAND_DATA.title}
-            </h2>
-=======
           <Reveal direction="left" delay={0.15} className="relative z-10 h-full flex flex-col justify-end p-8 sm:p-14 max-w-3xl space-y-6">
             {title ? (
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight leading-tight">
@@ -51,7 +45,6 @@ export default function CTABand({
                 {CTA_BAND_DATA.titleSuffix}
               </h2>
             )}
->>>>>>> Stashed changes
 
             <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-normal max-w-xl">
               {subtitle || CTA_BAND_DATA.desc}
