@@ -101,7 +101,7 @@ export const SERVICES_DATA = {
     titlePrefix: "Start Your ",
     titleItalic: "Hiring Journey",
     ctaText: "Get In Touch",
-    bgImage: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=85"
+    bgImage: "/images/hiring-journey-bg.jpg"
   }
 }
 
