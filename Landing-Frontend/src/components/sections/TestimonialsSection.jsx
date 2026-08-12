@@ -1,27 +1,39 @@
 import { Play } from 'lucide-react'
 import SectionBadge from '../ui/SectionBadge'
+import Reveal from '../ui/Reveal'
+import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { TESTIMONIALS_DATA } from '../../lib/content'
 
-export default function TestimonialsSection() {
+export default function TestimonialsSection({ eyebrow, title, items }) {
+  const testimonialItems = items || TESTIMONIALS_DATA.items
+  const gridCols =
+    testimonialItems.length >= 5 ? 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5' : 'sm:grid-cols-2 md:grid-cols-3'
+
   return (
     <section id="testimonials" className="bg-[#EEF3F8] py-20 px-6 md:px-12 border-t border-slate-200/50">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto">
-          <SectionBadge label={TESTIMONIALS_DATA.badge} />
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
-            {TESTIMONIALS_DATA.titlePrefix}
-            <span className="font-serif italic font-normal text-blue-950">
-              {TESTIMONIALS_DATA.titleItalic}
-            </span>
-            {TESTIMONIALS_DATA.titleSuffix}
-          </h2>
-        </div>
+        <Reveal direction="up" className="text-center max-w-2xl mx-auto">
+          <SectionBadge label={eyebrow || TESTIMONIALS_DATA.badge} />
+          {title ? (
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
+              {title}
+            </h2>
+          ) : (
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
+              {TESTIMONIALS_DATA.titlePrefix}
+              <span className="font-serif italic font-normal text-blue-950">
+                {TESTIMONIALS_DATA.titleItalic}
+              </span>
+              {TESTIMONIALS_DATA.titleSuffix}
+            </h2>
+          )}
+        </Reveal>
 
-        {/* 5 Portrait Testimonial Cards Carousel / Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-          {TESTIMONIALS_DATA.items.map((item) => (
-            <div
+        {/* Portrait Testimonial Cards Grid */}
+        <StaggerGroup className={`grid grid-cols-1 ${gridCols} gap-5`}>
+          {testimonialItems.map((item) => (
+            <StaggerItem
               key={item.id}
               className="relative min-h-[380px] rounded-2xl overflow-hidden shadow-md group border border-slate-200/60 transition-transform duration-300 hover:-translate-y-1"
             >
@@ -56,9 +68,9 @@ export default function TestimonialsSection() {
                   </button>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </div>
     </section>
   )

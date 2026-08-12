@@ -11,7 +11,13 @@ const item = {
 
 export function StaggerGroup({ className, children }) {
   return (
-    <motion.div className={className} variants={container} initial="hidden" animate="show">
+    <motion.div
+      className={className}
+      variants={container}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.2 }}
+    >
       {children}
     </motion.div>
   )

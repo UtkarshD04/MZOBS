@@ -8,7 +8,6 @@ import {
   User,
   FileText,
   Video,
-  GraduationCap,
   Briefcase,
   ClipboardList,
   CalendarCheck,
@@ -17,7 +16,6 @@ import {
   Settings,
   Upload,
   Sun,
-  LogOut,
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
@@ -36,7 +34,6 @@ export default function CommandPalette() {
       { grp: 'Navigate', icon: User, label: 'Go to Profile', act: () => navigate('/app/profile') },
       { grp: 'Navigate', icon: FileText, label: 'Go to Resume Center', act: () => navigate('/app/resume') },
       { grp: 'Navigate', icon: Video, label: 'Go to Mock Interview', act: () => navigate('/app/interview') },
-      { grp: 'Navigate', icon: GraduationCap, label: 'Go to Training', act: () => navigate('/app/training') },
       { grp: 'Navigate', icon: Briefcase, label: 'Go to Job Openings', act: () => navigate('/app/jobs') },
       { grp: 'Navigate', icon: ClipboardList, label: 'Go to My Applications', act: () => navigate('/app/applications') },
       { grp: 'Navigate', icon: CalendarCheck, label: 'Go to Interview Center', act: () => navigate('/app/interview-center') },
@@ -45,7 +42,6 @@ export default function CommandPalette() {
       { grp: 'Navigate', icon: Settings, label: 'Go to Settings', act: () => navigate('/app/settings') },
       { grp: 'Actions', icon: Upload, label: 'Upload a new resume', act: () => navigate('/app/resume') },
       { grp: 'Actions', icon: Sun, label: 'Toggle theme', act: toggleTheme },
-      { grp: 'Actions', icon: LogOut, label: 'Log out', act: () => navigate('/login') },
     ]
   }, [navigate, toggleTheme])
 

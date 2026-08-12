@@ -1,5 +1,7 @@
 import SectionBadge from '../ui/SectionBadge'
 import PillButton from '../ui/PillButton'
+import Reveal from '../ui/Reveal'
+import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { CASE_STUDIES_DATA } from '../../lib/content'
 
 export default function CaseStudiesSection() {
@@ -7,7 +9,7 @@ export default function CaseStudiesSection() {
     <section id="case-studies" className="bg-[#EEF3F8] py-20 px-6 md:px-12 border-t border-slate-200/50">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto">
+        <Reveal direction="up" className="text-center max-w-2xl mx-auto">
           <SectionBadge label={CASE_STUDIES_DATA.badge} />
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
             {CASE_STUDIES_DATA.titlePrefix}
@@ -16,12 +18,12 @@ export default function CaseStudiesSection() {
             </span>
             {CASE_STUDIES_DATA.titleSuffix}
           </h2>
-        </div>
+        </Reveal>
 
         {/* 3 Stacked Large Case Study Cards */}
-        <div className="space-y-8">
+        <StaggerGroup className="space-y-8">
           {CASE_STUDIES_DATA.items.map((item) => (
-            <div
+            <StaggerItem
               key={item.id}
               className="relative min-h-[420px] sm:min-h-[460px] rounded-3xl overflow-hidden shadow-lg border border-slate-200/60 group"
             >
@@ -76,9 +78,9 @@ export default function CaseStudiesSection() {
                   </PillButton>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
 
         {/* Centered View More Button */}
         <div className="text-center pt-4">

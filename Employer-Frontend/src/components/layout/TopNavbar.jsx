@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
-import { Menu as MenuIcon, Search, Sun, Moon, MessageSquare, Bell, ChevronDown, Building2, Settings, CreditCard, LifeBuoy, LogOut, Plus, Check, ShieldCheck, MailOpen } from 'lucide-react'
+import { Menu as MenuIcon, Search, Sun, Moon, MessageSquare, Bell, ChevronDown, Building2, Settings, CreditCard, LifeBuoy, Plus, Check, ShieldCheck, MailOpen } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import Avatar from '../ui/Avatar'
 import Button from '../ui/Button'
@@ -182,17 +182,6 @@ export default function TopNavbar() {
                       <span>{label}</span>
                     </button>
                   ))}
-                  <div className="h-px bg-border my-1.5" />
-                  <button
-                    onClick={() => {
-                      close()
-                      navigate('/login')
-                    }}
-                    className="flex w-full items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px] text-red"
-                  >
-                    <LogOut size={16} />
-                    <span>Log out</span>
-                  </button>
                 </div>
               </>
             )}

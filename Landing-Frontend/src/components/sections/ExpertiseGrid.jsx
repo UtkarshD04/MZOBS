@@ -1,5 +1,7 @@
 import SectionBadge from '../ui/SectionBadge'
 import PillButton from '../ui/PillButton'
+import Reveal from '../ui/Reveal'
+import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { SERVICES_DATA } from '../../lib/content'
 
 export default function ExpertiseGrid({
@@ -12,15 +14,14 @@ export default function ExpertiseGrid({
   ctaHref,
   reverse
 }) {
-  const badgeLabel = eyebrow || SERVICES_DATA.badge
   const servicesList = items || SERVICES_DATA.services
 
   return (
     <section id="services" className="bg-[#EEF3F8] py-14 px-6 md:px-12 border-t border-slate-200/50">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Section Header */}
-        <div>
-          <SectionBadge label={badgeLabel} />
+        <Reveal direction="up">
+          {eyebrow && <SectionBadge label={eyebrow} />}
           {title ? (
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
               {title}
@@ -36,16 +37,16 @@ export default function ExpertiseGrid({
           {subtitle && (
             <p className="text-base text-slate-600 mt-2 max-w-2xl">{subtitle}</p>
           )}
-        </div>
+        </Reveal>
 
         {/* 2-Column Grid */}
         <div className={`grid lg:grid-cols-12 gap-8 items-stretch ${reverse ? 'lg:flex-row-reverse' : ''}`}>
           {/* Left 2x2 Services Grid */}
-          <div className="lg:col-span-7 grid sm:grid-cols-2 gap-5">
+          <StaggerGroup className="lg:col-span-7 grid sm:grid-cols-2 gap-5">
             {servicesList.map((service, i) => {
               const Icon = service.icon
               return (
-                <div
+                <StaggerItem
                   key={i}
                   className="bg-white rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group"
                 >
@@ -58,7 +59,7 @@ export default function ExpertiseGrid({
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
-                      
+
                       {/* Icon overlay on top right */}
                       {Icon && (
                         <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-sm flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all duration-300">
@@ -78,13 +79,13 @@ export default function ExpertiseGrid({
                       </p>
                     </div>
                   </div>
-                </div>
+                </StaggerItem>
               )
             })}
-          </div>
+          </StaggerGroup>
 
           {/* Right Featured Card with Background Image */}
-          <div className="lg:col-span-5 relative min-h-75 rounded-3xl overflow-hidden shadow-lg group">
+          <Reveal direction="right" delay={0.1} className="lg:col-span-5 relative min-h-75 rounded-3xl overflow-hidden shadow-lg group">
             <img
               src={SERVICES_DATA.featuredCard.bgImage}
               alt="Start your hiring journey"
@@ -103,7 +104,7 @@ export default function ExpertiseGrid({
                 </PillButton>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

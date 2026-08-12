@@ -176,7 +176,7 @@ export default function CandidateJourneySection() {
             <Button
               variant="primary"
               size="lg"
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/app/dashboard')}
               className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110 rounded-full"
             >
               {CANDIDATE_JOURNEY_DATA.cta.buttonText} <ArrowRight size={16} />

@@ -1,3 +1,4 @@
+import Reveal from '../ui/Reveal'
 import { FOOTER_DATA } from '../../lib/content'
 
 export default function Footer() {
@@ -5,7 +6,7 @@ export default function Footer() {
     <footer className="bg-[#0B1220] text-white pt-20 pb-12 px-6 md:px-12 border-t border-white/10">
       <div className="max-w-7xl mx-auto space-y-16">
         {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+        <Reveal direction="up" className="grid grid-cols-1 md:grid-cols-12 gap-12">
           {/* Brand Column */}
           <div className="md:col-span-5 space-y-6">
             <a href="#home" className="flex items-center gap-3">
@@ -69,7 +70,7 @@ export default function Footer() {
               <p className="pt-1">{FOOTER_DATA.address}</p>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Bottom Sub-Footer Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-normal">

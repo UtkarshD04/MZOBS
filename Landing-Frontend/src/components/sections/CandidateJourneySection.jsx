@@ -2,7 +2,6 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import Button, { goldSolidClass } from '../ui/Button'
 import { CANDIDATE_JOURNEY_DATA } from '../../lib/candidateJourneyData'
-import { EMPLOYEE_REGISTER_URL } from '../../lib/config'
 
 export default function CandidateJourneySection() {
   return (
@@ -109,10 +108,10 @@ export default function CandidateJourneySection() {
                 >
                   {/* PHOTOGRAPH ARTWORK CONTAINER */}
                   <motion.div
-                    initial={{ opacity: 0, y: 25 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, x: isImageLeft ? -60 : 60, y: 15 }}
+                    whileInView={{ opacity: 1, x: 0, y: 0 }}
                     viewport={{ once: true, margin: '-60px' }}
-                    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
                     className={`lg:col-span-6 relative group ${
                       isImageLeft ? 'lg:order-1' : 'lg:order-2'
                     }`}
@@ -143,10 +142,10 @@ export default function CandidateJourneySection() {
 
                   {/* EDITORIAL TYPOGRAPHY CONTAINER */}
                   <motion.div
-                    initial={{ opacity: 0, y: 25 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, x: isImageLeft ? 60 : -60, y: 15 }}
+                    whileInView={{ opacity: 1, x: 0, y: 0 }}
                     viewport={{ once: true, margin: '-60px' }}
-                    transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.75, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
                     className={`lg:col-span-6 space-y-2.5 ${
                       isImageLeft ? 'lg:order-2 lg:pl-6' : 'lg:order-1 lg:pr-6'
                     }`}
@@ -192,7 +191,7 @@ export default function CandidateJourneySection() {
 
           <div className="pt-2 flex items-center justify-center">
             <Button
-              href={EMPLOYEE_REGISTER_URL}
+              to="/employees/signup"
               variant="primary"
               size="lg"
               pill

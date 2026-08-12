@@ -5,7 +5,7 @@ const AppContext = createContext(null)
 let toastId = 0
 
 export function AppProvider({ children }) {
-  const [themeOverride, setThemeOverride] = useState(() => localStorage.getItem('mzobs-theme') || null)
+  const [themeOverride, setThemeOverride] = useState(() => localStorage.getItem('mzobs-theme') || 'light')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)

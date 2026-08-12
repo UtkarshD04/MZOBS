@@ -224,6 +224,51 @@ export const APPROACH_DATA = {
   ]
 }
 
+export const EMPLOYEE_GOAL_DATA = {
+  titlePrefix: "We're Not Another ",
+  titleItalic: "Job Board",
+  titleSuffix: " — We're Your Placement Team",
+  desc: "Most platforms hand you a search bar and wish you luck. Mzobs assigns your resume to a real recruiter, runs you through mock interviews, and only puts you in front of employers hiring for roles you're actually qualified for.",
+  ctaText: "See Your Journey",
+  ctaHref: "#candidate-journey",
+  image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=85"
+}
+
+export const EMPLOYEE_APPROACH_DATA = {
+  heading: [
+    { text: "Getting hired shouldn't feel like " },
+    { text: "guesswork", italic: true },
+    { text: " — we build your resume, coach your interviews, and match you to roles that actually fit." }
+  ],
+  image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=85",
+  steps: [
+    {
+      num: "01",
+      icon: ShieldCheck,
+      title: "Verified Employer Network",
+      desc: "Every company on Mzobs is vetted before their openings go live — no fake listings, no ghost jobs."
+    },
+    {
+      num: "02",
+      icon: Sparkles,
+      title: "1:1 Resume & Interview Coaching",
+      desc: "A real recruiter rebuilds your resume and runs you through mock interviews before you meet an employer."
+    },
+    {
+      num: "03",
+      icon: Target,
+      title: "Matched, Not Searched",
+      desc: "We match you to roles based on your verified skills — you stop scrolling job boards that go nowhere."
+    },
+    {
+      num: "04",
+      icon: TrendingUp,
+      title: "Support After You're Hired",
+      desc: "Our team stays in touch through your first month to make sure the placement actually works out."
+    }
+  ]
+}
+
 export const TRUSTED_LOGOS_DATA = {
   badge: "WHO HIRES ON MZOBS",
   title: "Companies Hiring On Mzobs",
@@ -255,7 +300,7 @@ export const FOOTER_DATA = {
   desc: "Mzobs connects verified job seekers with employers who need them — every profile and every requirement reviewed by a real person before it goes live.",
   ctaText: "Contact Us",
   menuTitle: "Menu",
-  menuItems: ["Home", "Services", "Who We Are", "Case Studies", "Testimonials", "Contact"],
+  menuItems: ["Home", "Services", "Who We Are", "Contact"],
   socialsTitle: "Socials",
   socialsItems: ["Instagram", "Facebook", "LinkedIn", "Twitter (X)"],
   contactTitle: "Contact",
@@ -420,3 +465,4 @@ export const TEAM = [
 export const TRUSTED_LOGOS = TRUSTED_LOGOS_DATA.logos.map(l => l.name)
 export const EMPLOYER_TESTIMONIAL = TESTIMONIALS_DATA.items[1]
 export const HOME_TESTIMONIALS = TESTIMONIALS_DATA.items
+export const EMPLOYEE_TESTIMONIALS = [TESTIMONIALS_DATA.items[0], TESTIMONIALS_DATA.items[2], TESTIMONIALS_DATA.items[4]]
