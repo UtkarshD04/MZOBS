@@ -17,7 +17,6 @@ const TeamMembers = lazy(() => import('./pages/TeamMembers'))
 const Notifications = lazy(() => import('./pages/Notifications'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Support = lazy(() => import('./pages/Support'))
-const Login = lazy(() => import('./pages/Login'))
 const Home = lazy(() => import('./pages/Home'))
 
 export default function App() {
@@ -25,7 +24,6 @@ export default function App() {
     <Suspense fallback={<PageSkeleton />}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
 
         <Route element={<Shell />}>
           <Route path="/dashboard" element={<Dashboard />} />

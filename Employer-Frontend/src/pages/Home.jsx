@@ -55,7 +55,7 @@ export default function Home() {
             <Link to="mailto:hiring@mzobs.com" className="hidden sm:inline-flex">
               <Button variant="ghost" size="md">Talk to us</Button>
             </Link>
-            <Button variant="primary" size="md" onClick={() => navigate('/login')}>
+            <Button variant="primary" size="md" onClick={() => navigate('/dashboard')}>
               Sign in <ArrowRight size={15} />
             </Button>
           </div>
@@ -91,7 +91,7 @@ export default function Home() {
             </p>
 
             <div className="flex items-center justify-center gap-3 mt-8 flex-wrap">
-              <Button variant="primary" size="lg" onClick={() => navigate('/login')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
+              <Button variant="primary" size="lg" onClick={() => navigate('/dashboard')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
                 Sign in to your portal <ArrowRight size={16} />
               </Button>
               <Link to="mailto:hiring@mzobs.com">
@@ -177,7 +177,7 @@ export default function Home() {
           <h2 className="text-2xl font-bold tracking-tight">Ready to hire your next verified candidate?</h2>
           <p className="text-white/65 text-[14.5px] mt-2.5 max-w-md mx-auto">Employer accounts are provisioned by our team — sign in if you already have one, or reach out to get started.</p>
           <div className="flex items-center justify-center gap-3 mt-6 flex-wrap">
-            <Button variant="primary" size="lg" onClick={() => navigate('/login')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
+            <Button variant="primary" size="lg" onClick={() => navigate('/dashboard')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
               Sign in <ArrowRight size={16} />
             </Button>
             <Link to="mailto:hiring@mzobs.com">
@@ -197,7 +197,7 @@ export default function Home() {
             <span className="text-xs text-ink-tertiary">© {new Date().getFullYear()} Mzobs · Employer Portal</span>
           </div>
           <div className="flex items-center gap-5 flex-wrap text-xs text-ink-tertiary">
-            <Link to="/login" className="hover:text-navy transition-colors duration-200">Sign in</Link>
+            <Link to="/dashboard" className="hover:text-navy transition-colors duration-200">Sign in</Link>
             <Link to="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</Link>
             <Link to="#terms" className="hover:text-navy transition-colors duration-200">Terms</Link>
             <Link to="mailto:hiring@mzobs.com" className="hover:text-navy transition-colors duration-200">Contact sales</Link>

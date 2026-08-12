@@ -6,18 +6,12 @@ import ToastStack from './components/ui/ToastStack'
 import CommandPalette from './components/ui/CommandPalette'
 import AppShell from './components/layout/AppShell'
 
-import Home from './pages/Home'
-import Login from './pages/auth/Login'
-import Register from './pages/auth/Register'
-import ForgotPassword from './pages/auth/ForgotPassword'
-import Otp from './pages/auth/Otp'
 import Onboarding from './pages/Onboarding'
 
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import ResumeCenter from './pages/ResumeCenter'
 import MockInterview from './pages/MockInterview'
-import Training from './pages/Training'
 import JobMatching from './pages/JobMatching'
 import Applications from './pages/Applications'
 import InterviewCenter from './pages/InterviewCenter'
@@ -31,11 +25,7 @@ export default function App() {
   return (
     <AppProvider>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/otp" element={<Otp />} />
+        <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
         <Route path="/onboarding" element={<Onboarding />} />
 
         <Route path="/app" element={<AppShell />}>
@@ -44,7 +34,6 @@ export default function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="resume" element={<ResumeCenter />} />
           <Route path="interview" element={<MockInterview />} />
-          <Route path="training" element={<Training />} />
           <Route path="jobs" element={<JobMatching />} />
           <Route path="applications" element={<Applications />} />
           <Route path="interview-center" element={<InterviewCenter />} />

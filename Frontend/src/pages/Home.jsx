@@ -13,7 +13,6 @@ import {
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
-import Avatar from '../components/ui/Avatar'
 import CountUp from '../components/ui/CountUp'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import CandidateJourneySection from '../components/sections/CandidateJourneySection'
@@ -32,15 +31,12 @@ const FEATURES = [
   { icon: Sparkles, title: 'Application Tracking', desc: 'One dashboard for every application, interview and offer status.', image: '/images/services/service-analytics.jpg' },
 ]
 
-const STEPS = [
-  { n: '01', title: 'Create your profile', desc: 'Sign up and tell us your target role, experience and availability.' },
-  { n: '02', title: 'Get verified', desc: 'Our team reviews and rebuilds your resume so it clears the first screen.' },
-  { n: '03', title: 'Train & practice', desc: 'Work through your track and sit mock interviews with real feedback.' },
-  { n: '04', title: 'Get placed', desc: 'Apply to matched openings and track every interview to offer.' },
+const ABOUT_STATS = [
+  ['96%', 'Would recommend Mzobs to a friend'],
+  ['12,400+', 'Profiles verified by our team'],
+  ['3,180+', 'Interviews arranged for candidates'],
+  ['2 weeks', 'Average time to first interview'],
 ]
-
-const QUOTE = "Mzobs didn't just help me find a job — my resume was rebuilt by an expert, I trained for two weeks, and I walked into my interview at Razorpay actually prepared."
-const AUTHOR = { initials: 'RK', name: 'Rohit Kulkarni', role: 'Placed as Business Analyst, Razorpay' }
 
 export default function Home() {
   const navigate = useNavigate()
@@ -63,8 +59,8 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-2.5">
-            <Button variant="ghost" size="md" onClick={() => navigate('/login')}>Sign in</Button>
-            <Button variant="primary" size="md" onClick={() => navigate('/register')}>
+            <Button variant="ghost" size="md" onClick={() => navigate('/app/dashboard')}>Sign in</Button>
+            <Button variant="primary" size="md" onClick={() => navigate('/app/dashboard')}>
               Get started <ArrowRight size={15} />
             </Button>
           </div>
@@ -100,10 +96,10 @@ export default function Home() {
             </p>
 
             <div className="flex items-center justify-center gap-3 mt-8 flex-wrap">
-              <Button variant="primary" size="lg" onClick={() => navigate('/register')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
+              <Button variant="primary" size="lg" onClick={() => navigate('/app/dashboard')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
                 Create free account <ArrowRight size={16} />
               </Button>
-              <Button variant="secondary" size="lg" onClick={() => navigate('/login')} className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25">
+              <Button variant="secondary" size="lg" onClick={() => navigate('/app/dashboard')} className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25">
                 Sign in
               </Button>
             </div>
@@ -120,6 +116,30 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
+      </section>
+
+      {/* About statement + stats */}
+      <section className="max-w-5xl mx-auto px-6 pt-20">
+        <StaggerGroup>
+          <StaggerItem>
+            <h2 className="text-[24px] sm:text-[30px] font-bold tracking-tight leading-[1.4] text-center">
+              Mzobs is a <em className="italic text-gold-dot">results-driven</em> career platform helping job
+              seekers <em className="italic text-navy">navigate</em> the market, <em className="italic text-gold-dot">rebuild</em> their
+              profile, and <em className="italic text-navy">land</em> roles that actually fit.
+            </h2>
+          </StaggerItem>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
+            {ABOUT_STATS.map(([n, l]) => (
+              <StaggerItem key={l}>
+                <Card pad className="h-full text-center lg:text-left">
+                  <b className="text-2xl font-bold block">{n}</b>
+                  <span className="text-[13px] text-ink-secondary mt-1.5 block leading-relaxed">{l}</span>
+                </Card>
+              </StaggerItem>
+            ))}
+          </div>
+        </StaggerGroup>
       </section>
 
       {/* Features */}
@@ -170,7 +190,7 @@ export default function Home() {
           <ShieldCheck size={26} className="mx-auto text-gold-dot mb-4" />
           <h2 className="text-2xl font-bold tracking-tight">Ready to start your placement journey?</h2>
           <p className="text-white/65 text-[14.5px] mt-2.5 max-w-md mx-auto">Free to join. Verified by our operations team before anything reaches an employer.</p>
-          <Button variant="primary" size="lg" onClick={() => navigate('/register')} className="mt-6 bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
+          <Button variant="primary" size="lg" onClick={() => navigate('/app/dashboard')} className="mt-6 bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
             Create free account <ArrowRight size={16} />
           </Button>
         </Card>
@@ -184,7 +204,7 @@ export default function Home() {
             <span className="text-xs text-ink-tertiary">© {new Date().getFullYear()} Mzobs · Career Success Platform</span>
           </div>
           <div className="flex items-center gap-5 flex-wrap text-xs text-ink-tertiary">
-            <Link to="/login" className="hover:text-navy transition-colors duration-200">Sign in</Link>
+            <Link to="/app/dashboard" className="hover:text-navy transition-colors duration-200">Sign in</Link>
             <Link to="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</Link>
             <Link to="#terms" className="hover:text-navy transition-colors duration-200">Terms</Link>
             <span className="flex items-center gap-1.5">

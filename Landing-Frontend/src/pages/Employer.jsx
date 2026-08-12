@@ -4,14 +4,11 @@ import Footer from '../components/layout/Footer'
 import PageHero from '../components/sections/PageHero'
 import StatStrip from '../components/sections/StatStrip'
 import ExpertiseGrid from '../components/sections/ExpertiseGrid'
-import ApproachSteps from '../components/sections/ApproachSteps'
-import PricingSection from '../components/sections/PricingSection'
-import TestimonialRow from '../components/sections/TestimonialRow'
 import LogoCloud from '../components/sections/LogoCloud'
 import CTABand from '../components/sections/CTABand'
 import Button, { goldSolidClass } from '../components/ui/Button'
 import { CONTACT_EMAIL, EMPLOYER_LOGIN_URL } from '../lib/config'
-import { EMPLOYER_FEATURES, EMPLOYER_STATS, EMPLOYER_STEPS, EMPLOYER_TESTIMONIAL, TRUSTED_LOGOS } from '../lib/content'
+import { EMPLOYER_FEATURES, EMPLOYER_STATS, TRUSTED_LOGOS } from '../lib/content'
 
 export default function Employer() {
   return (
@@ -70,12 +67,6 @@ export default function Employer() {
         }}
         reverse
       />
-
-      <ApproachSteps eyebrow="How It Works" title="Four Steps To Your Next Hire" subtitle="From open requirement to signed offer." steps={EMPLOYER_STEPS} />
-
-      <PricingSection />
-
-      <TestimonialRow eyebrow="Customer Stories" title="What Employers Say" testimonials={[EMPLOYER_TESTIMONIAL]} />
 
       <LogoCloud eyebrow="Trusted By" title="Companies Hiring On Mzobs" logos={TRUSTED_LOGOS} />
 

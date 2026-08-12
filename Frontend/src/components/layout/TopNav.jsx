@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, Search, Sun, Moon, MessageSquare, Bell, ChevronDown, User, Settings, CreditCard, LifeBuoy, LogOut } from 'lucide-react'
+import { Menu, Search, Sun, Moon, MessageSquare, Bell, ChevronDown, User, Settings, CreditCard, LifeBuoy } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import Avatar from '../ui/Avatar'
 import FloatingPanel from '../ui/FloatingPanel'
@@ -103,17 +103,6 @@ export default function TopNav() {
                     <span>{label}</span>
                   </div>
                 ))}
-                <div className="h-px bg-border my-1.5" />
-                <div
-                  onClick={() => {
-                    setAvatarMenuOpen(false)
-                    navigate('/login')
-                  }}
-                  className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px] text-red"
-                >
-                  <LogOut size={16} />
-                  <span>Log out</span>
-                </div>
               </div>
             </FloatingPanel>
           </div>

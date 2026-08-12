@@ -5,7 +5,6 @@ import {
   User,
   FileText,
   Video,
-  GraduationCap,
   Briefcase,
   ClipboardList,
   CalendarCheck,
@@ -14,7 +13,6 @@ import {
   CreditCard,
   Settings,
   LifeBuoy,
-  LogOut,
   PanelLeft,
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
@@ -25,7 +23,6 @@ const verification = [
   { to: '/app/profile', label: 'Profile', icon: User },
   { to: '/app/resume', label: 'Resume Center', icon: FileText },
   { to: '/app/interview', label: 'Mock Interview', icon: Video },
-  { to: '/app/training', label: 'Training', icon: GraduationCap },
 ]
 const placement = [
   { to: '/app/jobs', label: 'Job Openings', icon: Briefcase },
@@ -93,10 +90,6 @@ export default function Sidebar() {
 
       <div className="mt-auto pt-3 border-t border-border">
         <NavItem to="/app/support" label="Support" icon={LifeBuoy} collapsed={sidebarCollapsed} />
-        <NavLink to="/login" className="flex items-center gap-[11px] px-2.5 py-[9px] rounded-[9px] cursor-pointer mb-0.5 text-[13.5px] font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink">
-          <LogOut size={18} className="flex-shrink-0" />
-          {!sidebarCollapsed && <span>Log out</span>}
-        </NavLink>
         <button
           onClick={() => setSidebarCollapsed((c) => !c)}
           className="hidden lg:flex items-center gap-2.5 px-2.5 py-2 rounded-[9px] text-ink-tertiary hover:bg-surface-hover hover:text-ink cursor-pointer text-[12.5px] w-full"

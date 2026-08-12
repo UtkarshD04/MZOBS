@@ -1,4 +1,6 @@
 import SectionBadge from '../ui/SectionBadge'
+import Reveal from '../ui/Reveal'
+import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { TRUSTED_LOGOS_DATA } from '../../lib/content'
 
 function LogoSvg({ variant }) {
@@ -70,7 +72,7 @@ function LogoSvg({ variant }) {
 }
 
 export default function LogoCloud({
-  eyebrow = TRUSTED_LOGOS_DATA.badge,
+  eyebrow,
   title = TRUSTED_LOGOS_DATA.title,
   logos = TRUSTED_LOGOS_DATA.logos
 }) {
@@ -78,31 +80,31 @@ export default function LogoCloud({
     <section className="bg-[#EEF3F8] py-20 px-6 md:px-12 border-t border-slate-200/50">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
-        <div className="text-center">
-          <SectionBadge label={eyebrow} />
+        <Reveal direction="up" className="text-center">
+          {eyebrow && <SectionBadge label={eyebrow} />}
           <h2 className="text-3xl sm:text-4xl font-serif font-normal text-[#0B1220] tracking-tight">
             {title}
           </h2>
-        </div>
+        </Reveal>
 
         {/* Logo Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+        <StaggerGroup className="grid grid-cols-2 sm:grid-cols-4 gap-5">
           {logos.map((logo, i) => {
             const variantNum = typeof logo === 'object' && logo.variant ? logo.variant : (i % 8) + 1
             const displayName = typeof logo === 'string' ? logo : logo.name
 
             return (
-              <div
+              <StaggerItem
                 key={displayName + i}
                 className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center min-h-[90px] group"
               >
                 <div className="opacity-75 group-hover:opacity-100 transition-opacity">
                   <LogoSvg variant={variantNum} />
                 </div>
-              </div>
+              </StaggerItem>
             )
           })}
-        </div>
+        </StaggerGroup>
       </div>
     </section>
   )
