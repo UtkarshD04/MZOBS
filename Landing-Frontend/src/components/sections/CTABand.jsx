@@ -24,19 +24,9 @@ export default function CTABand({
 
           {/* Glass Card Overlay Box */}
           <div className="relative z-10 h-full flex flex-col justify-end p-8 sm:p-14 max-w-3xl space-y-6">
-            {title ? (
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight leading-tight">
-                {title}
-              </h2>
-            ) : (
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight leading-tight">
-                {CTA_BAND_DATA.titlePrefix}
-                <span className="font-serif italic font-normal text-slate-100">
-                  {CTA_BAND_DATA.titleItalic}
-                </span>
-                {CTA_BAND_DATA.titleSuffix}
-              </h2>
-            )}
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight leading-tight">
+              {title || CTA_BAND_DATA.title}
+            </h2>
 
             <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-normal max-w-xl">
               {subtitle || CTA_BAND_DATA.desc}

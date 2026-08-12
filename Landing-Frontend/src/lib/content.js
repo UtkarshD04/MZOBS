@@ -189,21 +189,13 @@ export const OUR_GOAL_DATA = {
   titleSuffix: " Into A Fair Match",
   desc: "Mzobs started because hiring was broken on both sides — job seekers were applying into a void, and employers were drowning in unscreened resumes. Our team brings together operations, recruiting and product expertise with one shared mission: verify every profile and every requirement before it reaches the other side, so both sides get a faster, better hire.",
   ctaText: "Meet Our Team",
-  image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=85"
+  image: "/images/our-goal.jpg"
 }
 
 export const APPROACH_DATA = {
   badge: "OUR APPROACH",
-  heading: [
-    { text: "At Mzobs, we believe " },
-    { text: "hiring", italic: true },
-    { text: " should do more than " },
-    { text: "collect resumes", italic: true },
-    { text: " — it should drive a " },
-    { text: "real, verified", italic: true },
-    { text: " match." }
-  ],
-  image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=85",
+  title: "At Mzobs, we believe hiring should do more than collect resumes — it should drive a real, verified match.",
+  image: "/images/approach.jpg",
   steps: [
     {
       num: "01",
@@ -248,6 +240,7 @@ export const TRUSTED_LOGOS_DATA = {
 }
 
 export const CTA_BAND_DATA = {
+  title: "Ready To Get Hired Or Hire Faster?",
   titlePrefix: "Ready To ",
   titleItalic: "Get Hired",
   titleSuffix: " Or Hire Faster?",
