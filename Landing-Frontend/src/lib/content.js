@@ -194,7 +194,15 @@ export const OUR_GOAL_DATA = {
 
 export const APPROACH_DATA = {
   badge: "OUR APPROACH",
-  title: "At Mzobs, we believe hiring should do more than collect resumes — it should drive a real, verified match.",
+  heading: [
+    { text: "At Mzobs, we believe " },
+    { text: "hiring", italic: true },
+    { text: " should do more than " },
+    { text: "collect resumes", italic: true },
+    { text: " — it should drive a " },
+    { text: "real, verified", italic: true },
+    { text: " match." }
+  ],
   image: "/images/approach.jpg",
   steps: [
     {
@@ -285,7 +293,6 @@ export const TRUSTED_LOGOS_DATA = {
 }
 
 export const CTA_BAND_DATA = {
-  title: "Ready To Get Hired Or Hire Faster?",
   titlePrefix: "Ready To ",
   titleItalic: "Get Hired",
   titleSuffix: " Or Hire Faster?",

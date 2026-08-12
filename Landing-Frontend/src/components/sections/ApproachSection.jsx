@@ -11,9 +11,6 @@ export default function ApproachSection({ data }) {
         {/* Section Header */}
         <Reveal direction="up" className="max-w-4xl space-y-6">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-medium text-[#0B1220] leading-[1.3] tracking-tight">
-<<<<<<< Updated upstream
-            {APPROACH_DATA.title}
-=======
             {approachData.heading.map((item, idx) =>
               item.italic ? (
                 <span key={idx} className="font-serif italic font-normal text-blue-950 px-1">
@@ -23,37 +20,23 @@ export default function ApproachSection({ data }) {
                 <span key={idx}>{item.text}</span>
               )
             )}
->>>>>>> Stashed changes
           </h2>
         </Reveal>
 
         {/* 2-Column Grid */}
         <div className="grid lg:grid-cols-12 gap-8 items-stretch">
-<<<<<<< Updated upstream
-          {/* Left Visual Card Container */}
-          <div className="lg:col-span-6 min-h-[380px] sm:min-h-[440px] rounded-3xl overflow-hidden shadow-md border border-slate-200/60 bg-white group">
-            <img
-              src={APPROACH_DATA.image}
-              alt="How Mzobs verifies every hire - Fairer process, better hires"
-=======
           {/* Left Large Photo Container */}
           <Reveal direction="left" className="lg:col-span-5 min-h-[420px] rounded-3xl overflow-hidden shadow-md border border-slate-200/60 group">
             <img
               src={approachData.image}
               alt="How Mzobs verifies every hire"
->>>>>>> Stashed changes
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
             />
           </Reveal>
 
           {/* Right 4 Stacked Step Cards */}
-<<<<<<< Updated upstream
-          <div className="lg:col-span-6 flex flex-col gap-4 justify-between">
-            {APPROACH_DATA.steps.map((step, i) => {
-=======
           <StaggerGroup className="lg:col-span-7 flex flex-col gap-4 justify-between">
             {approachData.steps.map((step, i) => {
->>>>>>> Stashed changes
               const Icon = step.icon
               return (
                 <StaggerItem
