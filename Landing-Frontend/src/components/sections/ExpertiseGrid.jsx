@@ -88,9 +88,9 @@ export default function ExpertiseGrid({
             <img
               src={SERVICES_DATA.featuredCard.bgImage}
               alt="Start your hiring journey"
-              className="w-full h-full object-cover object-center brightness-[0.85] group-hover:scale-105 transition-transform duration-700"
+              className="w-full h-full object-cover object-center brightness-105 contrast-[1.05] saturate-[1.05] group-hover:scale-105 transition-all duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220]/90 via-[#0B1220]/30 to-transparent flex flex-col justify-end p-8 sm:p-10 space-y-6">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220]/75 via-[#0B1220]/15 to-transparent flex flex-col justify-end p-8 sm:p-10 space-y-6">
               <h3 className="text-2xl sm:text-3xl font-sans font-medium text-white tracking-tight leading-snug">
                 {SERVICES_DATA.featuredCard.titlePrefix}
                 <span className="font-serif italic font-normal text-slate-100">
