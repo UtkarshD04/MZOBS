@@ -10,14 +10,14 @@ export default function CandidateJourneySection() {
   return (
     <section
       id="candidate-journey"
-      className="bg-[#FAF8F5] py-16 sm:py-24 px-4 sm:px-6 lg:px-12 border-t border-stone-200/40 relative overflow-hidden select-none"
+      className="bg-[#FAF8F5] py-10 sm:py-14 px-4 sm:px-6 lg:px-12 border-t border-stone-200/40 relative overflow-hidden select-none"
     >
       {/* ============================================================
          THE WOW ELEMENT — CONTINUOUS ARTWORK FLOWING RIBBON SVG
       ============================================================ */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <svg
-          className="w-full h-full min-h-[1600px] opacity-70"
+          className="w-full h-full min-h-[900px] opacity-70"
           viewBox="0 0 1400 1900"
           fill="none"
           preserveAspectRatio="none"
@@ -57,7 +57,7 @@ export default function CandidateJourneySection() {
         </svg>
       </div>
 
-      <div className="max-w-7xl mx-auto space-y-20 sm:space-y-28 relative z-10">
+      <div className="max-w-7xl mx-auto space-y-10 sm:space-y-14 relative z-10">
 
         {/* SECTION HEADER */}
         <motion.div
@@ -65,7 +65,7 @@ export default function CandidateJourneySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center max-w-3xl mx-auto space-y-3"
+          className="text-center max-w-3xl mx-auto space-y-2"
         >
           <div className="inline-flex items-center gap-2 text-xs font-mono font-semibold text-[#1C2B4E]/70 tracking-widest uppercase mb-1">
             <span className="w-1.5 h-1.5 rounded-full bg-[#1C2B4E]" />
@@ -85,14 +85,14 @@ export default function CandidateJourneySection() {
         </motion.div>
 
         {/* 5 EDITORIAL CONTINUOUS ARTWORK STAGES */}
-        <div className="space-y-20 sm:space-y-28">
+        <div className="space-y-10 sm:space-y-14">
           {CANDIDATE_JOURNEY_DATA.steps.map((step) => {
             const isImageLeft = step.align === 'image-left'
 
             return (
               <div key={step.id} className="relative">
                 <div
-                  className={`grid lg:grid-cols-12 gap-8 lg:gap-14 items-center ${
+                  className={`grid lg:grid-cols-12 gap-6 lg:gap-10 items-center ${
                     isImageLeft ? '' : 'lg:flex-row-reverse'
                   }`}
                 >
@@ -113,16 +113,16 @@ export default function CandidateJourneySection() {
                     <div
                       className={`relative overflow-hidden shadow-xl transition-all duration-500 group-hover:shadow-2xl ${
                         step.shapeType === 'arch-left'
-                          ? 'rounded-t-[4rem] rounded-b-2xl'
+                          ? 'rounded-t-[3rem] rounded-b-xl'
                           : step.shapeType === 'curve-right'
-                          ? 'rounded-tr-[4.5rem] rounded-bl-[2.5rem] rounded-tl-2xl rounded-br-2xl'
-                          : 'rounded-[2.5rem]'
+                          ? 'rounded-tr-[3.5rem] rounded-bl-[2rem] rounded-tl-xl rounded-br-xl'
+                          : 'rounded-[2rem]'
                       }`}
                     >
                       <img
                         src={step.image}
                         alt={step.imageAlt}
-                        className="w-full h-[260px] sm:h-[320px] lg:h-[360px] object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out-premium"
+                        className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out-premium"
                         loading="lazy"
                       />
                     </div>
@@ -134,19 +134,19 @@ export default function CandidateJourneySection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '-60px' }}
                     transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    className={`lg:col-span-6 space-y-3.5 ${
+                    className={`lg:col-span-6 space-y-2.5 ${
                       isImageLeft ? 'lg:order-2 lg:pl-6' : 'lg:order-1 lg:pr-6'
                     }`}
                   >
-                    <div className="text-xl sm:text-2xl font-mono font-light text-slate-400 tracking-wider">
+                    <div className="text-lg sm:text-xl font-mono font-light text-slate-400 tracking-wider">
                       {step.num}
                     </div>
 
-                    <h3 className="text-2xl sm:text-3xl font-sans font-bold text-[#0A1128] tracking-tight leading-tight uppercase">
+                    <h3 className="text-xl sm:text-2xl font-sans font-bold text-[#0A1128] tracking-tight leading-tight uppercase">
                       {step.title}
                     </h3>
 
-                    <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-md">
+                    <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed max-w-md">
                       {step.description}
                     </p>
                   </motion.div>
@@ -162,13 +162,13 @@ export default function CandidateJourneySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center py-10 px-6 sm:px-12 relative z-10 max-w-2xl mx-auto space-y-4"
+          className="text-center py-6 px-6 sm:px-12 relative z-10 max-w-2xl mx-auto space-y-3"
         >
-          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-sans font-bold tracking-tight text-[#0A1128] uppercase leading-tight">
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-sans font-bold tracking-tight text-[#0A1128] uppercase leading-tight">
             {CANDIDATE_JOURNEY_DATA.cta.title}
           </h3>
 
-          <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
             {CANDIDATE_JOURNEY_DATA.cta.subtitle}
           </p>
 

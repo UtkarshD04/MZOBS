@@ -10,8 +10,8 @@ export const CANDIDATE_JOURNEY_DATA = {
       title: "₹99 LIFETIME SUBSCRIPTION",
       description: "Start your MZOBS journey with a one-time ₹99 subscription and get lifetime access to the candidate platform.",
       align: "image-left",
-      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1400&q=85",
-      imageAlt: "Young candidate using a laptop creating a profile",
+      image: "/images/journey/step-01.jpg",
+      imageAlt: "Candidate starting MZOBS journey with lifetime subscription",
       shapeType: "arch-left",
       lineAccent: "from-blue-400 via-indigo-300 to-purple-200"
     },
@@ -21,8 +21,8 @@ export const CANDIDATE_JOURNEY_DATA = {
       title: "UPLOAD YOUR RESUME",
       description: "Upload your resume and share your skills, experience and career profile with MZOBS.",
       align: "image-right",
-      image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=1400&q=85",
-      imageAlt: "Candidate reviewing and uploading a resume digitally",
+      image: "/images/journey/step-02.png",
+      imageAlt: "Uploading resume digitally on MZOBS candidate portal",
       shapeType: "curve-right",
       lineAccent: "from-indigo-300 via-sky-300 to-teal-200"
     },
@@ -32,8 +32,8 @@ export const CANDIDATE_JOURNEY_DATA = {
       title: "RESUME VERIFICATION",
       description: "Our team reviews your resume and prepares your profile for relevant hiring opportunities.",
       align: "image-left",
-      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1400&q=85",
-      imageAlt: "Candidate participating in a video mock interview",
+      image: "/images/journey/step-03.jpg",
+      imageAlt: "Expert reviewing candidate resume and career profile",
       shapeType: "pill-left",
       lineAccent: "from-sky-300 via-violet-300 to-indigo-200"
     },
@@ -43,8 +43,8 @@ export const CANDIDATE_JOURNEY_DATA = {
       title: "MOCK INTERVIEW",
       description: "Prepare for real interviews through mock interview practice and receive useful feedback.",
       align: "image-right",
-      image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1400&q=85",
-      imageAlt: "Candidate and recruiter discussing career opportunities",
+      image: "/images/journey/step-04.jpg",
+      imageAlt: "Candidate participating in a structured mock interview session",
       shapeType: "curve-right",
       lineAccent: "from-violet-300 via-purple-300 to-pink-200"
     },
@@ -54,8 +54,8 @@ export const CANDIDATE_JOURNEY_DATA = {
       title: "SKILL CATEGORISATION",
       description: "Your profile is categorised according to your skills and capabilities to identify suitable opportunities.",
       align: "image-left",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=1400&q=85",
-      imageAlt: "Confident professional candidate ready for opportunity",
+      image: "/images/journey/step-05.jpg",
+      imageAlt: "Recruiter categorising candidate skills and technical capabilities on MZOBS portal",
       shapeType: "arch-left",
       lineAccent: "from-purple-200 via-amber-200 to-orange-200"
     }

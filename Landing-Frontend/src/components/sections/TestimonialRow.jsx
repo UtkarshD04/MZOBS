@@ -10,25 +10,30 @@ const cols = {
   3: 'sm:grid-cols-3',
 }
 
-export default function TestimonialRow({ eyebrow = 'TESTIMONIALS', title = 'What Our Community Says', testimonials }) {
+export default function TestimonialRow({ eyebrow = 'TESTIMONIALS', title = 'What Our Community Says', testimonials = [] }) {
   return (
     <section className="max-w-6xl mx-auto px-6 py-16 sm:py-20">
       <SectionHeading eyebrow={eyebrow} title={title} className="mb-12" />
 
       <div className={cn('grid gap-5', cols[testimonials.length] || 'sm:grid-cols-3')}>
-        {testimonials.map((t) => (
-          <Card key={t.name} pad className="flex flex-col h-full">
-            <Quote size={20} className="text-gold-dot mb-3" />
-            <p className="text-[13.5px] text-ink leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
-            <div className="flex items-center gap-2.5 mt-5 pt-5 border-t border-border">
-              <Avatar initials={t.initials} gold />
-              <div className="text-left">
-                <div className="text-[13px] font-semibold">{t.name}</div>
-                <div className="text-[11.5px] text-ink-tertiary">{t.role}</div>
+        {testimonials.map((t, idx) => {
+          const initials = t.initials || (t.name ? t.name.split(' ').map(n => n[0]).join('') : 'MZ')
+          const roleText = t.role || t.title || ''
+
+          return (
+            <Card key={t.name || idx} pad className="flex flex-col h-full">
+              <Quote size={20} className="text-amber-500 mb-3" />
+              <p className="text-[13.5px] text-slate-800 leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
+              <div className="flex items-center gap-2.5 mt-5 pt-5 border-t border-slate-200">
+                <Avatar initials={initials} gold />
+                <div className="text-left">
+                  <div className="text-[13px] font-semibold text-slate-900">{t.name}</div>
+                  <div className="text-[11.5px] text-slate-500">{roleText}</div>
+                </div>
               </div>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          )
+        })}
       </div>
     </section>
   )

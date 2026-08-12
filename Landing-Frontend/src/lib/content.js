@@ -29,7 +29,7 @@ export const HERO_DATA = {
   titleLine2: "Both Sides.",
   subtitle: "Mzobs connects verified job seekers with employers who need them — every profile and every requirement checked by a real person before it goes live.",
   ctaText: "Get Started",
-  bgImage: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2000&q=85"
+  bgImage: "/images/hero-bg.jpg"
 }
 
 export const WHO_WE_ARE_DATA = {
@@ -357,13 +357,64 @@ export const PRICING_DATA = {
   ctaHref: "/contact"
 }
 
-// Legacy exports compatibility
+// Dedicated features data for Employees & Employers
+export const EMPLOYEE_FEATURES = [
+  {
+    icon: Target,
+    title: "Lifetime Platform Access",
+    desc: "One-time ₹99 subscription gives you lifetime access to profile matching, resume reviews, and placement tools.",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    icon: Settings,
+    title: "Expert Resume Verification",
+    desc: "Our recruitment experts review and structure your resume to ensure it highlights your core strengths to employers.",
+    image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    icon: Sparkles,
+    title: "Mock Interview Practice",
+    desc: "Train with real mock interview sessions and receive actionable feedback before meeting actual hiring managers.",
+    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    icon: BarChart3,
+    title: "Smart Skill Categorisation",
+    desc: "Your profile is categorized based on your technical and soft skills to match you with relevant hiring opportunities.",
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=85"
+  }
+]
+
+export const EMPLOYER_FEATURES = [
+  {
+    icon: ShieldCheck,
+    title: "Pre-Screened Candidates",
+    desc: "Receive candidates whose resumes, skills, and background have been verified by our operations team.",
+    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    icon: Briefcase,
+    title: "Single Hiring Dashboard",
+    desc: "Manage open requisitions, candidate profiles, interview schedules, and offer letters from one portal.",
+    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    icon: Users2,
+    title: "Batch Hiring & Scalability",
+    desc: "Easily scale your hiring needs from individual niche roles to full batch recruitment cycles effortlessly.",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    icon: TrendingUp,
+    title: "Faster Time-to-Offer",
+    desc: "Cut your hiring timeline in half by skipping unqualified resume stacks and interviewing ready candidates.",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=85"
+  }
+]
 export const HOME_STATS = WHO_WE_ARE_DATA.stats.map(s => ({ display: s.number, label: s.label }))
 export const EMPLOYEE_STATS = HOME_STATS
 export const EMPLOYER_STATS = HOME_STATS
 export const HOME_FEATURES = SERVICES_DATA.services
-export const EMPLOYEE_FEATURES = SERVICES_DATA.services
-export const EMPLOYER_FEATURES = SERVICES_DATA.services
 export const HOME_STEPS = APPROACH_DATA.steps
 export const EMPLOYEE_STEPS = APPROACH_DATA.steps
 export const EMPLOYER_STEPS = APPROACH_DATA.steps

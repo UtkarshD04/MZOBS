@@ -23,7 +23,7 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-8 bg-white/10 backdrop-blur-md border border-white/15 px-8 py-2.5 rounded-full text-sm font-medium text-white/90 shadow-lg">
           <a href="#home" className="hover:text-white transition-colors">Home</a>
           <a href="#who-we-are" className="hover:text-white transition-colors">Who We Are</a>
-          <Link to="/employers" className="hover:text-white transition-colors">Employers</Link>
+          <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-white transition-colors cursor-pointer">Employers</a>
           <Link to="/employees" className="hover:text-white transition-colors">Employees</Link>
           <a href="#" className="hover:text-white transition-colors">Job Opening</a>
         </nav>
@@ -53,7 +53,7 @@ export default function Navbar() {
         <div className="md:hidden mt-4 bg-[#0B1220]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col gap-4 text-white shadow-2xl animate-in fade-in duration-200">
           <a href="#home" onClick={() => setOpen(false)} className="text-base font-medium hover:text-blue-400">Home</a>
           <a href="#who-we-are" onClick={() => setOpen(false)} className="text-base font-medium hover:text-blue-400">Who We Are</a>
-          <Link to="/employers" onClick={() => setOpen(false)} className="text-base font-medium hover:text-blue-400">Employers</Link>
+          <a href="#" onClick={(e) => { e.preventDefault(); setOpen(false); }} className="text-base font-medium hover:text-blue-400 cursor-pointer">Employers</a>
           <Link to="/employees" onClick={() => setOpen(false)} className="text-base font-medium hover:text-blue-400">Employees</Link>
           <a href="#" onClick={() => setOpen(false)} className="text-base font-medium hover:text-blue-400">Job Opening</a>
           <a

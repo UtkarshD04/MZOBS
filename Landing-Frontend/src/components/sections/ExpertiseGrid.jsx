@@ -2,26 +2,47 @@ import SectionBadge from '../ui/SectionBadge'
 import PillButton from '../ui/PillButton'
 import { SERVICES_DATA } from '../../lib/content'
 
-export default function ExpertiseGrid() {
+export default function ExpertiseGrid({
+  eyebrow,
+  title,
+  subtitle,
+  items,
+  photoIcon,
+  ctaLabel,
+  ctaHref,
+  reverse
+}) {
+  const badgeLabel = eyebrow || SERVICES_DATA.badge
+  const servicesList = items || SERVICES_DATA.services
+
   return (
     <section id="services" className="bg-[#EEF3F8] py-14 px-6 md:px-12 border-t border-slate-200/50">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Section Header */}
         <div>
-          <SectionBadge label={SERVICES_DATA.badge} />
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
-            {SERVICES_DATA.titlePrefix}
-            <span className="font-serif italic font-normal text-blue-950">
-              {SERVICES_DATA.titleItalic}
-            </span>
-          </h2>
+          <SectionBadge label={badgeLabel} />
+          {title ? (
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
+              {title}
+            </h2>
+          ) : (
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
+              {SERVICES_DATA.titlePrefix}
+              <span className="font-serif italic font-normal text-blue-950">
+                {SERVICES_DATA.titleItalic}
+              </span>
+            </h2>
+          )}
+          {subtitle && (
+            <p className="text-base text-slate-600 mt-2 max-w-2xl">{subtitle}</p>
+          )}
         </div>
 
         {/* 2-Column Grid */}
-        <div className="grid lg:grid-cols-12 gap-8 items-stretch">
+        <div className={`grid lg:grid-cols-12 gap-8 items-stretch ${reverse ? 'lg:flex-row-reverse' : ''}`}>
           {/* Left 2x2 Services Grid */}
           <div className="lg:col-span-7 grid sm:grid-cols-2 gap-5">
-            {SERVICES_DATA.services.map((service, i) => {
+            {servicesList.map((service, i) => {
               const Icon = service.icon
               return (
                 <div
@@ -39,9 +60,11 @@ export default function ExpertiseGrid() {
                       <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
                       
                       {/* Icon overlay on top right */}
-                      <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-sm flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all duration-300">
-                        <Icon size={18} strokeWidth={1.8} />
-                      </div>
+                      {Icon && (
+                        <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-sm flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all duration-300">
+                          <Icon size={18} strokeWidth={1.8} />
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -75,8 +98,8 @@ export default function ExpertiseGrid() {
                 </span>
               </h3>
               <div>
-                <PillButton href="#contact" variant="white">
-                  {SERVICES_DATA.featuredCard.ctaText}
+                <PillButton href={ctaHref || "#contact"} variant="white">
+                  {ctaLabel || SERVICES_DATA.featuredCard.ctaText}
                 </PillButton>
               </div>
             </div>

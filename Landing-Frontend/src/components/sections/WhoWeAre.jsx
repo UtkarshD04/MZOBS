@@ -9,16 +9,8 @@ export default function WhoWeAre() {
         <div className="max-w-4xl space-y-6">
           <SectionBadge label={WHO_WE_ARE_DATA.badge} />
           
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-medium text-[#0B1220] leading-[1.3] tracking-tight">
-            {WHO_WE_ARE_DATA.statement.map((item, idx) =>
-              item.italic ? (
-                <span key={idx} className="font-serif italic font-normal text-blue-950 px-1">
-                  {item.text}
-                </span>
-              ) : (
-                <span key={idx}>{item.text}</span>
-              )
-            )}
+          <h2 className="text-3xl sm:text-4xl md:text-[42px] font-serif font-normal text-[#0A1128] leading-[1.38] tracking-tight">
+            {WHO_WE_ARE_DATA.statement.map((item) => item.text).join('')}
           </h2>
         </div>
 

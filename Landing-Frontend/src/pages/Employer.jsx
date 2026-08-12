@@ -21,9 +21,10 @@ export default function Employer() {
 
       <PageHero
         kicker="For Employers"
+        bgImage="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=2000&q=85"
         title={
           <>
-            Hire Verified Talent, Not A Stack Of <em className="italic text-gold-dot">Unread</em> Resumes.
+            Hire Verified Talent, Not A Stack Of <em className="italic text-amber-400">Unread</em> Resumes.
           </>
         }
         subtitle="A single pipeline for requirements, interviews, offers and billing — filled only with candidates our team has personally screened."
@@ -52,7 +53,7 @@ export default function Employer() {
         eyebrow="Why Employers Choose Mzobs"
         title={
           <>
-            Everything Hiring Teams Need, <em className="italic text-gold-strong">In One Portal</em>
+            Everything Hiring Teams Need, <em className="italic text-[#0B1220]">In One Portal</em>
           </>
         }
         subtitle="From requirement to offer letter, without switching tools."
@@ -60,6 +61,13 @@ export default function Employer() {
         photoIcon={Briefcase}
         ctaLabel="Talk to our team"
         ctaHref="/contact"
+        featuredCard={{
+          titlePrefix: "Build Your ",
+          titleItalic: "Dream Hiring Pipeline",
+          ctaText: "Talk To Our Team",
+          ctaHref: `mailto:${CONTACT_EMAIL}`,
+          bgImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=85"
+        }}
         reverse
       />
 
@@ -72,9 +80,10 @@ export default function Employer() {
       <LogoCloud eyebrow="Trusted By" title="Companies Hiring On Mzobs" logos={TRUSTED_LOGOS} />
 
       <CTABand
+        bgImage="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=2000&q=85"
         title={
           <>
-            Ready To Hire Your Next <em className="italic text-gold-dot">Verified Candidate</em>?
+            Ready To Hire Your Next <em className="italic text-amber-300">Verified Candidate</em>?
           </>
         }
         subtitle="Employer accounts are provisioned by our team — sign in if you already have one, or reach out to get started."
