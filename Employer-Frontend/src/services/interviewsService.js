@@ -1,37 +1,21 @@
-import { mockResolve } from '../lib/api'
-import { INTERVIEWS } from '../data/mock'
-
-const store = [...INTERVIEWS]
-let seq = store.length + 1
+import { apiClient } from '../lib/api'
 
 export function listInterviews() {
-  const rows = [...store].sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
-  return mockResolve(rows)
+  return apiClient.get('/interviews').then((r) => r.data)
 }
 
 export function scheduleInterview(input) {
-  const interview = { ...input, id: `I-${100 + seq++}`, status: 'Confirmed' }
-  store.push(interview)
-  return mockResolve(interview, 550)
+  return apiClient.post('/interviews', input).then((r) => r.data)
 }
 
 export function rescheduleInterview(id, startsAt) {
-  const idx = store.findIndex((i) => i.id === id)
-  if (idx === -1) return mockResolve(null)
-  store[idx] = { ...store[idx], startsAt, status: 'Rescheduled' }
-  return mockResolve(store[idx], 450)
+  return apiClient.patch(`/interviews/${id}/reschedule`, { startsAt }).then((r) => r.data)
 }
 
 export function cancelInterview(id) {
-  const idx = store.findIndex((i) => i.id === id)
-  if (idx === -1) return mockResolve(null)
-  store[idx] = { ...store[idx], status: 'Cancelled' }
-  return mockResolve(store[idx], 350)
+  return apiClient.patch(`/interviews/${id}/cancel`).then((r) => r.data)
 }
 
 export function submitFeedback(id, feedback) {
-  const idx = store.findIndex((i) => i.id === id)
-  if (idx === -1) return mockResolve(null)
-  store[idx] = { ...store[idx], status: 'Completed', feedback }
-  return mockResolve(store[idx], 500)
+  return apiClient.post(`/interviews/${id}/feedback`, { feedback }).then((r) => r.data)
 }

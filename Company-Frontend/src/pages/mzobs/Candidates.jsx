@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Search, Users, ShieldCheck, Video } from 'lucide-react'
+import { Search, Users, ShieldCheck } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -9,13 +9,19 @@ import { Select } from '../../components/ui/Field'
 import { TableWrap, Table, Tr, Td } from '../../components/ui/Table'
 import EmptyState from '../../components/ui/EmptyState'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
+import { PageSkeleton } from '../../components/ui/Skeleton'
+import ErrorState from '../../components/ui/ErrorState'
 import { useApp } from '../../context/AppContext'
-import { openCandidateDrawer, openScheduleMockModal, openVerifyResumeModal } from '../../lib/mzobsModals'
-import { CANDIDATES, MOCK_STATUS, PRICING, RESUME_STATUS, SKILL_TRACKS, trackOf } from '../../lib/mzobsData'
+import { useResumeQueueQuery } from '../../hooks/useResumes'
+import { useMockInterviewsQuery } from '../../hooks/useMockInterviews'
+import { VerifyResumeModal } from './ResumeQueue'
 
 const SUB_FILTERS = ['All', 'Subscribed', 'Not subscribed']
 const RESUME_FILTERS = ['Any resume state', 'Not uploaded', 'Pending verification', 'Verified', 'Changes requested']
 const RESUME_KEYS = { 'Not uploaded': 'none', 'Pending verification': 'pending', Verified: 'verified', 'Changes requested': 'changes' }
+const TRACKS = { analytics: 'Analytics', design: 'Design', sales: 'Sales', marketing: 'Marketing', hr: 'HR', support: 'Support', tech: 'Tech', ops: 'Ops' }
+const RESUME_STATUS_TONE = { pending: 'gold', changes: 'red', verified: 'green', rejected: 'red', none: 'gray' }
+const MOCK_STATUS_TONE = { not_scheduled: 'gray', scheduled: 'gold', completed: 'green', no_show: 'red' }
 
 export default function Candidates() {
   const app = useApp()
@@ -24,16 +30,28 @@ export default function Candidates() {
   const [resumeState, setResumeState] = useState('Any resume state')
   const [track, setTrack] = useState(null)
 
+  const { data: employees = [], isLoading, isError, refetch } = useResumeQueueQuery({})
+  const { data: mockInterviews = [] } = useMockInterviewsQuery({})
+  const mockByEmployee = useMemo(() => {
+    const map = new Map()
+    for (const m of mockInterviews) {
+      const empId = m.employeeId ?? m.employee?.id
+      const existing = map.get(empId)
+      if (!existing || new Date(m.createdAt) > new Date(existing.createdAt)) map.set(empId, m)
+    }
+    return map
+  }, [mockInterviews])
+
   const rows = useMemo(() => {
-    return CANDIDATES.filter((c) => {
-      if (sub === 'Subscribed' && c.subscription.status !== 'paid') return false
-      if (sub === 'Not subscribed' && c.subscription.status === 'paid') return false
-      if (resumeState !== 'Any resume state' && c.resume.status !== RESUME_KEYS[resumeState]) return false
-      if (track && c.track !== track) return false
-      if (query && !`${c.name} ${c.id} ${c.email} ${c.city}`.toLowerCase().includes(query.toLowerCase())) return false
+    return employees.filter((c) => {
+      if (sub === 'Subscribed' && c.subscription?.status !== 'paid') return false
+      if (sub === 'Not subscribed' && c.subscription?.status === 'paid') return false
+      if (resumeState !== 'Any resume state' && (c.resume?.status ?? 'none') !== RESUME_KEYS[resumeState]) return false
+      if (track && c.skillTrack?.key !== track) return false
+      if (query && !`${c.name} ${c.email} ${c.currentCity}`.toLowerCase().includes(query.toLowerCase())) return false
       return true
     })
-  }, [query, sub, resumeState, track])
+  }, [employees, query, sub, resumeState, track])
 
   function clearFilters() {
     setQuery('')
@@ -42,14 +60,17 @@ export default function Candidates() {
     setTrack(null)
   }
 
-  const subscribed = CANDIDATES.filter((c) => c.subscription.status === 'paid').length
+  if (isLoading) return <PageSkeleton />
+  if (isError) return <ErrorState onRetry={refetch} />
+
+  const subscribed = employees.filter((c) => c.subscription?.status === 'paid').length
 
   return (
     <StaggerGroup>
       <StaggerItem className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Candidates</h1>
         <p className="text-sm text-ink-secondary mt-1">
-          Everyone who signed up on the candidate portal. {subscribed} of {CANDIDATES.length} have paid the ₹{PRICING.candidateFee} programme fee.
+          Everyone who signed up on the candidate portal. {subscribed} of {employees.length} have paid the ₹99 programme fee.
         </p>
       </StaggerItem>
 
@@ -67,7 +88,7 @@ export default function Candidates() {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Name, id, email, city"
+              placeholder="Name, email, city"
               className="h-9 pl-8 pr-3 rounded-[9px] border border-border-strong bg-surface text-[12.5px] w-full outline-none focus:border-navy focus:shadow-[0_0_0_3.5px_var(--color-navy-ring)] transition-[border-color,box-shadow]"
             />
           </div>
@@ -88,9 +109,9 @@ export default function Candidates() {
 
           <div className="text-[11.5px] font-semibold tracking-wide uppercase text-ink-tertiary mb-2">Skill track</div>
           <div className="flex flex-wrap gap-1.5">
-            {Object.entries(SKILL_TRACKS).map(([k, t]) => (
+            {Object.entries(TRACKS).map(([k, label]) => (
               <Chip key={k} selected={track === k} onClick={() => setTrack(track === k ? null : k)}>
-                {t.label}
+                {label}
               </Chip>
             ))}
           </div>
@@ -119,53 +140,50 @@ export default function Candidates() {
           ) : (
             <Card>
               <TableWrap className="border-none rounded-none">
-                <Table columns={['Candidate', '₹99', 'Resume', 'Mock interview', 'Track', 'Applications', '']}>
+                <Table columns={['Candidate', '₹99', 'Resume', 'Mock interview', 'Track', '']}>
                   {rows.map((c) => {
-                    const r = RESUME_STATUS[c.resume.status]
-                    const m = MOCK_STATUS[c.mock.status]
-                    const t = trackOf(c.track)
+                    const mock = mockByEmployee.get(c.id)
                     return (
                       <Tr key={c.id}>
                         <Td>
-                          <button onClick={() => openCandidateDrawer(app, c)} className="flex items-center gap-2.5 text-left cursor-pointer">
-                            <Avatar initials={c.initials} size="sm" />
+                          <div className="flex items-center gap-2.5">
+                            <Avatar initials={c.name?.slice(0, 2)?.toUpperCase()} size="sm" />
                             <div className="min-w-0">
                               <div className="text-[13px] font-semibold">{c.name}</div>
                               <div className="text-[11px] text-ink-tertiary">
-                                {c.id} · {c.city} · {c.exp} yrs
+                                {c.currentCity || 'No city'} {c.experienceYears ? `· ${c.experienceYears} yrs` : ''}
                               </div>
                             </div>
-                          </button>
+                          </div>
                         </Td>
                         <Td>
-                          <Badge tone={c.subscription.status === 'paid' ? 'green' : 'red'}>{c.subscription.status === 'paid' ? 'Paid' : 'Unpaid'}</Badge>
+                          <Badge tone={c.subscription?.status === 'paid' ? 'green' : 'red'}>{c.subscription?.status === 'paid' ? 'Paid' : 'Unpaid'}</Badge>
                         </Td>
                         <Td>
-                          <Badge tone={r.tone}>{r.label}</Badge>
+                          <Badge tone={RESUME_STATUS_TONE[c.resume?.status ?? 'none']}>{c.resume?.status ?? 'none'}</Badge>
                         </Td>
                         <Td>
                           <div className="flex items-center gap-2">
-                            <Badge tone={m.tone}>{m.label}</Badge>
-                            {c.mock.overall && <span className="text-[12px] font-bold text-navy">{c.mock.overall}</span>}
+                            <Badge tone={MOCK_STATUS_TONE[mock?.status ?? 'not_scheduled']}>{mock?.status ?? 'not_scheduled'}</Badge>
+                            {mock?.scores?.overall != null && <span className="text-[12px] font-bold text-navy">{mock.scores.overall}</span>}
                           </div>
                         </Td>
-                        <Td>{c.track ? <Badge tone={t.tone} dot={false}>{t.label} · {c.grade}</Badge> : <span className="text-ink-tertiary text-[12.5px]">Unassigned</span>}</Td>
-                        <Td className="tabular-nums">{c.applications}</Td>
+                        <Td>
+                          {c.skillTrack?.key ? (
+                            <Badge tone="navy" dot={false}>
+                              {TRACKS[c.skillTrack.key] ?? c.skillTrack.key} · {c.skillTrack.grade || '-'}
+                            </Badge>
+                          ) : (
+                            <span className="text-ink-tertiary text-[12.5px]">Unassigned</span>
+                          )}
+                        </Td>
                         <Td>
                           <div className="flex items-center gap-1.5 justify-end">
-                            {c.resume.status === 'pending' && (
-                              <Button size="sm" onClick={() => openVerifyResumeModal(app, c)}>
+                            {c.resume?.status === 'pending' && (
+                              <Button size="sm" onClick={() => app.openModal(<VerifyResumeModal app={app} employee={c} onDone={refetch} />)}>
                                 <ShieldCheck size={13} /> Verify
                               </Button>
                             )}
-                            {c.resume.status === 'verified' && c.mock.status === 'not_scheduled' && (
-                              <Button size="sm" onClick={() => openScheduleMockModal(app, c)}>
-                                <Video size={13} /> Schedule
-                              </Button>
-                            )}
-                            <Button variant="ghost" size="sm" onClick={() => openCandidateDrawer(app, c)}>
-                              Open
-                            </Button>
                           </div>
                         </Td>
                       </Tr>

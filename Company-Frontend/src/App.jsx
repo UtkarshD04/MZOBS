@@ -5,6 +5,7 @@ import ModalRoot from './components/ui/Modal'
 import DrawerRoot from './components/ui/Drawer'
 import ToastStack from './components/ui/ToastStack'
 import CommandPalette from './components/ui/CommandPalette'
+import RequireAuth from './components/auth/RequireAuth'
 
 import MzobsShell from './components/layout/mzobs/MzobsShell'
 import Home from './pages/mzobs/Home'
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
 
+        <Route element={<RequireAuth />}>
         <Route path="/app" element={<MzobsShell />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
@@ -45,6 +47,7 @@ export default function App() {
           <Route path="team" element={<Team />} />
           <Route path="settings" element={<ComingSoon icon={Settings} title="Settings" subtitle="Portal preferences, rate card and notification rules." />} />
           <Route path="support" element={<ComingSoon icon={LifeBuoy} title="Support Desk" subtitle="Tickets raised by candidates and employers." />} />
+        </Route>
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

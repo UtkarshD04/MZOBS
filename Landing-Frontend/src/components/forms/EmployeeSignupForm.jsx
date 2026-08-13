@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowRight, CheckCircle2, Eye, EyeOff } from 'lucide-react'
 import { Field, Input, Select } from '../ui/Field'
 import Button, { goldSolidClass } from '../ui/Button'
+import { signupEmployee } from '../../lib/employeeAuth'
 
 const GRADUATION_OPTIONS = [
   '12th / No Degree',
@@ -49,10 +50,13 @@ export default function EmployeeSignupForm() {
     if (Object.keys(nextErrors).length > 0) return
 
     setStatus('submitting')
-    // TODO: wire up to the real Frontend registration endpoint once this
-    // marketing site is connected to Backend / the employee app's auth API.
-    await new Promise((resolve) => setTimeout(resolve, 700))
-    setStatus('success')
+    try {
+      await signupEmployee(form)
+      setStatus('success')
+    } catch (err) {
+      setStatus('idle')
+      setErrors({ form: err.message })
+    }
   }
 
   if (status === 'success') {
@@ -140,6 +144,8 @@ export default function EmployeeSignupForm() {
         </Select>
         {errors.graduation && <span className="text-xs text-red mt-1 block">{errors.graduation}</span>}
       </Field>
+
+      {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
 
       <Button
         type="submit"

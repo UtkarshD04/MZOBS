@@ -1,21 +1,27 @@
-import { EyeOff, CalendarCheck, Clock, Video } from 'lucide-react'
-import Card, { CardHead } from '../components/ui/Card'
+import { EyeOff } from 'lucide-react'
+import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
-import Button from '../components/ui/Button'
 import Stepper from '../components/ui/Stepper'
 import { CompanyLogo } from '../components/ui/Avatar'
 import CountUp from '../components/ui/CountUp'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
-import { APPLICATIONS, APPLICATION_STAGES, INTERVIEW_SCHEDULED } from '../lib/data'
-import { useApp } from '../context/AppContext'
-import { openRescheduleModal } from '../lib/modals'
+import { PageSkeleton } from '../components/ui/Skeleton'
+import ErrorState from '../components/ui/ErrorState'
+import EmptyState from '../components/ui/EmptyState'
+import { APPLICATION_STAGES } from '../lib/data'
+import { useApplicationsQuery } from '../hooks/useApplications'
+
+const STAGE_INDEX = { new: 1, screening: 2, shortlisted: 3, shared: 4, interview: 5, selected: 6, rejected: 6 }
 
 export default function Applications() {
-  const app = useApp()
+  const { data: applications = [], isLoading, isError, refetch } = useApplicationsQuery()
 
-  const shared = APPLICATIONS.filter((a) => a.stage >= 4).length
-  const interviews = APPLICATIONS.filter((a) => a.stage === 5 || a.stage === 4).length
-  const withMzobs = APPLICATIONS.filter((a) => a.stage < 4).length
+  if (isLoading) return <PageSkeleton />
+  if (isError) return <ErrorState onRetry={refetch} />
+
+  const shared = applications.filter((a) => STAGE_INDEX[a.status] >= 4).length
+  const interviews = applications.filter((a) => a.status === 'interview').length
+  const withMzobs = applications.filter((a) => STAGE_INDEX[a.status] < 4).length
 
   return (
     <StaggerGroup>
@@ -39,7 +45,7 @@ export default function Applications() {
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
         {[
-          ['Total Applications', APPLICATIONS.length, '', 'text-navy'],
+          ['Total Applications', applications.length, '', 'text-navy'],
           ['With Mzobs', withMzobs, '', 'text-gold-strong'],
           ['Shared with employers', shared, '', 'text-teal'],
           ['Interviews scheduled', interviews, '', 'text-green'],
@@ -53,81 +59,54 @@ export default function Applications() {
         ))}
       </StaggerItem>
 
-      {INTERVIEW_SCHEDULED && (
-        <StaggerItem className="mb-5">
-          <Card>
-            <CardHead>
-              <span className="text-[15px] font-semibold">Interview scheduled</span>
-              <Badge tone="gold">Profile shared {INTERVIEW_SCHEDULED.sharedOn}</Badge>
-            </CardHead>
-            <div className="p-[22px] flex items-center gap-4 flex-wrap">
-              <CompanyLogo initials={INTERVIEW_SCHEDULED.logo} />
-              <div className="flex-1 min-w-[220px]">
-                <div className="text-[15px] font-semibold">
-                  {INTERVIEW_SCHEDULED.co} — {INTERVIEW_SCHEDULED.role}
-                </div>
-                <div className="text-[13px] text-ink-secondary mt-0.5">{INTERVIEW_SCHEDULED.round}</div>
-                <div className="text-xs text-ink-tertiary mt-1.5 flex items-center gap-3 flex-wrap">
-                  <span className="flex items-center gap-1">
-                    <Clock size={12} /> {INTERVIEW_SCHEDULED.when} · {INTERVIEW_SCHEDULED.duration}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Video size={12} /> {INTERVIEW_SCHEDULED.mode}
-                  </span>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => openRescheduleModal(app, INTERVIEW_SCHEDULED.co, 'Mzobs placement desk')}>
-                  Reschedule
-                </Button>
-                <Button variant="primary" size="sm">
-                  <CalendarCheck size={14} /> Join
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </StaggerItem>
-      )}
-
-      <div className="flex flex-col gap-4">
-        {APPLICATIONS.map((a) => (
-          <StaggerItem key={a.id}>
-            <Card pad>
-              <div className="flex justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                  <CompanyLogo initials={a.logo} />
-                  <div>
-                    <div className="text-[15px] font-semibold">{a.role}</div>
-                    <div className="text-[13px] text-ink-secondary mt-0.5">
-                      {a.co} · Applied {a.date} · {a.id}
+      {applications.length === 0 ? (
+        <Card>
+          <EmptyState title="No applications yet" body="Browse job openings and apply — your applications will show up here with live status." />
+        </Card>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {applications.map((a) => {
+            const stage = STAGE_INDEX[a.status] ?? 1
+            return (
+              <StaggerItem key={a.id}>
+                <Card pad>
+                  <div className="flex justify-between flex-wrap gap-3">
+                    <div className="flex items-center gap-3">
+                      <CompanyLogo initials={a.job?.company?.logo ?? ''} />
+                      <div>
+                        <div className="text-[15px] font-semibold">{a.job?.title ?? 'Role'}</div>
+                        <div className="text-[13px] text-ink-secondary mt-0.5">
+                          {a.job?.company?.name ?? ''} · Applied {a.appliedOn ? new Date(a.appliedOn).toLocaleDateString('en-IN') : ''}
+                        </div>
+                      </div>
                     </div>
+                    {a.status === 'selected' ? (
+                      <Badge tone="green">Selected</Badge>
+                    ) : a.status === 'rejected' ? (
+                      <Badge tone="red">Not selected</Badge>
+                    ) : stage >= 4 ? (
+                      <Badge tone="gold">With employer</Badge>
+                    ) : (
+                      <Badge tone="navy">With Mzobs</Badge>
+                    )}
                   </div>
-                </div>
-                {a.outcome === 'selected' ? (
-                  <Badge tone="green">Selected</Badge>
-                ) : a.outcome === 'rejected' ? (
-                  <Badge tone="red">Not selected</Badge>
-                ) : a.stage >= 4 ? (
-                  <Badge tone="gold">With employer</Badge>
-                ) : (
-                  <Badge tone="navy">With Mzobs</Badge>
-                )}
-              </div>
 
-              <div className="mt-6">
-                <Stepper
-                  steps={APPLICATION_STAGES.map((label, i) => ({
-                    label,
-                    state: a.outcome === 'rejected' && i === a.stage - 1 ? 'rejected' : i < a.stage ? 'done' : i === a.stage ? 'current' : '',
-                  }))}
-                />
-              </div>
+                  <div className="mt-6">
+                    <Stepper
+                      steps={APPLICATION_STAGES.map((label, i) => ({
+                        label,
+                        state: a.status === 'rejected' && i === stage - 1 ? 'rejected' : i < stage - 1 ? 'done' : i === stage - 1 ? 'current' : '',
+                      }))}
+                    />
+                  </div>
 
-              {a.note && <p className="text-[12.5px] text-ink-secondary mt-5 pt-4 border-t border-border">{a.note}</p>}
-            </Card>
-          </StaggerItem>
-        ))}
-      </div>
+                  {a.note && <p className="text-[12.5px] text-ink-secondary mt-5 pt-4 border-t border-border">{a.note}</p>}
+                </Card>
+              </StaggerItem>
+            )
+          })}
+        </div>
+      )}
     </StaggerGroup>
   )
 }

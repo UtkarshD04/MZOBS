@@ -5,7 +5,10 @@ import DrawerRoot from './components/ui/Drawer'
 import ToastStack from './components/ui/ToastStack'
 import CommandPalette from './components/ui/CommandPalette'
 import AppShell from './components/layout/AppShell'
+import RequireAuth from './components/auth/RequireAuth'
+import RequireOnboarded from './components/auth/RequireOnboarded'
 
+import Home from './pages/Home'
 import Onboarding from './pages/Onboarding'
 
 import Dashboard from './pages/Dashboard'
@@ -25,23 +28,28 @@ export default function App() {
   return (
     <AppProvider>
       <Routes>
-        <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
-        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/" element={<Home />} />
 
-        <Route path="/app" element={<AppShell />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="resume" element={<ResumeCenter />} />
-          <Route path="interview" element={<MockInterview />} />
-          <Route path="jobs" element={<JobMatching />} />
-          <Route path="applications" element={<Applications />} />
-          <Route path="interview-center" element={<InterviewCenter />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="messages" element={<Messages />} />
-          <Route path="subscription" element={<Subscription />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="support" element={<Support />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/onboarding" element={<Onboarding />} />
+
+          <Route element={<RequireOnboarded />}>
+            <Route path="/app" element={<AppShell />}>
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="resume" element={<ResumeCenter />} />
+              <Route path="interview" element={<MockInterview />} />
+              <Route path="jobs" element={<JobMatching />} />
+              <Route path="applications" element={<Applications />} />
+              <Route path="interview-center" element={<InterviewCenter />} />
+              <Route path="notifications" element={<Notifications />} />
+              <Route path="messages" element={<Messages />} />
+              <Route path="subscription" element={<Subscription />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="support" element={<Support />} />
+            </Route>
+          </Route>
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

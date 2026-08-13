@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Shell from './components/layout/Shell'
+import RequireAuth from './components/auth/RequireAuth'
 import { PageSkeleton } from './components/ui/Skeleton'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -25,22 +26,24 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route element={<Shell />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/jobs" element={<Jobs />} />
-          <Route path="/jobs/new" element={<JobForm />} />
-          <Route path="/jobs/:id/edit" element={<JobForm />} />
-          <Route path="/batches" element={<Batches />} />
-          <Route path="/candidates" element={<Candidates />} />
-          <Route path="/candidates/:id" element={<CandidateProfile />} />
-          <Route path="/interviews" element={<Interviews />} />
-          <Route path="/offers" element={<Offers />} />
-          <Route path="/billing" element={<Billing />} />
-          <Route path="/company" element={<CompanyProfile />} />
-          <Route path="/team" element={<TeamMembers />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/support" element={<Support />} />
+        <Route element={<RequireAuth />}>
+          <Route element={<Shell />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/jobs" element={<Jobs />} />
+            <Route path="/jobs/new" element={<JobForm />} />
+            <Route path="/jobs/:id/edit" element={<JobForm />} />
+            <Route path="/batches" element={<Batches />} />
+            <Route path="/candidates" element={<Candidates />} />
+            <Route path="/candidates/:id" element={<CandidateProfile />} />
+            <Route path="/interviews" element={<Interviews />} />
+            <Route path="/offers" element={<Offers />} />
+            <Route path="/billing" element={<Billing />} />
+            <Route path="/company" element={<CompanyProfile />} />
+            <Route path="/team" element={<TeamMembers />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/support" element={<Support />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -7,7 +7,7 @@ import ExpertiseGrid from '../components/sections/ExpertiseGrid'
 import LogoCloud from '../components/sections/LogoCloud'
 import CTABand from '../components/sections/CTABand'
 import Button, { goldSolidClass } from '../components/ui/Button'
-import { CONTACT_EMAIL, EMPLOYER_LOGIN_URL } from '../lib/config'
+import { CONTACT_EMAIL } from '../lib/config'
 import { EMPLOYER_FEATURES, EMPLOYER_STATS, TRUSTED_LOGOS } from '../lib/content'
 
 export default function Employer() {
@@ -28,17 +28,11 @@ export default function Employer() {
         photoIcon={Briefcase}
         actions={
           <>
-            <Button href={EMPLOYER_LOGIN_URL} variant="primary" size="lg" pill className={goldSolidClass}>
-              Sign in to your portal <ArrowRight size={16} />
+            <Button to="/employers/signup" variant="primary" size="lg" pill className={goldSolidClass}>
+              Create your account <ArrowRight size={16} />
             </Button>
-            <Button
-              href={`mailto:${CONTACT_EMAIL}`}
-              variant="secondary"
-              size="lg"
-              pill
-              className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25"
-            >
-              Talk to our team
+            <Button to="/employers/signin" variant="secondary" size="lg" pill className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25">
+              Sign in
             </Button>
           </>
         }
@@ -77,21 +71,15 @@ export default function Employer() {
             Ready To Hire Your Next <em className="italic text-amber-300">Verified Candidate</em>?
           </>
         }
-        subtitle="Employer accounts are provisioned by our team — sign in if you already have one, or reach out to get started."
+        subtitle="Create your free employer account in minutes, or sign in if you already have one."
         photoIcon={Briefcase}
         actions={
           <>
-            <Button href={EMPLOYER_LOGIN_URL} variant="primary" size="lg" pill className={goldSolidClass}>
-              Sign in <ArrowRight size={16} />
+            <Button to="/employers/signup" variant="primary" size="lg" pill className={goldSolidClass}>
+              Create your account <ArrowRight size={16} />
             </Button>
-            <Button
-              href={`mailto:${CONTACT_EMAIL}`}
-              variant="secondary"
-              size="lg"
-              pill
-              className="bg-white/10 border-white/20 text-white hover:bg-white/15"
-            >
-              Talk to our team
+            <Button to="/employers/signin" variant="secondary" size="lg" pill className="bg-white/10 border-white/20 text-white hover:bg-white/15">
+              Sign in
             </Button>
           </>
         }

@@ -1,14 +1,16 @@
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
-import { Menu as MenuIcon, Search, Sun, Moon, MessageSquare, Bell, ChevronDown, Building2, Settings, CreditCard, LifeBuoy, Plus, Check, ShieldCheck, MailOpen } from 'lucide-react'
+import { Menu as MenuIcon, Search, Sun, Moon, MessageSquare, Bell, ChevronDown, Building2, Settings, CreditCard, LifeBuoy, Plus, Check, ShieldCheck, MailOpen, LogOut } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import Avatar from '../ui/Avatar'
 import Button from '../ui/Button'
 import EmptyState from '../ui/EmptyState'
 import CommandPalette from './CommandPalette'
-import { EMPLOYER_USER, COMPANY } from '../../data/mock'
 import { useNotificationsQuery, useMarkAllRead } from '../../hooks/useNotifications'
+import { useCompanyQuery } from '../../hooks/useCompany'
+import { useMeQuery } from '../../hooks/useMe'
+import { logout } from '../../hooks/useAuth'
 import { cn } from '../../lib/utils'
 
 export default function TopNavbar() {
@@ -17,6 +19,8 @@ export default function TopNavbar() {
   const { data: notifications = [] } = useNotificationsQuery()
   const markAllRead = useMarkAllRead()
   const unread = notifications.filter((n) => n.unread).length
+  const { data: company } = useCompanyQuery()
+  const { data: me } = useMeQuery()
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 z-[60] flex items-center gap-4 px-5 bg-surface/90 backdrop-blur-xl border-b border-border">
@@ -117,8 +121,8 @@ export default function TopNavbar() {
         <div className="relative max-sm:hidden">
           <Popover>
             <PopoverButton className="flex items-center gap-2 pl-1.5 pr-2 h-9 rounded-[10px] cursor-pointer hover:bg-surface-hover">
-              <div className="w-6 h-6 rounded-md bg-navy-tint text-navy flex items-center justify-center text-[10px] font-bold flex-shrink-0">{COMPANY.logo}</div>
-              <span className="text-[13px] font-semibold max-w-[130px] truncate">{COMPANY.name}</span>
+              <div className="w-6 h-6 rounded-md bg-navy-tint text-navy flex items-center justify-center text-[10px] font-bold flex-shrink-0">{company?.logo}</div>
+              <span className="text-[13px] font-semibold max-w-[130px] truncate">{company?.name}</span>
               <ChevronDown size={13} className="text-ink-tertiary" />
             </PopoverButton>
             <PopoverPanel
@@ -129,8 +133,8 @@ export default function TopNavbar() {
               <div className="px-4 py-3 border-b border-border text-[11px] font-semibold tracking-wide uppercase text-ink-tertiary">Your companies</div>
               <div className="p-1.5">
                 <div className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg bg-navy-tint text-navy text-[13px] font-semibold">
-                  <div className="w-7 h-7 rounded-md bg-surface text-navy flex items-center justify-center text-[11px] font-bold flex-shrink-0">{COMPANY.logo}</div>
-                  <span className="flex-1 truncate">{COMPANY.name}</span>
+                  <div className="w-7 h-7 rounded-md bg-surface text-navy flex items-center justify-center text-[11px] font-bold flex-shrink-0">{company?.logo}</div>
+                  <span className="flex-1 truncate">{company?.name}</span>
                   <Check size={15} />
                 </div>
                 <button onClick={() => toast.success('You only have one company workspace right now.')} className="flex w-full items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px] text-navy font-semibold">
@@ -144,7 +148,7 @@ export default function TopNavbar() {
 
         <Popover className="relative">
           <PopoverButton className="flex items-center gap-2 pr-2 pl-1 py-1 rounded-full cursor-pointer hover:bg-surface-hover">
-            <Avatar initials={EMPLOYER_USER.initials} />
+            <Avatar initials={me?.initials} />
             <ChevronDown size={14} className="text-ink-tertiary max-sm:hidden" />
           </PopoverButton>
           <PopoverPanel
@@ -155,9 +159,9 @@ export default function TopNavbar() {
             {({ close }) => (
               <>
                 <div className="px-4 py-3.5 border-b border-border">
-                  <div className="text-[13px] font-semibold">{EMPLOYER_USER.name}</div>
-                  <div className="text-xs text-ink-tertiary">{EMPLOYER_USER.role}</div>
-                  {COMPANY.verificationStatus === 'verified' && (
+                  <div className="text-[13px] font-semibold">{me?.name}</div>
+                  <div className="text-xs text-ink-tertiary">{me?.role}</div>
+                  {company?.verificationStatus === 'verified' && (
                     <div className="flex items-center gap-1 text-[11px] text-green font-semibold mt-1.5">
                       <ShieldCheck size={12} /> Company verified
                     </div>
@@ -182,6 +186,19 @@ export default function TopNavbar() {
                       <span>{label}</span>
                     </button>
                   ))}
+                </div>
+                <div className="p-1.5 border-t border-border">
+                  <button
+                    onClick={() => {
+                      logout()
+                      navigate('/')
+                      close()
+                    }}
+                    className="flex w-full items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px] text-red"
+                  >
+                    <LogOut size={16} />
+                    <span>Sign out</span>
+                  </button>
                 </div>
               </>
             )}

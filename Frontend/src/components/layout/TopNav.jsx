@@ -1,17 +1,31 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, Search, Sun, Moon, MessageSquare, Bell, ChevronDown, User, Settings, CreditCard, LifeBuoy } from 'lucide-react'
+import { Menu, Search, Sun, Moon, MessageSquare, Bell, ChevronDown, User, Settings, CreditCard, LifeBuoy, LogOut } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import Avatar from '../ui/Avatar'
 import FloatingPanel from '../ui/FloatingPanel'
 import NotificationsPanel from './NotificationsPanel'
-import { USER } from '../../lib/data'
+import { useProfileQuery } from '../../hooks/useProfile'
+import { EMPLOYEE_SIGNIN_URL } from '../../lib/config'
+
+function initialsOf(name = '') {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return ''
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
 
 export default function TopNav() {
   const { isDark, toggleTheme, setCmdkOpen, drawerOpen, setDrawerOpen, avatarMenuOpen, setAvatarMenuOpen, setMobileSidebarOpen } = useApp()
   const navigate = useNavigate()
   const bellRef = useRef(null)
   const avatarRef = useRef(null)
+  const { data: profile } = useProfileQuery()
+
+  function logout() {
+    localStorage.removeItem('mzobs-employee-token')
+    window.location.href = EMPLOYEE_SIGNIN_URL
+  }
 
   useEffect(() => {
     function onClick(e) {
@@ -75,14 +89,14 @@ export default function TopNav() {
             }}
             className="flex items-center gap-2 pr-2 pl-1 py-1 rounded-full cursor-pointer hover:bg-surface-hover"
           >
-            <Avatar initials={USER.initials} />
+            <Avatar initials={initialsOf(profile?.name)} />
             <ChevronDown size={14} className="text-ink-tertiary" />
           </button>
           <div data-panel="avatar">
             <FloatingPanel open={avatarMenuOpen} width={230}>
               <div className="px-4 py-3.5 border-b border-border">
-                <div className="text-[13px] font-semibold">{USER.name}</div>
-                <div className="text-xs text-ink-tertiary">{USER.email}</div>
+                <div className="text-[13px] font-semibold">{profile?.name}</div>
+                <div className="text-xs text-ink-tertiary">{profile?.email}</div>
               </div>
               <div className="p-1.5">
                 {[
@@ -103,6 +117,11 @@ export default function TopNav() {
                     <span>{label}</span>
                   </div>
                 ))}
+                <div className="h-px bg-border my-1.5" />
+                <div onClick={logout} className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px] text-red">
+                  <LogOut size={16} />
+                  <span>Log out</span>
+                </div>
               </div>
             </FloatingPanel>
           </div>

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, CheckCircle2, Upload, Link as LinkIcon, BadgeCheck, GraduationCap, IndianRupee, ShieldCheck } from 'lucide-react'
+import { Sparkles, CheckCircle2, Upload, Link as LinkIcon, BadgeCheck, GraduationCap, IndianRupee, ShieldCheck, Loader2 } from 'lucide-react'
 import { FaLinkedin, FaGithub } from 'react-icons/fa6'
 import Button from '../components/ui/Button'
 import Chip from '../components/ui/Chip'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
+import { useProfileQuery, useUpdateProfileMutation } from '../hooks/useProfile'
+import { useUploadResumeMutation } from '../hooks/useResume'
+import { usePaySubscriptionMutation } from '../hooks/useSubscription'
 
 const TOTAL = 17
 const PROGRAM_FEE = 99
@@ -50,6 +53,13 @@ function SingleChoiceGrid({ options, value, onChange, cols = 2 }) {
 export default function Onboarding() {
   const navigate = useNavigate()
   const [step, setStep] = useState(0)
+  const [submitError, setSubmitError] = useState('')
+
+  const { data: profile } = useProfileQuery()
+  const updateProfile = useUpdateProfileMutation()
+  const uploadResume = useUploadResumeMutation()
+  const paySubscription = usePaySubscriptionMutation()
+  const submitting = updateProfile.isPending || uploadResume.isPending || paySubscription.isPending
 
   const [employmentStatus, setEmploymentStatus] = useState('Fresher / Student')
   const [interests, setInterests] = useState(INTERESTS.slice(0, 2))
@@ -58,13 +68,80 @@ export default function Onboarding() {
   const [salary, setSalary] = useState(8)
   const [willingToRelocate, setWillingToRelocate] = useState('Yes, open to relocating')
 
+  const [currentCompany, setCurrentCompany] = useState('')
+  const [designation, setDesignation] = useState('')
+  const [expYears, setExpYears] = useState(2)
+  const [expMonths, setExpMonths] = useState(0)
+  const [currentCtc, setCurrentCtc] = useState('')
+  const [noticePeriod, setNoticePeriod] = useState('30 days')
+  const [preferredRole, setPreferredRole] = useState('Product Analyst')
+  const [educationLevel, setEducationLevel] = useState('Graduate')
+  const [degree, setDegree] = useState('B.Tech, Computer Science')
+  const [institution, setInstitution] = useState('RV College of Engineering')
+  const [gradYear, setGradYear] = useState('2025')
+  const [dob, setDob] = useState('')
+  const [gender, setGender] = useState('Female')
+  const [maritalStatus, setMaritalStatus] = useState('Single')
+  const [currentCity, setCurrentCity] = useState('Bengaluru')
+  const [resumeHeadline, setResumeHeadline] = useState('')
+  const [resumeFile, setResumeFile] = useState(null)
+  const [portfolioLink, setPortfolioLink] = useState('')
+  const [linkedin, setLinkedin] = useState('')
+  const [github, setGithub] = useState('')
+
   const isExperienced = employmentStatus === 'Experienced Professional'
 
   function toggle(list, setList, item) {
     setList(list.includes(item) ? list.filter((x) => x !== item) : [...list, item])
   }
 
-  function next() {
+  async function submitOnboarding() {
+    setSubmitError('')
+    try {
+      await updateProfile.mutateAsync({
+        experience: isExperienced ? 'experienced' : 'fresher',
+        currentCompany,
+        designation,
+        experienceYears: isExperienced ? expYears + expMonths / 12 : 0,
+        currentCtc,
+        noticePeriod,
+        interests,
+        preferredRole,
+        expectedSalaryMin: salary * 100000,
+        expectedSalaryMax: (salary + 2) * 100000,
+        preferredLocations: locations,
+        skills,
+        education: [{ degree, institute: institution, year: gradYear }],
+        dob,
+        gender,
+        maritalStatus,
+        currentCity,
+        relocationOk: willingToRelocate === 'Yes, open to relocating',
+        resumeHeadline,
+        portfolioLink,
+        linkedin,
+        github,
+      })
+
+      if (resumeFile) {
+        await uploadResume.mutateAsync(resumeFile)
+      }
+
+      await paySubscription.mutateAsync()
+      return true
+    } catch (err) {
+      setSubmitError(err.response?.data?.message ?? err.message ?? 'Something went wrong. Please try again.')
+      return false
+    }
+  }
+
+  async function next() {
+    if (step === TOTAL - 2) {
+      const ok = await submitOnboarding()
+      if (!ok) return
+      setStep((s) => s + 1)
+      return
+    }
     if (step === TOTAL - 1) {
       navigate('/app/dashboard')
       return
@@ -117,22 +194,22 @@ export default function Onboarding() {
                     <p className="text-sm text-ink-secondary mt-2 mb-4">Tell us about your latest role.</p>
                     <div className="grid grid-cols-2 gap-4">
                       <Field label="Current / latest company">
-                        <Input placeholder="e.g. TCS" />
+                        <Input placeholder="e.g. TCS" value={currentCompany} onChange={(e) => setCurrentCompany(e.target.value)} />
                       </Field>
                       <Field label="Designation">
-                        <Input placeholder="e.g. Business Analyst" />
+                        <Input placeholder="e.g. Business Analyst" value={designation} onChange={(e) => setDesignation(e.target.value)} />
                       </Field>
                     </div>
                     <Field label="Total experience">
                       <div className="grid grid-cols-2 gap-3">
-                        <Select defaultValue="2">
+                        <Select value={expYears} onChange={(e) => setExpYears(Number(e.target.value))}>
                           {YEARS.map((y) => (
                             <option key={y} value={y}>
                               {y} {y === 1 ? 'year' : 'years'}
                             </option>
                           ))}
                         </Select>
-                        <Select defaultValue="0">
+                        <Select value={expMonths} onChange={(e) => setExpMonths(Number(e.target.value))}>
                           {MONTHS.map((m) => (
                             <option key={m} value={m}>
                               {m} {m === 1 ? 'month' : 'months'}
@@ -143,10 +220,10 @@ export default function Onboarding() {
                     </Field>
                     <div className="grid grid-cols-2 gap-4">
                       <Field label="Current annual CTC (₹)">
-                        <Input placeholder="e.g. 6,00,000" />
+                        <Input placeholder="e.g. 6,00,000" value={currentCtc} onChange={(e) => setCurrentCtc(e.target.value)} />
                       </Field>
                       <Field label="Notice period">
-                        <Select defaultValue="30 days">
+                        <Select value={noticePeriod} onChange={(e) => setNoticePeriod(e.target.value)}>
                           <option>Immediate</option>
                           <option>15 days</option>
                           <option>30 days</option>
@@ -164,7 +241,7 @@ export default function Onboarding() {
                     <h2 className="text-xl font-bold">No work experience yet? No problem.</h2>
                     <p className="text-sm text-ink-secondary mt-2 max-w-[420px] mx-auto">We'll focus on your education, skills and potential instead. Add internships below if you've done any.</p>
                     <Field label="Internship / training experience" optional className="mt-5 text-left">
-                      <Textarea placeholder="e.g. 2-month Data Analytics internship at XYZ Pvt Ltd (optional)" />
+                      <Textarea placeholder="e.g. 2-month Data Analytics internship at XYZ Pvt Ltd (optional)" value={currentCompany} onChange={(e) => setCurrentCompany(e.target.value)} />
                     </Field>
                   </div>
                 ))}
@@ -181,9 +258,9 @@ export default function Onboarding() {
                 <div>
                   <h2 className="text-xl font-bold">What's your preferred role?</h2>
                   <p className="text-sm text-ink-secondary mt-2 mb-4">Tell us the role you're targeting.</p>
-                  <Input defaultValue="Product Analyst" placeholder="e.g. Business Analyst" />
+                  <Input value={preferredRole} onChange={(e) => setPreferredRole(e.target.value)} placeholder="e.g. Business Analyst" />
                   <p className="text-xs text-ink-tertiary mt-3 mb-2">Suggested for you:</p>
-                  <ChipRow options={ROLE_SUGGESTIONS} selected={[]} onToggle={() => {}} />
+                  <ChipRow options={ROLE_SUGGESTIONS} selected={[]} onToggle={(o) => setPreferredRole(o)} />
                 </div>
               )}
 
@@ -214,7 +291,18 @@ export default function Onboarding() {
                 <div>
                   <h2 className="text-xl font-bold">Your key skills</h2>
                   <p className="text-sm text-ink-secondary mt-2 mb-4">Add skills — we'll suggest relevant assessments.</p>
-                  <Input placeholder="Type a skill and press enter" className="mb-3" />
+                  <Input
+                    placeholder="Type a skill and press enter"
+                    className="mb-3"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                        toggle(skills, setSkills, e.currentTarget.value.trim())
+                        e.currentTarget.value = ''
+                      }
+                    }}
+                  />
+                  <ChipRow options={skills} selected={skills} onToggle={(o) => toggle(skills, setSkills, o)} />
+                  <p className="text-xs text-ink-tertiary mt-3 mb-2">Suggested:</p>
                   <ChipRow options={SKILLS} selected={skills} onToggle={(o) => toggle(skills, setSkills, o)} />
                 </div>
               )}
@@ -224,7 +312,7 @@ export default function Onboarding() {
                   <h2 className="text-xl font-bold">Education details</h2>
                   <p className="text-sm text-ink-secondary mt-2 mb-4">Your highest qualification.</p>
                   <Field label="Highest education level">
-                    <Select defaultValue="Graduate">
+                    <Select value={educationLevel} onChange={(e) => setEducationLevel(e.target.value)}>
                       <option>10th</option>
                       <option>12th</option>
                       <option>Diploma</option>
@@ -234,14 +322,14 @@ export default function Onboarding() {
                     </Select>
                   </Field>
                   <Field label="Degree / Course">
-                    <Input defaultValue="B.Tech, Computer Science" />
+                    <Input value={degree} onChange={(e) => setDegree(e.target.value)} />
                   </Field>
                   <div className="grid grid-cols-2 gap-4">
                     <Field label="Institution">
-                      <Input defaultValue="RV College of Engineering" />
+                      <Input value={institution} onChange={(e) => setInstitution(e.target.value)} />
                     </Field>
                     <Field label="Year of passing">
-                      <Input defaultValue="2025" />
+                      <Input value={gradYear} onChange={(e) => setGradYear(e.target.value)} />
                     </Field>
                   </div>
                 </div>
@@ -253,10 +341,10 @@ export default function Onboarding() {
                   <p className="text-sm text-ink-secondary mt-2 mb-4">Kept private from recruiters unless you choose to share.</p>
                   <div className="grid grid-cols-2 gap-4">
                     <Field label="Date of birth">
-                      <Input type="date" />
+                      <Input type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
                     </Field>
                     <Field label="Gender">
-                      <Select defaultValue="Female">
+                      <Select value={gender} onChange={(e) => setGender(e.target.value)}>
                         <option>Female</option>
                         <option>Male</option>
                         <option>Other</option>
@@ -265,7 +353,7 @@ export default function Onboarding() {
                     </Field>
                   </div>
                   <Field label="Marital status" optional>
-                    <Select defaultValue="Single">
+                    <Select value={maritalStatus} onChange={(e) => setMaritalStatus(e.target.value)}>
                       <option>Single</option>
                       <option>Married</option>
                       <option>Prefer not to say</option>
@@ -279,7 +367,7 @@ export default function Onboarding() {
                   <h2 className="text-xl font-bold">Where are you based?</h2>
                   <p className="text-sm text-ink-secondary mt-2 mb-4">Helps us match you with the right on-site and hybrid roles.</p>
                   <Field label="Current city">
-                    <Input placeholder="e.g. Bengaluru" defaultValue="Bengaluru" />
+                    <Input placeholder="e.g. Bengaluru" value={currentCity} onChange={(e) => setCurrentCity(e.target.value)} />
                   </Field>
                   <label className="text-[13px] font-semibold">Willing to relocate?</label>
                   <div className="mt-2">
@@ -293,14 +381,24 @@ export default function Onboarding() {
                   <h2 className="text-xl font-bold">Your resume</h2>
                   <p className="text-sm text-ink-secondary mt-2 mb-4">A short headline helps recruiters instantly understand your profile.</p>
                   <Field label="Resume headline">
-                    <Input placeholder="e.g. Aspiring Product Analyst | SQL, Excel, Data Analysis" />
+                    <Input
+                      placeholder="e.g. Aspiring Product Analyst | SQL, Excel, Data Analysis"
+                      value={resumeHeadline}
+                      onChange={(e) => setResumeHeadline(e.target.value)}
+                    />
                   </Field>
                   <p className="text-[13px] font-semibold mb-2">Upload your resume</p>
-                  <div className="border-[1.5px] border-dashed border-border-strong rounded-2xl p-9 text-center cursor-pointer bg-surface-sunken hover:border-navy hover:bg-navy-tint transition-all">
+                  <label className="block border-[1.5px] border-dashed border-border-strong rounded-2xl p-9 text-center cursor-pointer bg-surface-sunken hover:border-navy hover:bg-navy-tint transition-all">
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      className="hidden"
+                      onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
+                    />
                     <Upload size={30} className="mx-auto text-ink-secondary" />
-                    <p className="text-[15px] font-semibold mt-3">Drag & drop your resume here</p>
+                    <p className="text-[15px] font-semibold mt-3">{resumeFile ? resumeFile.name : 'Drag & drop your resume here'}</p>
                     <p className="text-xs text-ink-tertiary mt-1">PDF or DOCX, up to 5MB · The Mzobs team verifies it once your programme is activated</p>
-                  </div>
+                  </label>
                 </div>
               )}
 
@@ -311,7 +409,7 @@ export default function Onboarding() {
                   <Field label="Portfolio URL" optional>
                     <div className="relative">
                       <LinkIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
-                      <Input placeholder="https://yourportfolio.com" className="pl-[38px]" />
+                      <Input placeholder="https://yourportfolio.com" className="pl-[38px]" value={portfolioLink} onChange={(e) => setPortfolioLink(e.target.value)} />
                     </div>
                   </Field>
                 </div>
@@ -324,13 +422,13 @@ export default function Onboarding() {
                   <Field label="LinkedIn">
                     <div className="relative">
                       <FaLinkedin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
-                      <Input placeholder="linkedin.com/in/username" className="pl-[38px]" />
+                      <Input placeholder="linkedin.com/in/username" className="pl-[38px]" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} />
                     </div>
                   </Field>
                   <Field label="GitHub" optional>
                     <div className="relative">
                       <FaGithub size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
-                      <Input placeholder="github.com/username" className="pl-[38px]" />
+                      <Input placeholder="github.com/username" className="pl-[38px]" value={github} onChange={(e) => setGithub(e.target.value)} />
                     </div>
                   </Field>
                 </div>
@@ -347,27 +445,39 @@ export default function Onboarding() {
                 </div>
               )}
 
-              {step === 15 && <PaymentStep />}
+              {step === 15 && <PaymentStep submitting={submitting} error={submitError} />}
 
-              {step === 16 && <CompleteStep />}
+              {step === 16 && <CompleteStep name={profile?.name} />}
             </motion.div>
           </AnimatePresence>
         </div>
       </div>
 
       <div className="px-7 py-5 border-t border-border bg-surface flex justify-between items-center flex-shrink-0">
-        <Button variant="ghost" onClick={back} className={step === 0 ? 'invisible' : ''}>
+        <Button variant="ghost" onClick={back} className={step === 0 || submitting ? 'invisible' : ''}>
           Back
         </Button>
-        <Button variant="primary" size="lg" onClick={next}>
-          {step === TOTAL - 1 ? 'Go to Dashboard' : step === TOTAL - 2 ? `Pay ₹${PROGRAM_FEE} & activate` : step === 0 ? 'Get started' : 'Continue'}
+        <Button variant="primary" size="lg" onClick={next} disabled={submitting}>
+          {submitting ? (
+            <>
+              <Loader2 size={16} className="animate-spin" /> Activating...
+            </>
+          ) : step === TOTAL - 1 ? (
+            'Go to Dashboard'
+          ) : step === TOTAL - 2 ? (
+            `Pay ₹${PROGRAM_FEE} & activate`
+          ) : step === 0 ? (
+            'Get started'
+          ) : (
+            'Continue'
+          )}
         </Button>
       </div>
     </div>
   )
 }
 
-function PaymentStep() {
+function PaymentStep({ submitting, error }) {
   return (
     <div>
       <div className="text-center">
@@ -411,11 +521,14 @@ function PaymentStep() {
           </p>
         </div>
       </div>
+
+      {error && <p className="text-sm text-red mt-4 text-center">{error}</p>}
+      {submitting && <p className="text-xs text-ink-tertiary mt-3 text-center">Saving your profile and activating your programme...</p>}
     </div>
   )
 }
 
-function CompleteStep() {
+function CompleteStep({ name }) {
   const [pieces, setPieces] = useState([])
   useEffect(() => {
     const colors = ['var(--color-navy)', 'var(--color-gold-dot)', 'var(--color-green-dot)']
@@ -435,7 +548,7 @@ function CompleteStep() {
       <div className="w-16 h-16 rounded-[20px] bg-green-tint text-green flex items-center justify-center mx-auto mb-5">
         <CheckCircle2 size={30} />
       </div>
-      <h1 className="text-[30px] font-bold tracking-tight text-balance">You're all set, Ananya</h1>
+      <h1 className="text-[30px] font-bold tracking-tight text-balance">You're all set{name ? `, ${name.split(' ')[0]}` : ''}</h1>
       <p className="text-sm text-ink-secondary mt-3 max-w-[420px] mx-auto">
         Your ₹{PROGRAM_FEE} programme is active and your resume is now in the Mzobs verification queue.
       </p>

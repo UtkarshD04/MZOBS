@@ -1,12 +1,9 @@
-import { mockResolve } from '../lib/api'
-import { BATCHES } from '../data/mock'
-
-const store = [...BATCHES]
+import { apiClient } from '../lib/api'
 
 export function listBatches() {
-  return mockResolve([...store])
+  return apiClient.get('/batches').then((r) => r.data)
 }
 
 export function getBatch(id) {
-  return mockResolve(store.find((b) => b.id === id) ?? null)
+  return apiClient.get(`/batches/${id}`).then((r) => r.data)
 }

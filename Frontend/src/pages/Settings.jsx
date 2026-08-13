@@ -6,9 +6,12 @@ import Switch from '../components/ui/Switch'
 import Bar from '../components/ui/Bar'
 import { Field, Input, Select } from '../components/ui/Field'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
+import { PageSkeleton } from '../components/ui/Skeleton'
+import ErrorState from '../components/ui/ErrorState'
 import { useApp } from '../context/AppContext'
 import { openDeleteAccountModal } from '../lib/modals'
 import { cn } from '../lib/utils'
+import { useProfileQuery, useUpdateProfileMutation } from '../hooks/useProfile'
 
 const TABS = ['Account', 'Password', 'Privacy', 'Notifications', 'Delete Account']
 
@@ -33,6 +36,23 @@ function NotifSwitch({ defaultOn }) {
 export default function Settings() {
   const [tab, setTab] = useState(0)
   const app = useApp()
+  const { data: profile, isLoading, isError, refetch } = useProfileQuery()
+  const updateProfile = useUpdateProfileMutation()
+  const [name, setName] = useState(null)
+  const [phone, setPhone] = useState(null)
+
+  if (isLoading) return <PageSkeleton />
+  if (isError) return <ErrorState onRetry={refetch} />
+
+  function saveAccount() {
+    updateProfile.mutate(
+      { name: name ?? profile.name, phone: phone ?? profile.phone },
+      {
+        onSuccess: () => app.addToast('success', 'Account details saved'),
+        onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Could not save. Please try again.'),
+      }
+    )
+  }
 
   return (
     <StaggerGroup>
@@ -60,13 +80,13 @@ export default function Settings() {
               <div className="text-xl font-bold mb-4">Account details</div>
               <div className="grid md:grid-cols-2 gap-4">
                 <Field label="Full name">
-                  <Input defaultValue="Ananya Sharma" />
+                  <Input value={name ?? profile.name ?? ''} onChange={(e) => setName(e.target.value)} />
                 </Field>
                 <Field label="Email">
-                  <Input defaultValue="ananya.sharma@gmail.com" />
+                  <Input value={profile.email} disabled />
                 </Field>
                 <Field label="Phone">
-                  <Input defaultValue="+91 98765 43210" />
+                  <Input value={phone ?? profile.phone ?? ''} onChange={(e) => setPhone(e.target.value)} />
                 </Field>
                 <Field label="Preferred language">
                   <Select defaultValue="English">
@@ -75,7 +95,7 @@ export default function Settings() {
                   </Select>
                 </Field>
               </div>
-              <Button variant="primary" onClick={() => app.addToast('success', 'Account details saved')}>
+              <Button variant="primary" onClick={saveAccount} disabled={updateProfile.isPending}>
                 Save changes
               </Button>
             </Card>

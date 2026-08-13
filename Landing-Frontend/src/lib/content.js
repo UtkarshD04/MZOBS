@@ -76,32 +76,32 @@ export const SERVICES_DATA = {
       icon: Target,
       title: "Verified Candidate Pipeline",
       desc: "Every profile is screened and resume-checked by our team before it reaches an employer.",
-      image: "/images/services/service-pipeline.jpg"
+      image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800&q=85"
     },
     {
       icon: Settings,
       title: "Guided Job Matching",
       desc: "Curated openings filtered to your track — no scrolling through noise.",
-      image: "/images/services/service-matching.jpg"
+      image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=85"
     },
     {
       icon: Sparkles,
       title: "Structured Interviews",
       desc: "Schedule, track and score interviews from one shared pipeline.",
-      image: "/images/services/service-interviews.jpg"
+      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=85"
     },
     {
       icon: BarChart3,
       title: "Offer & Hiring Analytics",
       desc: "Track offers, acceptance and time-to-fill with full visibility.",
-      image: "/images/services/service-analytics.jpg"
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=85"
     }
   ],
   featuredCard: {
     titlePrefix: "Start Your ",
     titleItalic: "Hiring Journey",
     ctaText: "Get In Touch",
-    bgImage: "/images/hiring-journey-bg.jpg"
+    bgImage: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=85"
   }
 }
 
@@ -189,7 +189,7 @@ export const OUR_GOAL_DATA = {
   titleSuffix: " Into A Fair Match",
   desc: "Mzobs started because hiring was broken on both sides — job seekers were applying into a void, and employers were drowning in unscreened resumes. Our team brings together operations, recruiting and product expertise with one shared mission: verify every profile and every requirement before it reaches the other side, so both sides get a faster, better hire.",
   ctaText: "Meet Our Team",
-  image: "/images/our-goal.jpg"
+  image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
 }
 
 export const APPROACH_DATA = {
@@ -203,7 +203,7 @@ export const APPROACH_DATA = {
     { text: "real, verified", italic: true },
     { text: " match." }
   ],
-  image: "/images/approach.jpg",
+  image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=85",
   steps: [
     {
       num: "01",

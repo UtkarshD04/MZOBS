@@ -18,61 +18,39 @@ import Bar from '../../components/ui/Bar'
 import Button from '../../components/ui/Button'
 import Avatar from '../../components/ui/Avatar'
 import CountUp from '../../components/ui/CountUp'
-import AreaLineChart, { HBarList } from '../../components/ui/Charts'
+import { HBarList } from '../../components/ui/Charts'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
-import { useApp } from '../../context/AppContext'
-import { openBatchDrawer, openCandidateDrawer, openCompanyDrawer, openReviewJobModal, openVerifyResumeModal } from '../../lib/mzobsModals'
-import {
-  ACTIVITY,
-  BATCHES,
-  CANDIDATES,
-  COMPANIES,
-  JOB_POSTS,
-  MOCK_INTERVIEWS,
-  MZOBS_USER,
-  OPS_KPIS,
-  PIPELINE_FUNNEL,
-  PRICING,
-  REVENUE_TREND,
-  TRACK_SPLIT,
-  candidateOf,
-  companyOf,
-  jobOf,
-} from '../../lib/mzobsData'
+import { PageSkeleton } from '../../components/ui/Skeleton'
+import ErrorState from '../../components/ui/ErrorState'
+import { useDashboardQuery } from '../../hooks/useDashboard'
+import { useResumeQueueQuery } from '../../hooks/useResumes'
+import { useCompaniesQuery } from '../../hooks/useCompanies'
+import { useJobsQuery } from '../../hooks/useJobs'
+import { useBatchesQuery } from '../../hooks/useBatches'
 import { fmtINR } from '../../lib/utils'
 
-const KPI_ICONS = {
-  candidates: Users,
-  resumeQueue: FileCheck,
-  mockQueue: Video,
-  companyQueue: Building2,
-  openings: Briefcase,
-  applications: ClipboardList,
-}
-
-function renderRich(text) {
-  return { __html: text.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>') }
-}
+const KPI_ICONS = { candidates: Users, resumeQueue: FileCheck, mockQueue: Video, companyQueue: Building2, openings: Briefcase, applications: ClipboardList }
+const KPI_LABELS = { candidates: 'Candidates', resumeQueue: 'Resumes to verify', mockQueue: 'Mocks scheduled', companyQueue: 'Companies pending', openings: 'Open positions', applications: 'Applications' }
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const app = useApp()
+  const { data: dash, isLoading: dashLoading, isError: dashError, refetch: refetchDash } = useDashboardQuery()
+  const { data: pendingResumes = [] } = useResumeQueueQuery({ status: 'pending', limit: 3 })
+  const { data: pendingCompanies = [] } = useCompaniesQuery({ status: 'pending', limit: 4 })
+  const { data: pendingJobs = [] } = useJobsQuery({ status: 'pending_review', limit: 4 })
+  const { data: buildingBatches = [] } = useBatchesQuery({ status: 'preparing', limit: 3 })
 
-  const pendingResumes = CANDIDATES.filter((c) => c.resume.status === 'pending')
-  const pendingCompanies = COMPANIES.filter((c) => c.status === 'pending')
-  const pendingJobs = JOB_POSTS.filter((j) => j.status === 'pending_review')
-  const unpaidJobs = JOB_POSTS.filter((j) => j.feeStatus === 'unpaid' && j.status !== 'pending_review')
-  const readyBatches = BATCHES.filter((b) => b.status === 'ready' || b.status === 'building')
+  if (dashLoading) return <PageSkeleton />
+  if (dashError) return <ErrorState onRetry={refetchDash} />
 
-  const collected = JOB_POSTS.filter((j) => j.feeStatus === 'paid').reduce((n, j) => n + j.fee, 0)
-  const outstanding = unpaidJobs.reduce((n, j) => n + j.fee, 0)
-  const subsRevenue = CANDIDATES.filter((c) => c.subscription.status === 'paid').length * PRICING.candidateFee
+  const kpis = dash.kpis ?? {}
+  const revenue = dash.revenue ?? {}
 
   return (
     <StaggerGroup>
       <StaggerItem className="flex items-start justify-between gap-5 flex-wrap mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Good afternoon, {MZOBS_USER.name.split(' ')[0]}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Mzobs Operations</h1>
           <p className="text-sm text-ink-secondary mt-1">Everything moving between candidates and employers passes through this desk.</p>
         </div>
         <div className="flex items-center gap-2.5 flex-shrink-0">
@@ -86,50 +64,41 @@ export default function Dashboard() {
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-4">
-        {Object.entries(OPS_KPIS).map(([key, k]) => {
-          const Icon = KPI_ICONS[key]
+        {Object.entries(kpis).map(([key, value]) => {
+          const Icon = KPI_ICONS[key] ?? Briefcase
           return (
             <Card key={key} hover pad>
               <Icon size={15} className="text-navy" />
               <div className="text-[26px] font-bold tracking-tight mt-2.5">
-                <CountUp value={k.value} />
+                <CountUp value={value} />
               </div>
-              <div className="text-xs text-ink-tertiary mt-1 leading-snug">{k.label}</div>
-              <div className="text-[11px] font-semibold text-gold-strong mt-1.5">{k.delta}</div>
+              <div className="text-xs text-ink-tertiary mt-1 leading-snug">{KPI_LABELS[key] ?? key}</div>
             </Card>
           )
         })}
       </StaggerItem>
 
-      {/* Action queues — the whole point of this portal */}
       <StaggerItem className="grid lg:grid-cols-4 gap-5 mb-4">
         <QueueCard
           icon={FileCheck}
           tone="gold"
           title="Resumes to verify"
-          count={pendingResumes.length}
+          count={kpis.resumeQueue ?? 0}
           onOpen={() => navigate('/app/resumes')}
           rows={pendingResumes.slice(0, 3).map((c) => ({
             key: c.id,
-            initials: c.initials,
+            initials: c.name?.slice(0, 2)?.toUpperCase(),
             primary: c.name,
-            secondary: `Uploaded ${c.resume.uploadedOn}`,
-            action: () => openVerifyResumeModal(app, c),
+            secondary: c.resume?.uploadedOn ? `Uploaded ${new Date(c.resume.uploadedOn).toLocaleDateString('en-IN')}` : '',
           }))}
         />
         <QueueCard
           icon={Building2}
           tone="navy"
           title="Companies to verify"
-          count={pendingCompanies.length}
+          count={kpis.companyQueue ?? 0}
           onOpen={() => navigate('/app/companies')}
-          rows={pendingCompanies.map((co) => ({
-            key: co.id,
-            initials: co.logo,
-            primary: co.name,
-            secondary: `Registered ${co.registeredOn}`,
-            action: () => openCompanyDrawer(app, co),
-          }))}
+          rows={pendingCompanies.map((co) => ({ key: co.id, initials: co.logo, primary: co.name, secondary: co.hq }))}
         />
         <QueueCard
           icon={Briefcase}
@@ -137,39 +106,25 @@ export default function Dashboard() {
           title="Requirements to review"
           count={pendingJobs.length}
           onOpen={() => navigate('/app/requirements')}
-          rows={pendingJobs.map((j) => ({
-            key: j.id,
-            initials: companyOf(j.companyId).logo,
-            primary: j.title,
-            secondary: `${j.openings} openings · ${fmtINR(j.openings * PRICING.perOpeningFee)}`,
-            action: () => openReviewJobModal(app, j),
-          }))}
+          rows={pendingJobs.map((j) => ({ key: j.id, initials: j.company?.logo, primary: j.title, secondary: `${j.vacancies} opening${j.vacancies > 1 ? 's' : ''}` }))}
         />
         <QueueCard
           icon={Send}
           tone="teal"
           title="Batches in progress"
-          count={readyBatches.length}
+          count={buildingBatches.length}
           onOpen={() => navigate('/app/dispatch')}
-          rows={readyBatches.slice(0, 3).map((b) => ({
-            key: b.id,
-            initials: companyOf(b.companyId).logo,
-            primary: jobOf(b.jobId).title,
-            secondary: `${b.interviewsScheduled}/${b.resumeCount} resumes locked`,
-            action: () => openBatchDrawer(app, b),
-          }))}
+          rows={buildingBatches.map((b) => ({ key: b.id, initials: b.company?.logo, primary: b.jobTitle, secondary: `${b.resumesDelivered}/${b.resumesPromised} delivered` }))}
         />
       </StaggerItem>
 
-      {outstanding > 0 && (
+      {revenue.outstanding > 0 && (
         <StaggerItem className="mb-4">
           <Card pad className="flex items-start gap-3 border-gold-dot/40 bg-gold-tint">
             <AlertTriangle size={18} className="text-gold-strong mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <div className="text-[13.5px] font-semibold">{fmtINR(outstanding)} outstanding across {unpaidJobs.length} requirement{unpaidJobs.length > 1 ? 's' : ''}</div>
-              <div className="text-[13px] text-ink-secondary mt-0.5">
-                Sourcing stays on hold until the employer pays. We ship resumes only after the {fmtINR(PRICING.perOpeningFee)}-per-opening invoice clears.
-              </div>
+              <div className="text-[13.5px] font-semibold">{fmtINR(revenue.outstanding)} outstanding across employer invoices</div>
+              <div className="text-[13px] text-ink-secondary mt-0.5">Sourcing stays on hold until the employer pays.</div>
             </div>
             <Button size="sm" onClick={() => navigate('/app/payments')}>
               View payments
@@ -182,22 +137,22 @@ export default function Dashboard() {
         <Card>
           <CardHead>
             <span className="text-[15px] font-semibold">Candidate pipeline</span>
-            <span className="text-xs text-ink-tertiary">Signup → selected</span>
+            <span className="text-xs text-ink-tertiary">Registered → Selected</span>
           </CardHead>
           <div className="p-[22px] pt-4">
-            <HBarList data={PIPELINE_FUNNEL} />
-            <p className="text-xs text-ink-tertiary mt-4 pt-4 border-t border-border">
-              <b className="text-ink">68%</b> of registrations convert to the ₹{PRICING.candidateFee} programme, and <b className="text-ink">65%</b> of those clear resume verification.
-            </p>
+            <HBarList data={dash.funnel ?? []} />
           </div>
         </Card>
         <Card>
           <CardHead>
-            <span className="text-[15px] font-semibold">Revenue</span>
-            <span className="text-xs text-ink-tertiary">Last 6 months</span>
+            <span className="text-[15px] font-semibold">Skill tracks</span>
           </CardHead>
-          <div className="px-[10px] pt-4 pb-2">
-            <AreaLineChart data={REVENUE_TREND} height={216} formatValue={(v) => fmtINR(v)} />
+          <div className="p-[22px] pt-4">
+            {(dash.tracks ?? []).length === 0 ? (
+              <p className="text-[13px] text-ink-secondary">No skill tracks assigned yet.</p>
+            ) : (
+              <HBarList data={dash.tracks} tone="navy" />
+            )}
           </div>
         </Card>
       </StaggerItem>
@@ -208,35 +163,19 @@ export default function Dashboard() {
             <IndianRupee size={14} className="text-gold-strong" /> Collected from employers
           </div>
           <div className="text-[30px] font-bold tracking-tight text-gold-strong">
-            <CountUp value={collected} prefix="₹" />
+            <CountUp value={revenue.collected ?? 0} prefix="₹" />
           </div>
-          <div className="text-[13px] text-ink-secondary mt-2">
-            {fmtINR(outstanding)} still outstanding
-          </div>
-          <Bar value={Math.round((collected / (collected + outstanding)) * 100)} tone="gold" thin className="mt-3" />
+          <div className="text-[13px] text-ink-secondary mt-2">{fmtINR(revenue.outstanding ?? 0)} still outstanding</div>
+          <Bar value={revenue.collected ? Math.round((revenue.collected / (revenue.collected + revenue.outstanding)) * 100) : 0} tone="gold" thin className="mt-3" />
         </Card>
         <Card pad className="flex flex-col">
           <div className="flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-3">
             <Users size={14} className="text-navy" /> Candidate subscriptions
           </div>
           <div className="text-[30px] font-bold tracking-tight text-navy">
-            <CountUp value={subsRevenue} prefix="₹" />
-          </div>
-          <div className="text-[13px] text-ink-secondary mt-2">
-            {CANDIDATES.filter((c) => c.subscription.status === 'paid').length} paid × ₹{PRICING.candidateFee} · {CANDIDATES.filter((c) => c.subscription.status === 'unpaid').length} still unpaid
+            <CountUp value={revenue.subscriptions ?? 0} prefix="₹" />
           </div>
         </Card>
-        <Card>
-          <CardHead>
-            <span className="text-[15px] font-semibold">Skill tracks</span>
-          </CardHead>
-          <div className="p-[22px] pt-4">
-            <HBarList data={TRACK_SPLIT} tone="navy" />
-          </div>
-        </Card>
-      </StaggerItem>
-
-      <StaggerItem className="grid lg:grid-cols-[1.4fr_1fr] gap-5 mb-4">
         <Card>
           <CardHead>
             <span className="text-[15px] font-semibold">Mock interviews scheduled</span>
@@ -245,55 +184,47 @@ export default function Dashboard() {
             </span>
           </CardHead>
           <div className="p-[22px] pt-3.5 flex flex-col gap-3">
-            {MOCK_INTERVIEWS.map((iv) => {
-              const c = candidateOf(iv.candidateId)
-              return (
-                <div key={iv.id} className="flex items-center gap-3 p-3 border border-border rounded-xl">
-                  <Avatar initials={c.initials} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[15px] font-semibold truncate">{c.name}</span>
-                      <Badge tone={iv.status === 'Confirmed' ? 'gold' : 'gray'}>{iv.status === 'Confirmed' ? iv.when.split(',')[0] : 'Pending'}</Badge>
-                    </div>
-                    <div className="text-xs text-ink-tertiary mt-1 flex items-center gap-1">
-                      <Clock size={12} /> {iv.when} · Panel {iv.panel}
-                    </div>
+            {(dash.upcomingMockInterviews ?? []).length === 0 && <p className="text-[13px] text-ink-secondary">Nothing scheduled.</p>}
+            {(dash.upcomingMockInterviews ?? []).slice(0, 3).map((iv) => (
+              <div key={iv.id} className="flex items-center gap-3 p-3 border border-border rounded-xl">
+                <Avatar initials={iv.employee?.name?.slice(0, 2)?.toUpperCase()} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13.5px] font-semibold truncate">{iv.employee?.name}</div>
+                  <div className="text-xs text-ink-tertiary mt-1 flex items-center gap-1">
+                    <Clock size={12} /> {iv.when ? new Date(iv.when).toLocaleString('en-IN') : ''} · Panel {iv.panel}
                   </div>
-                  <Button size="sm" onClick={() => openCandidateDrawer(app, c)}>
-                    Open
-                  </Button>
                 </div>
-              )
-            })}
+                <Badge tone="gold">Scheduled</Badge>
+              </div>
+            ))}
           </div>
         </Card>
+      </StaggerItem>
+
+      <StaggerItem className="mb-4">
         <Card>
           <CardHead>
             <span className="text-[15px] font-semibold">Recent activity</span>
           </CardHead>
           <div className="p-[22px] pt-4">
-            <div className="relative pl-[26px]">
-              <div className="absolute left-[5px] top-1 bottom-1 w-px bg-border" />
-              {ACTIVITY.map((a, i, arr) => (
-                <div key={a.text} className={i < arr.length - 1 ? 'pb-5 relative' : 'relative'}>
-                  <div
-                    className={`absolute -left-[26px] top-0.5 w-[11px] h-[11px] rounded-full bg-surface border-2 ${
-                      a.tone === 'green'
-                        ? 'border-green-dot'
-                        : a.tone === 'gold'
-                          ? 'border-gold-dot'
-                          : a.tone === 'red'
-                            ? 'border-red-dot'
-                            : a.tone === 'teal'
-                              ? 'border-teal-dot'
-                              : 'border-navy'
-                    }`}
-                  />
-                  <div className="text-[13px]" dangerouslySetInnerHTML={renderRich(a.text)} />
-                  <div className="text-xs text-ink-tertiary mt-0.5">{a.time}</div>
-                </div>
-              ))}
-            </div>
+            {(dash.activity ?? []).length === 0 ? (
+              <p className="text-[13px] text-ink-secondary">No activity yet.</p>
+            ) : (
+              <div className="relative pl-[26px]">
+                <div className="absolute left-[5px] top-1 bottom-1 w-px bg-border" />
+                {dash.activity.map((a, i, arr) => (
+                  <div key={i} className={i < arr.length - 1 ? 'pb-5 relative' : 'relative'}>
+                    <div
+                      className={`absolute -left-[26px] top-0.5 w-[11px] h-[11px] rounded-full bg-surface border-2 ${
+                        a.tone === 'green' ? 'border-green-dot' : a.tone === 'gold' ? 'border-gold-dot' : 'border-navy'
+                      }`}
+                    />
+                    <div className="text-[13px]">{a.text}</div>
+                    <div className="text-xs text-ink-tertiary mt-0.5">{a.time}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </Card>
       </StaggerItem>
@@ -346,13 +277,13 @@ function QueueCard({ icon: Icon, tone, title, count, rows, onOpen }) {
           <div className="text-[12.5px] text-ink-tertiary py-2">Queue is clear.</div>
         ) : (
           rows.map((r) => (
-            <button key={r.key} onClick={r.action} className="flex items-center gap-2.5 text-left rounded-lg px-1.5 py-1.5 -mx-1.5 hover:bg-surface-hover cursor-pointer">
+            <div key={r.key} className="flex items-center gap-2.5 text-left rounded-lg px-1.5 py-1.5 -mx-1.5">
               <Avatar initials={r.initials} size="sm" />
               <div className="min-w-0 flex-1">
                 <div className="text-[12.5px] font-semibold truncate">{r.primary}</div>
                 <div className="text-[11px] text-ink-tertiary truncate">{r.secondary}</div>
               </div>
-            </button>
+            </div>
           ))
         )}
       </div>

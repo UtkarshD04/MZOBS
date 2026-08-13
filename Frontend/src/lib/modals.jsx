@@ -1,41 +1,62 @@
+import { useState } from 'react'
 import { AlertTriangle, Download, ShieldCheck, Users } from 'lucide-react'
 import { ModalHead, ModalBody, ModalFoot } from '../components/ui/Modal'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
 import { CompanyLogo } from '../components/ui/Avatar'
-import Ring from '../components/ui/Ring'
+import { applyToJob } from '../services/applicationsService'
 
-export function openApplyModal(app, job) {
-  app.openModal(
+export function fmtSalaryRange(job) {
+  if (!job.salaryMin && !job.salaryMax) return ''
+  const fmt = (n) => (n >= 100000 ? `₹${(n / 100000).toFixed(n % 100000 === 0 ? 0 : 1)}L` : `₹${n}`)
+  return `${fmt(job.salaryMin)} – ${fmt(job.salaryMax)}`
+}
+
+function ApplyModalContent({ app, job, onApplied }) {
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleApply() {
+    setSubmitting(true)
+    setError('')
+    try {
+      await applyToJob(job.id)
+      app.closeModal()
+      app.addToast('success', "Application received by Mzobs — we'll update you after screening")
+      onApplied?.()
+    } catch (err) {
+      setError(err.response?.data?.message ?? err.message ?? 'Something went wrong. Please try again.')
+      setSubmitting(false)
+    }
+  }
+
+  return (
     <>
-      <ModalHead title={`Apply to ${job.role}`} onClose={app.closeModal} />
+      <ModalHead title={`Apply to ${job.title}`} onClose={app.closeModal} />
       <ModalBody>
         <div className="flex gap-3 items-center mb-4">
           <CompanyLogo initials={job.logo} />
           <div>
-            <div className="text-[15px] font-semibold">{job.co}</div>
+            <div className="text-[15px] font-semibold">{job.company}</div>
             <div className="text-xs text-ink-tertiary">
-              {job.loc} · {job.mode} · {job.sal} · {job.openings} opening{job.openings > 1 ? 's' : ''}
+              {job.location} · {job.workMode} · {fmtSalaryRange(job)} · {job.vacancies} opening{job.vacancies > 1 ? 's' : ''}
             </div>
           </div>
         </div>
 
         <p className="text-[13px] text-ink-secondary">
-          Your application goes to the <b className="text-ink">Mzobs hiring team</b>, not to {job.co}. We screen you against the requirement and forward
-          your verified resume if you make the shortlist — the company sees your profile only at that point.
+          Your application goes to the <b className="text-ink">Mzobs hiring team</b>, not to {job.company}. We screen you against the requirement and
+          forward your verified resume if you make the shortlist — the company sees your profile only at that point.
         </p>
 
         <div className="bg-surface-sunken rounded-xl mt-4 p-3.5">
           <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-2.5">What we'll send on your behalf</div>
           <label className="flex items-start gap-2 text-[13px] cursor-pointer">
-            <input type="checkbox" defaultChecked className="mt-0.5 accent-navy w-[15px] h-[15px]" /> My verified resume (v3)
+            <input type="checkbox" defaultChecked disabled className="mt-0.5 accent-navy w-[15px] h-[15px]" /> My verified resume
           </label>
           <label className="flex items-start gap-2 text-[13px] cursor-pointer mt-2">
-            <input type="checkbox" defaultChecked className="mt-0.5 accent-navy w-[15px] h-[15px]" /> Mock interview score and skill track
-          </label>
-          <label className="flex items-start gap-2 text-[13px] cursor-pointer mt-2">
-            <input type="checkbox" defaultChecked className="mt-0.5 accent-navy w-[15px] h-[15px]" /> Skill assessment results
+            <input type="checkbox" defaultChecked disabled className="mt-0.5 accent-navy w-[15px] h-[15px]" /> Mock interview score and skill track
           </label>
         </div>
 
@@ -45,50 +66,51 @@ export function openApplyModal(app, job) {
             Applying is free and always will be. Mzobs is paid by the employer, never by you — and a shortlist is not a guarantee of selection.
           </p>
         </div>
+
+        {error && <p className="text-[13px] text-red mt-3">{error}</p>}
       </ModalBody>
       <ModalFoot>
-        <Button onClick={app.closeModal}>Cancel</Button>
-        <Button
-          variant="primary"
-          onClick={() => {
-            app.closeModal()
-            app.addToast('success', 'Application received by Mzobs — we\'ll update you after screening')
-          }}
-        >
-          Send to Mzobs
+        <Button onClick={app.closeModal} disabled={submitting}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={handleApply} disabled={submitting}>
+          {submitting ? 'Sending...' : 'Send to Mzobs'}
         </Button>
       </ModalFoot>
     </>
   )
 }
 
-export function openJobDetailModal(app, job) {
+export function openApplyModal(app, job, onApplied) {
+  app.openModal(<ApplyModalContent app={app} job={job} onApplied={onApplied} />)
+}
+
+export function openJobDetailModal(app, job, onApplied) {
   app.openModal(
     <>
-      <ModalHead title={job.role} onClose={app.closeModal} />
+      <ModalHead title={job.title} onClose={app.closeModal} />
       <ModalBody>
         <div className="flex items-center justify-between mb-4">
           <div className="flex gap-3 items-center">
             <CompanyLogo initials={job.logo} />
             <div>
-              <div className="text-[15px] font-semibold">{job.co}</div>
+              <div className="text-[15px] font-semibold">{job.company}</div>
               <div className="text-xs text-ink-tertiary">
-                {job.loc} · {job.mode}
+                {job.location} · {job.workMode}
               </div>
             </div>
           </div>
-          <Ring value={job.match} size={56} hero={job.match >= 90} />
         </div>
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="bg-surface-sunken rounded-xl p-3.5">
             <div className="text-xs text-ink-tertiary">Salary Range</div>
-            <div className="text-[15px] font-semibold mt-1">{job.sal}</div>
+            <div className="text-[15px] font-semibold mt-1">{fmtSalaryRange(job)}</div>
           </div>
           <div className="bg-surface-sunken rounded-xl p-3.5">
             <div className="text-xs text-ink-tertiary">Openings</div>
             <div className="text-[15px] font-semibold mt-1 flex items-center gap-1.5">
               <Users size={14} className="text-navy" />
-              {job.openings}
+              {job.vacancies}
             </div>
           </div>
           <div className="bg-surface-sunken rounded-xl p-3.5">
@@ -98,25 +120,31 @@ export function openJobDetailModal(app, job) {
         </div>
         <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-2">Requirements</div>
         <div className="flex flex-wrap gap-1.5 mb-4">
-          {job.tags.map((t) => (
+          {(job.skills ?? []).map((t) => (
             <span key={t} className="text-[11px] font-semibold text-ink-secondary bg-surface-sunken px-2 py-1 rounded-md">
               {t}
             </span>
           ))}
         </div>
+        {job.description && (
+          <>
+            <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-2">About the role</div>
+            <p className="text-[13px] text-ink-secondary mb-4">{job.description}</p>
+          </>
+        )}
         <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-2">How hiring works for this role</div>
         <p className="text-[13px] text-ink-secondary">
-          {job.co} is a Mzobs-verified employer and has raised this requirement with us. We screen every applicant, shortlist against the brief, and send
-          the company a batch of resumes to interview from. Being shortlisted gets you an interview — the final decision is the employer's.
+          {job.company} is a Mzobs-verified employer and has raised this requirement with us. We screen every applicant, shortlist against the brief, and
+          send the company a batch of resumes to interview from. Being shortlisted gets you an interview — the final decision is the employer's.
         </p>
       </ModalBody>
       <ModalFoot>
-        <Button onClick={app.closeModal}>Save</Button>
+        <Button onClick={app.closeModal}>Close</Button>
         <Button
           variant="primary"
           onClick={() => {
             app.closeModal()
-            openApplyModal(app, job)
+            openApplyModal(app, job, onApplied)
           }}
         >
           Apply through Mzobs

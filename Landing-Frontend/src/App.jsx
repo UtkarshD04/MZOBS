@@ -7,6 +7,8 @@ import Employee from './pages/Employee'
 import EmployeeSignup from './pages/EmployeeSignup'
 import EmployeeSignin from './pages/EmployeeSignin'
 import Employer from './pages/Employer'
+import EmployerSignup from './pages/EmployerSignup'
+import EmployerSignin from './pages/EmployerSignin'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -21,6 +23,8 @@ export default function App() {
         <Route path="/employees/signup" element={<EmployeeSignup />} />
         <Route path="/employees/signin" element={<EmployeeSignin />} />
         <Route path="/employers" element={<Employer />} />
+        <Route path="/employers/signup" element={<EmployerSignup />} />
+        <Route path="/employers/signin" element={<EmployerSignin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
