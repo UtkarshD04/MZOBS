@@ -5,6 +5,8 @@ import PageHero from '../components/sections/PageHero'
 import Card from '../components/ui/Card'
 import Photo from '../components/sections/Photo'
 import ContactForm from '../components/forms/ContactForm'
+import Reveal from '../components/ui/Reveal'
+import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from '../lib/config'
 
 const INFO_CARDS = [
@@ -31,34 +33,38 @@ export default function Contact() {
       />
 
       <section className="max-w-6xl mx-auto px-6 py-16">
-        <div className="grid sm:grid-cols-3 gap-4">
+        <StaggerGroup className="grid sm:grid-cols-3 gap-4">
           {INFO_CARDS.map((c) => (
-            <Card key={c.label} pad hover className="text-center">
-              <div className="w-11 h-11 rounded-lg bg-navy-tint text-navy flex items-center justify-center mx-auto mb-3">
-                <c.icon size={19} />
-              </div>
-              <h3 className="text-[13.5px] font-semibold">{c.label}</h3>
-              {c.href ? (
-                <a href={c.href} className="text-[13px] text-ink-secondary mt-1 block hover:text-navy transition-colors duration-200">
-                  {c.value}
-                </a>
-              ) : (
-                <p className="text-[13px] text-ink-secondary mt-1">{c.value}</p>
-              )}
-            </Card>
+            <StaggerItem key={c.label}>
+              <Card pad hover className="text-center h-full">
+                <div className="w-11 h-11 rounded-lg bg-navy-tint text-navy flex items-center justify-center mx-auto mb-3">
+                  <c.icon size={19} />
+                </div>
+                <h3 className="text-[13.5px] font-semibold">{c.label}</h3>
+                {c.href ? (
+                  <a href={c.href} className="text-[13px] text-ink-secondary mt-1 block hover:text-navy transition-colors duration-200">
+                    {c.value}
+                  </a>
+                ) : (
+                  <p className="text-[13px] text-ink-secondary mt-1">{c.value}</p>
+                )}
+              </Card>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </section>
 
       <section className="max-w-6xl mx-auto px-6 pb-20">
         <div className="grid lg:grid-cols-5 gap-6">
-          <Card pad className="lg:col-span-3">
-            <h2 className="text-xl font-bold tracking-tight mb-1">Send us a message</h2>
-            <p className="text-[13.5px] text-ink-secondary mb-6">Tell us a bit about what you need and we'll route it to the right team.</p>
-            <ContactForm />
-          </Card>
+          <Reveal direction="left" blur className="lg:col-span-3">
+            <Card pad className="h-full">
+              <h2 className="text-xl font-bold tracking-tight mb-1">Send us a message</h2>
+              <p className="text-[13.5px] text-ink-secondary mb-6">Tell us a bit about what you need and we'll route it to the right team.</p>
+              <ContactForm />
+            </Card>
+          </Reveal>
 
-          <div className="lg:col-span-2 flex flex-col gap-4">
+          <Reveal direction="right" delay={0.1} blur className="lg:col-span-2 flex flex-col gap-4">
             <Photo icon={MapPin} tone="navy" ratio="square" rounded="xl" className="shadow-lg" alt="Mzobs office" />
             <Card pad>
               <div className="flex items-center gap-2 mb-3">
@@ -80,7 +86,7 @@ export default function Contact() {
                 </li>
               </ul>
             </Card>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -88,3 +94,4 @@ export default function Contact() {
     </div>
   )
 }
+

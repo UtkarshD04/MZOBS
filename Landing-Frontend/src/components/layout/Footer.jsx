@@ -3,18 +3,18 @@ import { FOOTER_DATA } from '../../lib/content'
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0B1220] text-white pt-20 pb-12 px-6 md:px-12 border-t border-white/10">
+    <footer className="bg-[#0B1220] text-white pt-20 pb-12 px-6 md:px-12 border-t border-slate-800 relative before:absolute before:-top-[1px] before:left-0 before:right-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-blue-500/40 before:to-transparent">
       <div className="max-w-7xl mx-auto space-y-16">
         {/* Main Footer Grid */}
-        <Reveal direction="up" className="grid grid-cols-1 md:grid-cols-12 gap-12">
+        <Reveal direction="up" duration={0.9} scale={0.94} blur className="grid grid-cols-1 md:grid-cols-12 gap-12">
           {/* Brand Column */}
           <div className="md:col-span-5 space-y-6">
-            <a href="#home" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white font-serif font-bold text-xl">
+            <a href="#home" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400/25 via-blue-500/25 to-indigo-600/30 backdrop-blur-md border border-white/25 flex items-center justify-center text-white font-serif font-bold text-xl shadow-[0_0_18px_rgba(59,130,246,0.2)] group-hover:scale-105 transition-transform duration-300">
                 M
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-lg leading-tight tracking-tight">{FOOTER_DATA.logoText}</span>
+                <span className="font-bold text-lg leading-tight tracking-tight group-hover:text-amber-300 transition-colors">{FOOTER_DATA.logoText}</span>
                 <span className="text-[9px] tracking-[0.2em] text-white/70 uppercase font-medium">{FOOTER_DATA.logoSub}</span>
               </div>
             </a>

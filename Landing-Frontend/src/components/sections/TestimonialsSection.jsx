@@ -35,13 +35,13 @@ export default function TestimonialsSection({ eyebrow, title, items }) {
           {testimonialItems.map((item) => (
             <StaggerItem
               key={item.id}
-              className="relative min-h-[380px] rounded-2xl overflow-hidden shadow-md group border border-slate-200/60 transition-transform duration-300 hover:-translate-y-1"
+              className="relative min-h-[380px] rounded-2xl overflow-hidden shadow-md group border border-slate-200/60 hover:shadow-lg transition-all duration-300 ease-out-premium hover:-translate-y-1.5"
             >
               {/* Client Portrait Photo */}
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-full h-full absolute inset-0 object-cover object-center brightness-90 group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-full absolute inset-0 object-cover object-center brightness-90 group-hover:scale-105 transition-transform duration-500 ease-out-premium"
               />
 
               {/* Dark Gradient Overlay */}

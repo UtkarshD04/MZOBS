@@ -1,32 +1,66 @@
 import { motion } from 'framer-motion'
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-}
-const item = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
-}
+export function StaggerGroup({
+  className,
+  children,
+  staggerDelay = 0.12,
+  delayChildren = 0,
+  amount = 0.12,
+  once = true,
+  ...props
+}) {
+  const containerVariants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: staggerDelay,
+        delayChildren: delayChildren,
+      },
+    },
+  }
 
-export function StaggerGroup({ className, children }) {
   return (
     <motion.div
       className={className}
-      variants={container}
+      variants={containerVariants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once, amount }}
+      {...props}
     >
       {children}
     </motion.div>
   )
 }
 
-export function StaggerItem({ className, children, ...props }) {
+export function StaggerItem({
+  className,
+  children,
+  y = 70,
+  scale = 0.88,
+  rotate = 2.5,
+  duration = 0.75,
+  ...props
+}) {
+  const itemVariants = {
+    hidden: { opacity: 0, y, scale, rotate },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      rotate: 0,
+      transition: {
+        duration,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  }
+
   return (
-    <motion.div className={className} variants={item} {...props}>
+    <motion.div className={className} variants={itemVariants} {...props}>
       {children}
     </motion.div>
   )
 }
+
+

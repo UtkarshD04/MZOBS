@@ -1,6 +1,7 @@
 import SectionBadge from '../ui/SectionBadge'
 import PillButton from '../ui/PillButton'
 import Reveal from '../ui/Reveal'
+import ParallaxImage from '../ui/ParallaxImage'
 import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { CASE_STUDIES_DATA } from '../../lib/content'
 
@@ -28,10 +29,11 @@ export default function CaseStudiesSection() {
               className="relative min-h-[420px] sm:min-h-[460px] rounded-3xl overflow-hidden shadow-lg border border-slate-200/60 group"
             >
               {/* Background Image */}
-              <img
+              <ParallaxImage
                 src={item.bgImage}
                 alt={item.title}
-                className="w-full h-full absolute inset-0 object-cover object-center brightness-[0.7] group-hover:scale-105 transition-transform duration-700"
+                offset={15}
+                className="w-full h-full absolute inset-0 object-cover object-center brightness-[0.7] group-hover:scale-105 transition-transform duration-700 ease-out-premium"
               />
 
               {/* Gradient Overlay */}
