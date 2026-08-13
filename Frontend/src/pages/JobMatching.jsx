@@ -1,25 +1,28 @@
-import { useState } from 'react'
-import { Sliders, MapPin, Bookmark, Sparkles, BarChart3, Users, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Sliders, MapPin, Bookmark, Sparkles, BarChart3, Briefcase, Users, ShieldCheck, CheckCircle2 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
-import Ring from '../components/ui/Ring'
 import { CompanyLogo } from '../components/ui/Avatar'
 import { PillTabs } from '../components/ui/Tabs'
 import { Select } from '../components/ui/Field'
 import EmptyState from '../components/ui/EmptyState'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
-import { JOBS, MOCK_INTERVIEW, RESUME, SKILL_TRACK } from '../lib/data'
+import { PageSkeleton } from '../components/ui/Skeleton'
+import ErrorState from '../components/ui/ErrorState'
 import { categoryOf } from '../lib/category'
 import { useApp } from '../context/AppContext'
-import { openApplyModal, openJobDetailModal } from '../lib/modals'
+import { openApplyModal, openJobDetailModal, fmtSalaryRange } from '../lib/modals'
+import { useProfileQuery } from '../hooks/useProfile'
+import { useJobsQuery } from '../hooks/useJobs'
+import { useApplicationsQuery } from '../hooks/useApplications'
 
-const eligible = RESUME.status === 'verified' && MOCK_INTERVIEW.status === 'completed'
+const SAVED_KEY = 'mzobs-saved-jobs'
 
-function JobCard({ job, saved, onToggleSave }) {
+function JobCard({ job, applied, eligible, saved, employeeTrack, onToggleSave, onApplied }) {
   const app = useApp()
-  const cat = categoryOf(job.category)
-  const onTrack = job.category === SKILL_TRACK.key
+  const cat = categoryOf(job.track)
+  const onTrack = !!job.track && job.track === employeeTrack
 
   return (
     <Card hover pad className="flex gap-4 items-start">
@@ -28,7 +31,7 @@ function JobCard({ job, saved, onToggleSave }) {
         <div className="flex justify-between flex-wrap gap-2">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <div className="text-[15px] font-semibold">{job.role}</div>
+              <div className="text-[15px] font-semibold">{job.title}</div>
               <Badge tone={cat.tone} dot={false}>
                 {cat.label}
               </Badge>
@@ -39,25 +42,24 @@ function JobCard({ job, saved, onToggleSave }) {
               )}
             </div>
             <div className="text-[13px] text-ink-secondary mt-0.5">
-              {job.co} · {job.loc} · {job.mode}
+              {job.company} · {job.location} · {job.workMode}
             </div>
             <div className="text-xs text-ink-tertiary mt-1.5 flex items-center gap-1">
-              <Users size={11} /> {job.openings} opening{job.openings > 1 ? 's' : ''} · Verified employer
+              <Users size={11} /> {job.vacancies} opening{job.vacancies > 1 ? 's' : ''} · Verified employer
             </div>
           </div>
-          <Ring value={job.match} size={44} thick={5} hero={job.match >= 90} />
         </div>
 
         <div className="flex items-center gap-3.5 mt-2.5 text-[13px] flex-wrap">
           <span className="flex items-center gap-1 text-ink-tertiary">
-            <MapPin size={12} /> {job.loc}
+            <MapPin size={12} /> {job.location}
           </span>
-          <span>{job.sal}</span>
+          <span>{fmtSalaryRange(job)}</span>
           <span className="text-xs text-ink-tertiary">Posted {job.posted}</span>
         </div>
 
         <div className="flex flex-wrap gap-1.5 mt-2.5">
-          {job.tags.map((t) => (
+          {(job.skills ?? []).map((t) => (
             <span key={t} className="text-[11px] font-semibold text-ink-secondary bg-surface-sunken px-2 py-1 rounded-md">
               {t}
             </span>
@@ -65,16 +67,16 @@ function JobCard({ job, saved, onToggleSave }) {
         </div>
 
         <div className="flex items-center gap-2 mt-3.5 flex-wrap">
-          {job.applied ? (
+          {applied ? (
             <Badge tone="green" icon={<CheckCircle2 size={11} />} dot={false}>
               Applied — with Mzobs
             </Badge>
           ) : (
-            <Button variant="primary" size="sm" disabled={!eligible} onClick={() => openApplyModal(app, job)}>
+            <Button variant="primary" size="sm" disabled={!eligible} onClick={() => openApplyModal(app, job, onApplied)}>
               Apply through Mzobs
             </Button>
           )}
-          <Button size="sm" onClick={() => openJobDetailModal(app, job)}>
+          <Button size="sm" onClick={() => openJobDetailModal(app, job, onApplied)}>
             View details
           </Button>
           <button onClick={onToggleSave} className={`ml-auto p-1.5 rounded-lg ${saved ? 'text-gold-strong' : 'text-ink-tertiary hover:bg-surface-hover hover:text-ink'}`}>
@@ -88,7 +90,15 @@ function JobCard({ job, saved, onToggleSave }) {
 
 export default function JobMatching() {
   const [tab, setTab] = useState(0)
-  const [saved, setSaved] = useState(() => new Set())
+  const [saved, setSaved] = useState(() => new Set(JSON.parse(localStorage.getItem(SAVED_KEY) ?? '[]')))
+
+  const { data: profile, isLoading: profileLoading } = useProfileQuery()
+  const { data: jobs = [], isLoading: jobsLoading, isError: jobsError, refetch: refetchJobs } = useJobsQuery()
+  const { data: applications = [], refetch: refetchApplications } = useApplicationsQuery()
+
+  useEffect(() => {
+    localStorage.setItem(SAVED_KEY, JSON.stringify([...saved]))
+  }, [saved])
 
   function toggleSave(id) {
     setSaved((s) => {
@@ -99,8 +109,24 @@ export default function JobMatching() {
     })
   }
 
-  const savedJobs = JOBS.filter((j) => saved.has(j.id))
-  const trackJobs = JOBS.filter((j) => j.category === SKILL_TRACK.key)
+  if (profileLoading || jobsLoading) return <PageSkeleton />
+  if (jobsError) return <ErrorState onRetry={refetchJobs} />
+
+  const eligible = profile?.resume?.status === 'verified'
+  const track = profile?.skillTrack
+  const appliedJobIds = new Set(applications.map((a) => a.jobId))
+  const savedJobs = jobs.filter((j) => saved.has(j.id))
+  const trackJobs = track?.key ? jobs.filter((j) => j.track === track.key) : []
+
+  const cardProps = (job) => ({
+    job,
+    applied: appliedJobIds.has(job.id),
+    eligible,
+    saved: saved.has(job.id),
+    employeeTrack: track?.key,
+    onToggleSave: () => toggleSave(job.id),
+    onApplied: refetchApplications,
+  })
 
   return (
     <StaggerGroup>
@@ -116,12 +142,12 @@ export default function JobMatching() {
           <ShieldCheck size={18} className={`mt-0.5 flex-shrink-0 ${eligible ? 'text-navy' : 'text-gold-strong'}`} />
           <div className="flex-1 min-w-0">
             <div className="text-[13.5px] font-semibold">
-              {eligible ? `You're eligible to apply — ${SKILL_TRACK.label}, Grade ${SKILL_TRACK.grade}` : 'Finish verification to unlock applications'}
+              {eligible ? `You're eligible to apply${track?.key ? ` — ${track.label || track.key}, Grade ${track.grade || '-'}` : ''}` : 'Finish verification to unlock applications'}
             </div>
             <p className="text-[13px] text-ink-secondary mt-0.5">
               {eligible
-                ? 'Your resume is verified and your mock interview is done. When you apply, Mzobs screens you, shortlists against the requirement, and forwards your resume to the company. You will see "Interview scheduled" the moment your profile is shared.'
-                : 'Applications open once your resume is verified and you have cleared the Mzobs mock interview round.'}
+                ? 'Your resume is verified. When you apply, Mzobs screens you, shortlists against the requirement, and forwards your resume to the company.'
+                : 'Applications open once your resume is verified by the Mzobs team.'}
             </p>
           </div>
         </Card>
@@ -133,37 +159,39 @@ export default function JobMatching() {
           <Button size="sm">
             <Sliders size={14} /> Filters
           </Button>
-          <Select className="h-8 text-[12.5px]" defaultValue="Best match">
-            <option>Best match</option>
+          <Select className="h-8 text-[12.5px]" defaultValue="Newest">
             <option>Newest</option>
-            <option>Salary</option>
-            <option>Most openings</option>
           </Select>
         </div>
       </StaggerItem>
 
       <StaggerItem>
-        {tab === 0 && (
-          <div className="flex flex-col gap-4">
-            {JOBS.map((j) => (
-              <JobCard key={j.id} job={j} saved={saved.has(j.id)} onToggleSave={() => toggleSave(j.id)} />
-            ))}
-          </div>
-        )}
+        {tab === 0 &&
+          (jobs.length ? (
+            <div className="flex flex-col gap-4">
+              {jobs.map((j) => (
+                <JobCard key={j.id} {...cardProps(j)} />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <EmptyState icon={Briefcase} title="No live openings right now" body="Check back soon — new requirements post here as employers pay for sourcing." />
+            </Card>
+          ))}
 
         {tab === 1 &&
           (trackJobs.length ? (
             <div className="flex flex-col gap-4">
               {trackJobs.map((j) => (
-                <JobCard key={j.id} job={j} saved={saved.has(j.id)} onToggleSave={() => toggleSave(j.id)} />
+                <JobCard key={j.id} {...cardProps(j)} />
               ))}
             </div>
           ) : (
             <Card>
               <EmptyState
                 icon={Sparkles}
-                title={`No live ${SKILL_TRACK.label} requirements right now`}
-                body="We'll notify you the moment a company posts one matching your track."
+                title={track?.key ? `No live ${track.label || track.key} requirements right now` : 'No track assigned yet'}
+                body={track?.key ? "We'll notify you the moment a company posts one matching your track." : 'Complete your mock interview to get a skill track assigned.'}
                 action={
                   <Button variant="primary" className="mt-2" onClick={() => setTab(0)}>
                     Browse all openings
@@ -177,7 +205,7 @@ export default function JobMatching() {
           (savedJobs.length ? (
             <div className="flex flex-col gap-4">
               {savedJobs.map((j) => (
-                <JobCard key={j.id} job={j} saved onToggleSave={() => toggleSave(j.id)} />
+                <JobCard key={j.id} {...cardProps(j)} />
               ))}
             </div>
           ) : (

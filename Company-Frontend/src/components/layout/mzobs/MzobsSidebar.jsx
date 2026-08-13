@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   LayoutDashboard,
@@ -18,24 +18,8 @@ import {
 } from 'lucide-react'
 import { useApp } from '../../../context/AppContext'
 import { cn } from '../../../lib/utils'
-import { QUEUE_COUNTS } from '../../../lib/mzobsData'
-
-const candidateOps = [
-  { to: '/app/candidates', label: 'Candidates', icon: Users },
-  { to: '/app/resumes', label: 'Resume Verification', icon: FileCheck, badge: QUEUE_COUNTS.resumes },
-  { to: '/app/mock-interviews', label: 'Mock Interviews', icon: Video, badge: QUEUE_COUNTS.mocks },
-]
-const employerOps = [
-  { to: '/app/companies', label: 'Companies', icon: Building2, badge: QUEUE_COUNTS.companies },
-  { to: '/app/requirements', label: 'Requirements', icon: Briefcase, badge: QUEUE_COUNTS.jobs },
-  { to: '/app/applications', label: 'Applications', icon: ClipboardList },
-  { to: '/app/dispatch', label: 'Resume Dispatch', icon: Send },
-]
-const business = [
-  { to: '/app/payments', label: 'Payments', icon: IndianRupee },
-  { to: '/app/team', label: 'Mzobs Team', icon: Users2 },
-  { to: '/app/settings', label: 'Settings', icon: Settings },
-]
+import { useDashboardQuery } from '../../../hooks/useDashboard'
+import { logout as clearAuth } from '../../../hooks/useAuth'
 
 function NavItem({ to, label, icon: Icon, badge, collapsed }) {
   return (
@@ -75,6 +59,31 @@ function Group({ label, items, collapsed }) {
 
 export default function MzobsSidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen } = useApp()
+  const navigate = useNavigate()
+  const { data: dash } = useDashboardQuery()
+  const kpis = dash?.kpis ?? {}
+
+  const candidateOps = [
+    { to: '/app/candidates', label: 'Candidates', icon: Users },
+    { to: '/app/resumes', label: 'Resume Verification', icon: FileCheck, badge: kpis.resumeQueue },
+    { to: '/app/mock-interviews', label: 'Mock Interviews', icon: Video, badge: kpis.mockQueue },
+  ]
+  const employerOps = [
+    { to: '/app/companies', label: 'Companies', icon: Building2, badge: kpis.companyQueue },
+    { to: '/app/requirements', label: 'Requirements', icon: Briefcase },
+    { to: '/app/applications', label: 'Applications', icon: ClipboardList },
+    { to: '/app/dispatch', label: 'Resume Dispatch', icon: Send },
+  ]
+  const business = [
+    { to: '/app/payments', label: 'Payments', icon: IndianRupee },
+    { to: '/app/team', label: 'Mzobs Team', icon: Users2 },
+    { to: '/app/settings', label: 'Settings', icon: Settings },
+  ]
+
+  function logout() {
+    clearAuth()
+    navigate('/login')
+  }
 
   return (
     <aside
@@ -92,10 +101,10 @@ export default function MzobsSidebar() {
 
       <div className="mt-auto pt-3 border-t border-border">
         <NavItem to="/app/support" label="Support Desk" icon={LifeBuoy} collapsed={sidebarCollapsed} />
-        <NavLink to="/login" className="flex items-center gap-[11px] px-2.5 py-[9px] rounded-[9px] cursor-pointer mb-0.5 text-[13.5px] font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink">
+        <div onClick={logout} className="flex items-center gap-[11px] px-2.5 py-[9px] rounded-[9px] cursor-pointer mb-0.5 text-[13.5px] font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink">
           <LogOut size={18} className="flex-shrink-0" />
           {!sidebarCollapsed && <span>Log out</span>}
-        </NavLink>
+        </div>
         <button
           onClick={() => setSidebarCollapsed((c) => !c)}
           className="hidden lg:flex items-center gap-2.5 px-2.5 py-2 rounded-[9px] text-ink-tertiary hover:bg-surface-hover hover:text-ink cursor-pointer text-[12.5px] w-full"

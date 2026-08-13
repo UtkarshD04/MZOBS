@@ -1,38 +1,17 @@
-import { mockResolve } from '../lib/api'
-import { TEAM } from '../data/mock'
-import { initialsOf } from '../lib/utils'
-
-const store = [...TEAM]
-let seq = store.length + 1
+import { apiClient } from '../lib/api'
 
 export function listTeam() {
-  return mockResolve([...store])
+  return apiClient.get('/team').then((r) => r.data)
 }
 
 export function inviteMember(input) {
-  const member = {
-    id: `TM-${seq++}`,
-    name: input.name,
-    initials: initialsOf(input.name),
-    role: input.role,
-    email: input.email,
-    status: 'invited',
-    lastActive: 'Never',
-    joinedOn: new Date().toISOString().slice(0, 10),
-  }
-  store.unshift(member)
-  return mockResolve(member, 550)
+  return apiClient.post('/team/invite', input).then((r) => r.data)
 }
 
 export function updateMemberRole(id, role) {
-  const idx = store.findIndex((m) => m.id === id)
-  if (idx === -1) return mockResolve(null)
-  store[idx] = { ...store[idx], role }
-  return mockResolve(store[idx], 350)
+  return apiClient.patch(`/team/${id}/role`, { role }).then((r) => r.data)
 }
 
 export function removeMember(id) {
-  const idx = store.findIndex((m) => m.id === id)
-  if (idx !== -1) store.splice(idx, 1)
-  return mockResolve(true, 400)
+  return apiClient.delete(`/team/${id}`).then((r) => r.data)
 }

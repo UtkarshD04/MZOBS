@@ -1,10 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, BarChart3, Briefcase, CalendarCheck2, CreditCard, FileCheck2, ShieldCheck, Users2 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
 import Avatar from '../components/ui/Avatar'
+import { EMPLOYER_SIGNIN_URL, EMPLOYER_SIGNUP_URL } from '../lib/config'
 
 const STATS = [
   ['12,400+', 'Verified candidates'],
@@ -32,8 +33,6 @@ const QUOTE = 'We used to spend weeks sifting resumes that went nowhere. With Mz
 const AUTHOR = { initials: 'RK', name: 'Rhea Kapoor', role: 'Head of Talent, Solace Technologies' }
 
 export default function Home() {
-  const navigate = useNavigate()
-
   return (
     <div className="min-h-screen bg-bg">
       {/* Nav */}
@@ -55,7 +54,7 @@ export default function Home() {
             <Link to="mailto:hiring@mzobs.com" className="hidden sm:inline-flex">
               <Button variant="ghost" size="md">Talk to us</Button>
             </Link>
-            <Button variant="primary" size="md" onClick={() => navigate('/dashboard')}>
+            <Button variant="primary" size="md" onClick={() => { window.location.href = EMPLOYER_SIGNIN_URL }}>
               Sign in <ArrowRight size={15} />
             </Button>
           </div>
@@ -91,7 +90,7 @@ export default function Home() {
             </p>
 
             <div className="flex items-center justify-center gap-3 mt-8 flex-wrap">
-              <Button variant="primary" size="lg" onClick={() => navigate('/dashboard')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
+              <Button variant="primary" size="lg" onClick={() => { window.location.href = EMPLOYER_SIGNIN_URL }} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
                 Sign in to your portal <ArrowRight size={16} />
               </Button>
               <Link to="mailto:hiring@mzobs.com">
@@ -175,16 +174,14 @@ export default function Home() {
         <Card className="bg-navy-950 border-none text-white text-center py-14 px-8">
           <ShieldCheck size={26} className="mx-auto text-gold-dot mb-4" />
           <h2 className="text-2xl font-bold tracking-tight">Ready to hire your next verified candidate?</h2>
-          <p className="text-white/65 text-[14.5px] mt-2.5 max-w-md mx-auto">Employer accounts are provisioned by our team — sign in if you already have one, or reach out to get started.</p>
+          <p className="text-white/65 text-[14.5px] mt-2.5 max-w-md mx-auto">Create your free employer account in minutes, or sign in if you already have one.</p>
           <div className="flex items-center justify-center gap-3 mt-6 flex-wrap">
-            <Button variant="primary" size="lg" onClick={() => navigate('/dashboard')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
-              Sign in <ArrowRight size={16} />
+            <Button variant="primary" size="lg" onClick={() => { window.location.href = EMPLOYER_SIGNUP_URL }} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
+              Create an account <ArrowRight size={16} />
             </Button>
-            <Link to="mailto:hiring@mzobs.com">
-              <Button variant="secondary" size="lg" className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25">
-                Talk to our team
-              </Button>
-            </Link>
+            <Button variant="secondary" size="lg" onClick={() => { window.location.href = EMPLOYER_SIGNIN_URL }} className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25">
+              Sign in
+            </Button>
           </div>
         </Card>
       </section>
@@ -197,7 +194,7 @@ export default function Home() {
             <span className="text-xs text-ink-tertiary">© {new Date().getFullYear()} Mzobs · Employer Portal</span>
           </div>
           <div className="flex items-center gap-5 flex-wrap text-xs text-ink-tertiary">
-            <Link to="/dashboard" className="hover:text-navy transition-colors duration-200">Sign in</Link>
+            <a href={EMPLOYER_SIGNIN_URL} className="hover:text-navy transition-colors duration-200">Sign in</a>
             <Link to="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</Link>
             <Link to="#terms" className="hover:text-navy transition-colors duration-200">Terms</Link>
             <Link to="mailto:hiring@mzobs.com" className="hover:text-navy transition-colors duration-200">Contact sales</Link>

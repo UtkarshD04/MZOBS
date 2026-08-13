@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions, Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
 import { Briefcase, CalendarCheck, FileCheck, LayoutDashboard, Search, Users } from 'lucide-react'
-import { JOBS } from '../../data/mock'
-import { CANDIDATES } from '../../data/mock'
+import { useJobsQuery } from '../../hooks/useJobs'
+import { useCandidatesQuery } from '../../hooks/useCandidates'
 import { cn } from '../../lib/utils'
 
 const staticPages = [
@@ -14,20 +14,20 @@ const staticPages = [
   { id: 'p-offers', label: 'Offers', sub: 'Track offer letters', to: '/offers', icon: FileCheck },
 ]
 
-const jobItems = JOBS.map((j) => ({ id: j.id, label: j.title, sub: `${j.department} · ${j.location}`, to: `/jobs`, icon: Briefcase }))
-const candidateItems = CANDIDATES.map((c) => ({ id: c.id, label: c.name, sub: c.appliedFor, to: `/candidates/${c.id}`, icon: Users }))
-
-const allItems = [...staticPages, ...jobItems, ...candidateItems]
-
 export default function CommandPalette({ open, onClose }) {
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
+  const { data: jobs = [] } = useJobsQuery()
+  const { data: candidates = [] } = useCandidatesQuery()
 
   const results = useMemo(() => {
     if (!query.trim()) return staticPages
     const q = query.toLowerCase()
+    const jobItems = jobs.map((j) => ({ id: j.id, label: j.title, sub: `${j.department} · ${j.location}`, to: `/jobs`, icon: Briefcase }))
+    const candidateItems = candidates.map((c) => ({ id: c.id, label: c.name, sub: c.appliedFor, to: `/candidates/${c.id}`, icon: Users }))
+    const allItems = [...staticPages, ...jobItems, ...candidateItems]
     return allItems.filter((i) => i.label.toLowerCase().includes(q) || i.sub.toLowerCase().includes(q)).slice(0, 8)
-  }, [query])
+  }, [query, jobs, candidates])
 
   function go(item) {
     navigate(item.to)

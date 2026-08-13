@@ -3,6 +3,7 @@ import { ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { Field, Input } from '../ui/Field'
 import Button, { goldSolidClass } from '../ui/Button'
 import { EMPLOYEE_APP_URL } from '../../lib/config'
+import { loginEmployee } from '../../lib/employeeAuth'
 
 const initialForm = { email: '', password: '' }
 
@@ -31,10 +32,13 @@ export default function EmployeeSigninForm() {
     if (Object.keys(nextErrors).length > 0) return
 
     setStatus('submitting')
-    // TODO: wire up to the real Frontend auth endpoint once this marketing
-    // site is connected to Backend / the employee app's auth API.
-    await new Promise((resolve) => setTimeout(resolve, 700))
-    window.location.href = `${EMPLOYEE_APP_URL}/app/dashboard`
+    try {
+      const { token } = await loginEmployee(form)
+      window.location.href = `${EMPLOYEE_APP_URL}/app/dashboard?token=${encodeURIComponent(token)}`
+    } catch (err) {
+      setStatus('idle')
+      setErrors({ form: err.message })
+    }
   }
 
   return (
@@ -70,6 +74,8 @@ export default function EmployeeSigninForm() {
           Forgot password?
         </a>
       </div>
+
+      {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
 
       <Button
         type="submit"

@@ -11,6 +11,12 @@ export default defineConfig({
     // fail loudly instead of silently hopping to another app's port
     strictPort: true,
     allowedHosts: ['.trycloudflare.com'],
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+    },
   },
   preview: {
     port: 4175,

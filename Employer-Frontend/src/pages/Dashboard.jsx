@@ -28,15 +28,19 @@ import FunnelChart from '../components/charts/FunnelChart'
 import TrendChart from '../components/charts/TrendChart'
 import DepartmentBarChart from '../components/charts/DepartmentBarChart'
 import { useDashboardQuery } from '../hooks/useDashboard'
-import { EMPLOYER_USER, COMPANY, PRICING } from '../data/mock'
+import { useCompanyQuery } from '../hooks/useCompany'
+import { useMeQuery } from '../hooks/useMe'
+import { PRICING } from '../data/mock'
 import { cn, fmtDateTime, fmtINR } from '../lib/utils'
 
 export default function Dashboard() {
   const navigate = useNavigate()
   const { data, isLoading, isError, refetch } = useDashboardQuery()
+  const { data: company, isLoading: companyLoading } = useCompanyQuery()
+  const { data: me, isLoading: meLoading } = useMeQuery()
 
-  if (isLoading) return <PageSkeleton />
-  if (isError || !data) return <ErrorState onRetry={() => refetch()} />
+  if (isLoading || companyLoading || meLoading) return <PageSkeleton />
+  if (isError || !data || !company || !me) return <ErrorState onRetry={() => refetch()} />
 
   const { stats, funnel, trend, departments, activity, upcomingInterviews } = data
 
@@ -52,8 +56,8 @@ export default function Dashboard() {
   return (
     <div>
       <PageHeader
-        title={`Welcome back, ${EMPLOYER_USER.name.split(' ')[0]}`}
-        subtitle={`Here's how hiring at ${COMPANY.name} is progressing this week.`}
+        title={`Welcome back, ${me.name.split(' ')[0]}`}
+        subtitle={`Here's how hiring at ${company.name} is progressing this week.`}
         actions={
           <>
             <Button variant="secondary" size="md" onClick={() => navigate('/candidates')}>
@@ -66,7 +70,7 @@ export default function Dashboard() {
         }
       />
 
-      {COMPANY.verificationStatus !== 'verified' && (
+      {company.verificationStatus !== 'verified' && (
         <Card pad className="mb-5 flex items-start gap-3 border-amber/40" style={{ background: 'var(--color-amber-tint)' }}>
           <span className="w-9 h-9 rounded-[10px] bg-surface text-amber flex items-center justify-center flex-shrink-0">
             <ShieldAlert size={17} />
@@ -117,7 +121,7 @@ export default function Dashboard() {
             <QuickAction icon={Plus} label="Raise a requirement" sub={`${fmtINR(PRICING.perOpeningFee)} per opening`} onClick={() => navigate('/jobs/new')} />
             <QuickAction icon={Package} label="Track resume batches" sub={`${stats.resumesReceived} profiles delivered`} onClick={() => navigate('/batches')} />
             <QuickAction icon={CalendarCheck} label="Schedule interviews" sub="Coordinate with your panel" onClick={() => navigate('/interviews')} />
-            <QuickAction icon={CreditCard} label="Billing & invoices" sub={`${COMPANY.openingsPurchased} openings billed`} onClick={() => navigate('/billing')} />
+            <QuickAction icon={CreditCard} label="Billing & invoices" sub={`${company.openingsPurchased} openings billed`} onClick={() => navigate('/billing')} />
           </CardBody>
         </Card>
       </div>

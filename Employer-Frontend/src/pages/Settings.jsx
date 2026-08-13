@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { AlertTriangle, KeyRound, Save, ShieldCheck, Smartphone } from 'lucide-react'
@@ -10,7 +10,8 @@ import { Field, Input } from '../components/ui/Field'
 import Switch from '../components/ui/Switch'
 import { Tabs } from '../components/ui/Tabs'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
-import { EMPLOYER_USER } from '../data/mock'
+import { PageSkeleton } from '../components/ui/Skeleton'
+import { useMeQuery, useUpdateMe } from '../hooks/useMe'
 
 const TAB_LABELS = ['Profile', 'Security', 'Notifications', 'Danger Zone']
 
@@ -18,6 +19,15 @@ export default function Settings() {
   const [tab, setTab] = useState(0)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [notifPrefs, setNotifPrefs] = useState({ candidates: true, interviews: true, offers: true, billing: true, product: false })
+  const { data: me, isLoading } = useMeQuery()
+  const updateMe = useUpdateMe()
+  const [name, setName] = useState('')
+
+  useEffect(() => {
+    if (me) setName(me.name)
+  }, [me])
+
+  if (isLoading || !me) return <PageSkeleton />
 
   return (
     <div>
@@ -31,16 +41,16 @@ export default function Settings() {
         {tab === 0 && (
           <CardBody className="max-w-xl">
             <div className="flex items-center gap-4 mb-5">
-              <Avatar initials={EMPLOYER_USER.initials} size="lg" />
+              <Avatar initials={me.initials} size="lg" />
               <div>
                 <Button variant="secondary" size="sm" onClick={() => toast.success('Profile photo updated')}>Change Photo</Button>
                 <p className="text-[11.5px] text-ink-tertiary mt-1.5">JPG or PNG, up to 2MB.</p>
               </div>
             </div>
-            <Field label="Full Name"><Input defaultValue={EMPLOYER_USER.name} /></Field>
-            <Field label="Role / Title"><Input defaultValue={EMPLOYER_USER.role} /></Field>
-            <Field label="Work Email"><Input type="email" defaultValue={EMPLOYER_USER.email} disabled /></Field>
-            <Button variant="primary" size="md" onClick={() => toast.success('Profile updated')}>
+            <Field label="Full Name"><Input value={name} onChange={(e) => setName(e.target.value)} /></Field>
+            <Field label="Role" hint="Managed from the Team page"><Input value={me.role} disabled /></Field>
+            <Field label="Work Email"><Input type="email" defaultValue={me.email} disabled /></Field>
+            <Button variant="primary" size="md" loading={updateMe.isPending} onClick={() => updateMe.mutate({ name })}>
               <Save size={15} /> Save Changes
             </Button>
           </CardBody>

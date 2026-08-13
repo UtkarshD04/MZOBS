@@ -1,13 +1,9 @@
-import { mockResolve } from '../lib/api'
-import { COMPANY } from '../data/mock'
-
-let store = { ...COMPANY }
+import { apiClient } from '../lib/api'
 
 export function getCompany() {
-  return mockResolve(store)
+  return apiClient.get('/company').then((r) => r.data)
 }
 
 export function updateCompany(input) {
-  store = { ...store, ...input }
-  return mockResolve(store, 500)
+  return apiClient.put('/company', input).then((r) => r.data)
 }

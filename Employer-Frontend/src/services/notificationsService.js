@@ -1,19 +1,13 @@
-import { mockResolve } from '../lib/api'
-import { NOTIFICATIONS } from '../data/mock'
-
-const store = [...NOTIFICATIONS]
+import { apiClient } from '../lib/api'
 
 export function listNotifications() {
-  return mockResolve([...store])
+  return apiClient.get('/notifications').then((r) => r.data)
 }
 
 export function markAsRead(id) {
-  const idx = store.findIndex((n) => n.id === id)
-  if (idx !== -1) store[idx] = { ...store[idx], unread: false }
-  return mockResolve(true, 200)
+  return apiClient.patch(`/notifications/${id}/read`).then((r) => r.data)
 }
 
 export function markAllRead() {
-  for (let i = 0; i < store.length; i++) store[i] = { ...store[i], unread: false }
-  return mockResolve(true, 300)
+  return apiClient.patch('/notifications/read-all').then((r) => r.data)
 }

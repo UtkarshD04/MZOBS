@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -16,6 +16,7 @@ import Badge from '../components/ui/Badge'
 import CountUp from '../components/ui/CountUp'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import CandidateJourneySection from '../components/sections/CandidateJourneySection'
+import { EMPLOYEE_SIGNIN_URL, EMPLOYEE_SIGNUP_URL } from '../lib/config'
 
 const STATS = [
   [12400, '+', 'Profiles verified'],
@@ -39,8 +40,6 @@ const ABOUT_STATS = [
 ]
 
 export default function Home() {
-  const navigate = useNavigate()
-
   return (
     <div className="min-h-screen bg-bg">
       {/* Nav */}
@@ -59,8 +58,8 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-2.5">
-            <Button variant="ghost" size="md" onClick={() => navigate('/app/dashboard')}>Sign in</Button>
-            <Button variant="primary" size="md" onClick={() => navigate('/app/dashboard')}>
+            <Button variant="ghost" size="md" onClick={() => (window.location.href = EMPLOYEE_SIGNIN_URL)}>Sign in</Button>
+            <Button variant="primary" size="md" onClick={() => (window.location.href = EMPLOYEE_SIGNUP_URL)}>
               Get started <ArrowRight size={15} />
             </Button>
           </div>
@@ -96,10 +95,10 @@ export default function Home() {
             </p>
 
             <div className="flex items-center justify-center gap-3 mt-8 flex-wrap">
-              <Button variant="primary" size="lg" onClick={() => navigate('/app/dashboard')} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
+              <Button variant="primary" size="lg" onClick={() => (window.location.href = EMPLOYEE_SIGNUP_URL)} className="bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
                 Create free account <ArrowRight size={16} />
               </Button>
-              <Button variant="secondary" size="lg" onClick={() => navigate('/app/dashboard')} className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25">
+              <Button variant="secondary" size="lg" onClick={() => (window.location.href = EMPLOYEE_SIGNIN_URL)} className="bg-white/5 border-white/15 text-white hover:bg-white/10 hover:border-white/25">
                 Sign in
               </Button>
             </div>
@@ -190,7 +189,7 @@ export default function Home() {
           <ShieldCheck size={26} className="mx-auto text-gold-dot mb-4" />
           <h2 className="text-2xl font-bold tracking-tight">Ready to start your placement journey?</h2>
           <p className="text-white/65 text-[14.5px] mt-2.5 max-w-md mx-auto">Free to join. Verified by our operations team before anything reaches an employer.</p>
-          <Button variant="primary" size="lg" onClick={() => navigate('/app/dashboard')} className="mt-6 bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
+          <Button variant="primary" size="lg" onClick={() => (window.location.href = EMPLOYEE_SIGNUP_URL)} className="mt-6 bg-gradient-to-br from-gold-dot to-gold-strong shadow-none hover:brightness-110">
             Create free account <ArrowRight size={16} />
           </Button>
         </Card>
@@ -204,7 +203,7 @@ export default function Home() {
             <span className="text-xs text-ink-tertiary">© {new Date().getFullYear()} Mzobs · Career Success Platform</span>
           </div>
           <div className="flex items-center gap-5 flex-wrap text-xs text-ink-tertiary">
-            <Link to="/app/dashboard" className="hover:text-navy transition-colors duration-200">Sign in</Link>
+            <a href={EMPLOYEE_SIGNIN_URL} className="hover:text-navy transition-colors duration-200">Sign in</a>
             <Link to="#privacy" className="hover:text-navy transition-colors duration-200">Privacy</Link>
             <Link to="#terms" className="hover:text-navy transition-colors duration-200">Terms</Link>
             <span className="flex items-center gap-1.5">

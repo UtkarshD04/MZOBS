@@ -22,6 +22,7 @@ export const queryKeys = {
   team: ['team'],
   notifications: ['notifications'],
   company: ['company'],
+  me: ['me'],
   billingSummary: ['billing', 'summary'],
   invoices: ['billing', 'invoices'],
 }

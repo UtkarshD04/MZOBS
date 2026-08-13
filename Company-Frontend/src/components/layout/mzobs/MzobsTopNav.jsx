@@ -6,7 +6,8 @@ import Avatar from '../../ui/Avatar'
 import FloatingPanel from '../../ui/FloatingPanel'
 import Badge from '../../ui/Badge'
 import MzobsNotificationsPanel from './MzobsNotificationsPanel'
-import { MZOBS_USER, QUEUE_COUNTS } from '../../../lib/mzobsData'
+import { useMeQuery, logout as clearAuth } from '../../../hooks/useAuth'
+import { useDashboardQuery } from '../../../hooks/useDashboard'
 
 export default function MzobsTopNav() {
   const app = useApp()
@@ -14,6 +15,13 @@ export default function MzobsTopNav() {
   const navigate = useNavigate()
   const bellRef = useRef(null)
   const avatarRef = useRef(null)
+  const { data: me } = useMeQuery()
+  const { data: dash } = useDashboardQuery()
+
+  function logout() {
+    clearAuth()
+    navigate('/login')
+  }
 
   useEffect(() => {
     function onClick(e) {
@@ -24,7 +32,7 @@ export default function MzobsTopNav() {
     return () => document.removeEventListener('click', onClick)
   }, [setDrawerOpen, setAvatarMenuOpen])
 
-  const pending = QUEUE_COUNTS.resumes + QUEUE_COUNTS.companies + QUEUE_COUNTS.jobs
+  const pending = (dash?.kpis?.resumeQueue ?? 0) + (dash?.kpis?.companyQueue ?? 0)
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 z-[60] flex items-center gap-4 px-5 bg-surface/90 backdrop-blur-xl border-b border-border">
@@ -86,14 +94,14 @@ export default function MzobsTopNav() {
             }}
             className="flex items-center gap-2 pr-2 pl-1 py-1 rounded-full cursor-pointer hover:bg-surface-hover"
           >
-            <Avatar initials={MZOBS_USER.initials} />
+            <Avatar initials={me?.initials} />
             <ChevronDown size={14} className="text-ink-tertiary max-sm:hidden" />
           </button>
           <div data-panel="avatar">
             <FloatingPanel open={avatarMenuOpen} width={240}>
               <div className="px-4 py-3.5 border-b border-border">
-                <div className="text-[13px] font-semibold">{MZOBS_USER.name}</div>
-                <div className="text-xs text-ink-tertiary">{MZOBS_USER.role}</div>
+                <div className="text-[13px] font-semibold">{me?.name}</div>
+                <div className="text-xs text-ink-tertiary">{me?.role}</div>
                 <div className="flex items-center gap-1 text-[11px] text-green font-semibold mt-1.5">
                   <ShieldCheck size={12} /> Mzobs staff account
                 </div>
@@ -121,7 +129,7 @@ export default function MzobsTopNav() {
                 <div
                   onClick={() => {
                     setAvatarMenuOpen(false)
-                    navigate('/login')
+                    logout()
                   }}
                   className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px] text-red"
                 >

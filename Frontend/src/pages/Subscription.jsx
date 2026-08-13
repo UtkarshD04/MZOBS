@@ -5,8 +5,11 @@ import Button from '../components/ui/Button'
 import CountUp from '../components/ui/CountUp'
 import { TableWrap, Table, Tr, Td } from '../components/ui/Table'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
-import { INVOICES, PROGRAM_FEE, SUBSCRIPTION, USER } from '../lib/data'
+import { PageSkeleton } from '../components/ui/Skeleton'
+import ErrorState from '../components/ui/ErrorState'
 import { fmtINR } from '../lib/utils'
+import { useSubscriptionQuery } from '../hooks/useSubscription'
+import { useProfileQuery } from '../hooks/useProfile'
 
 const UNLOCKS = [
   [ShieldCheck, 'Resume verification', 'Our team reviews your resume line by line and verifies your work history before any employer sees it.'],
@@ -18,11 +21,19 @@ const UNLOCKS = [
 ]
 
 export default function Subscription() {
+  const { data: subscription, isLoading: subLoading, isError: subError, refetch: refetchSub } = useSubscriptionQuery()
+  const { data: profile, isLoading: profileLoading, isError: profileError, refetch: refetchProfile } = useProfileQuery()
+
+  if (subLoading || profileLoading) return <PageSkeleton />
+  if (subError || profileError) return <ErrorState onRetry={() => (subError ? refetchSub() : refetchProfile())} />
+
+  const fee = subscription.amount ?? 99
+
   return (
     <StaggerGroup>
       <StaggerItem className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Subscription</h1>
-        <p className="text-sm text-ink-secondary mt-1">Your one-time ₹{PROGRAM_FEE} Placement Support Programme.</p>
+        <p className="text-sm text-ink-secondary mt-1">Your one-time ₹{fee} Placement Support Programme.</p>
       </StaggerItem>
 
       <StaggerItem>
@@ -36,20 +47,18 @@ export default function Subscription() {
           />
           <div className="flex items-center justify-between flex-wrap gap-4 relative">
             <div>
-              <Badge dot={false} className="!bg-white/15 !text-white">
-                Active
+              <Badge dot={false} className={subscription.status === 'paid' ? '!bg-white/15 !text-white' : '!bg-red/20 !text-white'}>
+                {subscription.status === 'paid' ? 'Active' : 'Inactive'}
               </Badge>
-              <div className="text-2xl font-bold tracking-tight mt-2.5">{SUBSCRIPTION.name}</div>
+              <div className="text-2xl font-bold tracking-tight mt-2.5">Placement Support Programme</div>
               <div className="text-[13px] text-white/70 mt-1.5">
-                Purchased {SUBSCRIPTION.purchasedOn} · One-time payment · No renewal, no monthly fee
+                {subscription.paidOn ? `Purchased ${new Date(subscription.paidOn).toLocaleDateString('en-IN')} · ` : ''}One-time payment · No renewal, no monthly fee
               </div>
-              <div className="text-[13px] text-white/70 mt-1">
-                Candidate ID {USER.candidateId}
-              </div>
+              <div className="text-[13px] text-white/70 mt-1">Candidate ID {profile.id}</div>
             </div>
             <div className="text-right">
               <div className="text-[30px] font-bold">
-                <CountUp value={PROGRAM_FEE} prefix="₹" duration={900} />
+                <CountUp value={fee} prefix="₹" duration={900} />
               </div>
               <div className="text-xs text-white/60">Paid once, valid for life</div>
             </div>
@@ -63,14 +72,14 @@ export default function Subscription() {
           <div>
             <div className="text-[13.5px] font-semibold">This is placement support, not a job guarantee</div>
             <p className="text-[13px] text-ink-secondary mt-1">
-              The ₹{PROGRAM_FEE} fee covers verification, a mock interview, training and getting your resume in front of hiring companies. Whether you
+              The ₹{fee} fee covers verification, a mock interview, training and getting your resume in front of hiring companies. Whether you
               are selected is the employer's decision — we do not promise a job, and we never charge you again at any stage.
             </p>
           </div>
         </Card>
       </StaggerItem>
 
-      <StaggerItem className="text-xl font-bold mb-3">What your ₹{PROGRAM_FEE} unlocks</StaggerItem>
+      <StaggerItem className="text-xl font-bold mb-3">What your ₹{fee} unlocks</StaggerItem>
       <StaggerItem className="grid md:grid-cols-3 gap-5 mb-6">
         {UNLOCKS.map(([Icon, title, desc]) => (
           <Card key={title} pad>
@@ -118,21 +127,25 @@ export default function Subscription() {
           </CardHead>
           <TableWrap className="border-none rounded-none">
             <Table columns={['Description', 'Date', 'Amount', 'Status', '']}>
-              {INVOICES.map((i) => (
-                <Tr key={i.id}>
-                  <Td>{i.desc}</Td>
-                  <Td>{i.date}</Td>
-                  <Td className="font-bold">{fmtINR(i.amount)}</Td>
+              {subscription.status === 'paid' ? (
+                <Tr>
+                  <Td>Mzobs placement programme — one-time fee</Td>
+                  <Td>{subscription.paidOn ? new Date(subscription.paidOn).toLocaleDateString('en-IN') : ''}</Td>
+                  <Td className="font-bold">{fmtINR(fee)}</Td>
                   <Td>
                     <Badge tone="green">Paid</Badge>
                   </Td>
                   <Td>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" disabled>
                       <Download size={14} /> Invoice
                     </Button>
                   </Td>
                 </Tr>
-              ))}
+              ) : (
+                <Tr>
+                  <Td colSpan={5}>No payment recorded yet.</Td>
+                </Tr>
+              )}
             </Table>
           </TableWrap>
         </Card>

@@ -1,8 +1,10 @@
 import SectionBadge from '../ui/SectionBadge'
-import PillButton from '../ui/PillButton'
+// PillButton removed — featured card removed
 import Reveal from '../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { SERVICES_DATA } from '../../lib/content'
+import Photo from './Photo'
+import { motion } from 'framer-motion'
 
 export default function ExpertiseGrid({
   eyebrow,
@@ -42,69 +44,57 @@ export default function ExpertiseGrid({
         {/* 2-Column Grid */}
         <div className={`grid lg:grid-cols-12 gap-8 items-stretch ${reverse ? 'lg:flex-row-reverse' : ''}`}>
           {/* Left 2x2 Services Grid */}
-          <StaggerGroup className="lg:col-span-7 grid sm:grid-cols-2 gap-5">
+          <StaggerGroup className="lg:col-span-12 grid sm:grid-cols-2 gap-5">
             {servicesList.map((service, i) => {
               const Icon = service.icon
-              return (
-                <StaggerItem
-                  key={i}
-                  className="bg-white rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group"
-                >
-                  {service.image && (
-                    <div className="h-36 w-full overflow-hidden relative bg-slate-100">
-                      <img
-                        src={service.image}
-                        alt={service.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
 
-                      {/* Icon overlay on top right */}
-                      {Icon && (
-                        <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-sm flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all duration-300">
-                          <Icon size={18} strokeWidth={1.8} />
+              return (
+                <StaggerItem key={i} className="w-full">
+                  <motion.div
+                    className="bg-white border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group"
+                    initial={{ borderRadius: 8, opacity: 0, y: 8 }}
+                    whileInView={{ borderRadius: 28, opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ borderRadius: 8 }}
+                  >
+                      {service.image && (
+                        <div className="h-36 w-full overflow-hidden relative bg-slate-100">
+                          <Photo
+                            src={service.image}
+                            alt={service.title}
+                            rounded="xl"
+                            ratio="video"
+                            className="w-full h-full object-cover object-right group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
+
+                          {/* Icon overlay on top right */}
+                          {Icon && (
+                            <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-sm flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all duration-300">
+                              <Icon size={18} strokeWidth={1.8} />
+                            </div>
+                          )}
                         </div>
                       )}
-                    </div>
-                  )}
 
-                  <div className="p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-base font-bold text-[#0B1220] mb-1.5 group-hover:text-blue-900 transition-colors">
-                        {service.title}
-                      </h3>
-                      <p className="text-xs text-slate-600 leading-relaxed">
-                        {service.desc}
-                      </p>
-                    </div>
-                  </div>
+                      <div className="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="text-base font-bold text-[#0B1220] mb-1.5 group-hover:text-blue-900 transition-colors">
+                            {service.title}
+                          </h3>
+                          <p className="text-xs text-slate-600 leading-relaxed">
+                            {service.desc}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
                 </StaggerItem>
               )
             })}
           </StaggerGroup>
 
-          {/* Right Featured Card with Background Image */}
-          <Reveal direction="right" delay={0.1} className="lg:col-span-5 relative min-h-75 rounded-3xl overflow-hidden shadow-lg group">
-            <img
-              src={SERVICES_DATA.featuredCard.bgImage}
-              alt="Start your hiring journey"
-              className="w-full h-full object-cover object-center brightness-105 contrast-[1.05] saturate-[1.05] group-hover:scale-105 transition-all duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220]/75 via-[#0B1220]/15 to-transparent flex flex-col justify-end p-8 sm:p-10 space-y-6">
-              <h3 className="text-2xl sm:text-3xl font-sans font-medium text-white tracking-tight leading-snug">
-                {SERVICES_DATA.featuredCard.titlePrefix}
-                <span className="font-serif italic font-normal text-slate-100">
-                  {SERVICES_DATA.featuredCard.titleItalic}
-                </span>
-              </h3>
-              <div>
-                <PillButton href={ctaHref || "#contact"} variant="white">
-                  {ctaLabel || SERVICES_DATA.featuredCard.ctaText}
-                </PillButton>
-              </div>
-            </div>
-          </Reveal>
+          {/* Featured card removed — showing only 2x2 service cards */}
         </div>
       </div>
     </section>

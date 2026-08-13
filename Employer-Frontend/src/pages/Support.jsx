@@ -6,6 +6,7 @@ import Button from '../components/ui/Button'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
 import Accordion from '../components/ui/Accordion'
 import { useState } from 'react'
+import { useSubmitTicket } from '../hooks/useSupport'
 
 const FAQS = [
   { question: 'What exactly do I pay for?', answer: '₹2,000 per opening, paid upfront. For every opening you pay for, Mzobs delivers 5 screened resumes — so 100 openings means 500 profiles to choose from. There is no plan, no monthly fee and no success fee.' },
@@ -18,6 +19,7 @@ const FAQS = [
 
 export default function Support() {
   const [form, setForm] = useState({ subject: '', category: 'General', message: '' })
+  const submitTicket = useSubmitTicket()
 
   return (
     <div>
@@ -58,13 +60,19 @@ export default function Support() {
               variant="primary"
               size="md"
               className="w-full"
+              loading={submitTicket.isPending}
               onClick={() => {
                 if (!form.subject || !form.message) {
                   toast.error('Please fill in a subject and message.')
                   return
                 }
-                toast.success('Support ticket submitted — we\'ll respond within 24 hours.')
-                setForm({ subject: '', category: 'General', message: '' })
+                submitTicket.mutate(form, {
+                  onSuccess: () => {
+                    toast.success('Support ticket submitted — we\'ll respond within 24 hours.')
+                    setForm({ subject: '', category: 'General', message: '' })
+                  },
+                  onError: () => toast.error('Could not submit your ticket. Please try again.'),
+                })
               }}
             >
               <LifeBuoy size={15} /> Submit Ticket

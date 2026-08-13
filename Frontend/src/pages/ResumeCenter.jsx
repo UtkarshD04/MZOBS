@@ -1,21 +1,43 @@
-import { Upload, RotateCw, FileText, Download, CheckCircle2, Zap, Check, ShieldCheck, Clock, Send } from 'lucide-react'
+import { useRef } from 'react'
+import { Upload, FileText, Download, CheckCircle2, ShieldCheck, Clock, Send } from 'lucide-react'
 import Card, { CardHead } from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Ring from '../components/ui/Ring'
-import Bar from '../components/ui/Bar'
 import Button from '../components/ui/Button'
 import Stepper from '../components/ui/Stepper'
 import { TableWrap, Table, Tr, Td } from '../components/ui/Table'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
+import { PageSkeleton } from '../components/ui/Skeleton'
+import ErrorState from '../components/ui/ErrorState'
 import { useApp } from '../context/AppContext'
-import { openVersionCompareModal } from '../lib/modals'
-import { RESUME, RESUME_CHECKS, RESUME_HISTORY } from '../lib/data'
+import { useResumeQuery, useUploadResumeMutation } from '../hooks/useResume'
+import { FILE_BASE_URL } from '../lib/config'
 
 const VERIFICATION_STEPS = ['Uploaded', 'Received by Mzobs', 'Expert review', 'Verified', 'Eligible for dispatch']
 
 export default function ResumeCenter() {
   const app = useApp()
-  const verified = RESUME.status === 'verified'
+  const fileInputRef = useRef(null)
+  const { data, isLoading, isError, refetch } = useResumeQuery()
+  const uploadResume = useUploadResumeMutation()
+
+  if (isLoading) return <PageSkeleton />
+  if (isError) return <ErrorState onRetry={refetch} />
+
+  const resume = data?.resume ?? {}
+  const history = data?.resumeHistory ?? []
+  const verified = resume.status === 'verified'
+  const stepIndex = resume.status === 'none' ? -1 : verified ? 4 : resume.status === 'pending' ? 2 : 2
+
+  function handleFilePicked(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    uploadResume.mutate(file, {
+      onSuccess: () => app.addToast('success', 'Resume uploaded — sent to the Mzobs team for verification'),
+      onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Upload failed. Please try again.'),
+    })
+    e.target.value = ''
+  }
 
   return (
     <StaggerGroup>
@@ -25,11 +47,9 @@ export default function ResumeCenter() {
           <p className="text-sm text-ink-secondary mt-1">Upload your resume here — the Mzobs team verifies it before any employer sees it.</p>
         </div>
         <div className="flex gap-2.5">
-          <Button onClick={() => openVersionCompareModal(app)}>
-            <RotateCw size={15} /> Compare versions
-          </Button>
-          <Button variant="primary" onClick={() => app.addToast('success', 'Resume uploaded — sent to the Mzobs team for verification')}>
-            <Upload size={15} /> Upload new resume
+          <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={handleFilePicked} />
+          <Button variant="primary" onClick={() => fileInputRef.current?.click()} disabled={uploadResume.isPending}>
+            <Upload size={15} /> {uploadResume.isPending ? 'Uploading...' : resume.status === 'none' ? 'Upload resume' : 'Upload new resume'}
           </Button>
         </div>
       </StaggerItem>
@@ -38,20 +58,30 @@ export default function ResumeCenter() {
         <Card pad>
           <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
             <span className="text-[15px] font-semibold">Verification status</span>
-            <Badge tone={verified ? 'green' : 'gold'}>{verified ? 'Verified by Mzobs' : 'Pending verification'}</Badge>
+            <Badge tone={verified ? 'green' : resume.status === 'none' ? 'navy' : 'gold'}>
+              {verified ? 'Verified by Mzobs' : resume.status === 'none' ? 'No resume uploaded' : resume.status === 'changes' ? 'Changes requested' : resume.status === 'rejected' ? 'Rejected' : 'Pending verification'}
+            </Badge>
           </div>
           <Stepper
             steps={VERIFICATION_STEPS.map((label, i) => ({
               label,
-              state: verified ? 'done' : i < 2 ? 'done' : i === 2 ? 'current' : '',
+              state: stepIndex < 0 ? '' : verified ? 'done' : i < stepIndex ? 'done' : i === stepIndex ? 'current' : '',
             }))}
           />
           <p className="text-[13px] text-ink-secondary mt-6 pt-5 border-t border-border">
             {verified ? (
               <>
-                Verified on <b className="text-ink">{RESUME.verifiedOn}</b> by <b className="text-ink">{RESUME.reviewer}</b> ({RESUME.reviewerRole}).
-                Your resume is now eligible to be sent to hiring companies when a matching requirement opens.
+                Verified on <b className="text-ink">{new Date(resume.verifiedOn).toLocaleDateString('en-IN')}</b>
+                {resume.reviewer ? (
+                  <>
+                    {' '}
+                    by <b className="text-ink">{resume.reviewer}</b> {resume.reviewerRole ? `(${resume.reviewerRole})` : ''}
+                  </>
+                ) : null}
+                . Your resume is now eligible to be sent to hiring companies when a matching requirement opens.
               </>
+            ) : resume.status === 'none' ? (
+              <>Upload your resume to start the Mzobs verification process.</>
             ) : (
               <>Our verification team usually clears resumes within 24–48 hours. You'll get a notification the moment it's decided.</>
             )}
@@ -59,122 +89,90 @@ export default function ResumeCenter() {
         </Card>
       </StaggerItem>
 
-      <StaggerItem className="grid lg:grid-cols-[1.3fr_1fr] gap-5 mb-4">
-        <Card pad>
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-[15px] font-semibold">Current resume</span>
-            <Badge tone={verified ? 'green' : 'gold'}>{verified ? 'Verified' : 'Under review'}</Badge>
-          </div>
-          <div className="flex items-center gap-3.5 p-3.5 bg-surface-sunken rounded-xl">
-            <FileText size={30} className="text-navy flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <div className="text-[14px] font-semibold truncate">{RESUME.file}</div>
-              <div className="text-xs text-ink-tertiary mt-1">
-                Version {RESUME.version} · Uploaded {RESUME.uploadedOn} · Reviewed by {RESUME.reviewer}
-              </div>
+      {resume.status !== 'none' && (
+        <StaggerItem className="grid lg:grid-cols-[1.3fr_1fr] gap-5 mb-4">
+          <Card pad>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[15px] font-semibold">Current resume</span>
+              <Badge tone={verified ? 'green' : 'gold'}>{verified ? 'Verified' : 'Under review'}</Badge>
             </div>
-            <Button size="sm">
-              <Download size={14} /> Download
-            </Button>
-          </div>
-          <div className="text-xs text-ink-tertiary mt-3 flex items-center gap-1">
-            <CheckCircle2 size={12} className="text-green" /> Passed ATS compatibility check on {RESUME.verifiedOn}
-          </div>
-          {RESUME.note && (
-            <div className="mt-4 pt-4 border-t border-border">
-              <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-1.5">Reviewer note</div>
-              <p className="text-[13px] text-ink-secondary">{RESUME.note}</p>
-            </div>
-          )}
-        </Card>
-        <Card pad className="flex flex-col items-center justify-center text-center">
-          <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-2">Verification Score</div>
-          <Ring value={RESUME.score} size={96} thick={9} hero />
-          <div className="text-[13px] text-ink-secondary mt-2.5">Assigned by the Mzobs verification team</div>
-          <div className="text-xs text-ink-tertiary mt-1">A higher score means you're shortlisted earlier in a dispatch batch.</div>
-        </Card>
-      </StaggerItem>
-
-      <StaggerItem className="grid lg:grid-cols-2 gap-5 mb-4">
-        <Card>
-          <CardHead>
-            <span className="text-[15px] font-semibold">What we checked</span>
-            <span className="text-xs text-ink-tertiary">Mzobs verification standard</span>
-          </CardHead>
-          <div className="p-[22px] flex flex-col gap-3.5">
-            {RESUME_CHECKS.map(([label, v, max, note]) => (
-              <div key={label}>
-                <div className="flex justify-between text-[13px] mb-1.5">
-                  <span>{label}</span>
-                  <span className="text-ink-secondary">
-                    {v}/{max}
-                  </span>
+            <div className="flex items-center gap-3.5 p-3.5 bg-surface-sunken rounded-xl">
+              <FileText size={30} className="text-navy flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="text-[14px] font-semibold truncate">{resume.file}</div>
+                <div className="text-xs text-ink-tertiary mt-1">
+                  Version {resume.version} · Uploaded {new Date(resume.uploadedOn).toLocaleDateString('en-IN')}
+                  {resume.reviewer ? ` · Reviewed by ${resume.reviewer}` : ''}
                 </div>
-                <Bar value={(v / max) * 100} thin />
-                <div className="text-[11.5px] text-ink-tertiary mt-1">{note}</div>
               </div>
-            ))}
-          </div>
-        </Card>
-        <Card>
-          <CardHead>
-            <span className="text-[15px] font-semibold">Suggestions to improve</span>
-          </CardHead>
-          <div className="p-[22px] flex flex-col gap-3.5">
-            <div className="flex gap-2.5">
-              <div className="w-[30px] h-[30px] rounded-[9px] bg-gold-tint text-gold-strong flex items-center justify-center flex-shrink-0">
-                <Zap size={14} />
-              </div>
-              <div className="text-[13px]">Add 2–3 more quantified achievements to your most recent role (e.g. "improved X by 20%").</div>
+              {resume.url && (
+                <Button size="sm" onClick={() => window.open(`${FILE_BASE_URL}${resume.url}`, '_blank')}>
+                  <Download size={14} /> Download
+                </Button>
+              )}
             </div>
-            <div className="flex gap-2.5">
-              <div className="w-[30px] h-[30px] rounded-[9px] bg-gold-tint text-gold-strong flex items-center justify-center flex-shrink-0">
-                <Zap size={14} />
+            {verified && (
+              <div className="text-xs text-ink-tertiary mt-3 flex items-center gap-1">
+                <CheckCircle2 size={12} className="text-green" /> Verified on {new Date(resume.verifiedOn).toLocaleDateString('en-IN')}
               </div>
-              <div className="text-[13px]">Include "Data Visualization" — it appears in most Analytics track requirements.</div>
-            </div>
-            <div className="flex gap-2.5">
-              <div className="w-[30px] h-[30px] rounded-[9px] bg-green-tint text-green flex items-center justify-center flex-shrink-0">
-                <Check size={14} />
+            )}
+            {resume.note && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-1.5">Reviewer note</div>
+                <p className="text-[13px] text-ink-secondary">{resume.note}</p>
               </div>
-              <div className="text-[13px]">Formatting is clean and ATS-parsable — no changes needed.</div>
+            )}
+          </Card>
+          <Card pad className="flex flex-col items-center justify-center text-center">
+            <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-2">Verification Score</div>
+            <Ring value={resume.score ?? 0} size={96} thick={9} hero={!!resume.score} />
+            <div className="text-[13px] text-ink-secondary mt-2.5">
+              {resume.score != null ? 'Assigned by the Mzobs verification team' : 'Assigned once a reviewer scores your resume'}
             </div>
-            <div className="mt-1 pt-4 border-t border-border flex items-start gap-2.5">
-              <Send size={15} className="text-navy mt-0.5 flex-shrink-0" />
-              <div className="text-[12.5px] text-ink-secondary">
-                Re-uploading resets verification. Your new version goes back into the Mzobs queue, and only the verified version is sent to employers.
-              </div>
-            </div>
+            <div className="text-xs text-ink-tertiary mt-1">A higher score means you're shortlisted earlier in a dispatch batch.</div>
+          </Card>
+        </StaggerItem>
+      )}
+
+      <StaggerItem className="mb-4">
+        <Card pad className="flex items-start gap-3">
+          <Send size={15} className="text-navy mt-0.5 flex-shrink-0" />
+          <div className="text-[12.5px] text-ink-secondary">
+            Re-uploading resets verification. Your new version goes back into the Mzobs queue, and only the verified version is sent to employers.
           </div>
         </Card>
       </StaggerItem>
 
-      <StaggerItem>
-        <Card>
-          <CardHead>
-            <span className="text-[15px] font-semibold">Upload history</span>
-          </CardHead>
-          <TableWrap className="border-none rounded-none">
-            <Table columns={['Version', 'Uploaded', 'Score', 'Mzobs decision', '']}>
-              {RESUME_HISTORY.map((r) => (
-                <Tr key={r.version}>
-                  <Td className="font-bold">{r.version}</Td>
-                  <Td>{r.uploadedOn}</Td>
-                  <Td className="font-bold">{r.score}</Td>
-                  <Td>
-                    <Badge tone={r.tone}>{r.status}</Badge>
-                  </Td>
-                  <Td>
-                    <Button variant="ghost" size="sm">
-                      <Download size={14} />
-                    </Button>
-                  </Td>
-                </Tr>
-              ))}
-            </Table>
-          </TableWrap>
-        </Card>
-      </StaggerItem>
+      {history.length > 0 && (
+        <StaggerItem>
+          <Card>
+            <CardHead>
+              <span className="text-[15px] font-semibold">Upload history</span>
+            </CardHead>
+            <TableWrap className="border-none rounded-none">
+              <Table columns={['Version', 'Uploaded', 'Score', 'Mzobs decision', '']}>
+                {history.map((r) => (
+                  <Tr key={r.version}>
+                    <Td className="font-bold">{r.version}</Td>
+                    <Td>{r.uploadedOn ? new Date(r.uploadedOn).toLocaleDateString('en-IN') : ''}</Td>
+                    <Td className="font-bold">{r.score ?? '—'}</Td>
+                    <Td>
+                      <Badge tone={r.status === 'verified' ? 'green' : r.status === 'rejected' ? 'red' : 'gold'}>{r.status}</Badge>
+                    </Td>
+                    <Td>
+                      {r.url && (
+                        <Button variant="ghost" size="sm" onClick={() => window.open(`${FILE_BASE_URL}${r.url}`, '_blank')}>
+                          <Download size={14} />
+                        </Button>
+                      )}
+                    </Td>
+                  </Tr>
+                ))}
+              </Table>
+            </TableWrap>
+          </Card>
+        </StaggerItem>
+      )}
 
       <StaggerItem className="mt-5">
         <Card pad className="flex items-start gap-3">

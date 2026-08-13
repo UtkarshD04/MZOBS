@@ -5,17 +5,35 @@ import Button from '../components/ui/Button'
 import { CompanyLogo } from '../components/ui/Avatar'
 import { TableWrap, Table, Tr, Td } from '../components/ui/Table'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
+import { PageSkeleton } from '../components/ui/Skeleton'
+import ErrorState from '../components/ui/ErrorState'
+import EmptyState from '../components/ui/EmptyState'
 import { useApp } from '../context/AppContext'
 import { openRescheduleModal } from '../lib/modals'
-import { INTERVIEW_SCHEDULED } from '../lib/data'
+import { useInterviewsQuery } from '../hooks/useInterviews'
 
-const EVENT_DAYS = [6, 9, 14]
-const TODAY = 5
-const LEAD_BLANKS = 5
-const DAYS_IN_MONTH = 31
+const TODAY = new Date()
+const LEAD_BLANKS = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1).getDay()
+const DAYS_IN_MONTH = new Date(TODAY.getFullYear(), TODAY.getMonth() + 1, 0).getDate()
+
+const STATUS_TONE = { Confirmed: 'gold', 'Awaiting confirmation': 'gold', Completed: 'green', Cancelled: 'red', Rescheduled: 'navy' }
 
 export default function InterviewCenter() {
   const app = useApp()
+  const { data: interviews = [], isLoading, isError, refetch } = useInterviewsQuery()
+
+  if (isLoading) return <PageSkeleton />
+  if (isError) return <ErrorState onRetry={refetch} />
+
+  const eventDays = new Set(
+    interviews
+      .filter((i) => i.when && new Date(i.when).getMonth() === TODAY.getMonth() && new Date(i.when).getFullYear() === TODAY.getFullYear())
+      .map((i) => new Date(i.when).getDate())
+  )
+
+  const upcoming = interviews
+    .filter((i) => ['Confirmed', 'Awaiting confirmation'].includes(i.status))
+    .sort((a, b) => new Date(a.when) - new Date(b.when))[0]
 
   return (
     <StaggerGroup>
@@ -29,7 +47,7 @@ export default function InterviewCenter() {
       <StaggerItem className="grid lg:grid-cols-[1fr_1.3fr] gap-5">
         <Card pad>
           <div className="flex items-center justify-between mb-3.5">
-            <span className="text-[15px] font-semibold">August 2026</span>
+            <span className="text-[15px] font-semibold">{TODAY.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}</span>
             <div className="flex gap-1">
               <button className="w-8 h-8 rounded-lg flex items-center justify-center text-ink-secondary hover:bg-surface-hover">
                 <ChevronLeft size={15} />
@@ -46,14 +64,12 @@ export default function InterviewCenter() {
               </div>
             ))}
             {Array.from({ length: LEAD_BLANKS }, (_, i) => (
-              <div key={'b' + i} className="aspect-square rounded-lg flex items-center justify-center text-[12.5px] text-ink-tertiary opacity-40">
-                {26 + i}
-              </div>
+              <div key={'b' + i} className="aspect-square rounded-lg" />
             ))}
             {Array.from({ length: DAYS_IN_MONTH }, (_, i) => {
               const d = i + 1
-              const isToday = d === TODAY
-              const hasEvent = EVENT_DAYS.includes(d)
+              const isToday = d === TODAY.getDate()
+              const hasEvent = eventDays.has(d)
               return (
                 <div
                   key={d}
@@ -75,61 +91,62 @@ export default function InterviewCenter() {
           </div>
         </Card>
 
-        <Card>
-          <CardHead>
-            <span className="text-[15px] font-semibold">
-              {INTERVIEW_SCHEDULED.co} — {INTERVIEW_SCHEDULED.round}
-            </span>
-            <Badge tone="gold">Tomorrow</Badge>
-          </CardHead>
-          <div className="p-[22px]">
-            <div className="flex items-center gap-3 mb-4 p-3 bg-surface-sunken rounded-xl">
-              <CompanyLogo initials={INTERVIEW_SCHEDULED.logo} />
-              <div className="min-w-0">
-                <div className="text-[13.5px] font-semibold truncate">{INTERVIEW_SCHEDULED.role}</div>
-                <div className="text-xs text-ink-tertiary mt-0.5">Profile shared by Mzobs on {INTERVIEW_SCHEDULED.sharedOn}</div>
+        {upcoming ? (
+          <Card>
+            <CardHead>
+              <span className="text-[15px] font-semibold">
+                {upcoming.company} — {upcoming.round || 'Interview'}
+              </span>
+              <Badge tone={STATUS_TONE[upcoming.status] ?? 'navy'}>{upcoming.status}</Badge>
+            </CardHead>
+            <div className="p-[22px]">
+              <div className="flex items-center gap-3 mb-4 p-3 bg-surface-sunken rounded-xl">
+                <CompanyLogo initials={upcoming.logo} />
+                <div className="min-w-0">
+                  <div className="text-[13.5px] font-semibold truncate">{upcoming.role}</div>
+                  <div className="text-xs text-ink-tertiary mt-0.5">
+                    Profile shared by Mzobs {upcoming.sharedOn ? `on ${new Date(upcoming.sharedOn).toLocaleDateString('en-IN')}` : ''}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                {[
+                  ['Date & Time', upcoming.when ? new Date(upcoming.when).toLocaleString('en-IN') : '—'],
+                  ['Mode', upcoming.mode ?? (upcoming.location ? 'On-site' : '—')],
+                  ['Round', upcoming.round || '—'],
+                  ['Duration', upcoming.duration ? `${upcoming.duration} min` : '—'],
+                ].map(([label, val]) => (
+                  <div key={label}>
+                    <div className="text-xs text-ink-tertiary">{label}</div>
+                    <div className="text-[13px] font-semibold mt-1">{val}</div>
+                  </div>
+                ))}
+              </div>
+
+              {upcoming.link ? (
+                <div className="flex gap-2.5">
+                  <input readOnly value={upcoming.link} className="flex-1 h-10 px-3 rounded-[9px] border border-border-strong bg-surface text-[13.5px]" />
+                  <Button onClick={() => navigator.clipboard?.writeText(upcoming.link)}>Copy link</Button>
+                </div>
+              ) : upcoming.location ? (
+                <div className="text-[13px] text-ink-secondary">{upcoming.location}</div>
+              ) : null}
+              <div className="flex gap-2.5 mt-4">
+                <Button onClick={() => openRescheduleModal(app, upcoming.company, 'Mzobs placement desk')}>Reschedule</Button>
+                {upcoming.link && (
+                  <Button variant="primary" className="flex-1" onClick={() => window.open(upcoming.link, '_blank')}>
+                    Join meeting
+                  </Button>
+                )}
               </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              {[
-                ['Date & Time', INTERVIEW_SCHEDULED.when],
-                ['Mode', INTERVIEW_SCHEDULED.mode],
-                ['Round', INTERVIEW_SCHEDULED.round],
-                ['Duration', INTERVIEW_SCHEDULED.duration],
-              ].map(([label, val]) => (
-                <div key={label}>
-                  <div className="text-xs text-ink-tertiary">{label}</div>
-                  <div className="text-[13px] font-semibold mt-1">{val}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-2">Already sent on your behalf</div>
-            <div className="flex flex-col gap-2 mb-4">
-              <label className="flex items-center gap-2 text-[13px] text-ink-secondary">
-                <input type="checkbox" checked disabled className="accent-navy w-[15px] h-[15px]" /> Verified resume (v3)
-              </label>
-              <label className="flex items-center gap-2 text-[13px] text-ink-secondary">
-                <input type="checkbox" checked disabled className="accent-navy w-[15px] h-[15px]" /> Mock interview score & skill track
-              </label>
-              <label className="flex items-center gap-2 text-[13px] text-ink-secondary">
-                <input type="checkbox" className="accent-navy w-[15px] h-[15px]" /> Portfolio / work samples (optional)
-              </label>
-            </div>
-
-            <div className="flex gap-2.5">
-              <input readOnly value={INTERVIEW_SCHEDULED.link} className="flex-1 h-10 px-3 rounded-[9px] border border-border-strong bg-surface text-[13.5px]" />
-              <Button>Copy link</Button>
-            </div>
-            <div className="flex gap-2.5 mt-4">
-              <Button onClick={() => openRescheduleModal(app, INTERVIEW_SCHEDULED.co, 'Mzobs placement desk')}>Reschedule</Button>
-              <Button variant="primary" className="flex-1">
-                Join meeting
-              </Button>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        ) : (
+          <Card>
+            <EmptyState title="No interview scheduled yet" body="Once an employer wants to meet you, Mzobs schedules it and it shows up here." />
+          </Card>
+        )}
       </StaggerItem>
 
       <StaggerItem className="mt-5">
@@ -137,30 +154,32 @@ export default function InterviewCenter() {
           <CardHead>
             <span className="text-[15px] font-semibold">Interview history</span>
           </CardHead>
-          <TableWrap className="border-none rounded-none">
-            <Table columns={['Company / Panel', 'Round', 'Date', 'Mode', 'Status']}>
-              {[
-                ['MZ', 'Mzobs Panel', 'Verification round', '30 Jul 2026', 'Video', 'green', 'Cleared · 81/100'],
-                ['ST', 'Solace Technologies', 'Round 1 — Hiring Manager', '6 Aug 2026', 'Video', 'gold', 'Scheduled'],
-                ['NR', 'Nimbus Retail', 'Round 1 — Screening', '24 Jul 2026', 'Phone', 'red', 'Not selected'],
-              ].map((r) => (
-                <Tr key={r[1] + r[3]}>
-                  <Td>
-                    <div className="flex items-center gap-2">
-                      <CompanyLogo initials={r[0]} size="sm" />
-                      {r[1]}
-                    </div>
-                  </Td>
-                  <Td>{r[2]}</Td>
-                  <Td>{r[3]}</Td>
-                  <Td>{r[4]}</Td>
-                  <Td>
-                    <Badge tone={r[5]}>{r[6]}</Badge>
-                  </Td>
-                </Tr>
-              ))}
-            </Table>
-          </TableWrap>
+          {interviews.length === 0 ? (
+            <div className="p-[22px]">
+              <EmptyState title="No interviews yet" body="Interviews scheduled by employers through Mzobs will appear here." />
+            </div>
+          ) : (
+            <TableWrap className="border-none rounded-none">
+              <Table columns={['Company', 'Round', 'Date', 'Mode', 'Status']}>
+                {interviews.map((i) => (
+                  <Tr key={i.id}>
+                    <Td>
+                      <div className="flex items-center gap-2">
+                        <CompanyLogo initials={i.logo} size="sm" />
+                        {i.company}
+                      </div>
+                    </Td>
+                    <Td>{i.round || '—'}</Td>
+                    <Td>{i.when ? new Date(i.when).toLocaleDateString('en-IN') : '—'}</Td>
+                    <Td>{i.mode ?? (i.location ? 'On-site' : '—')}</Td>
+                    <Td>
+                      <Badge tone={STATUS_TONE[i.status] ?? 'navy'}>{i.status}</Badge>
+                    </Td>
+                  </Tr>
+                ))}
+              </Table>
+            </TableWrap>
+          )}
         </Card>
       </StaggerItem>
     </StaggerGroup>
