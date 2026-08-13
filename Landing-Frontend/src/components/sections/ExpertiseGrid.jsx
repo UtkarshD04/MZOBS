@@ -1,7 +1,6 @@
 import SectionBadge from '../ui/SectionBadge'
 // PillButton removed — featured card removed
 import Reveal from '../ui/Reveal'
-import TiltCard from '../ui/TiltCard'
 import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { SERVICES_DATA } from '../../lib/content'
 import Photo from './Photo'
@@ -48,7 +47,6 @@ export default function ExpertiseGrid({
           <StaggerGroup className="lg:col-span-12 grid sm:grid-cols-2 gap-5">
             {servicesList.map((service, i) => {
               const Icon = service.icon
-<<<<<<< Updated upstream
 
               return (
                 <StaggerItem key={i} className="w-full">
@@ -91,41 +89,6 @@ export default function ExpertiseGrid({
                         </div>
                       </div>
                     </motion.div>
-=======
-              return (
-                <StaggerItem key={i}>
-                  <TiltCard className="bg-white rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:border-slate-300 flex flex-col overflow-hidden h-full">
-                    {service.image && (
-                      <div className="h-36 w-full overflow-hidden relative bg-slate-100">
-                        <img
-                          src={service.image}
-                          alt={service.title}
-                          className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out-premium"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
-
-                        {/* Icon overlay on top right */}
-                        {Icon && (
-                          <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-sm flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white group-hover:scale-110 transition-all duration-300">
-                            <Icon size={18} strokeWidth={1.8} />
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="p-5 flex-1 flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-base font-bold text-[#0B1220] mb-1.5 group-hover:text-blue-900 transition-colors">
-                          {service.title}
-                        </h3>
-                        <p className="text-xs text-slate-600 leading-relaxed">
-                          {service.desc}
-                        </p>
-                      </div>
-                    </div>
-                  </TiltCard>
->>>>>>> Stashed changes
                 </StaggerItem>
               )
             })}

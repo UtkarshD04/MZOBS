@@ -18,7 +18,6 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
-<<<<<<< Updated upstream
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -31,7 +30,6 @@ export default function App() {
         <Route path="/employers/signin" element={<EmployerSignin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-=======
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}
@@ -52,7 +50,6 @@ export default function App() {
           </Routes>
         </motion.div>
       </AnimatePresence>
->>>>>>> Stashed changes
     </>
   )
 }
