@@ -26,6 +26,7 @@ export default function About() {
         }
         subtitle="We're a team of operations people, not just software — every profile and every requirement on Mzobs is reviewed by a person before it goes live."
         photoIcon={Building2}
+        bgImage="/images/who-we-are-hero-new.jpg"
       />
 
       <section className="max-w-3xl mx-auto px-6 py-14 text-center">

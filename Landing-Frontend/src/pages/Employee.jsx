@@ -18,8 +18,8 @@ export default function Employee() {
 
       <PageHero
         kicker="For Job Seekers"
-        bgImage="/images/employeeheroimagejpeg.jpeg"
-        bgFit="contain"
+        bgImage="/images/employee-hero.png"
+        bgFit="cover"
         title={
           <>
             Find A Role You&rsquo;re <em className="italic text-amber-400">Actually</em> Qualified For.

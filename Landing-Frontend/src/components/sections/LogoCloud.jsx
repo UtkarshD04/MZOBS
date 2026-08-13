@@ -1,5 +1,6 @@
 import SectionBadge from '../ui/SectionBadge'
 import Reveal from '../ui/Reveal'
+import TiltCard from '../ui/TiltCard'
 import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { TRUSTED_LOGOS_DATA } from '../../lib/content'
 
@@ -94,13 +95,12 @@ export default function LogoCloud({
             const displayName = typeof logo === 'string' ? logo : logo.name
 
             return (
-              <StaggerItem
-                key={displayName + i}
-                className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center min-h-[90px] group"
-              >
-                <div className="opacity-75 group-hover:opacity-100 transition-opacity">
-                  <LogoSvg variant={variantNum} />
-                </div>
+              <StaggerItem key={displayName + i}>
+                <TiltCard className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm hover:shadow-xl hover:border-slate-300 flex items-center justify-center min-h-[90px] w-full">
+                  <div className="opacity-75 group-hover:opacity-100 group-hover:scale-105 transition-all">
+                    <LogoSvg variant={variantNum} />
+                  </div>
+                </TiltCard>
               </StaggerItem>
             )
           })}

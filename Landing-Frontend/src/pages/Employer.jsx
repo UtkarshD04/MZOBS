@@ -18,7 +18,7 @@ export default function Employer() {
 
       <PageHero
         kicker="For Employers"
-        bgImage="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=2000&q=85"
+        bgImage="/images/employer-hero-new.jpg"
         title={
           <>
             Hire Verified Talent, Not A Stack Of <em className="italic text-amber-400">Unread</em> Resumes.

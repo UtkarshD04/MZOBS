@@ -19,8 +19,8 @@ export default function PathCard({ photoIcon, tags = [], title, desc, ctaLabel, 
       <div className="p-6">
         <h3 className="text-lg font-bold tracking-tight">{title}</h3>
         <p className="text-[13.5px] text-ink-secondary mt-1.5 leading-relaxed">{desc}</p>
-        <Link to={href} className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-navy mt-4 hover:underline">
-          {ctaLabel} <ArrowRight size={14} />
+        <Link to={href} className="group/link inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-navy mt-4 hover:underline">
+          {ctaLabel} <ArrowRight size={14} className="transition-transform duration-200 group-hover/link:translate-x-1" />
         </Link>
       </div>
     </Card>

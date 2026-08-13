@@ -258,6 +258,7 @@ export default function Dashboard() {
             })}
           </div>
         </Card>
+
         <Card>
           <CardHead>
             <span className="text-[15px] font-semibold">Recent activity</span>

@@ -464,10 +464,10 @@ export const HOME_STEPS = APPROACH_DATA.steps
 export const EMPLOYEE_STEPS = APPROACH_DATA.steps
 export const EMPLOYER_STEPS = APPROACH_DATA.steps
 export const TEAM = [
-  { name: 'Ananya Rao', role: 'Founder & CEO', initials: 'AR' },
-  { name: 'Vikram Shetty', role: 'Head of Operations', initials: 'VS' },
-  { name: 'Priya Menon', role: 'Head of Talent', initials: 'PM' },
-  { name: 'Karan Malhotra', role: 'Head of Verification', initials: 'KM' }
+  { name: 'Ananya Rao', role: 'Founder & CEO', initials: 'AR', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=85' },
+  { name: 'Vikram Shetty', role: 'Head of Operations', initials: 'VS', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=85' },
+  { name: 'Priya Menon', role: 'Head of Talent', initials: 'PM', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=85' },
+  { name: 'Karan Malhotra', role: 'Head of Verification', initials: 'KM', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=85' }
 ]
 export const TRUSTED_LOGOS = TRUSTED_LOGOS_DATA.logos.map(l => l.name)
 export const EMPLOYER_TESTIMONIAL = TESTIMONIALS_DATA.items[1]
