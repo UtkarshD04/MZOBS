@@ -1,9 +1,15 @@
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { feeFor, resumesFor } from '../utils/jobPricing.js'
 import { logActivity } from '../utils/activityLog.js'
+import { creditJobPayment } from '../utils/creditJobPayment.js'
+import { verifyOrderPaymentSignature } from '../utils/razorpaySignature.js'
 import { paginationParams, paginate, setPaginationHeaders } from '../utils/paginate.js'
+import { getRazorpayClient } from '../config/razorpay.js'
+import { env } from '../config/env.js'
+import { logger } from '../config/logger.js'
 import Job from '../models/Job.js'
 import Invoice from '../models/Invoice.js'
+import Payment from '../models/Payment.js'
 
 const INPUT_FIELDS = [
   'title',
@@ -131,32 +137,86 @@ export const setJobStatus = asyncHandler(async (req, res) => {
   res.json(job)
 })
 
-export const payJobInvoice = asyncHandler(async (req, res) => {
+// Creates a Razorpay order for the job's sourcing fee. The amount is always
+// job.feeTotal as computed server-side by feeFor() — the client only ever
+// gets back an order id to hand to Checkout, never a say in the amount.
+export const createJobPaymentOrder = asyncHandler(async (req, res) => {
+  const job = await findScopedJob(req)
+  if (!job) return res.status(404).json({ message: 'Job not found' })
+  if (job.feeStatus === 'paid') return res.status(409).json({ message: 'This requirement is already paid for' })
+  if (!job.feeTotal || job.feeTotal <= 0) return res.status(400).json({ message: 'Nothing to pay for this requirement' })
+
+  const receipt = `job_${job._id}_${Date.now()}`
+  const order = await getRazorpayClient().orders.create({
+    amount: Math.round(job.feeTotal * 100), // paise
+    currency: 'INR',
+    receipt,
+    notes: { purpose: 'employer_job_fee', jobId: job._id.toString(), companyId: req.company._id.toString() },
+  })
+
+  await Payment.create({
+    purpose: 'employer_job_fee',
+    company: req.company._id,
+    job: job._id,
+    razorpayOrderId: order.id,
+    amount: job.feeTotal,
+    currency: 'INR',
+    status: 'created',
+    receipt,
+  })
+
+  res.status(201).json({
+    orderId: order.id,
+    amount: order.amount,
+    currency: order.currency,
+    keyId: env.razorpayKeyId,
+    name: 'Mzobs',
+    description: `${job.title} — sourcing fee`,
+    prefill: { name: req.user.name, email: req.user.email },
+  })
+})
+
+// Confirms the checkout redirect result: HMAC signature proves it came from
+// Razorpay for this order, then payments.fetch confirms it actually settled
+// as 'captured' before the requirement is released into sourcing.
+export const verifyJobPayment = asyncHandler(async (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body ?? {}
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    return res.status(400).json({ message: 'Missing payment details' })
+  }
+
   const job = await findScopedJob(req)
   if (!job) return res.status(404).json({ message: 'Job not found' })
 
-  if (job.invoiceId) {
-    await Invoice.findByIdAndUpdate(job.invoiceId, { status: 'paid' })
-  } else {
-    const invoice = await Invoice.create({
-      company: req.company._id,
-      job: job._id,
-      description: `${job.title} — ${job.vacancies} opening${job.vacancies === 1 ? '' : 's'}`,
-      amount: job.feeTotal,
-      status: 'paid',
-    })
-    job.invoiceId = invoice._id.toString()
+  const payment = await Payment.findOne({ razorpayOrderId: razorpay_order_id, company: req.company._id, job: job._id })
+  if (!payment) return res.status(404).json({ message: 'Order not found' })
+
+  if (payment.status === 'paid') return res.json(job)
+  if (payment.status !== 'created') {
+    return res.status(400).json({ message: 'This order can no longer be verified' })
   }
 
-  job.feeStatus = 'paid'
-  job.paidOn = new Date()
-  job.status = 'sourcing'
-  if (!job.postedOn) job.postedOn = new Date()
-  job.updatedOn = new Date()
+  if (!verifyOrderPaymentSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)) {
+    payment.status = 'failed'
+    await payment.save()
+    logger.warn({ orderId: razorpay_order_id, jobId: job._id.toString() }, 'Razorpay signature verification failed')
+    return res.status(400).json({ message: 'Payment verification failed' })
+  }
 
-  await job.save()
+  const captured = await getRazorpayClient().payments.fetch(razorpay_payment_id)
+  if (captured.order_id !== razorpay_order_id || captured.status !== 'captured') {
+    payment.status = 'failed'
+    await payment.save()
+    return res.status(400).json({ message: 'Payment was not captured' })
+  }
 
-  await logActivity(req.company._id, `Payment received for "${job.title}" — Mzobs is now sourcing ${job.resumesPromised} resumes`, 'green')
+  payment.razorpayPaymentId = razorpay_payment_id
+  payment.razorpaySignature = razorpay_signature
+  payment.status = 'paid'
+  payment.paidAt = new Date()
+  await payment.save()
+
+  await creditJobPayment(job, payment)
 
   res.json(job)
 })

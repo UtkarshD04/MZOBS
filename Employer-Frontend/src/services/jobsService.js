@@ -21,8 +21,12 @@ export function setJobStatus(id, status) {
 }
 
 /** Paying the per-opening invoice is what releases a requirement into sourcing. */
-export function payJobInvoice(id) {
-  return apiClient.post(`/jobs/${id}/pay`).then((r) => r.data)
+export function createJobPaymentOrder(id) {
+  return apiClient.post(`/jobs/${id}/pay/order`).then((r) => r.data)
+}
+
+export function verifyJobPayment(id, payload) {
+  return apiClient.post(`/jobs/${id}/pay/verify`, payload).then((r) => r.data)
 }
 
 export function duplicateJob(id) {
