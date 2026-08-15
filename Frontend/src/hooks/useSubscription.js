@@ -6,10 +6,14 @@ export function useSubscriptionQuery() {
   return useQuery({ queryKey: queryKeys.subscription, queryFn: subscriptionService.getSubscription })
 }
 
-export function usePaySubscriptionMutation() {
+export function useCreateSubscriptionOrderMutation() {
+  return useMutation({ mutationFn: subscriptionService.createSubscriptionOrder })
+}
+
+export function useVerifySubscriptionPaymentMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: subscriptionService.paySubscription,
+    mutationFn: subscriptionService.verifySubscriptionPayment,
     onSuccess: (data) => queryClient.setQueryData(queryKeys.subscription, data),
   })
 }

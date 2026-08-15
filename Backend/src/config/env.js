@@ -19,4 +19,7 @@ export const env = {
   seedStaffName: process.env.SEED_STAFF_NAME ?? 'Mzobs Ops Admin',
   seedStaffEmail: process.env.SEED_STAFF_EMAIL ?? 'ops@mzobs.dev',
   seedStaffPassword: process.env.SEED_STAFF_PASSWORD ?? 'Passw0rd!123',
+  razorpayKeyId: process.env.RAZORPAY_KEY_ID ?? '',
+  razorpayKeySecret: process.env.RAZORPAY_KEY_SECRET ?? '',
+  razorpayWebhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET ?? '',
 }

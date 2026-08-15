@@ -19,3 +19,13 @@ export const apiLimiter = rateLimit({
   legacyHeaders: false,
   message: { message: 'Too many requests. Please slow down.' },
 })
+
+// Order creation/verification are cheap to spam and directly touch money —
+// capped tighter than the general API limit.
+export const paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many payment attempts. Please try again later.' },
+})
