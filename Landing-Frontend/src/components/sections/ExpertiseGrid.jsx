@@ -65,9 +65,8 @@ export default function ExpertiseGrid({
                             alt={service.title}
                             rounded="xl"
                             ratio="video"
-                            className="w-full h-full object-cover object-right group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover object-right"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
 
                           {/* Icon overlay on top right */}
                           {Icon && (

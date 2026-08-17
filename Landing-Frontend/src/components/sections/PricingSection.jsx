@@ -49,26 +49,12 @@ function Takeaways({ items }) {
 import TiltCard from '../ui/TiltCard'
 
 function HowItWorks({ steps }) {
-  const images = [
-    "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=85",
-    "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=600&q=85",
-    "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=85",
-    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=85"
-  ]
-
   return (
     <StaggerGroup className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {steps.map((s, i) => (
+      {steps.map((s) => (
         <StaggerItem key={s.n}>
           <TiltCard className="bg-white rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:border-slate-300 flex flex-col overflow-hidden h-full">
             <div className="h-28 w-full overflow-hidden relative bg-slate-100">
-              <img
-                src={images[i % images.length]}
-                alt={s.title}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out-premium"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
               <span className="absolute top-3 right-3 text-xs font-bold text-amber-700 bg-amber-50/90 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-amber-200/80 shadow-xs">
                 {s.n}
               </span>

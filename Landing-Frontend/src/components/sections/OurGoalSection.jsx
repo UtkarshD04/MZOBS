@@ -32,7 +32,7 @@ export default function OurGoalSection({ data }) {
         </Reveal>
 
         {/* Right Photo Card */}
-        <Reveal direction="right" delay={0.1} blur className="lg:col-span-6 min-h-[380px] sm:min-h-[440px] rounded-3xl overflow-hidden shadow-md border border-slate-200/60 group">
+        <Reveal direction="right" delay={0.1} blur className="lg:col-span-6 min-h-[380px] sm:min-h-[440px] rounded-3xl overflow-hidden shadow-md border border-slate-200/60 group bg-slate-100">
           <ParallaxImage
             src={goalData.image}
             alt="Turning hiring into a fair match"

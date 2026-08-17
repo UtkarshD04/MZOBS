@@ -121,23 +121,16 @@ export default function CandidateJourneySection() {
                       className={`absolute -inset-4 rounded-full bg-gradient-to-tr ${step.lineAccent} blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none`}
                     />
 
-                    {/* Compact Image with Organic Cutout Mask */}
+                    {/* Organic Cutout Mask Placeholder */}
                     <div
-                      className={`relative overflow-hidden shadow-xl transition-all duration-500 group-hover:shadow-2xl ${
+                      className={`relative overflow-hidden shadow-xl transition-all duration-500 group-hover:shadow-2xl bg-slate-100 w-full h-[180px] sm:h-[220px] lg:h-[240px] ${
                         step.shapeType === 'arch-left'
                           ? 'rounded-t-[3rem] rounded-b-xl'
                           : step.shapeType === 'curve-right'
                           ? 'rounded-tr-[3.5rem] rounded-bl-[2rem] rounded-tl-xl rounded-br-xl'
                           : 'rounded-[2rem]'
                       }`}
-                    >
-                      <img
-                        src={step.image}
-                        alt={step.imageAlt}
-                        className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out-premium"
-                        loading="lazy"
-                      />
-                    </div>
+                    />
                   </motion.div>
 
                   {/* EDITORIAL TYPOGRAPHY CONTAINER */}

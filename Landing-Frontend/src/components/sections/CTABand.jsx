@@ -9,8 +9,7 @@ export default function CTABand({
   title,
   subtitle,
   actions,
-  photoIcon: PhotoIcon,
-  bgImage
+  photoIcon: PhotoIcon
 }) {
   return (
     <section id="contact" className="bg-[#EEF3F8] py-16 px-6 md:px-12">
@@ -20,11 +19,11 @@ export default function CTABand({
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
-          className="relative min-h-[420px] sm:min-h-[460px] rounded-3xl overflow-hidden shadow-2xl border border-slate-300/40 group"
+          className="relative min-h-[420px] sm:min-h-[460px] rounded-3xl overflow-hidden shadow-2xl border border-slate-300/40 group bg-[#0B1220]"
         >
           {/* Background Image with Parallax */}
           <ParallaxImage
-            src={bgImage || CTA_BAND_DATA.bgImage}
+            src={CTA_BAND_DATA.bgImage}
             alt="Ready to get hired or hire faster"
             offset={60}
             className="w-full h-full absolute inset-0 object-cover object-center brightness-[0.5] group-hover:scale-108 transition-transform duration-700 ease-out-premium"

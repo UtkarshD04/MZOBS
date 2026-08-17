@@ -1,59 +1,94 @@
+import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6'
+import { ShieldAlert } from 'lucide-react'
 import Reveal from '../ui/Reveal'
 import { FOOTER_DATA } from '../../lib/content'
 
+const SOCIAL_ICONS = {
+  Instagram: FaInstagram,
+  Facebook: FaFacebookF,
+  LinkedIn: FaLinkedinIn,
+  'Twitter (X)': FaXTwitter,
+}
+
 export default function Footer() {
   return (
-    <footer className="bg-[#0B1220] text-white pt-20 pb-12 px-6 md:px-12 border-t border-slate-800 relative before:absolute before:-top-[1px] before:left-0 before:right-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-blue-500/40 before:to-transparent">
-      <div className="max-w-7xl mx-auto space-y-16">
-        {/* Main Footer Grid */}
-        <Reveal direction="up" duration={0.9} scale={0.94} blur className="grid grid-cols-1 md:grid-cols-12 gap-12">
-          {/* Brand Column */}
-          <div className="md:col-span-5 space-y-6">
-            <a href="#home" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400/25 via-blue-500/25 to-indigo-600/30 backdrop-blur-md border border-white/25 flex items-center justify-center text-white font-serif font-bold text-xl shadow-[0_0_18px_rgba(59,130,246,0.2)] group-hover:scale-105 transition-transform duration-300">
-                M
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-lg leading-tight tracking-tight group-hover:text-amber-300 transition-colors">{FOOTER_DATA.logoText}</span>
-                <span className="text-[9px] tracking-[0.2em] text-white/70 uppercase font-medium">{FOOTER_DATA.logoSub}</span>
-              </div>
-            </a>
-
-            <p className="text-sm text-slate-400 leading-relaxed font-normal max-w-md">
-              {FOOTER_DATA.desc}
-            </p>
-
-            <div>
-              <a
-                href="#contact"
-                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-white text-[#0B1220] text-xs font-semibold hover:bg-slate-200 transition-colors shadow-sm"
-              >
-                {FOOTER_DATA.ctaText}
+    <footer className="bg-[#F5F5F5] pt-16 pb-8 px-6 md:px-12 border-t border-[#e0e0e0]">
+      <div className="max-w-7xl mx-auto space-y-10">
+        {/* Fraud Caution Notice */}
+        <Reveal direction="up" duration={0.8}>
+          <div className="flex items-start gap-3 bg-white border border-[#e0e0e0] rounded-2xl px-5 py-4 text-[12px] text-[#666] leading-relaxed">
+            <motion.div
+              animate={{ scale: [1, 1.15, 1] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              className="shrink-0 mt-0.5"
+            >
+              <ShieldAlert size={18} className="text-[#333333]" />
+            </motion.div>
+            <p>
+              <span className="font-black text-black">Beware of fraud: </span>
+              Mzobs never asks candidates to pay for a job offer, interview call or verification. Report suspicious
+              offers to{' '}
+              <a href={`mailto:${FOOTER_DATA.email}`} className="text-[#333333] font-bold hover:underline">
+                {FOOTER_DATA.email}
               </a>
+              .
+            </p>
+          </div>
+        </Reveal>
+
+        {/* Main Footer Grid */}
+        <Reveal direction="up" duration={0.9} scale={0.96} className="grid grid-cols-1 md:grid-cols-12 gap-10">
+          {/* Brand Column */}
+          <div className="md:col-span-5 space-y-5">
+            <Link to="/" className="flex items-center gap-2.5 group w-fit">
+              <motion.div
+                whileHover={{ rotate: -8, scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                transition={{ type: 'spring', stiffness: 350, damping: 15 }}
+                className="w-9 h-9 rounded-xl bg-[#333333] flex items-center justify-center text-white font-black text-lg"
+              >
+                M
+              </motion.div>
+              <div className="flex flex-col leading-none">
+                <span className="font-black text-base text-black tracking-tight">{FOOTER_DATA.logoText}</span>
+                <span className="text-[8px] tracking-[0.18em] text-[#595959] uppercase font-bold">{FOOTER_DATA.logoSub}</span>
+              </div>
+            </Link>
+
+            <p className="text-[13px] text-[#666] leading-relaxed max-w-md font-medium">{FOOTER_DATA.desc}</p>
+
+            <div className="flex flex-wrap gap-3">
+              <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 350, damping: 18 }}>
+                <Link
+                  to="/employees/signin"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-white text-[#595959] text-[12px] font-bold border border-[#666] hover:bg-[#333333] hover:text-white hover:border-[#333333] transition-colors"
+                >
+                  Employee Login
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 350, damping: 18 }}>
+                <Link
+                  to="/employers/signin"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#333333] text-white text-[12px] font-bold border border-[#333333] hover:bg-white hover:text-[#595959] hover:border-[#666] transition-colors"
+                >
+                  Employer Login
+                </Link>
+              </motion.div>
             </div>
           </div>
 
           {/* Menu Column */}
           <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">{FOOTER_DATA.menuTitle}</h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
+            <h4 className="text-sm font-black text-black uppercase tracking-wider">{FOOTER_DATA.menuTitle}</h4>
+            <ul className="space-y-2.5 text-[13px] text-[#666] font-medium">
               {FOOTER_DATA.menuItems.map((item, idx) => (
                 <li key={idx}>
-                  <a href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-white transition-colors">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Socials Column */}
-          <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">{FOOTER_DATA.socialsTitle}</h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
-              {FOOTER_DATA.socialsItems.map((item, idx) => (
-                <li key={idx}>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a
+                    href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="relative w-fit inline-block hover:text-[#333333] transition-colors after:absolute after:left-0 after:-bottom-0.5 after:h-[1px] after:w-0 after:bg-[#333333] after:transition-all after:duration-300 hover:after:w-full"
+                  >
                     {item}
                   </a>
                 </li>
@@ -63,25 +98,48 @@ export default function Footer() {
 
           {/* Contact Details Column */}
           <div className="md:col-span-3 space-y-4">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">{FOOTER_DATA.contactTitle}</h4>
-            <div className="space-y-2.5 text-xs text-slate-400 leading-relaxed">
-              <p className="hover:text-white transition-colors cursor-pointer">{FOOTER_DATA.phone}</p>
-              <p className="hover:text-white transition-colors cursor-pointer">{FOOTER_DATA.email}</p>
+            <h4 className="text-sm font-black text-black uppercase tracking-wider">{FOOTER_DATA.contactTitle}</h4>
+            <div className="space-y-2.5 text-[13px] text-[#666] leading-relaxed font-medium">
+              <p className="hover:text-[#333333] transition-colors cursor-pointer w-fit">{FOOTER_DATA.phone}</p>
+              <p className="hover:text-[#333333] transition-colors cursor-pointer w-fit">{FOOTER_DATA.email}</p>
               <p className="pt-1">{FOOTER_DATA.address}</p>
+            </div>
+          </div>
+
+          {/* Socials Column */}
+          <div className="md:col-span-2 space-y-4">
+            <h4 className="text-sm font-black text-black uppercase tracking-wider">{FOOTER_DATA.socialsTitle}</h4>
+            <div className="flex flex-wrap gap-2.5">
+              {FOOTER_DATA.socialsItems.map((item, idx) => {
+                const Icon = SOCIAL_ICONS[item]
+                return (
+                  <motion.a
+                    key={idx}
+                    href="#"
+                    aria-label={item}
+                    whileHover={{ scale: 1.15, rotate: -10, backgroundColor: '#333333', color: '#fff' }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 15 }}
+                    className="w-9 h-9 rounded-full bg-white border border-[#e0e0e0] flex items-center justify-center text-[#333333]"
+                  >
+                    {Icon && <Icon size={14} />}
+                  </motion.a>
+                )
+              })}
             </div>
           </div>
         </Reveal>
 
         {/* Bottom Sub-Footer Bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-normal">
+        <div className="pt-6 border-t border-[#e0e0e0] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#666] font-medium">
           <p>{FOOTER_DATA.copyright}</p>
           <div className="flex items-center gap-4">
             {FOOTER_DATA.rightLinks.map((link, i) => (
               <span key={i} className="flex items-center gap-4">
-                <a href="#" className="hover:text-slate-300 transition-colors">
+                <a href="#" className="hover:text-[#333333] transition-colors">
                   {link}
                 </a>
-                {i < FOOTER_DATA.rightLinks.length - 1 && <span className="text-slate-700">|</span>}
+                {i < FOOTER_DATA.rightLinks.length - 1 && <span className="text-[#C9C9C9]">|</span>}
               </span>
             ))}
           </div>

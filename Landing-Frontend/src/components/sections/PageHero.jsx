@@ -3,7 +3,6 @@ import { useRef } from 'react'
 import PillButton from '../ui/PillButton'
 import Reveal from '../ui/Reveal'
 import FloatingElement from '../ui/FloatingElement'
-import ParallaxImage from '../ui/ParallaxImage'
 import { HERO_DATA } from '../../lib/content'
 
 export default function PageHero({
@@ -12,10 +11,7 @@ export default function PageHero({
   subtitle = HERO_DATA.subtitle,
   actions,
   photoIcon: PhotoIcon,
-  bgImage,
-  sideImage,
-  bgFit = 'cover',
-  bgPosition = 'center'
+  sideImage
 }) {
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -81,11 +77,7 @@ export default function PageHero({
           <motion.div style={{ y: bgY }} className="lg:col-span-6">
             <Reveal direction="right" duration={1.0} delay={0.2} scale={0.85} blur>
               <div className="rounded-3xl overflow-hidden shadow-2xl border border-slate-700/60 bg-[#0F172A]/90 p-2 sm:p-3 group">
-                <img
-                  src={sideImage}
-                  alt="Career opportunities and growth steps"
-                  className="w-full h-auto object-contain rounded-2xl group-hover:scale-105 transition-transform duration-700 ease-out-premium"
-                />
+                <div className="w-full aspect-square rounded-2xl bg-[#0B1220]/60" />
               </div>
             </Reveal>
           </motion.div>
@@ -96,23 +88,6 @@ export default function PageHero({
 
   return (
     <section ref={containerRef} id="home" className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-[#0B1220] pt-28 pb-20 px-6 md:px-12">
-      {/* Background Image with Dark Gradient Mask & Parallax */}
-      <motion.div
-        className="absolute inset-0 z-0"
-        initial={{ opacity: 0, scale: 0.85 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <ParallaxImage
-          src={bgImage || HERO_DATA.bgImage}
-          alt="Mzobs hiring platform"
-          offset={60}
-          className={`w-full h-full ${bgFit === 'contain' ? 'object-contain' : 'object-cover'} brightness-[0.88] contrast-[1.12] saturate-[1.1] transition-all duration-500`}
-          style={{ objectPosition: bgPosition }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220]/80 via-[#0B1220]/25 to-[#0B1220]/35 pointer-events-none" />
-      </motion.div>
-
       {/* Floating Ambient Glows */}
       <FloatingElement duration={8} distance={20} className="absolute top-1/4 left-10 w-72 h-72 bg-amber-400/10 rounded-full blur-3xl pointer-events-none z-0" />
       <FloatingElement duration={10} delay={2} distance={24} className="absolute bottom-1/4 right-10 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none z-0" />
