@@ -1,72 +1,115 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, NavLink } from 'react-router-dom'
+import { motion, useScroll, useSpring } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const lastY = useRef(0)
+  const { scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 })
+
+  useEffect(() => {
+    function onScroll() {
+      const y = window.scrollY
+      setHidden(y > 140 && y > lastY.current)
+      lastY.current = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const linkClass = ({ isActive }) =>
+    `relative py-2 text-[12px] font-bold uppercase tracking-wide border-b-2 transition-colors duration-200 ${
+      isActive ? 'text-[#333333] border-[#333333]' : 'text-[#595959] border-transparent hover:text-[#333333] hover:border-[#333333]'
+    }`
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-50 py-6 px-6 md:px-12 transition-all">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400/25 via-blue-500/25 to-indigo-600/30 backdrop-blur-md border border-white/30 flex items-center justify-center text-white font-serif font-bold text-xl shadow-[0_0_18px_rgba(59,130,246,0.25)] transition-all duration-300 group-hover:scale-105 group-hover:border-amber-400/50">
-            M
-          </div>
-          <div className="flex flex-col text-white">
-            <span className="font-bold text-lg leading-tight tracking-tight group-hover:text-amber-300 transition-colors">Mzobs</span>
-            <span className="text-[9px] tracking-[0.2em] text-white/70 uppercase font-medium">Hiring Platform</span>
-          </div>
-        </Link>
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 h-[76px] bg-[#F5F5F5] shadow-[0_1px_0_#e0e0e0] transition-transform duration-500 ${
+          hidden ? '-translate-y-full' : 'translate-y-0'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between">
+          {/* Brand Logo */}
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+            <motion.div
+              whileHover={{ rotate: -8, scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 15 }}
+              className="w-9 h-9 rounded-xl bg-[#333333] flex items-center justify-center text-white font-black text-lg group-hover:bg-[#1a1a1a] transition-colors"
+            >
+              M
+            </motion.div>
+            <div className="flex flex-col leading-none">
+              <span className="font-black text-base text-black tracking-tight">Mzobs</span>
+              <span className="text-[8px] tracking-[0.18em] text-[#595959] uppercase font-bold">Hiring Platform</span>
+            </div>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 bg-slate-900/60 backdrop-blur-xl border border-white/20 px-8 py-2.5 rounded-full text-sm font-medium text-white/90 shadow-xl shadow-black/20 hover:border-white/30 transition-all duration-300">
-          {NAV_LINKS.map((link) =>
-            link.to ? (
-              <Link key={link.label} to={link.to} className="relative hover:text-amber-300 transition-colors duration-200 py-1 group/link">
-                {link.label}
-                <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-amber-400 to-blue-400 rounded-full transition-all duration-300 group-hover/link:w-full" />
-              </Link>
-            ) : (
-              <a key={link.label} href={link.href || '#'} className="relative hover:text-amber-300 transition-colors duration-200 py-1 group/link">
-                {link.label}
-                <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-amber-400 to-blue-400 rounded-full transition-all duration-300 group-hover/link:w-full" />
-              </a>
-            )
-          )}
-        </nav>
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-7">
+            {NAV_LINKS.map((link) =>
+              link.to ? (
+                <NavLink key={link.label} to={link.to} end={link.to === '/'} className={linkClass}>
+                  {link.label}
+                </NavLink>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href || '#'}
+                  className="py-2 text-[12px] font-bold uppercase tracking-wide text-[#595959] border-b-2 border-transparent hover:text-[#333333] hover:border-[#333333] transition-colors duration-200"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
+          </nav>
 
-        {/* Desktop Contact CTA Button */}
-        <div className="hidden md:block">
-          <a
-            href="#contact"
-            className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-white text-[#0B1220] font-semibold text-sm shadow-[0_4px_20px_rgba(255,255,255,0.18)] hover:shadow-[0_6px_25px_rgba(255,255,255,0.3)] hover:bg-slate-100 transition-all duration-300 transform hover:-translate-y-0.5"
+          {/* Mobile Toggle */}
+          <button
+            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white border border-[#e0e0e0] text-[#595959]"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle navigation"
+            aria-expanded={open}
           >
-            Contact Us
-          </a>
+            {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle Navigation"
-        >
-          {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
+        {/* Scroll progress indicator */}
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#333333] origin-left"
+          style={{ scaleX: progress }}
+        />
+      </header>
+
+      {/* Mobile Drawer Backdrop (sibling of header, so it stays viewport-fixed) */}
+      {open && (
+        <div
+          className="lg:hidden fixed inset-0 top-[76px] bg-black/30 z-40"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Mobile Drawer */}
-      {open && (
-        <div className="md:hidden mt-4 bg-[#0B1220]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col gap-4 text-white shadow-2xl animate-in fade-in duration-200">
+      <div
+        className={`lg:hidden fixed top-[76px] left-0 bottom-0 w-[300px] max-w-[80vw] bg-white shadow-2xl overflow-y-auto z-40 transition-transform duration-300 ease-in-out ${
+          open ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="p-6 flex flex-col gap-1">
           {NAV_LINKS.map((link) =>
             link.to ? (
               <Link
                 key={link.label}
                 to={link.to}
                 onClick={() => setOpen(false)}
-                className="text-base font-medium hover:text-blue-400"
+                className="py-3 text-[13px] font-bold uppercase tracking-wide text-[#595959] border-b border-[#e0e0e0] hover:text-[#333333]"
               >
                 {link.label}
               </Link>
@@ -75,21 +118,14 @@ export default function Navbar() {
                 key={link.label}
                 href={link.href || '#'}
                 onClick={() => setOpen(false)}
-                className="text-base font-medium hover:text-blue-400"
+                className="py-3 text-[13px] font-bold uppercase tracking-wide text-[#595959] border-b border-[#e0e0e0] hover:text-[#333333]"
               >
                 {link.label}
               </a>
             )
           )}
-          <a
-            href="#contact"
-            onClick={() => setOpen(false)}
-            className="mt-2 text-center py-3 rounded-full bg-white text-[#0B1220] font-bold text-sm"
-          >
-            Contact Us
-          </a>
         </div>
-      )}
-    </header>
+      </div>
+    </>
   )
 }

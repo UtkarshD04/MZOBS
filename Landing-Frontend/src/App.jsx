@@ -18,18 +18,6 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/employees" element={<Employee />} />
-        <Route path="/employees/signup" element={<EmployeeSignup />} />
-        <Route path="/employees/signin" element={<EmployeeSignin />} />
-        <Route path="/employers" element={<Employer />} />
-        <Route path="/employers/signup" element={<EmployerSignup />} />
-        <Route path="/employers/signin" element={<EmployerSignin />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}
@@ -46,6 +34,8 @@ export default function App() {
             <Route path="/employees/signup" element={<EmployeeSignup />} />
             <Route path="/employees/signin" element={<EmployeeSignin />} />
             <Route path="/employers" element={<Employer />} />
+            <Route path="/employers/signup" element={<EmployerSignup />} />
+            <Route path="/employers/signin" element={<EmployerSignin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </motion.div>

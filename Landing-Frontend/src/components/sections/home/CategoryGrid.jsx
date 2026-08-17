@@ -1,0 +1,49 @@
+import { ArrowUpRight } from 'lucide-react'
+import Reveal from '../../ui/Reveal'
+import SectionLabel from '../../ui/SectionLabel'
+import SplitText from '../../ui/SplitText'
+import SpotlightCard from '../../ui/SpotlightCard'
+import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
+import { CATEGORY_DATA } from '../../../lib/content'
+import { EMPLOYEE_APP_URL } from '../../../lib/config'
+
+export default function CategoryGrid() {
+  return (
+    <section className="bg-white py-16 md:py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto space-y-10">
+        <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl">
+          <SectionLabel>{CATEGORY_DATA.badge}</SectionLabel>
+          <h2 className="text-3xl sm:text-4xl md:text-[42px] font-black text-black tracking-tight leading-tight">
+            <SplitText text={`${CATEGORY_DATA.titlePrefix}${CATEGORY_DATA.titleItalic}${CATEGORY_DATA.titleSuffix}`} />
+          </h2>
+          <p className="mt-2 text-[15px] text-[#595959] leading-relaxed font-medium">{CATEGORY_DATA.subtitle}</p>
+        </Reveal>
+
+        <StaggerGroup className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {CATEGORY_DATA.categories.map((cat) => {
+            return (
+              <StaggerItem key={cat.title}>
+                <SpotlightCard
+                  as="a"
+                  href={`${EMPLOYEE_APP_URL}?category=${encodeURIComponent(cat.title)}`}
+                  glow="rgba(255,255,255,0.3)"
+                  className="flex items-center gap-4 bg-[#F5F5F5] hover:bg-[#333333] rounded-2xl p-4 transition-colors duration-300 group/cat"
+                >
+                  {cat.image && (
+                    <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-white/60 shadow-sm">
+                      <img src={cat.image} alt={cat.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover/cat:scale-110" />
+                    </div>
+                  )}
+                  <span className="font-black text-[15px] text-black group-hover/spotlight:text-white transition-colors duration-300">
+                    {cat.title}
+                  </span>
+                  <ArrowUpRight size={18} className="ml-auto text-[#9E9E9E] group-hover/spotlight:text-white group-hover/spotlight:translate-x-1 transition-all duration-300 shrink-0" />
+                </SpotlightCard>
+              </StaggerItem>
+            )
+          })}
+        </StaggerGroup>
+      </div>
+    </section>
+  )
+}

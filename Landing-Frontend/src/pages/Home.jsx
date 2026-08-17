@@ -1,44 +1,52 @@
 import Navbar from '../components/layout/Navbar'
-import PageHero from '../components/sections/PageHero'
-import WhoWeAre from '../components/sections/WhoWeAre'
-import ExpertiseGrid from '../components/sections/ExpertiseGrid'
-import OurGoalSection from '../components/sections/OurGoalSection'
-import ApproachSection from '../components/sections/ApproachSection'
-import LogoCloud from '../components/sections/LogoCloud'
-import CTABand from '../components/sections/CTABand'
 import Footer from '../components/layout/Footer'
+import FloatingQuickNav from '../components/ui/FloatingQuickNav'
+import CareersHero from '../components/sections/home/CareersHero'
+import SpotlightGrid from '../components/sections/home/SpotlightGrid'
+import HowWeHireSection from '../components/sections/home/HowWeHireSection'
+import CategoryGrid from '../components/sections/home/CategoryGrid'
+import TeamSection from '../components/sections/home/TeamSection'
+import SuccessStoriesCarousel from '../components/sections/home/SuccessStoriesCarousel'
+import TestimonialsCarousel from '../components/sections/home/TestimonialsCarousel'
+import StatsTimeline from '../components/sections/home/StatsTimeline'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#EEF3F8] text-[#0B1220] font-sans antialiased selection:bg-blue-200">
+    <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
       <title>Mzobs — Hiring, Built Right From Both Sides</title>
-      
+
       {/* 1. Navbar */}
       <Navbar />
 
-      {/* 2. Hero Section */}
-      <PageHero />
+      {/* 2. Hero: rotating headline + job search + banner image */}
+      <CareersHero />
 
-      {/* 3. Who We Are / Statement & Stats */}
-      <WhoWeAre />
+      {/* 3. Spotlight: what Mzobs offers, pastel cards */}
+      <SpotlightGrid />
 
-      {/* 4. Our Expertise / Services */}
-      <ExpertiseGrid />
+      {/* 4. How We Hire: mission narrative + 4-step process */}
+      <HowWeHireSection />
 
-      {/* 5. Our Goal / Transforming Strategy into Results */}
-      <OurGoalSection />
+      {/* 5. Find Your Team: browse jobs by category */}
+      <CategoryGrid />
 
-      {/* 6. Our Approach / 4 Steps */}
-      <ApproachSection />
+      {/* 6. Meet the team behind Mzobs */}
+      <TeamSection />
 
-      {/* 7. We Work With / Logo Cloud */}
-      <LogoCloud />
+      {/* 7. Success stories carousel */}
+      <SuccessStoriesCarousel />
 
-      {/* 8. CTA Band */}
-      <CTABand />
+      {/* 8. Testimonials carousel */}
+      <TestimonialsCarousel />
 
-      {/* 9. Footer */}
+      {/* 9. Mzobs by the numbers */}
+      <StatsTimeline />
+
+      {/* 10. Footer */}
       <Footer />
+
+      {/* Floating quick-links button */}
+      <FloatingQuickNav />
     </div>
   )
 }

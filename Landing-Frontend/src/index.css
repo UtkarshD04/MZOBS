@@ -205,3 +205,68 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ============================================================
+   CAREERS HOME PAGE — Jio Careers–inspired palette
+   Fixed light values (not theme-adaptive) used only by the Home
+   page redesign + shared Navbar/Footer. Kept as explicit --careers-*
+   properties, separate from the light-dark() tokens above, since
+   this design has no dark-mode counterpart to switch to.
+============================================================ */
+:root {
+  --careers-blue: #333333;
+  --careers-blue-hover: #1a1a1a;
+  --careers-bg: #f5f5f5;
+  --careers-ink: #000000;
+  --careers-text: #595959;
+  --careers-text-soft: #666666;
+  --careers-border: #e0e0e0;
+  --careers-border-soft: #c9c9c9;
+  --careers-cyan: #b9f5f9;
+  --careers-cyan-soft: #c0ecff;
+  --careers-mint: #cafdc7;
+  --careers-peach: #ffdab4;
+  --careers-pink: #ffd1e6;
+
+  /* Muted accent tints — used for card surfaces where the bright
+     cyan/mint/peach/pink set above reads too playful (stats, service
+     cards). Same hues, desaturated for a calmer, more premium tone. */
+  --careers-tint-blue: #e3edf5;
+  --careers-tint-blue-ink: #2c4a63;
+  --careers-tint-sage: #e5efe0;
+  --careers-tint-sage-ink: #3d5c34;
+  --careers-tint-sand: #f5ead9;
+  --careers-tint-sand-ink: #7a5424;
+  --careers-tint-rose: #f3e2e6;
+  --careers-tint-rose-ink: #7a3d4c;
+}
+
+@keyframes careersSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes careersSlideOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+.careers-scroll-x {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.careers-scroll-x::-webkit-scrollbar {
+  display: none;
+}

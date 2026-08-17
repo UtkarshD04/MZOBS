@@ -11,7 +11,10 @@ import {
   Users2,
   Wallet,
   RefreshCw,
-  TrendingUp
+  TrendingUp,
+  Cpu,
+  Server,
+  GraduationCap
 } from 'lucide-react'
 import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 
@@ -29,7 +32,10 @@ export const HERO_DATA = {
   titleLine2: "Both Sides.",
   subtitle: "Mzobs connects verified job seekers with employers who need them — every profile and every requirement checked by a real person before it goes live.",
   ctaText: "Get Started",
-  bgImage: "/images/hero-bg.jpg"
+  bgImage: "/images/hero-bg.jpg",
+  rotatingPrefix: "It's time to",
+  rotatingWords: ["Get Hired!", "Hire Smarter!", "Get Verified!", "Grow!", "Build Your Team!"],
+  searchPlaceholder: "Search jobs, roles or companies"
 }
 
 export const WHO_WE_ARE_DATA = {
@@ -76,32 +82,32 @@ export const SERVICES_DATA = {
       icon: Target,
       title: "Verified Candidate Pipeline",
       desc: "Every profile is screened and resume-checked by our team before it reaches an employer.",
-      image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800&q=85"
+      image: "/images/new_images/service_pipeline.jpg"
     },
     {
       icon: Settings,
       title: "Guided Job Matching",
       desc: "Curated openings filtered to your track — no scrolling through noise.",
-      image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=85"
+      image: "/images/new_images/service_matching.jpg"
     },
     {
       icon: Sparkles,
       title: "Structured Interviews",
       desc: "Schedule, track and score interviews from one shared pipeline.",
-      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=85"
+      image: "/images/new_images/service_interviews.jpg"
     },
     {
       icon: BarChart3,
       title: "Offer & Hiring Analytics",
       desc: "Track offers, acceptance and time-to-fill with full visibility.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=85"
+      image: "/images/new_images/service_analytics.jpg"
     }
   ],
   featuredCard: {
     titlePrefix: "Start Your ",
     titleItalic: "Hiring Journey",
     ctaText: "Get In Touch",
-    bgImage: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1200&q=85"
+    bgImage: "/images/new_images/featured_card.jpg"
   }
 }
 
@@ -117,7 +123,7 @@ export const CASE_STUDIES_DATA = {
       title: "Helped a job seeker land a Business Analyst offer at Razorpay.",
       italicWords: "land a Business Analyst offer",
       desc: "Mzobs rebuilt their resume, ran two weeks of guided training and mock interviews, and matched them to a role they were actually qualified for.",
-      bgImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=85"
+      bgImage: "/images/new_images/story_razorpay.jpg"
     },
     {
       id: "solace-technologies",
@@ -125,7 +131,7 @@ export const CASE_STUDIES_DATA = {
       title: "Solace Technologies Cut Time-To-Offer By Half",
       italicWords: null,
       desc: "By sending only pre-verified, screened candidates into their pipeline, Mzobs helped Solace Technologies stop sifting resumes that went nowhere and start interviewing candidates worth their time.",
-      bgImage: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=85"
+      bgImage: "/images/new_images/story_solace.jpg"
     },
     {
       id: "batch-hiring",
@@ -133,7 +139,7 @@ export const CASE_STUDIES_DATA = {
       title: "Filling Dozens of Roles At Once With Verified Talent",
       italicWords: "Verified Talent",
       desc: "A growing company used Mzobs to fill an entire team of open roles in one hiring cycle, with every candidate matched to the requirement instead of keyword-searched.",
-      bgImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=85"
+      bgImage: "/images/new_images/story_batch.jpg"
     }
   ]
 }
@@ -146,35 +152,35 @@ export const TESTIMONIALS_DATA = {
   items: [
     {
       id: 1,
-      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=85",
+      image: "/images/new_images/testimonial_rohit.jpg",
       quote: "Mzobs didn't just help me find a job — my resume was rebuilt by an expert, I trained for two weeks, and I walked into my interview actually prepared.",
       name: "Rohit Kulkarni",
       title: "Placed as Business Analyst, Razorpay"
     },
     {
       id: 2,
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=85",
+      image: "/images/new_images/testimonial_rhea.jpg",
       quote: "We used to spend weeks sifting resumes that went nowhere. With Mzobs, every candidate we interview is already pre-verified.",
       name: "Rhea Kapoor",
       title: "Head of Talent, Solace Technologies"
     },
     {
       id: 3,
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=85",
+      image: "/images/new_images/testimonial_anna.jpg",
       quote: "Guided training and real mock interviews made the difference. I finally applied to roles I was actually qualified for.",
       name: "Anna White",
       title: "Placed as Product Analyst, Nexa Group"
     },
     {
       id: 4,
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=85",
+      image: "/images/new_images/testimonial_mario.jpg",
       quote: "Our time-to-offer dropped by more than half once every candidate arrived pre-screened and ready to interview.",
       name: "Mario Fotiou",
       title: "Talent Lead, Constructo"
     },
     {
       id: 5,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=85",
+      image: "/images/new_images/testimonial_john.jpg",
       quote: "One dashboard for every application, interview and offer status — I always knew exactly where I stood.",
       name: "John Smith",
       title: "Placed as Software Engineer, Innovate"
@@ -189,7 +195,7 @@ export const OUR_GOAL_DATA = {
   titleSuffix: " Into A Fair Match",
   desc: "Mzobs started because hiring was broken on both sides — job seekers were applying into a void, and employers were drowning in unscreened resumes. Our team brings together operations, recruiting and product expertise with one shared mission: verify every profile and every requirement before it reaches the other side, so both sides get a faster, better hire.",
   ctaText: "Meet Our Team",
-  image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
+  image: "/images/new_images/our_goal.jpg"
 }
 
 export const APPROACH_DATA = {
@@ -203,31 +209,35 @@ export const APPROACH_DATA = {
     { text: "real, verified", italic: true },
     { text: " match." }
   ],
-  image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=85",
+  image: "/images/new_images/approach.jpg",
   steps: [
     {
       num: "01",
       icon: Lightbulb,
       title: "Create Your Profile",
-      desc: "Job seekers sign up and tell us their target role; employers share their hiring requirement."
+      desc: "Job seekers sign up and tell us their target role; employers share their hiring requirement.",
+      image: "/images/new_images/step_01.jpg"
     },
     {
       num: "02",
       icon: BarChart2,
       title: "Get Verified",
-      desc: "Our team reviews and rebuilds every resume, and screens every candidate before they're matched."
+      desc: "Our team reviews and rebuilds every resume, and screens every candidate before they're matched.",
+      image: "/images/new_images/step_02.jpg"
     },
     {
       num: "03",
       icon: Rocket,
       title: "Match & Interview",
-      desc: "Verified candidates and open roles are matched, then run through structured interviews."
+      desc: "Verified candidates and open roles are matched, then run through structured interviews.",
+      image: "/images/new_images/step_03.jpg"
     },
     {
       num: "04",
       icon: Target,
       title: "Hire & Get Placed",
-      desc: "Offers are issued, accepted and tracked — from first application to signed offer."
+      desc: "Offers are issued, accepted and tracked — from first application to signed offer.",
+      image: "/images/new_images/step_04.jpg"
     }
   ]
 }
@@ -239,7 +249,7 @@ export const EMPLOYEE_GOAL_DATA = {
   desc: "Most platforms hand you a search bar and wish you luck. Mzobs assigns your resume to a real recruiter, runs you through mock interviews, and only puts you in front of employers hiring for roles you're actually qualified for.",
   ctaText: "See Your Journey",
   ctaHref: "#candidate-journey",
-  image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=85"
+  image: "/images/new_images/employee_goal.jpg"
 }
 
 export const EMPLOYEE_APPROACH_DATA = {
@@ -248,7 +258,7 @@ export const EMPLOYEE_APPROACH_DATA = {
     { text: "guesswork", italic: true },
     { text: " — we build your resume, coach your interviews, and match you to roles that actually fit." }
   ],
-  image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=85",
+  image: "/images/new_images/employee_approach.jpg",
   steps: [
     {
       num: "01",
@@ -292,13 +302,29 @@ export const TRUSTED_LOGOS_DATA = {
   ]
 }
 
+export const CATEGORY_DATA = {
+  badge: "BROWSE OPENINGS",
+  titlePrefix: "Find Your ",
+  titleItalic: "Team",
+  titleSuffix: "",
+  subtitle: "Every role on Mzobs is tagged and verified by category — jump straight to the openings that match what you do.",
+  categories: [
+    { icon: TrendingUp, title: "Sales & Distribution", image: "/images/new_images/cat_sales.jpg" },
+    { icon: Cpu, title: "Engineering & Technology", image: "/images/new_images/cat_engineering.jpg" },
+    { icon: Server, title: "IT & Systems", image: "/images/new_images/cat_it.jpg" },
+    { icon: GraduationCap, title: "HR & Training", image: "/images/new_images/cat_hr.jpg" },
+    { icon: Wallet, title: "Finance & Accounting", image: "/images/new_images/cat_finance.jpg" },
+    { icon: Settings, title: "Operations", image: "/images/new_images/cat_ops.jpg" }
+  ]
+}
+
 export const CTA_BAND_DATA = {
   titlePrefix: "Ready To ",
   titleItalic: "Get Hired",
   titleSuffix: " Or Hire Faster?",
   desc: "Whichever side of hiring you're on, Mzobs verifies it before it goes live. Create a free account or reach out to our team to get started.",
   ctaText: "Get Started Today",
-  bgImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=85"
+  bgImage: "/images/new_images/cta_band.jpg"
 }
 
 export const FOOTER_DATA = {
@@ -408,25 +434,25 @@ export const EMPLOYEE_FEATURES = [
     icon: Target,
     title: "Lifetime Platform Access",
     desc: "One-time ₹99 subscription gives you lifetime access to profile matching, resume reviews, and placement tools.",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=85"
+    image: "/images/new_images/emp_feature_1.jpg"
   },
   {
     icon: Settings,
     title: "Expert Resume Verification",
     desc: "Our recruitment experts review and structure your resume to ensure it highlights your core strengths to employers.",
-    image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800&q=85"
+    image: "/images/new_images/emp_feature_2.jpg"
   },
   {
     icon: Sparkles,
     title: "Mock Interview Practice",
     desc: "Train with real mock interview sessions and receive actionable feedback before meeting actual hiring managers.",
-    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=85"
+    image: "/images/new_images/emp_feature_3.jpg"
   },
   {
     icon: BarChart3,
     title: "Smart Skill Categorisation",
     desc: "Your profile is categorized based on your technical and soft skills to match you with relevant hiring opportunities.",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=85"
+    image: "/images/new_images/emp_feature_4.jpg"
   }
 ]
 
@@ -435,25 +461,25 @@ export const EMPLOYER_FEATURES = [
     icon: ShieldCheck,
     title: "Pre-Screened Candidates",
     desc: "Receive candidates whose resumes, skills, and background have been verified by our operations team.",
-    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=85"
+    image: "/images/new_images/employer_feature_1.jpg"
   },
   {
     icon: Briefcase,
     title: "Single Hiring Dashboard",
     desc: "Manage open requisitions, candidate profiles, interview schedules, and offer letters from one portal.",
-    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=85"
+    image: "/images/new_images/employer_feature_2.jpg"
   },
   {
     icon: Users2,
     title: "Batch Hiring & Scalability",
     desc: "Easily scale your hiring needs from individual niche roles to full batch recruitment cycles effortlessly.",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=85"
+    image: "/images/new_images/employer_feature_3.jpg"
   },
   {
     icon: TrendingUp,
     title: "Faster Time-to-Offer",
     desc: "Cut your hiring timeline in half by skipping unqualified resume stacks and interviewing ready candidates.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=85"
+    image: "/images/new_images/employer_feature_4.jpg"
   }
 ]
 export const HOME_STATS = WHO_WE_ARE_DATA.stats.map(s => ({ display: s.number, label: s.label }))
@@ -464,12 +490,22 @@ export const HOME_STEPS = APPROACH_DATA.steps
 export const EMPLOYEE_STEPS = APPROACH_DATA.steps
 export const EMPLOYER_STEPS = APPROACH_DATA.steps
 export const TEAM = [
-  { name: 'Ananya Rao', role: 'Founder & CEO', initials: 'AR', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=85' },
-  { name: 'Vikram Shetty', role: 'Head of Operations', initials: 'VS', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=85' },
-  { name: 'Priya Menon', role: 'Head of Talent', initials: 'PM', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=85' },
-  { name: 'Karan Malhotra', role: 'Head of Verification', initials: 'KM', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=85' }
+  { name: 'Ananya Rao', role: 'Founder & CEO', initials: 'AR', image: '/images/new_images/team_ananya.jpg' },
+  { name: 'Vikram Shetty', role: 'Head of Operations', initials: 'VS', image: '/images/new_images/team_vikram.jpg' },
+  { name: 'Priya Menon', role: 'Head of Talent', initials: 'PM', image: '/images/new_images/team_priya.jpg' },
+  { name: 'Karan Malhotra', role: 'Head of Verification', initials: 'KM', image: '/images/new_images/team_karan.jpg' }
 ]
 export const TRUSTED_LOGOS = TRUSTED_LOGOS_DATA.logos.map(l => l.name)
 export const EMPLOYER_TESTIMONIAL = TESTIMONIALS_DATA.items[1]
 export const HOME_TESTIMONIALS = TESTIMONIALS_DATA.items
 export const EMPLOYEE_TESTIMONIALS = [TESTIMONIALS_DATA.items[0], TESTIMONIALS_DATA.items[2], TESTIMONIALS_DATA.items[4]]
+export const GALLERY_IMAGES = [
+  "/images/new_images/galleria_1.jpg",
+  "/images/new_images/galleria_2.jpg",
+  "/images/new_images/galleria_3.jpg",
+  "/images/new_images/galleria_4.jpg",
+  "/images/new_images/galleria_5_fix.jpg",
+  "/images/new_images/galleria_6.jpg",
+  "/images/new_images/galleria_7.jpg",
+  "/images/new_images/galleria_8.jpg"
+]

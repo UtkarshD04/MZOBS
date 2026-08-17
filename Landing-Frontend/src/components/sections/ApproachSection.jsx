@@ -27,7 +27,7 @@ export default function ApproachSection({ data }) {
 
         {/* 2-Column Grid */}
         <div className="grid lg:grid-cols-12 gap-8 items-stretch">
-          {/* Left Large Photo Container with Clip Reveal */}
+          {/* Left Large Photo Container */}
           <div className="lg:col-span-5 min-h-[420px] rounded-3xl overflow-hidden shadow-md border border-slate-200/60">
             <ImageReveal
               src={approachData.image}

@@ -3,9 +3,9 @@ import { motion } from 'framer-motion'
 export function StaggerGroup({
   className,
   children,
-  staggerDelay = 0.12,
+  staggerDelay = 0.09,
   delayChildren = 0,
-  amount = 0.12,
+  amount = 0.15,
   once = true,
   ...props
 }) {
@@ -25,7 +25,7 @@ export function StaggerGroup({
       variants={containerVariants}
       initial="hidden"
       whileInView="show"
-      viewport={{ once, amount }}
+      viewport={{ once, amount, margin: '0px 0px -80px 0px' }}
       {...props}
     >
       {children}
@@ -36,10 +36,10 @@ export function StaggerGroup({
 export function StaggerItem({
   className,
   children,
-  y = 70,
-  scale = 0.88,
-  rotate = 2.5,
-  duration = 0.75,
+  y = 34,
+  scale = 0.95,
+  rotate = 0,
+  duration = 0.65,
   ...props
 }) {
   const itemVariants = {
@@ -51,7 +51,7 @@ export function StaggerItem({
       rotate: 0,
       transition: {
         duration,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.16, 1, 0.3, 1],
       },
     },
   }
@@ -62,5 +62,3 @@ export function StaggerItem({
     </motion.div>
   )
 }
-
-
