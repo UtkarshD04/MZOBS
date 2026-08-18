@@ -24,7 +24,7 @@ export default function EmployerResetPassword() {
               <h2 className="text-xl font-black text-black">Set a new password</h2>
             </div>
             <p className="text-[13.5px] text-[#595959] mt-1 mb-6">
-              <Link to="/employers/signin" className="font-bold text-black hover:text-[#333333] transition-colors">
+              <Link to="/employers/signin" className="font-bold text-black hover:text-[var(--careers-accent)] transition-colors">
                 Back to sign in
               </Link>
             </p>

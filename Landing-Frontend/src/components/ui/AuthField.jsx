@@ -17,7 +17,7 @@ export function Field({ label, optional, hint, children, className }) {
 }
 
 export const inputClass =
-  'h-11 px-4 rounded-xl border border-[#C9C9C9] bg-white text-black text-[13.5px] font-medium w-full transition-colors duration-150 outline-none placeholder:text-[#9E9E9E] focus:border-[#333333]'
+  'h-11 px-4 rounded-xl border border-[#C9C9C9] bg-white text-black text-[13.5px] font-medium w-full transition-colors duration-150 outline-none placeholder:text-[#9E9E9E] focus:border-[var(--careers-accent)]'
 
 export function Input(props) {
   return <input className={cn(inputClass, props.className)} {...props} />
@@ -39,7 +39,7 @@ export function SubmitButton({ children, className, ...props }) {
     <button
       type="submit"
       className={cn(
-        'w-full h-12 inline-flex items-center justify-center gap-2 rounded-full bg-[#333333] text-white text-sm font-bold hover:bg-[#1a1a1a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+        'w-full h-12 inline-flex items-center justify-center gap-2 rounded-full bg-[var(--careers-accent)] text-white text-sm font-bold hover:bg-[var(--careers-accent-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
         className
       )}
       {...props}
@@ -54,7 +54,7 @@ export function LinkButton({ to, children, className }) {
     <Link
       to={to}
       className={cn(
-        'inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#333333] text-white text-sm font-bold hover:bg-[#1a1a1a] transition-colors',
+        'inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[var(--careers-accent)] text-white text-sm font-bold hover:bg-[var(--careers-accent-hover)] transition-colors',
         className
       )}
     >

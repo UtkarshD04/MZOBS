@@ -25,7 +25,7 @@ export default function EmployeeForgotPassword() {
             </div>
             <p className="text-[13.5px] text-[#595959] mt-1 mb-6">
               Remembered it after all?{' '}
-              <Link to="/employees/signin" className="font-bold text-black hover:text-[#333333] transition-colors">
+              <Link to="/employees/signin" className="font-bold text-black hover:text-[var(--careers-accent)] transition-colors">
                 Back to sign in
               </Link>
             </p>

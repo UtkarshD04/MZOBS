@@ -23,7 +23,7 @@ export default function HowWeHireSection() {
             return (
               <StaggerItem key={step.num}>
                 <TiltCard maxTilt={3} y={-6} className="bg-white rounded-3xl p-6 h-full border border-[#e0e0e0] hover:shadow-lg">
-                  <span className="text-[13px] font-black text-[#333333]">{step.num}</span>
+                  <span className="text-[13px] font-black text-[var(--careers-accent)]">{step.num}</span>
                   <div className="w-11 h-11 rounded-xl bg-[#F5F5F5] flex items-center justify-center my-4 transition-transform duration-300 group-hover:scale-110">
                     <Icon size={20} strokeWidth={1.8} className="text-black" />
                   </div>

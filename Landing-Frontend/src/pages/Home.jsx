@@ -6,7 +6,7 @@ import SpotlightGrid from '../components/sections/home/SpotlightGrid'
 import HowWeHireSection from '../components/sections/home/HowWeHireSection'
 import CategoryGrid from '../components/sections/home/CategoryGrid'
 import EmployerLogosSection from '../components/sections/employer/EmployerLogosSection'
-import SuccessStoriesCarousel from '../components/sections/home/SuccessStoriesCarousel'
+import CompanyWorkflowSection from '../components/sections/home/CompanyWorkflowSection'
 import TestimonialsCarousel from '../components/sections/home/TestimonialsCarousel'
 import StatsTimeline from '../components/sections/home/StatsTimeline'
 
@@ -33,8 +33,8 @@ export default function Home() {
       {/* 6. Companies hiring on Mzobs */}
       <EmployerLogosSection />
 
-      {/* 7. Success stories carousel */}
-      <SuccessStoriesCarousel />
+      {/* 7. How companies hire: colorful workflow steps */}
+      <CompanyWorkflowSection />
 
       {/* 8. Testimonials carousel */}
       <TestimonialsCarousel />

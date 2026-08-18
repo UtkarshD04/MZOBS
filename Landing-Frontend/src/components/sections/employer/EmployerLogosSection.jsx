@@ -72,20 +72,20 @@ function LogoMark({ variant }) {
 // and organic rather than a grid — position comes from flex layout + a
 // vertical nudge, not fixed coordinates, so it stays responsive.
 const VARIANTS = [
-  { size: 108, offset: -14, duration: 7, delay: 0 },
-  { size: 88, offset: 38, duration: 8.5, delay: 0.6 },
-  { size: 124, offset: -28, duration: 6.5, delay: 1.1 },
-  { size: 96, offset: 46, duration: 9, delay: 0.3 },
-  { size: 112, offset: -18, duration: 7.5, delay: 1.4 },
-  { size: 92, offset: 42, duration: 8, delay: 0.8 },
-  { size: 104, offset: -22, duration: 7, delay: 0.2 },
-  { size: 94, offset: 40, duration: 9.5, delay: 1.0 },
+  { size: 104, offset: -10, duration: 7, delay: 0 },
+  { size: 90, offset: 28, duration: 8.5, delay: 0.6 },
+  { size: 116, offset: -20, duration: 6.5, delay: 1.1 },
+  { size: 96, offset: 32, duration: 9, delay: 0.3 },
+  { size: 108, offset: -14, duration: 7.5, delay: 1.4 },
+  { size: 92, offset: 30, duration: 8, delay: 0.8 },
+  { size: 102, offset: -16, duration: 7, delay: 0.2 },
+  { size: 94, offset: 28, duration: 9.5, delay: 1.0 },
 ]
 
 export default function EmployerLogosSection() {
   return (
-    <section className="bg-[#F5F5F5] py-16 md:py-24 px-6 md:px-12 overflow-hidden">
-      <div className="max-w-7xl mx-auto space-y-14">
+    <section className="bg-(--careers-tint-sage) py-12 md:py-16 px-6 md:px-12 overflow-hidden">
+      <div className="max-w-7xl mx-auto space-y-10">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl mx-auto text-center">
           <SectionLabel className="mx-auto">{TRUSTED_LOGOS_DATA.badge}</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-[42px] font-black text-black tracking-tight leading-tight">
@@ -93,7 +93,7 @@ export default function EmployerLogosSection() {
           </h2>
         </Reveal>
 
-        <div className="max-w-3xl mx-auto flex flex-wrap items-start justify-center gap-x-8 gap-y-16 sm:gap-x-10 py-6">
+        <div className="max-w-3xl mx-auto flex flex-wrap items-start justify-center gap-x-6 gap-y-10 sm:gap-x-8 py-4">
           {TRUSTED_LOGOS_DATA.logos.map((logo, i) => {
             const v = VARIANTS[i % VARIANTS.length]
             return (
@@ -106,14 +106,14 @@ export default function EmployerLogosSection() {
                 style={{ marginTop: v.offset }}
               >
                 <div className="group relative">
-                  <div className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap px-2.5 py-1 rounded-full bg-[#333333] text-white text-[11px] font-bold opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none">
+                  <div className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap px-2.5 py-1 rounded-full bg-[var(--careers-accent)] text-white text-[11px] font-bold opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none">
                     {logo.name}
-                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#333333]" />
+                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[var(--careers-accent)]" />
                   </div>
 
                   <div
                     style={{ width: v.size, height: v.size }}
-                    className="rounded-full bg-white border border-[#e0e0e0] shadow-sm flex items-center justify-center px-3 transition-all duration-300 hover:shadow-xl hover:scale-110 hover:border-[#333333]/30 cursor-default"
+                    className="rounded-full bg-white border border-[#e0e0e0] shadow-sm flex items-center justify-center px-3 transition-all duration-300 hover:shadow-xl hover:scale-110 hover:border-(--careers-accent)/30 cursor-default"
                   >
                     <LogoMark variant={logo.variant} />
                   </div>

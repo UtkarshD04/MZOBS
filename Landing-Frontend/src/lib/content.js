@@ -14,7 +14,8 @@ import {
   TrendingUp,
   Cpu,
   Server,
-  GraduationCap
+  GraduationCap,
+  CheckCircle2
 } from 'lucide-react'
 import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 
@@ -82,25 +83,25 @@ export const SERVICES_DATA = {
       icon: Target,
       title: "Verified Candidate Pipeline",
       desc: "Every profile is screened and resume-checked by our team before it reaches an employer.",
-      image: "/images/new_images/service_pipeline.jpg"
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=85"
     },
     {
       icon: Settings,
       title: "Guided Job Matching",
       desc: "Curated openings filtered to your track — no scrolling through noise.",
-      image: "/images/new_images/service_matching.jpg"
+      image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=85"
     },
     {
       icon: Sparkles,
       title: "Structured Interviews",
       desc: "Schedule, track and score interviews from one shared pipeline.",
-      image: "/images/new_images/service_interviews.jpg"
+      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=85"
     },
     {
       icon: BarChart3,
       title: "Offer & Hiring Analytics",
       desc: "Track offers, acceptance and time-to-fill with full visibility.",
-      image: "/images/new_images/service_analytics.jpg"
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=85"
     }
   ],
   featuredCard: {
@@ -140,6 +141,56 @@ export const CASE_STUDIES_DATA = {
       italicWords: "Verified Talent",
       desc: "A growing company used Mzobs to fill an entire team of open roles in one hiring cycle, with every candidate matched to the requirement instead of keyword-searched.",
       bgImage: "/images/new_images/story_batch.jpg"
+    }
+  ]
+}
+
+export const COMPANY_WORKFLOW_DATA = {
+  badge: "FOR EMPLOYERS",
+  titlePrefix: "How Companies ",
+  titleItalic: "Hire",
+  titleSuffix: " On Mzobs",
+  subtitle: "One workflow, from open requirement to signed offer — with every candidate verified before they reach you.",
+  steps: [
+    {
+      num: "01",
+      icon: Briefcase,
+      title: "Post The Requirement",
+      desc: "Share the role, must-have skills and budget — live in minutes, not weeks.",
+      bg: "#cfe8fb",
+      accent: "#2563eb"
+    },
+    {
+      num: "02",
+      icon: ShieldCheck,
+      title: "We Screen & Verify",
+      desc: "Every applicant is manually reviewed and verified before reaching your pipeline.",
+      bg: "#cdeec5",
+      accent: "#16a34a"
+    },
+    {
+      num: "03",
+      icon: Users2,
+      title: "Interview Shortlisted Talent",
+      desc: "Meet only candidates matched to your requirement — no resume pile to dig through.",
+      bg: "#ffe2b0",
+      accent: "#d97706"
+    },
+    {
+      num: "04",
+      icon: CheckCircle2,
+      title: "Extend & Track Offers",
+      desc: "Issue offers and track acceptance status from one shared dashboard.",
+      bg: "#ffd0de",
+      accent: "#db2777"
+    },
+    {
+      num: "05",
+      icon: TrendingUp,
+      title: "Onboard & Scale Hiring",
+      desc: "Bring hires onboard, then reuse the same workflow for every open role.",
+      bg: "#e3d5fb",
+      accent: "#7c3aed"
     }
   ]
 }
@@ -195,7 +246,7 @@ export const OUR_GOAL_DATA = {
   titleSuffix: " Into A Fair Match",
   desc: "Mzobs started because hiring was broken on both sides — job seekers were applying into a void, and employers were drowning in unscreened resumes. Our team brings together operations, recruiting and product expertise with one shared mission: verify every profile and every requirement before it reaches the other side, so both sides get a faster, better hire.",
   ctaText: "Meet Our Team",
-  image: "/images/new_images/our_goal.jpg"
+  image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
 }
 
 export const OUR_STORY_DATA = {
@@ -220,7 +271,7 @@ export const APPROACH_DATA = {
     { text: "real, verified", italic: true },
     { text: " match." }
   ],
-  image: "/images/new_images/approach.jpg",
+  image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=85",
   steps: [
     {
       num: "01",

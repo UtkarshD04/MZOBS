@@ -26,7 +26,7 @@ export default function EmployeeHero() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[58px] font-black text-black leading-[1.08] tracking-tight">
             <SplitText text="Find A Role You're" />
             <br />
-            <SplitText text="Actually Qualified For." delay={0.15} wordClassName="text-[#333333]" />
+            <SplitText text="Actually Qualified For." delay={0.15} wordClassName="text-[var(--careers-accent)]" />
           </h1>
 
           <Reveal direction="up" delay={0.35} duration={0.85} scale={0.96}>
@@ -39,13 +39,13 @@ export default function EmployeeHero() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 to="/employees/signup"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#333333] text-white text-sm font-bold border border-[#333333] hover:bg-white hover:text-[#595959] hover:border-[#666] transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--careers-accent)] text-white text-sm font-bold border border-[var(--careers-accent)] hover:bg-white hover:text-[#595959] hover:border-[#666] transition-colors"
               >
                 Create free account <ArrowRight size={16} />
               </Link>
               <Link
                 to="/employees/signin"
-                className="inline-flex items-center px-6 py-3 rounded-full bg-white text-[#595959] text-sm font-bold border border-[#666] hover:bg-[#333333] hover:text-white hover:border-[#333333] transition-colors"
+                className="inline-flex items-center px-6 py-3 rounded-full bg-white text-[#595959] text-sm font-bold border border-[#666] hover:bg-[var(--careers-accent)] hover:text-white hover:border-[var(--careers-accent)] transition-colors"
               >
                 Sign in
               </Link>
@@ -70,7 +70,7 @@ export default function EmployeeHero() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 pointer-events-none" />
               <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-white/40 shadow-lg text-xs font-bold text-black flex items-center justify-between">
                 <div>
-                  <span className="text-[#333333] font-extrabold block text-sm">Verified &amp; Guided</span>
+                  <span className="text-[var(--careers-accent)] font-extrabold block text-sm">Verified &amp; Guided</span>
                   <span className="text-[#666] font-medium text-[11px]">Real recruiters, real mock interviews</span>
                 </div>
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />

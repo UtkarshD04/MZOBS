@@ -46,7 +46,7 @@ export default function EmployerWhySection() {
         <Reveal direction="up" className="flex justify-center pt-2">
           <Link
             to="/contact"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#333333] text-white text-sm font-bold border border-[#333333] hover:bg-white hover:text-[#595959] hover:border-[#666] transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--careers-accent)] text-white text-sm font-bold border border-[var(--careers-accent)] hover:bg-white hover:text-[#595959] hover:border-[#666] transition-colors"
           >
             Talk to our team <ArrowRight size={16} />
           </Link>

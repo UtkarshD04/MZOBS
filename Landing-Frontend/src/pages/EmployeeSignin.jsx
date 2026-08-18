@@ -27,7 +27,7 @@ export default function EmployeeSignin() {
           <div className="lg:col-span-6">
             <SectionLabel>For Job Seekers</SectionLabel>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-black leading-[1.1] tracking-tight">
-              Welcome Back To Your <span className="text-[#333333]">Placement</span> Journey.
+              Welcome Back To Your <span className="text-[var(--careers-accent)]">Placement</span> Journey.
             </h1>
             <p className="mt-6 text-base sm:text-lg text-[#595959] max-w-md leading-relaxed font-medium">
               Sign in to check your application status, continue your resume review, and pick up mock interview prep where you left off.
@@ -51,7 +51,7 @@ export default function EmployeeSignin() {
               <h2 className="text-xl font-black text-black">Sign in to your account</h2>
               <p className="text-[13.5px] text-[#595959] mt-1 mb-6">
                 Don't have one yet?{' '}
-                <Link to="/employees/signup" className="font-bold text-black hover:text-[#333333] transition-colors">
+                <Link to="/employees/signup" className="font-bold text-black hover:text-[var(--careers-accent)] transition-colors">
                   Create free account
                 </Link>
               </p>

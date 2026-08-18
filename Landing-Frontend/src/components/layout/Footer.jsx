@@ -24,13 +24,13 @@ export default function Footer() {
               transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
               className="shrink-0 mt-0.5"
             >
-              <ShieldAlert size={18} className="text-[#333333]" />
+              <ShieldAlert size={18} className="text-[var(--careers-accent)]" />
             </motion.div>
             <p>
               <span className="font-black text-black">Beware of fraud: </span>
               Mzobs never asks candidates to pay for a job offer, interview call or verification. Report suspicious
               offers to{' '}
-              <a href={`mailto:${FOOTER_DATA.email}`} className="text-[#333333] font-bold hover:underline">
+              <a href={`mailto:${FOOTER_DATA.email}`} className="text-[var(--careers-accent)] font-bold hover:underline">
                 {FOOTER_DATA.email}
               </a>
               .
@@ -47,7 +47,7 @@ export default function Footer() {
                 whileHover={{ rotate: -8, scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-                className="w-9 h-9 rounded-xl bg-[#333333] flex items-center justify-center text-white font-black text-lg"
+                className="w-9 h-9 rounded-xl bg-[var(--careers-accent)] flex items-center justify-center text-white font-black text-lg"
               >
                 M
               </motion.div>
@@ -63,7 +63,7 @@ export default function Footer() {
               <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 350, damping: 18 }}>
                 <Link
                   to="/employees/signin"
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-white text-[#595959] text-[12px] font-bold border border-[#666] hover:bg-[#333333] hover:text-white hover:border-[#333333] transition-colors"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-white text-[#595959] text-[12px] font-bold border border-[#666] hover:bg-[var(--careers-accent)] hover:text-white hover:border-[var(--careers-accent)] transition-colors"
                 >
                   Employee Login
                 </Link>
@@ -71,7 +71,7 @@ export default function Footer() {
               <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 350, damping: 18 }}>
                 <Link
                   to="/employers/signin"
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#333333] text-white text-[12px] font-bold border border-[#333333] hover:bg-white hover:text-[#595959] hover:border-[#666] transition-colors"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[var(--careers-accent)] text-white text-[12px] font-bold border border-[var(--careers-accent)] hover:bg-white hover:text-[#595959] hover:border-[#666] transition-colors"
                 >
                   Employer Login
                 </Link>
@@ -87,7 +87,7 @@ export default function Footer() {
                 <li key={idx}>
                   <a
                     href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="relative w-fit inline-block hover:text-[#333333] transition-colors after:absolute after:left-0 after:-bottom-0.5 after:h-[1px] after:w-0 after:bg-[#333333] after:transition-all after:duration-300 hover:after:w-full"
+                    className="relative w-fit inline-block hover:text-[var(--careers-accent)] transition-colors after:absolute after:left-0 after:-bottom-0.5 after:h-[1px] after:w-0 after:bg-[var(--careers-accent)] after:transition-all after:duration-300 hover:after:w-full"
                   >
                     {item}
                   </a>
@@ -100,8 +100,8 @@ export default function Footer() {
           <div className="md:col-span-3 space-y-4">
             <h4 className="text-sm font-black text-black uppercase tracking-wider">{FOOTER_DATA.contactTitle}</h4>
             <div className="space-y-2.5 text-[13px] text-[#666] leading-relaxed font-medium">
-              <p className="hover:text-[#333333] transition-colors cursor-pointer w-fit">{FOOTER_DATA.phone}</p>
-              <p className="hover:text-[#333333] transition-colors cursor-pointer w-fit">{FOOTER_DATA.email}</p>
+              <p className="hover:text-[var(--careers-accent)] transition-colors cursor-pointer w-fit">{FOOTER_DATA.phone}</p>
+              <p className="hover:text-[var(--careers-accent)] transition-colors cursor-pointer w-fit">{FOOTER_DATA.email}</p>
               <p className="pt-1">{FOOTER_DATA.address}</p>
             </div>
           </div>
@@ -117,10 +117,10 @@ export default function Footer() {
                     key={idx}
                     href="#"
                     aria-label={item}
-                    whileHover={{ scale: 1.15, rotate: -10, backgroundColor: '#333333', color: '#fff' }}
+                    whileHover={{ scale: 1.15, rotate: -10, backgroundColor: '#3D5C34', color: '#fff' }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-                    className="w-9 h-9 rounded-full bg-white border border-[#e0e0e0] flex items-center justify-center text-[#333333]"
+                    className="w-9 h-9 rounded-full bg-white border border-[#e0e0e0] flex items-center justify-center text-[var(--careers-accent)]"
                   >
                     {Icon && <Icon size={14} />}
                   </motion.a>
@@ -136,7 +136,7 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             {FOOTER_DATA.rightLinks.map((link, i) => (
               <span key={i} className="flex items-center gap-4">
-                <a href="#" className="hover:text-[#333333] transition-colors">
+                <a href="#" className="hover:text-[var(--careers-accent)] transition-colors">
                   {link}
                 </a>
                 {i < FOOTER_DATA.rightLinks.length - 1 && <span className="text-[#C9C9C9]">|</span>}
