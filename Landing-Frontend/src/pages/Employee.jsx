@@ -28,7 +28,7 @@ export default function Employee() {
       <EmployeeWhySection />
 
       {/* 5. Candidate testimonials */}
-      <TestimonialsCarousel items={EMPLOYEE_TESTIMONIALS} badge="Success Stories" />
+      {/* <TestimonialsCarousel items={EMPLOYEE_TESTIMONIALS} badge="Success Stories" /> */}
 
       {/* 6. Closing CTA */}
       <EmployeeCTABand />

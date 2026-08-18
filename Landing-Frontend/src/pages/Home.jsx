@@ -7,7 +7,7 @@ import HowWeHireSection from '../components/sections/home/HowWeHireSection'
 import CategoryGrid from '../components/sections/home/CategoryGrid'
 import EmployerLogosSection from '../components/sections/employer/EmployerLogosSection'
 import CompanyWorkflowSection from '../components/sections/home/CompanyWorkflowSection'
-import TestimonialsCarousel from '../components/sections/home/TestimonialsCarousel'
+import FAQSection from '../components/sections/home/FAQSection'
 import StatsTimeline from '../components/sections/home/StatsTimeline'
 
 export default function Home() {
@@ -36,12 +36,15 @@ export default function Home() {
       {/* 7. How companies hire: colorful workflow steps */}
       <CompanyWorkflowSection />
 
-      {/* 8. Testimonials carousel */}
-      <TestimonialsCarousel />
+      
+     
 
       {/* 9. Mzobs by the numbers */}
+
       <StatsTimeline />
 
+      {/* 8. Frequently asked questions */}
+ <FAQSection />
       {/* 10. Footer */}
       <Footer />
 

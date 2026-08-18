@@ -35,19 +35,15 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between">
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0">
-            <motion.div
-              whileHover={{ rotate: -8, scale: 1.08 }}
+          <Link to="/" className="flex items-center group shrink-0">
+            <motion.img
+              src="/images/logo.jpg"
+              alt="Mzobs"
+              whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-              className="w-10 h-10 rounded-xl bg-[var(--careers-accent)] shadow-[0_6px_16px_-4px_var(--careers-accent)] flex items-center justify-center text-white font-black text-lg group-hover:bg-[var(--careers-accent-hover)] transition-colors"
-            >
-              M
-            </motion.div>
-            <div className="flex flex-col leading-none">
-              <span className="font-black text-[17px] text-black tracking-tight">Mzobs</span>
-              <span className="text-[8px] tracking-[0.18em] text-[#595959] uppercase font-bold">Hiring Platform</span>
-            </div>
+              className="h-16 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Navigation */}
