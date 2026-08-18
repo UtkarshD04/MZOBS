@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { FileCheck, FileText, ShieldCheck, Download, Clock } from 'lucide-react'
+import { FileCheck, FileText, ShieldCheck, Download, Clock, Video } from 'lucide-react'
 import Card, { CardHead } from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -16,6 +16,8 @@ import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Input, Textarea } from '../../components/ui/Field'
 import { useApp } from '../../context/AppContext'
 import { useResumeQueueQuery, useReviewResumeMutation } from '../../hooks/useResumes'
+import { useMockInterviewsQuery } from '../../hooks/useMockInterviews'
+import { ScheduleMockModal } from './MockInterviews'
 import { FILE_BASE_URL } from '../../lib/config'
 
 const TABS = ['Pending', 'Changes requested', 'Verified', 'Not uploaded']
@@ -96,8 +98,10 @@ export default function ResumeQueue() {
   const status = TAB_KEYS[tab]
   const { data: rows = [], isLoading, isError, refetch } = useResumeQueueQuery({ status })
   const { data: allRows = [] } = useResumeQueueQuery({})
+  const { data: mockInterviews = [] } = useMockInterviewsQuery({})
 
   const counts = useMemo(() => TAB_KEYS.map((k) => allRows.filter((c) => (c.resume?.status ?? 'none') === k).length), [allRows])
+  const scheduledEmployeeIds = useMemo(() => new Set(mockInterviews.map((m) => m.employeeId ?? m.employee?.id)), [mockInterviews])
 
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
@@ -187,6 +191,11 @@ export default function ResumeQueue() {
                   {c.resume?.file && (
                     <Button variant="primary" size="sm" onClick={() => app.openModal(<VerifyResumeModal app={app} employee={c} onDone={refetch} />)}>
                       <ShieldCheck size={14} /> {c.resume.status === 'verified' ? 'Re-verify' : 'Review & decide'}
+                    </Button>
+                  )}
+                  {c.resume?.status === 'verified' && !scheduledEmployeeIds.has(c.id) && (
+                    <Button size="sm" onClick={() => app.openModal(<ScheduleMockModal app={app} employee={c} onDone={refetch} />)}>
+                      <Video size={14} /> Schedule mock interview
                     </Button>
                   )}
                 </div>

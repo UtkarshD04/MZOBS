@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { AlertTriangle, CreditCard, Download, FileStack, IndianRupee, Receipt, Users } from 'lucide-react'
+import { AlertTriangle, CreditCard, Download, FileStack, IndianRupee, Receipt, SkipForward, Users } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
 import Card, { CardBody, CardHead, CardTitle } from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -11,7 +11,7 @@ import EmptyState from '../components/ui/EmptyState'
 import ErrorState from '../components/ui/ErrorState'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import { useBillingSummaryQuery, useInvoicesQuery } from '../hooks/useBilling'
-import { useJobsQuery, usePayJobInvoice } from '../hooks/useJobs'
+import { useJobsQuery, usePayJobInvoice, useSetJobStatus } from '../hooks/useJobs'
 import { fmtDate, fmtINR } from '../lib/utils'
 
 export default function Billing() {
@@ -20,6 +20,7 @@ export default function Billing() {
   const { data: invoices = [], isLoading: invoicesLoading } = useInvoicesQuery()
   const { data: jobs = [] } = useJobsQuery()
   const payInvoice = usePayJobInvoice()
+  const setJobStatus = useSetJobStatus()
 
   if (isLoading) return <PageSkeleton />
   if (isError || !summary) return <ErrorState onRetry={() => refetch()} />
@@ -79,7 +80,7 @@ export default function Billing() {
       {dueJobs.length > 0 && (
         <Card className="mb-5">
           <CardHead>
-            <CardTitle>Payment required before sourcing starts</CardTitle>
+            <CardTitle>Pending payment for sourcing</CardTitle>
             <span className="text-[12px] text-ink-tertiary">{fmtINR(summary.outstanding)} outstanding</span>
           </CardHead>
           <CardBody className="flex flex-col gap-3">
@@ -95,6 +96,9 @@ export default function Billing() {
                   </div>
                 </div>
                 <div className="text-[17px] font-bold tracking-tight tabular-nums">{fmtINR(job.feeTotal)}</div>
+                <Button variant="secondary" size="sm" loading={setJobStatus.isPending} onClick={() => setJobStatus.mutate({ id: job.id, status: 'sourcing' })}>
+                  <SkipForward size={14} /> Skip for now
+                </Button>
                 <Button variant="primary" size="sm" loading={payInvoice.isPending} onClick={() => payInvoice.mutate(job.id)}>
                   <IndianRupee size={14} /> Pay now
                 </Button>

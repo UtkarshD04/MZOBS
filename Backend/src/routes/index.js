@@ -11,6 +11,7 @@ import notificationRoutes from './notificationRoutes.js'
 import billingRoutes from './billingRoutes.js'
 import dashboardRoutes from './dashboardRoutes.js'
 import supportRoutes from './supportRoutes.js'
+import contactRoutes from './contactRoutes.js'
 import employeeAuthRoutes from './employeeAuthRoutes.js'
 import employeeProfileRoutes from './employeeProfileRoutes.js'
 import employeeResumeRoutes from './employeeResumeRoutes.js'
@@ -72,5 +73,6 @@ const router = Router()
 router.use('/employer', employerRoutes)
 router.use('/employee', employeeRoutes)
 router.use('/staff', staffRoutes)
+router.use('/contact', contactRoutes)
 
 export default router

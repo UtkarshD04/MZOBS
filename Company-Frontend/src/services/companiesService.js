@@ -15,3 +15,15 @@ export function verifyCompany(id, { method, note }) {
 export function rejectCompany(id, { note }) {
   return apiClient.patch(`/companies/${id}/reject`, { note }).then((r) => r.data)
 }
+
+export function blockCompany(id, { reason }) {
+  return apiClient.patch(`/companies/${id}/block`, { reason }).then((r) => r.data)
+}
+
+export function unblockCompany(id) {
+  return apiClient.patch(`/companies/${id}/unblock`).then((r) => r.data)
+}
+
+export function deleteCompany(id) {
+  return apiClient.delete(`/companies/${id}`).then((r) => r.data)
+}

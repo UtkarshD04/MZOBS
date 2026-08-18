@@ -21,6 +21,7 @@ function authResponse(user, company) {
       id: user._id.toString(),
       name: user.name,
       email: user.email,
+      phone: user.phone,
       role: user.role,
       initials: initialsOf(user.name),
     },
@@ -47,6 +48,10 @@ export const login = asyncHandler(async (req, res) => {
   const matches = await bcrypt.compare(password, user.passwordHash)
   if (!matches) return res.status(401).json({ message: 'Invalid email or password' })
 
+  if (user.company?.blocked) {
+    return res.status(403).json({ message: 'This company account has been blocked. Contact Mzobs support for help.' })
+  }
+
   user.lastActiveAt = new Date()
   await user.save()
 
@@ -54,9 +59,9 @@ export const login = asyncHandler(async (req, res) => {
 })
 
 export const signup = asyncHandler(async (req, res) => {
-  const { companyName, name, email, password } = req.body ?? {}
-  if (!companyName || !name || !email || !password) {
-    return res.status(400).json({ message: 'Company name, your name, email and password are required' })
+  const { companyName, name, email, phone, password, industry, size, website, hq } = req.body ?? {}
+  if (!companyName || !name || !email || !phone || !password || !industry || !size || !website || !hq) {
+    return res.status(400).json({ message: 'All fields are required to register your company' })
   }
   if (password.length < 8) {
     return res.status(400).json({ message: 'Password must be at least 8 characters' })
@@ -66,13 +71,20 @@ export const signup = asyncHandler(async (req, res) => {
   const existing = await User.findOne({ email: normalizedEmail })
   if (existing) return res.status(409).json({ message: 'An account with this email already exists' })
 
-  const company = await Company.create({ name: companyName.trim() })
+  const company = await Company.create({
+    name: companyName.trim(),
+    industry: industry.trim(),
+    size,
+    website: website.trim(),
+    hq: hq.trim(),
+  })
 
   const passwordHash = await bcrypt.hash(password, 10)
   const user = await User.create({
     company: company._id,
     name: name.trim(),
     email: normalizedEmail,
+    phone: phone.trim(),
     passwordHash,
     role: 'Admin',
     status: 'active',
@@ -87,6 +99,7 @@ export const getMe = asyncHandler(async (req, res) => {
     id: req.user._id.toString(),
     name: req.user.name,
     email: req.user.email,
+    phone: req.user.phone,
     role: req.user.role,
     initials: initialsOf(req.user.name),
   })
@@ -103,6 +116,7 @@ export const updateMe = asyncHandler(async (req, res) => {
     id: req.user._id.toString(),
     name: req.user.name,
     email: req.user.email,
+    phone: req.user.phone,
     role: req.user.role,
     initials: initialsOf(req.user.name),
   })

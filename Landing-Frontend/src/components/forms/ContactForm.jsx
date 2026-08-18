@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { CheckCircle2, Send } from 'lucide-react'
 import { Field, Input, Select, Textarea } from '../ui/Field'
 import Button from '../ui/Button'
+import { submitContactMessage } from '../../lib/contact'
 
 const initialForm = { name: '', email: '', role: 'Job Seeker', subject: '', message: '' }
 
@@ -19,6 +20,7 @@ export default function ContactForm() {
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | submitting | success
+  const [submitError, setSubmitError] = useState('')
 
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }))
@@ -31,10 +33,15 @@ export default function ContactForm() {
     if (Object.keys(nextErrors).length > 0) return
 
     setStatus('submitting')
-    // TODO: wire up to a real endpoint once Backend exposes one (currently empty).
-    await new Promise((resolve) => setTimeout(resolve, 700))
-    setStatus('success')
-    setForm(initialForm)
+    setSubmitError('')
+    try {
+      await submitContactMessage(form)
+      setStatus('success')
+      setForm(initialForm)
+    } catch (err) {
+      setSubmitError(err.message)
+      setStatus('idle')
+    }
   }
 
   if (status === 'success') {
@@ -84,6 +91,8 @@ export default function ContactForm() {
         <Textarea value={form.message} onChange={(e) => update('message', e.target.value)} placeholder="Tell us a bit more..." />
         {errors.message && <span className="text-xs text-red mt-1 block">{errors.message}</span>}
       </Field>
+
+      {submitError && <p className="text-xs text-red mb-3">{submitError}</p>}
 
       <Button type="submit" variant="primary" size="lg" pill disabled={status === 'submitting'} className="w-full sm:w-auto mt-2">
         {status === 'submitting' ? (

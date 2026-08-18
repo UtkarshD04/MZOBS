@@ -16,6 +16,7 @@ function employeeSummary(employee) {
     id: employee._id.toString(),
     name: employee.name,
     email: employee.email,
+    phone: employee.phone,
     experience: employee.experience,
     graduation: employee.graduation,
     initials: initialsOf(employee.name),
@@ -45,9 +46,9 @@ export const login = asyncHandler(async (req, res) => {
 })
 
 export const signup = asyncHandler(async (req, res) => {
-  const { name, email, password, experience, graduation } = req.body ?? {}
-  if (!name || !email || !password || !graduation) {
-    return res.status(400).json({ message: 'Name, email, password and graduation are required' })
+  const { name, email, phone, password, experience, graduation } = req.body ?? {}
+  if (!name || !email || !phone || !password || !graduation) {
+    return res.status(400).json({ message: 'Name, email, phone, password and graduation are required' })
   }
   if (password.length < 8) {
     return res.status(400).json({ message: 'Password must be at least 8 characters' })
@@ -61,6 +62,7 @@ export const signup = asyncHandler(async (req, res) => {
   const employee = await Employee.create({
     name: name.trim(),
     email: normalizedEmail,
+    phone: phone.trim(),
     passwordHash,
     experience: experience === 'experienced' ? 'experienced' : 'fresher',
     graduation,
