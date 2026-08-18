@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { ArrowRight, CheckCircle2, Eye, EyeOff } from 'lucide-react'
-import { Field, Input, Select } from '../ui/Field'
-import Button, { goldSolidClass } from '../ui/Button'
+import { Field, Input, Select, SubmitButton, LinkButton } from '../ui/AuthField'
 import { signupEmployee } from '../../lib/employeeAuth'
 
 const GRADUATION_OPTIONS = [
@@ -67,13 +66,13 @@ export default function EmployeeSignupForm() {
         <div className="w-14 h-14 rounded-full bg-green-tint text-green flex items-center justify-center mb-4">
           <CheckCircle2 size={26} />
         </div>
-        <h3 className="text-lg font-bold tracking-tight text-[#0B1220]">You're all set, {form.name.split(' ')[0]}!</h3>
-        <p className="text-[13.5px] text-slate-600 mt-1.5 max-w-xs">
+        <h3 className="text-lg font-black text-black">You're all set, {form.name.split(' ')[0]}!</h3>
+        <p className="text-[13.5px] text-[#595959] mt-1.5 max-w-xs">
           Your Mzobs account has been created. Sign in to complete your profile and start getting matched.
         </p>
-        <Button to="/employees/signin" variant="primary" size="lg" pill className={`${goldSolidClass} mt-6`}>
+        <LinkButton to="/employees/signin" className="mt-6">
           Sign in to continue <ArrowRight size={16} />
-        </Button>
+        </LinkButton>
       </div>
     )
   }
@@ -107,7 +106,7 @@ export default function EmployeeSignupForm() {
           <button
             type="button"
             onClick={() => setShowPassword((s) => !s)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-tertiary hover:text-ink transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9E9E9E] hover:text-black transition-colors"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -126,10 +125,10 @@ export default function EmployeeSignupForm() {
               key={opt.value}
               type="button"
               onClick={() => update('experience', opt.value)}
-              className={`h-10 rounded-[9px] text-[13.5px] font-semibold border transition-all duration-200 ${
+              className={`h-11 rounded-xl text-[13.5px] font-bold border transition-all duration-200 ${
                 form.experience === opt.value
-                  ? 'bg-[#0B1220] border-[#0B1220] text-white shadow-sm'
-                  : 'bg-surface border-border-strong text-ink-secondary hover:border-ink-tertiary'
+                  ? 'bg-[#333333] border-[#333333] text-white'
+                  : 'bg-white border-[#C9C9C9] text-[#595959] hover:border-[#333333]'
               }`}
             >
               {opt.label}
@@ -154,14 +153,7 @@ export default function EmployeeSignupForm() {
 
       {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
 
-      <Button
-        type="submit"
-        variant="primary"
-        size="lg"
-        pill
-        disabled={status === 'submitting'}
-        className={`${goldSolidClass} w-full mt-2`}
-      >
+      <SubmitButton disabled={status === 'submitting'} className="mt-2">
         {status === 'submitting' ? (
           'Creating your account...'
         ) : (
@@ -169,9 +161,9 @@ export default function EmployeeSignupForm() {
             Create free account <ArrowRight size={16} />
           </>
         )}
-      </Button>
+      </SubmitButton>
 
-      <p className="text-[11.5px] text-ink-tertiary text-center mt-4 leading-relaxed">
+      <p className="text-[11.5px] text-[#9E9E9E] text-center mt-4 leading-relaxed">
         By signing up, you agree to Mzobs' Terms of Service and Privacy Policy.
       </p>
     </form>

@@ -5,7 +5,7 @@ import CareersHero from '../components/sections/home/CareersHero'
 import SpotlightGrid from '../components/sections/home/SpotlightGrid'
 import HowWeHireSection from '../components/sections/home/HowWeHireSection'
 import CategoryGrid from '../components/sections/home/CategoryGrid'
-import TeamSection from '../components/sections/home/TeamSection'
+import EmployerLogosSection from '../components/sections/employer/EmployerLogosSection'
 import SuccessStoriesCarousel from '../components/sections/home/SuccessStoriesCarousel'
 import TestimonialsCarousel from '../components/sections/home/TestimonialsCarousel'
 import StatsTimeline from '../components/sections/home/StatsTimeline'
@@ -30,8 +30,8 @@ export default function Home() {
       {/* 5. Find Your Team: browse jobs by category */}
       <CategoryGrid />
 
-      {/* 6. Meet the team behind Mzobs */}
-      <TeamSection />
+      {/* 6. Companies hiring on Mzobs */}
+      <EmployerLogosSection />
 
       {/* 7. Success stories carousel */}
       <SuccessStoriesCarousel />

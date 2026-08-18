@@ -7,6 +7,11 @@ import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { CATEGORY_DATA } from '../../../lib/content'
 import { EMPLOYEE_APP_URL } from '../../../lib/config'
 
+// Brighter, more saturated than the site's default muted tint tokens —
+// this grid reads too monochrome at the softer shade, so it uses its own
+// punchier palette instead of the shared `--careers-tint-*` vars.
+const TINTS = ['bg-[#cfe8fb]', 'bg-[#cdeec5]', 'bg-[#ffe2b0]', 'bg-[#ffd0de]']
+
 export default function CategoryGrid() {
   return (
     <section className="bg-white py-16 md:py-24 px-6 md:px-12">
@@ -20,24 +25,24 @@ export default function CategoryGrid() {
         </Reveal>
 
         <StaggerGroup className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {CATEGORY_DATA.categories.map((cat) => {
+          {CATEGORY_DATA.categories.map((cat, i) => {
             return (
               <StaggerItem key={cat.title}>
                 <SpotlightCard
                   as="a"
                   href={`${EMPLOYEE_APP_URL}?category=${encodeURIComponent(cat.title)}`}
-                  glow="rgba(255,255,255,0.3)"
-                  className="flex items-center gap-4 bg-[#F5F5F5] hover:bg-[#333333] rounded-2xl p-4 transition-colors duration-300 group/cat"
+                  glow="rgba(255,255,255,0.35)"
+                  className={`flex items-center gap-4 rounded-2xl p-4 border border-black/[0.04] hover:bg-[#333333] transition-colors duration-300 ${TINTS[i % TINTS.length]}`}
                 >
                   {cat.image && (
                     <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-white/60 shadow-sm">
-                      <img src={cat.image} alt={cat.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover/cat:scale-110" />
+                      <img src={cat.image} alt={cat.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover/spotlight:scale-110" />
                     </div>
                   )}
                   <span className="font-black text-[15px] text-black group-hover/spotlight:text-white transition-colors duration-300">
                     {cat.title}
                   </span>
-                  <ArrowUpRight size={18} className="ml-auto text-[#9E9E9E] group-hover/spotlight:text-white group-hover/spotlight:translate-x-1 transition-all duration-300 shrink-0" />
+                  <ArrowUpRight size={18} className="ml-auto text-black/40 group-hover/spotlight:text-white group-hover/spotlight:translate-x-1 group-hover/spotlight:-translate-y-1 transition-all duration-300" />
                 </SpotlightCard>
               </StaggerItem>
             )

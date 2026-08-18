@@ -7,7 +7,8 @@ const ROLES = ['Job Seeker', 'Employer', 'Other']
 export const submitContactMessage = asyncHandler(async (req, res) => {
   const { name, email, role, subject, message } = req.body ?? {}
 
-  if (!name?.trim() || !email?.trim() || !subject?.trim() || !message?.trim()) {
+  const required = { name, email, subject, message }
+  if (Object.values(required).some((v) => typeof v !== 'string' || !v.trim())) {
     return res.status(400).json({ message: 'Name, email, subject and message are required' })
   }
   if (!EMAIL_RE.test(email)) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
-export default function RotatingWord({ words, interval = 2200, className = '' }) {
+export default function RotatingWord({ words, interval = 2200, className = '', colors }) {
   const [index, setIndex] = useState(0)
 
   useEffect(() => {
@@ -31,6 +31,7 @@ export default function RotatingWord({ words, interval = 2200, className = '' })
             exit={{ y: '-100%', opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="absolute left-0 top-0 whitespace-nowrap"
+            style={colors?.length ? { color: colors[index % colors.length] } : undefined}
           >
             {words[index]}
           </motion.span>

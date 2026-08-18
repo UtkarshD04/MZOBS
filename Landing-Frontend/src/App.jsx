@@ -7,9 +7,13 @@ import Contact from './pages/Contact'
 import Employee from './pages/Employee'
 import EmployeeSignup from './pages/EmployeeSignup'
 import EmployeeSignin from './pages/EmployeeSignin'
+import EmployeeForgotPassword from './pages/EmployeeForgotPassword'
+import EmployeeResetPassword from './pages/EmployeeResetPassword'
 import Employer from './pages/Employer'
 import EmployerSignup from './pages/EmployerSignup'
 import EmployerSignin from './pages/EmployerSignin'
+import EmployerForgotPassword from './pages/EmployerForgotPassword'
+import EmployerResetPassword from './pages/EmployerResetPassword'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -33,9 +37,13 @@ export default function App() {
             <Route path="/employees" element={<Employee />} />
             <Route path="/employees/signup" element={<EmployeeSignup />} />
             <Route path="/employees/signin" element={<EmployeeSignin />} />
+            <Route path="/employees/forgot-password" element={<EmployeeForgotPassword />} />
+            <Route path="/employees/reset-password" element={<EmployeeResetPassword />} />
             <Route path="/employers" element={<Employer />} />
             <Route path="/employers/signup" element={<EmployerSignup />} />
             <Route path="/employers/signin" element={<EmployerSignin />} />
+            <Route path="/employers/forgot-password" element={<EmployerForgotPassword />} />
+            <Route path="/employers/reset-password" element={<EmployerResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </motion.div>

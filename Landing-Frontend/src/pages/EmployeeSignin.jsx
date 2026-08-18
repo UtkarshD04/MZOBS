@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom'
 import { Sparkles, ShieldCheck, Target } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
-import SectionBadge from '../components/ui/SectionBadge'
+import SectionLabel from '../components/ui/SectionLabel'
+import FloatingElement from '../components/ui/FloatingElement'
 import EmployeeSigninForm from '../components/forms/EmployeeSigninForm'
 
 const PERKS = [
@@ -13,50 +14,50 @@ const PERKS = [
 
 export default function EmployeeSignin() {
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
       <title>Sign In — Mzobs</title>
       <Navbar />
 
-      {/* Slim dark backdrop so the navbar (built for a dark hero) stays legible */}
-      <div className="h-28 bg-[#0B1220]" />
+      <section id="home" className="relative bg-white pt-[76px] overflow-hidden">
+        <FloatingElement duration={9} distance={16} className="absolute top-24 right-[8%] w-64 h-64 rounded-full bg-[#F5F5F5] blur-3xl pointer-events-none" />
+        <FloatingElement duration={11} delay={1.5} distance={20} className="absolute bottom-10 left-[4%] w-72 h-72 rounded-full bg-[var(--careers-cyan-soft)]/40 blur-3xl pointer-events-none" />
 
-      <section className="bg-[#EEF3F8] px-6 md:px-12 pt-12 pb-20 md:pb-28 border-b border-slate-200/50">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="relative max-w-6xl mx-auto px-6 md:px-12 py-16 md:py-24 grid lg:grid-cols-12 gap-12 items-center">
           {/* Left: pitch */}
-          <div className="space-y-8">
-            <SectionBadge label="For Job Seekers" />
-
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-sans font-medium leading-[1.15] tracking-tight text-[#0B1220]">
-              Welcome Back To Your <em className="italic font-serif text-blue-900">Placement</em> Journey.
+          <div className="lg:col-span-6">
+            <SectionLabel>For Job Seekers</SectionLabel>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-black leading-[1.1] tracking-tight">
+              Welcome Back To Your <span className="text-[#333333]">Placement</span> Journey.
             </h1>
-
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-md">
+            <p className="mt-6 text-base sm:text-lg text-[#595959] max-w-md leading-relaxed font-medium">
               Sign in to check your application status, continue your resume review, and pick up mock interview prep where you left off.
             </p>
 
-            <ul className="space-y-4 pt-2">
+            <ul className="mt-8 space-y-4">
               {PERKS.map((perk, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-white border border-slate-200/60 shadow-sm flex items-center justify-center text-blue-800 shrink-0">
+                  <div className="w-9 h-9 rounded-lg bg-[#F5F5F5] flex items-center justify-center text-black shrink-0">
                     <perk.icon size={17} strokeWidth={1.8} />
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed pt-1.5">{perk.text}</p>
+                  <p className="text-sm text-[#595959] font-medium leading-relaxed pt-1.5">{perk.text}</p>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Right: signin card */}
-          <div className="bg-white rounded-3xl shadow-md p-7 sm:p-9 border border-slate-200/60">
-            <h2 className="text-xl font-bold tracking-tight text-[#0B1220]">Sign in to your account</h2>
-            <p className="text-[13.5px] text-slate-600 mt-1 mb-6">
-              Don't have one yet?{' '}
-              <Link to="/employees/signup" className="font-semibold text-[#0B1220] hover:text-blue-800 transition-colors">
-                Create free account
-              </Link>
-            </p>
+          <div className="lg:col-span-6">
+            <div className="bg-white rounded-3xl shadow-xl p-7 sm:p-9 border border-[#e0e0e0]">
+              <h2 className="text-xl font-black text-black">Sign in to your account</h2>
+              <p className="text-[13.5px] text-[#595959] mt-1 mb-6">
+                Don't have one yet?{' '}
+                <Link to="/employees/signup" className="font-bold text-black hover:text-[#333333] transition-colors">
+                  Create free account
+                </Link>
+              </p>
 
-            <EmployeeSigninForm />
+              <EmployeeSigninForm />
+            </div>
           </div>
         </div>
       </section>

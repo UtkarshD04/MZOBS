@@ -25,7 +25,7 @@ function staffSummary(staff) {
 // by another authenticated staff member through POST /staff/team.
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body ?? {}
-  if (!email || !password) {
+  if (typeof email !== 'string' || typeof password !== 'string' || !email.trim() || !password) {
     return res.status(400).json({ message: 'Email and password are required' })
   }
 

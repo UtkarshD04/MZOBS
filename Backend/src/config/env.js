@@ -22,4 +22,14 @@ export const env = {
   razorpayKeyId: process.env.RAZORPAY_KEY_ID ?? '',
   razorpayKeySecret: process.env.RAZORPAY_KEY_SECRET ?? '',
   razorpayWebhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET ?? '',
+  // Base URL of the marketing site — used to build the link inside
+  // password-reset emails (e.g. `${frontendUrl}/employees/reset-password?token=...`).
+  frontendUrl: process.env.FRONTEND_URL ?? 'http://localhost:5176',
+  smtp: {
+    host: process.env.SMTP_HOST ?? '',
+    port: Number(process.env.SMTP_PORT ?? 587),
+    user: process.env.SMTP_USER ?? '',
+    pass: process.env.SMTP_PASS ?? '',
+    from: process.env.MAIL_FROM ?? 'Mzobs <no-reply@mzobs.com>',
+  },
 }
