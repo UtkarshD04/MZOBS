@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Building2, ShieldCheck, Search, Globe, Phone, AlertTriangle } from 'lucide-react'
+import { Building2, ShieldCheck, Search, Globe, Phone, AlertTriangle, Ban, Trash2 } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -12,7 +12,14 @@ import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Select, Textarea } from '../../components/ui/Field'
 import { useApp } from '../../context/AppContext'
-import { useCompaniesQuery, useVerifyCompanyMutation, useRejectCompanyMutation } from '../../hooks/useCompanies'
+import {
+  useCompaniesQuery,
+  useVerifyCompanyMutation,
+  useRejectCompanyMutation,
+  useBlockCompanyMutation,
+  useUnblockCompanyMutation,
+  useDeleteCompanyMutation,
+} from '../../hooks/useCompanies'
 
 const TABS = ['Pending', 'Verified', 'Rejected', 'All']
 const TAB_KEYS = ['pending', 'verified', 'rejected', null]
@@ -81,6 +88,92 @@ function VerifyCompanyModal({ app, company, mode, onDone }) {
   )
 }
 
+function BlockCompanyModal({ app, company, onDone }) {
+  const [reason, setReason] = useState('')
+  const block = useBlockCompanyMutation()
+
+  function submit() {
+    block.mutate(
+      { id: company.id, reason },
+      {
+        onSuccess: () => {
+          app.closeModal()
+          app.addToast('error', `${company.name} blocked`)
+          onDone?.()
+        },
+        onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
+      }
+    )
+  }
+
+  return (
+    <>
+      <ModalHead title={`Block ${company.name}?`} onClose={app.closeModal} />
+      <ModalBody>
+        <div className="flex items-start gap-3 mb-4">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 bg-red-tint text-red">
+            <Ban size={20} />
+          </div>
+          <p className="text-[13px] text-ink-secondary">
+            {company.name} will not be able to sign in or post requirements until unblocked. Existing sessions are cut off immediately.
+          </p>
+        </div>
+        <Field label="Reason" optional>
+          <Textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Visible to the Mzobs team only" />
+        </Field>
+      </ModalBody>
+      <ModalFoot>
+        <Button onClick={app.closeModal} disabled={block.isPending}>
+          Cancel
+        </Button>
+        <Button variant="danger" onClick={submit} disabled={block.isPending}>
+          {block.isPending ? 'Blocking...' : 'Block company'}
+        </Button>
+      </ModalFoot>
+    </>
+  )
+}
+
+function DeleteCompanyModal({ app, company, onDone }) {
+  const del = useDeleteCompanyMutation()
+
+  function submit() {
+    del.mutate(company.id, {
+      onSuccess: () => {
+        app.closeModal()
+        app.addToast('error', `${company.name} deleted`)
+        onDone?.()
+      },
+      onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
+    })
+  }
+
+  return (
+    <>
+      <ModalHead title={`Delete ${company.name}?`} onClose={app.closeModal} />
+      <ModalBody>
+        <div className="flex items-start gap-3">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 bg-red-tint text-red">
+            <AlertTriangle size={20} />
+          </div>
+          <p className="text-[13px] text-ink-secondary">
+            This permanently removes {company.name} and its login accounts. This cannot be undone. Requirements, applications and invoices already
+            on record are kept as history.
+          </p>
+        </div>
+      </ModalBody>
+      <ModalFoot>
+        <Button onClick={app.closeModal} disabled={del.isPending}>
+          Cancel
+        </Button>
+        <Button variant="danger" onClick={submit} disabled={del.isPending}>
+          {del.isPending ? 'Deleting...' : 'Delete company'}
+        </Button>
+      </ModalFoot>
+    </>
+  )
+}
+
 export default function Companies() {
   const app = useApp()
   const [tab, setTab] = useState(0)
@@ -88,6 +181,7 @@ export default function Companies() {
   const status = TAB_KEYS[tab]
   const { data: rows = [], isLoading, isError, refetch } = useCompaniesQuery(status ? { status } : {})
   const { data: allRows = [] } = useCompaniesQuery({})
+  const unblockCompany = useUnblockCompanyMutation()
 
   const filtered = useMemo(() => {
     if (!query) return rows
@@ -156,7 +250,10 @@ export default function Companies() {
                       <Globe size={11} /> {co.website || 'No website'} · {co.hq || 'No HQ'}
                     </div>
                   </div>
-                  <Badge tone={STATUS_TONE[co.verificationStatus] ?? 'navy'}>{co.verificationStatus}</Badge>
+                  <div className="flex flex-col items-end gap-1">
+                    <Badge tone={STATUS_TONE[co.verificationStatus] ?? 'navy'}>{co.verificationStatus}</Badge>
+                    {co.blocked && <Badge tone="red">blocked</Badge>}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5 mt-3.5">
@@ -192,6 +289,21 @@ export default function Companies() {
                     </Button>
                   </div>
                 )}
+
+                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
+                  {co.blocked ? (
+                    <Button size="sm" onClick={() => unblockCompany.mutate(co.id, { onSuccess: () => app.addToast('success', `${co.name} unblocked`), onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong') })} disabled={unblockCompany.isPending}>
+                      <Ban size={14} /> Unblock
+                    </Button>
+                  ) : (
+                    <Button size="sm" onClick={() => app.openModal(<BlockCompanyModal app={app} company={co} onDone={refetch} />)}>
+                      <Ban size={14} /> Block
+                    </Button>
+                  )}
+                  <Button variant="danger" size="sm" onClick={() => app.openModal(<DeleteCompanyModal app={app} company={co} onDone={refetch} />)}>
+                    <Trash2 size={14} /> Delete
+                  </Button>
+                </div>
               </Card>
             ))}
           </div>

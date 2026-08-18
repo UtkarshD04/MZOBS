@@ -1,21 +1,43 @@
 import { useState } from 'react'
 import { ArrowRight, Eye, EyeOff } from 'lucide-react'
-import { Field, Input } from '../ui/Field'
+import { Field, Input, Select } from '../ui/Field'
 import Button, { goldSolidClass } from '../ui/Button'
 import { EMPLOYER_APP_URL } from '../../lib/config'
 import { signupEmployer } from '../../lib/employerAuth'
 
-const initialForm = { companyName: '', name: '', email: '', password: '' }
+const COMPANY_SIZES = ['1–50 employees', '51–200 employees', '201–500 employees', '501–1000 employees', '1000+ employees']
+
+const initialForm = {
+  name: '',
+  email: '',
+  phone: '',
+  password: '',
+  companyName: '',
+  industry: '',
+  size: '',
+  website: '',
+  hq: '',
+}
 
 function validate(form) {
   const errors = {}
-  if (!form.companyName.trim()) errors.companyName = 'Please enter your company name.'
   if (!form.name.trim()) errors.name = 'Please enter your full name.'
   if (!form.email.trim()) errors.email = 'Please enter your email.'
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Enter a valid email address.'
+  if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
+  else if (form.phone.replace(/\D/g, '').length < 10) errors.phone = 'Enter a valid phone number.'
   if (!form.password) errors.password = 'Please create a password.'
   else if (form.password.length < 8) errors.password = 'Password must be at least 8 characters.'
+  if (!form.companyName.trim()) errors.companyName = 'Please enter your company name.'
+  if (!form.industry.trim()) errors.industry = 'Please enter your industry.'
+  if (!form.size) errors.size = 'Please select a company size.'
+  if (!form.website.trim()) errors.website = 'Please enter your company website.'
+  if (!form.hq.trim()) errors.hq = 'Please enter your headquarters city.'
   return errors
+}
+
+function SectionLabel({ children }) {
+  return <div className="text-[11px] font-semibold tracking-wide uppercase text-ink-tertiary pb-2 mb-1 border-b border-border">{children}</div>
 }
 
 export default function EmployerSignupForm() {
@@ -46,20 +68,23 @@ export default function EmployerSignupForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <Field label="Company name">
-        <Input value={form.companyName} onChange={(e) => update('companyName', e.target.value)} placeholder="Acme Technologies" />
-        {errors.companyName && <span className="text-xs text-red mt-1 block">{errors.companyName}</span>}
-      </Field>
+      <SectionLabel>Your details</SectionLabel>
 
       <Field label="Your full name">
         <Input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Rhea Kapoor" />
         {errors.name && <span className="text-xs text-red mt-1 block">{errors.name}</span>}
       </Field>
 
-      <Field label="Work email">
-        <Input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@company.com" />
-        {errors.email && <span className="text-xs text-red mt-1 block">{errors.email}</span>}
-      </Field>
+      <div className="grid sm:grid-cols-2 gap-x-4">
+        <Field label="Work email">
+          <Input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@company.com" />
+          {errors.email && <span className="text-xs text-red mt-1 block">{errors.email}</span>}
+        </Field>
+        <Field label="Phone number">
+          <Input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="98765 43210" />
+          {errors.phone && <span className="text-xs text-red mt-1 block">{errors.phone}</span>}
+        </Field>
+      </div>
 
       <Field label="Password">
         <div className="relative">
@@ -81,6 +106,46 @@ export default function EmployerSignupForm() {
         </div>
         {errors.password && <span className="text-xs text-red mt-1 block">{errors.password}</span>}
       </Field>
+
+      <div className="mt-2">
+        <SectionLabel>Company details</SectionLabel>
+      </div>
+
+      <Field label="Company name">
+        <Input value={form.companyName} onChange={(e) => update('companyName', e.target.value)} placeholder="Acme Technologies" />
+        {errors.companyName && <span className="text-xs text-red mt-1 block">{errors.companyName}</span>}
+      </Field>
+
+      <div className="grid sm:grid-cols-2 gap-x-4">
+        <Field label="Industry">
+          <Input value={form.industry} onChange={(e) => update('industry', e.target.value)} placeholder="e.g. IT Services" />
+          {errors.industry && <span className="text-xs text-red mt-1 block">{errors.industry}</span>}
+        </Field>
+        <Field label="Company size">
+          <Select value={form.size} onChange={(e) => update('size', e.target.value)}>
+            <option value="" disabled>
+              Select size
+            </option>
+            {COMPANY_SIZES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </Select>
+          {errors.size && <span className="text-xs text-red mt-1 block">{errors.size}</span>}
+        </Field>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-x-4">
+        <Field label="Website">
+          <Input value={form.website} onChange={(e) => update('website', e.target.value)} placeholder="acme.com" />
+          {errors.website && <span className="text-xs text-red mt-1 block">{errors.website}</span>}
+        </Field>
+        <Field label="Headquarters city">
+          <Input value={form.hq} onChange={(e) => update('hq', e.target.value)} placeholder="Bengaluru" />
+          {errors.hq && <span className="text-xs text-red mt-1 block">{errors.hq}</span>}
+        </Field>
+      </div>
 
       {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
 

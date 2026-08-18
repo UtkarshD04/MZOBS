@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Briefcase, Copy, CreditCard, Edit3, Eye, MoreHorizontal, Plus, Search, Send, Trash2, XCircle } from 'lucide-react'
+import { Briefcase, Copy, CreditCard, Edit3, Eye, MoreHorizontal, Plus, Search, Send, SkipForward, Trash2, XCircle } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
 import Card, { CardBody } from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -155,11 +155,16 @@ export default function Jobs() {
                         { label: 'View / Edit', icon: <Edit3 size={14} />, onClick: () => navigate(`/jobs/${job.id}/edit`) },
                         { label: 'Duplicate', icon: <Copy size={14} />, onClick: () => duplicateJob.mutate(job.id) },
                         'divider',
-                        job.status === 'draft'
-                          ? { label: 'Submit to Mzobs', icon: <Send size={14} />, onClick: () => setJobStatus.mutate({ id: job.id, status: 'pending_review' }) }
+                        ...(job.status === 'draft'
+                          ? [{ label: 'Submit to Mzobs', icon: <Send size={14} />, onClick: () => setJobStatus.mutate({ id: job.id, status: 'pending_review' }) }]
                           : job.status === 'awaiting_payment'
-                          ? { label: `Pay ${fmtINR(job.feeTotal)}`, icon: <CreditCard size={14} />, onClick: () => payInvoice.mutate(job.id) }
-                          : { label: 'View resume batch', icon: <Eye size={14} />, onClick: () => navigate('/batches') },
+                          ? [
+                              { label: `Pay ${fmtINR(job.feeTotal)}`, icon: <CreditCard size={14} />, onClick: () => payInvoice.mutate(job.id) },
+                              // Payment isn't compulsory yet — same "skip for now" pattern the
+                              // employee side uses — so this moves straight to sourcing unpaid.
+                              { label: 'Skip for now', icon: <SkipForward size={14} />, onClick: () => setJobStatus.mutate({ id: job.id, status: 'sourcing' }) },
+                            ]
+                          : [{ label: 'View resume batch', icon: <Eye size={14} />, onClick: () => navigate('/batches') }]),
                         job.status !== 'closed' && job.status !== 'archived'
                           ? { label: 'Close Requirement', icon: <XCircle size={14} />, onClick: () => setJobStatus.mutate({ id: job.id, status: 'closed' }) }
                           : { label: 'Archive Requirement', icon: <XCircle size={14} />, onClick: () => setJobStatus.mutate({ id: job.id, status: 'archived' }) },

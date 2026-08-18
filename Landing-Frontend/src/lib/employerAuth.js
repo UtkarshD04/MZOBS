@@ -15,6 +15,6 @@ export function loginEmployer({ email, password }) {
   return postJSON('/auth/login', { email, password })
 }
 
-export function signupEmployer({ companyName, name, email, password }) {
-  return postJSON('/auth/signup', { companyName, name, email, password })
+export function signupEmployer({ companyName, name, email, phone, password, industry, size, website, hq }) {
+  return postJSON('/auth/signup', { companyName, name, email, phone, password, industry, size, website, hq })
 }

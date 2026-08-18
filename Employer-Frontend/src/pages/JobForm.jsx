@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Controller, useForm, useWatch } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Save, Send, Info } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
@@ -11,8 +11,6 @@ import TagInput from '../components/ui/TagInput'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import { jobDefaultValues, jobSchema } from '../schemas/jobSchema'
 import { useCreateJob, useJobQuery, useUpdateJob } from '../hooks/useJobs'
-import { PRICING } from '../data/mock'
-import { fmtINR } from '../lib/utils'
 
 const DEPARTMENTS = ['Engineering', 'Design', 'Product', 'Sales', 'Marketing', 'Operations', 'People', 'Finance']
 
@@ -55,11 +53,6 @@ export default function JobForm() {
 
   const isPending = createJob.isPending || updateJob.isPending
 
-  // The commercials follow the openings, so show them live as the number changes.
-  const openings = useWatch({ control, name: 'vacancies' }) || 0
-  const fee = openings * PRICING.perOpeningFee
-  const resumes = openings * PRICING.resumesPerOpening
-
   function submitAs(status) {
     return handleSubmit((values) => {
       const payload = { ...values, status, hiringTeam: existingJob?.hiringTeam ?? ['RK'] }
@@ -82,8 +75,8 @@ export default function JobForm() {
         title={isEdit ? 'Edit Requirement' : 'New Requirement'}
         subtitle={
           isEdit
-            ? 'Update this requirement. Changes go back to Mzobs for review if it has not been paid for yet.'
-            : `Tell Mzobs how many people you need. You pay ${fmtINR(PRICING.perOpeningFee)} per opening and receive ${PRICING.resumesPerOpening} screened resumes for each one.`
+            ? 'Update this requirement. Changes go back to Mzobs for review.'
+            : 'Tell Mzobs how many people you need for this role.'
         }
       />
 
@@ -122,7 +115,7 @@ export default function JobForm() {
                       <Input type="number" min={0} error={!!errors.experienceMax} {...register('experienceMax', { valueAsNumber: true })} />
                     </div>
                   </Field>
-                  <Field label="Openings" hint={`Billed at ${fmtINR(PRICING.perOpeningFee)} each`} error={errors.vacancies?.message}>
+                  <Field label="Openings" error={errors.vacancies?.message}>
                     <Input type="number" min={1} error={!!errors.vacancies} {...register('vacancies', { valueAsNumber: true })} />
                   </Field>
                 </div>
@@ -168,25 +161,6 @@ export default function JobForm() {
           </div>
 
           <div className="flex flex-col gap-5">
-            <Card>
-              <CardHead><CardTitle>What this will cost</CardTitle></CardHead>
-              <CardBody>
-                <div className="flex items-baseline justify-between pb-3 border-b border-border">
-                  <span className="text-[13px] text-ink-secondary">
-                    {openings || 0} opening{openings === 1 ? '' : 's'} × {fmtINR(PRICING.perOpeningFee)}
-                  </span>
-                  <span className="text-[22px] font-bold tracking-tight tabular-nums">{fmtINR(fee)}</span>
-                </div>
-                <div className="flex items-baseline justify-between pt-3">
-                  <span className="text-[13px] text-ink-secondary">Resumes Mzobs will send</span>
-                  <span className="text-[17px] font-bold tabular-nums">{resumes}</span>
-                </div>
-                <p className="text-[12px] text-ink-tertiary mt-3">
-                  {PRICING.resumesPerOpening} screened, interview-ready profiles per opening. You choose your hires from that set.
-                </p>
-              </CardBody>
-            </Card>
-
             <Card>
               <CardHead><CardTitle>Submit</CardTitle></CardHead>
               <CardBody className="flex flex-col gap-2.5">

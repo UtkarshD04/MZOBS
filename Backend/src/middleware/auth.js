@@ -20,6 +20,7 @@ export const requireAuth = asyncHandler(async (req, res, next) => {
 
   const user = await User.findById(payload.sub).populate('company')
   if (!user || !user.company) return res.status(401).json({ message: 'User no longer exists' })
+  if (user.company.blocked) return res.status(403).json({ message: 'This company account has been blocked. Contact Mzobs support for help.' })
 
   req.user = user
   req.company = user.company

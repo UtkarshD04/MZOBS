@@ -2,6 +2,7 @@ import { asyncHandler } from '../utils/asyncHandler.js'
 import { logStaffActivity } from '../utils/staffActivityLog.js'
 import { paginationParams, paginate, setPaginationHeaders } from '../utils/paginate.js'
 import Company from '../models/Company.js'
+import User from '../models/User.js'
 
 export const listCompanies = asyncHandler(async (req, res) => {
   const { status, search } = req.query
@@ -55,4 +56,51 @@ export const rejectCompany = asyncHandler(async (req, res) => {
   await logStaffActivity(`${company.name} verification rejected`, 'gold')
 
   res.json(company)
+})
+
+export const blockCompany = asyncHandler(async (req, res) => {
+  const { reason } = req.body ?? {}
+  const company = await Company.findById(req.params.id)
+  if (!company) return res.status(404).json({ message: 'Company not found' })
+
+  company.blocked = true
+  company.blockReason = reason ?? ''
+  company.blockedOn = new Date()
+  company.blockedBy = req.staff.name
+
+  await company.save()
+  await logStaffActivity(`${company.name} blocked`, 'gold')
+
+  res.json(company)
+})
+
+export const unblockCompany = asyncHandler(async (req, res) => {
+  const company = await Company.findById(req.params.id)
+  if (!company) return res.status(404).json({ message: 'Company not found' })
+
+  company.blocked = false
+  company.blockReason = ''
+  company.blockedOn = null
+  company.blockedBy = null
+
+  await company.save()
+  await logStaffActivity(`${company.name} unblocked`, 'green')
+
+  res.json(company)
+})
+
+export const deleteCompany = asyncHandler(async (req, res) => {
+  const company = await Company.findById(req.params.id)
+  if (!company) return res.status(404).json({ message: 'Company not found' })
+
+  // Removes the employer's login accounts along with the company record.
+  // Jobs/applications/invoices already sourced under this company are left
+  // as historical records rather than cascading further — same convention
+  // deleteJob already follows for its own dependents.
+  await User.deleteMany({ company: company._id })
+  await company.deleteOne()
+
+  await logStaffActivity(`${company.name} deleted`, 'gold')
+
+  res.json({ id: req.params.id })
 })
