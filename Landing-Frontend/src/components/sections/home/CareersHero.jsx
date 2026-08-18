@@ -8,6 +8,13 @@ import FloatingElement from '../../ui/FloatingElement'
 import { HERO_DATA, WHO_WE_ARE_DATA } from '../../../lib/content'
 import { EMPLOYEE_APP_URL } from '../../../lib/config'
 
+const ROTATING_WORD_COLORS = [
+  'var(--careers-tint-blue-ink)',
+  'var(--careers-tint-sage-ink)',
+  'var(--careers-tint-sand-ink)',
+  'var(--careers-tint-rose-ink)',
+]
+
 export default function CareersHero() {
   const [query, setQuery] = useState('')
   const companyStat = WHO_WE_ARE_DATA.stats[1]
@@ -20,17 +27,16 @@ export default function CareersHero() {
 
   return (
     <section id="home" className="relative bg-white pt-[76px] overflow-hidden">
-      {/* Ambient floating accents */}
+      {/* Ambient floating accent */}
       <FloatingElement duration={9} distance={16} className="absolute top-24 right-[8%] w-64 h-64 rounded-full bg-[#F5F5F5] blur-3xl pointer-events-none" />
-      <FloatingElement duration={11} delay={1.5} distance={20} className="absolute bottom-10 left-[4%] w-72 h-72 rounded-full bg-[#FFD1E6]/30 blur-3xl pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-24 grid lg:grid-cols-12 gap-12 items-center">
         {/* Left: Headline, Search, Copy */}
-        <div className="lg:col-span-7">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-black text-black leading-[1.05] tracking-tight">
+        <div className="lg:col-span-5">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[50px] font-black text-black leading-[1.05] tracking-tight">
             <SplitText text={HERO_DATA.rotatingPrefix} />
             <br />
-            <RotatingWord words={HERO_DATA.rotatingWords} className="text-[#333333]" />
+            <RotatingWord words={HERO_DATA.rotatingWords} colors={ROTATING_WORD_COLORS} className="text-[#333333]" />
           </h1>
 
           <Reveal direction="up" delay={0.35} duration={0.85} scale={0.96}>
@@ -59,7 +65,7 @@ export default function CareersHero() {
                 whileHover={{ scale: 1.08, rotate: 45 }}
                 whileTap={{ scale: 0.9 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-                className="w-11 h-11 rounded-full bg-[#333333] text-white flex items-center justify-center hover:bg-[#1a1a1a] transition-colors shrink-0"
+                className="w-11 h-11 rounded-full bg-[rgb(61,92,52)] text-white flex items-center justify-center hover:bg-[rgb(49,74,42)] transition-colors shrink-0"
               >
                 <ArrowUpRight size={18} />
               </motion.button>
@@ -75,28 +81,16 @@ export default function CareersHero() {
         </div>
 
         {/* Right: Hero Banner Image */}
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-7">
           <Reveal direction="right" duration={1} delay={0.2} scale={0.9} blur>
-            <motion.div
+            <motion.img
+              src="/images/hero1.png"
+              alt="Verified talent and top companies hiring on Mzobs"
+              fetchPriority="high"
               whileHover={{ scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 250, damping: 22 }}
-              className="relative rounded-[32px] overflow-hidden shadow-2xl border border-[#e0e0e0] aspect-[4/5] bg-[#F5F5F5] group"
-            >
-              <img
-                src="/images/new_images/hero_banner.jpg"
-                alt="Mzobs Hiring Platform Overview"
-                fetchPriority="high"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 pointer-events-none" />
-              <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-white/40 shadow-lg text-xs font-bold text-black flex items-center justify-between">
-                <div>
-                  <span className="text-[#333333] font-extrabold block text-sm">100% Verified Profiles</span>
-                  <span className="text-[#666] font-medium text-[11px]">Real people, pre-screened roles</span>
-                </div>
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              </div>
-            </motion.div>
+              className="w-full h-auto"
+            />
           </Reveal>
         </div>
       </div>

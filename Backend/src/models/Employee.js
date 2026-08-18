@@ -63,6 +63,8 @@ const employeeSchema = new Schema(
     graduation: { type: String, required: true },
     status: { type: String, enum: ['active', 'suspended'], default: 'active' },
     lastActiveAt: { type: Date, default: null },
+    resetPasswordToken: { type: String, default: null, select: false },
+    resetPasswordExpires: { type: Date, default: null, select: false },
 
     // Profile — collected across the onboarding wizard / profile editor
     phone: { type: String, default: '' },

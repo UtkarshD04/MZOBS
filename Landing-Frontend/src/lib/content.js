@@ -198,6 +198,17 @@ export const OUR_GOAL_DATA = {
   image: "/images/new_images/our_goal.jpg"
 }
 
+export const OUR_STORY_DATA = {
+  badge: "OUR STORY",
+  titlePrefix: "How Mzobs ",
+  titleItalic: "Started",
+  titleSuffix: "",
+  desc: "Mzobs started because hiring was broken on both sides — job seekers were applying into a void, and employers were drowning in unscreened resumes. We started as a small placement team rebuilding resumes by hand, and grew into a platform that verifies every profile and every requirement before it reaches the other side.",
+  ctaText: "Get in touch",
+  ctaHref: `mailto:${CONTACT_EMAIL}`,
+  image: "/images/new_images/approach.jpg"
+}
+
 export const APPROACH_DATA = {
   badge: "OUR APPROACH",
   heading: [

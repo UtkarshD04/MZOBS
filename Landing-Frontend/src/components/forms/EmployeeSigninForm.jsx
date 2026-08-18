@@ -1,7 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff } from 'lucide-react'
-import { Field, Input } from '../ui/Field'
-import Button, { goldSolidClass } from '../ui/Button'
+import { Field, Input, SubmitButton } from '../ui/AuthField'
 import { EMPLOYEE_APP_URL } from '../../lib/config'
 import { loginEmployee } from '../../lib/employeeAuth'
 
@@ -60,7 +60,7 @@ export default function EmployeeSigninForm() {
           <button
             type="button"
             onClick={() => setShowPassword((s) => !s)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-tertiary hover:text-ink transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9E9E9E] hover:text-black transition-colors"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -70,21 +70,14 @@ export default function EmployeeSigninForm() {
       </Field>
 
       <div className="flex justify-end -mt-2 mb-4">
-        <a href="#forgot-password" className="text-xs font-semibold text-slate-500 hover:text-[#0B1220] transition-colors">
+        <Link to="/employees/forgot-password" className="text-xs font-bold text-[#595959] hover:text-black transition-colors">
           Forgot password?
-        </a>
+        </Link>
       </div>
 
       {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
 
-      <Button
-        type="submit"
-        variant="primary"
-        size="lg"
-        pill
-        disabled={status === 'submitting'}
-        className={`${goldSolidClass} w-full mt-2`}
-      >
+      <SubmitButton disabled={status === 'submitting'} className="mt-2">
         {status === 'submitting' ? (
           'Signing in...'
         ) : (
@@ -92,7 +85,7 @@ export default function EmployeeSigninForm() {
             Sign in <ArrowRight size={16} />
           </>
         )}
-      </Button>
+      </SubmitButton>
     </form>
   )
 }

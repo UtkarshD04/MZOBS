@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { ArrowRight, Eye, EyeOff } from 'lucide-react'
-import { Field, Input, Select } from '../ui/Field'
-import Button, { goldSolidClass } from '../ui/Button'
+import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
 import { EMPLOYER_APP_URL } from '../../lib/config'
 import { signupEmployer } from '../../lib/employerAuth'
 
@@ -37,7 +36,7 @@ function validate(form) {
 }
 
 function SectionLabel({ children }) {
-  return <div className="text-[11px] font-semibold tracking-wide uppercase text-ink-tertiary pb-2 mb-1 border-b border-border">{children}</div>
+  return <div className="text-[11px] font-bold tracking-wide uppercase text-[#9E9E9E] pb-2 mb-1 border-b border-[#e0e0e0]">{children}</div>
 }
 
 export default function EmployerSignupForm() {
@@ -98,7 +97,7 @@ export default function EmployerSignupForm() {
           <button
             type="button"
             onClick={() => setShowPassword((s) => !s)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-tertiary hover:text-ink transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9E9E9E] hover:text-black transition-colors"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -149,14 +148,7 @@ export default function EmployerSignupForm() {
 
       {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
 
-      <Button
-        type="submit"
-        variant="primary"
-        size="lg"
-        pill
-        disabled={status === 'submitting'}
-        className={`${goldSolidClass} w-full mt-2`}
-      >
+      <SubmitButton disabled={status === 'submitting'} className="mt-2">
         {status === 'submitting' ? (
           'Creating your workspace...'
         ) : (
@@ -164,9 +156,9 @@ export default function EmployerSignupForm() {
             Create your account <ArrowRight size={16} />
           </>
         )}
-      </Button>
+      </SubmitButton>
 
-      <p className="text-[11.5px] text-ink-tertiary text-center mt-4 leading-relaxed">
+      <p className="text-[11.5px] text-[#9E9E9E] text-center mt-4 leading-relaxed">
         By signing up, you agree to Mzobs' Terms of Service and Privacy Policy.
       </p>
     </form>

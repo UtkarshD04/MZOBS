@@ -13,6 +13,8 @@ const userSchema = new Schema(
     role: { type: String, enum: ['Admin', 'Hiring Manager', 'Recruiter', 'Interviewer'], required: true },
     status: { type: String, enum: ['active', 'invited'], default: 'active' },
     lastActiveAt: { type: Date, default: null },
+    resetPasswordToken: { type: String, default: null, select: false },
+    resetPasswordExpires: { type: Date, default: null, select: false },
   },
   { timestamps: true }
 )

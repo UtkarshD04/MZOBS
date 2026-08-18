@@ -18,3 +18,11 @@ export function loginEmployer({ email, password }) {
 export function signupEmployer({ companyName, name, email, phone, password, industry, size, website, hq }) {
   return postJSON('/auth/signup', { companyName, name, email, phone, password, industry, size, website, hq })
 }
+
+export function forgotPasswordEmployer({ email }) {
+  return postJSON('/auth/forgot-password', { email })
+}
+
+export function resetPasswordEmployer({ token, password }) {
+  return postJSON('/auth/reset-password', { token, password })
+}
