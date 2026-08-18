@@ -214,8 +214,8 @@
    this design has no dark-mode counterpart to switch to.
 ============================================================ */
 :root {
-  --careers-blue: #333333;
-  --careers-blue-hover: #1a1a1a;
+  --careers-accent: #3d5c34;
+  --careers-accent-hover: #314a2a;
   --careers-bg: #f5f5f5;
   --careers-ink: #000000;
   --careers-text: #595959;

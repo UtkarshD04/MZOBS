@@ -21,8 +21,8 @@ export default function PillButton({
     dark: "bg-[#0B1220] text-white hover:bg-[#1A253A]",
     white: "bg-white text-[#0B1220] hover:bg-slate-100",
     outline: "border border-white/30 text-white hover:bg-white/10",
-    blueFill: "bg-[#333333] text-white border border-[#333333] hover:bg-white hover:text-[#595959] hover:border-[#666]",
-    blueOutline: "bg-white text-[#595959] border border-[#666] hover:bg-[#333333] hover:text-white hover:border-[#333333]"
+    blueFill: "bg-[var(--careers-accent)] text-white border border-[var(--careers-accent)] hover:bg-white hover:text-[#595959] hover:border-[#666]",
+    blueOutline: "bg-white text-[#595959] border border-[#666] hover:bg-[var(--careers-accent)] hover:text-white hover:border-[var(--careers-accent)]"
   }
 
   const circleVariants = {

@@ -27,7 +27,7 @@ export default function EmployerSignin() {
           <div className="lg:col-span-6">
             <SectionLabel>For Employers</SectionLabel>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-black leading-[1.1] tracking-tight">
-              Welcome Back To Your <span className="text-[#333333]">Hiring</span> Portal.
+              Welcome Back To Your <span className="text-[var(--careers-accent)]">Hiring</span> Portal.
             </h1>
             <p className="mt-6 text-base sm:text-lg text-[#595959] max-w-md leading-relaxed font-medium">
               Sign in to review your requirements, screen candidates and manage interviews, offers and billing.
@@ -51,7 +51,7 @@ export default function EmployerSignin() {
               <h2 className="text-xl font-black text-black">Sign in to your portal</h2>
               <p className="text-[13.5px] text-[#595959] mt-1 mb-6">
                 New to Mzobs?{' '}
-                <Link to="/employers/signup" className="font-bold text-black hover:text-[#333333] transition-colors">
+                <Link to="/employers/signup" className="font-bold text-black hover:text-[var(--careers-accent)] transition-colors">
                   Create a free account
                 </Link>
               </p>

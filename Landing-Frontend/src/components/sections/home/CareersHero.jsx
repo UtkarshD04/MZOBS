@@ -36,7 +36,7 @@ export default function CareersHero() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[50px] font-black text-black leading-[1.05] tracking-tight">
             <SplitText text={HERO_DATA.rotatingPrefix} />
             <br />
-            <RotatingWord words={HERO_DATA.rotatingWords} colors={ROTATING_WORD_COLORS} className="text-[#333333]" />
+            <RotatingWord words={HERO_DATA.rotatingWords} colors={ROTATING_WORD_COLORS} className="text-[var(--careers-accent)]" />
           </h1>
 
           <Reveal direction="up" delay={0.35} duration={0.85} scale={0.96}>
@@ -74,7 +74,7 @@ export default function CareersHero() {
 
           <Reveal direction="up" delay={0.55} duration={0.75}>
             <div className="mt-5 flex items-center gap-2 text-[13px] font-bold text-[#595959]">
-              <MapPin size={15} className="text-[#333333]" />
+              <MapPin size={15} className="text-[var(--careers-accent)]" />
               Hiring across India — {companyStat.number} companies actively recruiting on Mzobs
             </div>
           </Reveal>

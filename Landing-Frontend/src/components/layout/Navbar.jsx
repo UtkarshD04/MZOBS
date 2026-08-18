@@ -23,35 +23,35 @@ export default function Navbar() {
 
   const linkClass = ({ isActive }) =>
     `relative py-2 text-[12px] font-bold uppercase tracking-wide border-b-2 transition-colors duration-200 ${
-      isActive ? 'text-[#333333] border-[#333333]' : 'text-[#595959] border-transparent hover:text-[#333333] hover:border-[#333333]'
+      isActive ? 'text-[var(--careers-accent)] border-[var(--careers-accent)]' : 'text-[#595959] border-transparent hover:text-[var(--careers-accent)] hover:border-[var(--careers-accent)]'
     }`
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-[76px] bg-[#F5F5F5] shadow-[0_1px_0_#e0e0e0] transition-transform duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 h-[76px] bg-white/75 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_30px_-14px_rgba(17,24,39,0.18)] border-b border-black/5 transition-transform duration-500 ${
           hidden ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
         <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between">
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
             <motion.div
               whileHover={{ rotate: -8, scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-              className="w-9 h-9 rounded-xl bg-[#333333] flex items-center justify-center text-white font-black text-lg group-hover:bg-[#1a1a1a] transition-colors"
+              className="w-10 h-10 rounded-xl bg-[var(--careers-accent)] shadow-[0_6px_16px_-4px_var(--careers-accent)] flex items-center justify-center text-white font-black text-lg group-hover:bg-[var(--careers-accent-hover)] transition-colors"
             >
               M
             </motion.div>
             <div className="flex flex-col leading-none">
-              <span className="font-black text-base text-black tracking-tight">Mzobs</span>
+              <span className="font-black text-[17px] text-black tracking-tight">Mzobs</span>
               <span className="text-[8px] tracking-[0.18em] text-[#595959] uppercase font-bold">Hiring Platform</span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((link) =>
               link.to ? (
                 <NavLink key={link.label} to={link.to} end={link.to === '/'} className={linkClass}>
@@ -61,7 +61,7 @@ export default function Navbar() {
                 <a
                   key={link.label}
                   href={link.href || '#'}
-                  className="py-2 text-[12px] font-bold uppercase tracking-wide text-[#595959] border-b-2 border-transparent hover:text-[#333333] hover:border-[#333333] transition-colors duration-200"
+                  className="py-2 text-[12px] font-bold uppercase tracking-wide text-[#595959] border-b-2 border-transparent hover:text-[var(--careers-accent)] hover:border-[var(--careers-accent)] transition-colors duration-200"
                 >
                   {link.label}
                 </a>
@@ -71,7 +71,7 @@ export default function Navbar() {
 
           {/* Mobile Toggle */}
           <button
-            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white border border-[#e0e0e0] text-[#595959]"
+            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white border border-[#e0e0e0] shadow-sm text-[#595959]"
             onClick={() => setOpen(!open)}
             aria-label="Toggle navigation"
             aria-expanded={open}
@@ -82,7 +82,7 @@ export default function Navbar() {
 
         {/* Scroll progress indicator */}
         <motion.div
-          className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#333333] origin-left"
+          className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[var(--careers-accent)] origin-left"
           style={{ scaleX: progress }}
         />
       </header>
@@ -109,7 +109,7 @@ export default function Navbar() {
                 key={link.label}
                 to={link.to}
                 onClick={() => setOpen(false)}
-                className="py-3 text-[13px] font-bold uppercase tracking-wide text-[#595959] border-b border-[#e0e0e0] hover:text-[#333333]"
+                className="py-3 text-[13px] font-bold uppercase tracking-wide text-[#595959] border-b border-[#e0e0e0] hover:text-[var(--careers-accent)]"
               >
                 {link.label}
               </Link>
@@ -118,7 +118,7 @@ export default function Navbar() {
                 key={link.label}
                 href={link.href || '#'}
                 onClick={() => setOpen(false)}
-                className="py-3 text-[13px] font-bold uppercase tracking-wide text-[#595959] border-b border-[#e0e0e0] hover:text-[#333333]"
+                className="py-3 text-[13px] font-bold uppercase tracking-wide text-[#595959] border-b border-[#e0e0e0] hover:text-[var(--careers-accent)]"
               >
                 {link.label}
               </a>

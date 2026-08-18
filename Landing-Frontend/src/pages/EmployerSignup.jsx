@@ -27,7 +27,7 @@ export default function EmployerSignup() {
           <div className="lg:col-span-6">
             <SectionLabel>For Employers</SectionLabel>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-black leading-[1.1] tracking-tight">
-              Hire Verified Talent, <span className="text-[#333333]">Not</span> A Stack Of Resumes.
+              Hire Verified Talent, <span className="text-[var(--careers-accent)]">Not</span> A Stack Of Resumes.
             </h1>
             <p className="mt-6 text-base sm:text-lg text-[#595959] max-w-md leading-relaxed font-medium">
               Create your free employer account and share your first requirement in minutes — no sales call required.
@@ -51,7 +51,7 @@ export default function EmployerSignup() {
               <h2 className="text-xl font-black text-black">Create your employer account</h2>
               <p className="text-[13.5px] text-[#595959] mt-1 mb-6">
                 Already have one?{' '}
-                <Link to="/employers/signin" className="font-bold text-black hover:text-[#333333] transition-colors">
+                <Link to="/employers/signin" className="font-bold text-black hover:text-[var(--careers-accent)] transition-colors">
                   Sign in
                 </Link>
               </p>

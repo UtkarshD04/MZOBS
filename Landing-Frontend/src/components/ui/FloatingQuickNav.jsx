@@ -49,7 +49,7 @@ export default function FloatingQuickNav() {
                   <Link
                     to={link.to}
                     onClick={() => setOpen(false)}
-                    className="block px-3 py-2 rounded-lg text-[12px] font-bold text-[#595959] hover:bg-[#F5F5F5] hover:text-[#333333] hover:translate-x-1 transition-all"
+                    className="block px-3 py-2 rounded-lg text-[12px] font-bold text-[#595959] hover:bg-[#F5F5F5] hover:text-[var(--careers-accent)] hover:translate-x-1 transition-all"
                   >
                     {link.label}
                   </Link>
@@ -63,7 +63,7 @@ export default function FloatingQuickNav() {
 
       <div className="relative">
         {!open && (
-          <span className="absolute inset-0 rounded-full bg-[#333333]/50 animate-ping pointer-events-none" />
+          <span className="absolute inset-0 rounded-full bg-[var(--careers-accent)]/50 animate-ping pointer-events-none" />
         )}
         <motion.button
           type="button"
@@ -73,7 +73,7 @@ export default function FloatingQuickNav() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-          className="relative w-12 h-12 rounded-full bg-[#333333] text-white shadow-lg flex items-center justify-center hover:bg-[#1a1a1a] transition-colors"
+          className="relative w-12 h-12 rounded-full bg-[var(--careers-accent)] text-white shadow-lg flex items-center justify-center hover:bg-[var(--careers-accent-hover)] transition-colors"
         >
           <AnimatePresence mode="wait" initial={false}>
             <motion.span

@@ -27,7 +27,7 @@ export default function EmployeeSignup() {
           <div className="lg:col-span-6">
             <SectionLabel>For Job Seekers</SectionLabel>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-black leading-[1.1] tracking-tight">
-              Your Placement Journey <span className="text-[#333333]">Starts</span> Here.
+              Your Placement Journey <span className="text-[var(--careers-accent)]">Starts</span> Here.
             </h1>
             <p className="mt-6 text-base sm:text-lg text-[#595959] max-w-md leading-relaxed font-medium">
               One-time ₹99 for lifetime access. Verified resumes, guided training and real mock interviews — everything between job hunting and placed.
@@ -51,7 +51,7 @@ export default function EmployeeSignup() {
               <h2 className="text-xl font-black text-black">Create your free account</h2>
               <p className="text-[13.5px] text-[#595959] mt-1 mb-6">
                 Do you have an account?{' '}
-                <Link to="/employees/signin" className="font-bold text-black hover:text-[#333333] transition-colors">
+                <Link to="/employees/signin" className="font-bold text-black hover:text-[var(--careers-accent)] transition-colors">
                   Sign in
                 </Link>
               </p>

@@ -127,8 +127,8 @@ export default function EmployeeSignupForm() {
               onClick={() => update('experience', opt.value)}
               className={`h-11 rounded-xl text-[13.5px] font-bold border transition-all duration-200 ${
                 form.experience === opt.value
-                  ? 'bg-[#333333] border-[#333333] text-white'
-                  : 'bg-white border-[#C9C9C9] text-[#595959] hover:border-[#333333]'
+                  ? 'bg-[var(--careers-accent)] border-[var(--careers-accent)] text-white'
+                  : 'bg-white border-[#C9C9C9] text-[#595959] hover:border-[var(--careers-accent)]'
               }`}
             >
               {opt.label}

@@ -32,7 +32,7 @@ export default function CategoryGrid() {
                   as="a"
                   href={`${EMPLOYEE_APP_URL}?category=${encodeURIComponent(cat.title)}`}
                   glow="rgba(255,255,255,0.35)"
-                  className={`flex items-center gap-4 rounded-2xl p-4 border border-black/[0.04] hover:bg-[#333333] transition-colors duration-300 ${TINTS[i % TINTS.length]}`}
+                  className={`flex items-center gap-4 rounded-2xl p-4 border border-black/[0.04] hover:bg-[var(--careers-accent)] transition-colors duration-300 ${TINTS[i % TINTS.length]}`}
                 >
                   {cat.image && (
                     <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-white/60 shadow-sm">
