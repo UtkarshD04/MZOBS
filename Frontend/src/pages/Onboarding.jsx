@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, CheckCircle2, Upload, Link as LinkIcon, BadgeCheck, GraduationCap, IndianRupee, ShieldCheck, Loader2 } from 'lucide-react'
+import { Sparkles, CheckCircle2, Upload, Link as LinkIcon, BadgeCheck, GraduationCap, IndianRupee, ShieldCheck, Lock, Loader2 } from 'lucide-react'
 import { FaLinkedin, FaGithub } from 'react-icons/fa6'
 import Button from '../components/ui/Button'
+import Badge from '../components/ui/Badge'
 import Chip from '../components/ui/Chip'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
 import { useProfileQuery, useUpdateProfileMutation } from '../hooks/useProfile'
 import { useUploadResumeMutation } from '../hooks/useResume'
-import { useCreateSubscriptionOrderMutation, useVerifySubscriptionPaymentMutation } from '../hooks/useSubscription'
+import {
+  useCreateSubscriptionOrderMutation,
+  useVerifySubscriptionPaymentMutation,
+  useConfirmMockSubscriptionPaymentMutation,
+} from '../hooks/useSubscription'
 import { openRazorpayCheckout } from '../lib/razorpay'
 
 const TOTAL = 17
@@ -61,9 +66,12 @@ export default function Onboarding() {
   const uploadResume = useUploadResumeMutation()
   const createOrder = useCreateSubscriptionOrderMutation()
   const verifyPayment = useVerifySubscriptionPaymentMutation()
+  const confirmMockPayment = useConfirmMockSubscriptionPaymentMutation()
   const [profileSaved, setProfileSaved] = useState(false)
   const [payingNow, setPayingNow] = useState(false)
-  const submitting = updateProfile.isPending || uploadResume.isPending || createOrder.isPending || verifyPayment.isPending || payingNow
+  const [isMockPayment, setIsMockPayment] = useState(false)
+  const submitting =
+    updateProfile.isPending || uploadResume.isPending || createOrder.isPending || verifyPayment.isPending || confirmMockPayment.isPending || payingNow
 
   const [employmentStatus, setEmploymentStatus] = useState('Fresher / Student')
   const [interests, setInterests] = useState(INTERESTS.slice(0, 2))
@@ -143,6 +151,13 @@ export default function Onboarding() {
       }
 
       const order = await createOrder.mutateAsync()
+
+      if (order.mock) {
+        setIsMockPayment(true)
+        await confirmMockPayment.mutateAsync(order.orderId)
+        return true
+      }
+
       setPayingNow(true)
       const result = await openRazorpayCheckout(order)
       await verifyPayment.mutateAsync({
@@ -469,7 +484,7 @@ export default function Onboarding() {
                 </div>
               )}
 
-              {step === 15 && <PaymentStep submitting={submitting} error={submitError} />}
+              {step === 15 && <PaymentStep submitting={submitting} error={submitError} isMockPayment={isMockPayment} />}
 
               {step === 16 && <CompleteStep name={profile?.name} />}
             </motion.div>
@@ -501,49 +516,78 @@ export default function Onboarding() {
   )
 }
 
-function PaymentStep({ submitting, error }) {
+function PaymentStep({ submitting, error, isMockPayment }) {
   return (
     <div>
       <div className="text-center">
         <div className="w-16 h-16 rounded-[20px] bg-gold-tint text-gold-strong flex items-center justify-center mx-auto mb-5">
           <IndianRupee size={28} />
         </div>
+        <Badge tone="navy" dot={false} className="mb-3">
+          ONE-TIME · NO PLANS, NO RENEWALS
+        </Badge>
+        {isMockPayment && (
+          <p className="text-[11px] font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3 max-w-[440px] mx-auto">
+            Test mode — payment was simulated because Razorpay isn't configured yet.
+          </p>
+        )}
         <h1 className="text-[26px] font-bold tracking-tight text-balance">Activate your placement support</h1>
         <p className="text-sm text-ink-secondary mt-3 max-w-[440px] mx-auto">
           A single ₹{PROGRAM_FEE} payment. No renewals, no success fee, nothing deducted from your salary — ever.
         </p>
       </div>
 
-      <div className="bg-surface border border-border rounded-2xl mt-6 p-[22px]">
-        <div className="flex items-baseline justify-between pb-4 border-b border-border">
-          <div>
-            <div className="text-[15px] font-semibold">Placement Support Programme</div>
-            <div className="text-xs text-ink-tertiary mt-0.5">One-time · lifetime access</div>
-          </div>
-          <div className="text-[26px] font-bold tracking-tight">₹{PROGRAM_FEE}</div>
-        </div>
-
-        <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mt-4 mb-2.5">What this unlocks</div>
-        <div className="flex flex-col gap-2">
-          {[
-            'Resume verification by the Mzobs team',
-            'A mock interview with our panel, with written feedback',
-            'A skill track assignment that decides which roles you are matched to',
-            'Your resume sent to hiring companies when a matching requirement opens',
-          ].map((t) => (
-            <div key={t} className="flex items-start gap-2 text-[13px]">
-              <CheckCircle2 size={15} className="text-green mt-0.5 flex-shrink-0" />
-              <span>{t}</span>
+      <div className="relative mt-6 rounded-2xl overflow-hidden shadow-navy">
+        <div className="absolute inset-0 bg-gradient-to-br from-navy-950 to-navy-900" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(320px 220px at 92% 0%, rgba(198,138,31,.25), transparent 65%), radial-gradient(280px 260px at 4% 100%, rgba(125,95,214,.20), transparent 65%)',
+          }}
+        />
+        <div className="relative p-[22px] sm:p-[26px] text-white">
+          <div className="flex items-baseline justify-between pb-5 border-b border-white/10">
+            <div>
+              <div className="text-[15px] font-semibold">Placement Support Programme</div>
+              <div className="text-xs text-white/60 mt-1">One-time · lifetime access</div>
             </div>
-          ))}
-        </div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-[34px] font-bold tracking-tight leading-none">₹{PROGRAM_FEE}</div>
+              <div className="text-[11px] text-white/50 mt-1.5">paid once, valid for life</div>
+            </div>
+          </div>
 
-        <div className="flex items-start gap-2.5 mt-4 pt-4 border-t border-border">
-          <ShieldCheck size={15} className="text-navy mt-0.5 flex-shrink-0" />
-          <p className="text-[12.5px] text-ink-secondary">
-            This is placement support, not a job guarantee. We get your profile in front of employers — the hiring decision is always theirs.
-          </p>
+          <div className="text-[11px] font-semibold tracking-wide uppercase text-white/50 mt-5 mb-3">What this unlocks</div>
+          <div className="grid sm:grid-cols-2 gap-x-4 gap-y-2.5">
+            {[
+              'Resume verification by the Mzobs team',
+              'A mock interview with our panel, with written feedback',
+              'A skill track assignment matched to your strengths',
+              'Your resume sent to employers on matching requirements',
+            ].map((t) => (
+              <div key={t} className="flex items-start gap-2 text-[13px] text-white/90">
+                <CheckCircle2 size={15} className="text-gold-dot mt-0.5 flex-shrink-0" />
+                <span>{t}</span>
+              </div>
+            ))}
+          </div>
         </div>
+      </div>
+
+      <div className="flex items-start gap-2.5 mt-4 p-[14px] rounded-xl bg-navy-tint">
+        <ShieldCheck size={15} className="text-navy mt-0.5 flex-shrink-0" />
+        <p className="text-[12.5px] text-ink-secondary">
+          This is placement support, not a job guarantee. We get your profile in front of employers — the hiring decision is always theirs.
+        </p>
+      </div>
+
+      <div className="flex items-center justify-center gap-4 mt-4 text-[11px] text-ink-tertiary">
+        <span className="flex items-center gap-1.5">
+          <Lock size={12} /> Secured by Razorpay
+        </span>
+        <span className="w-1 h-1 rounded-full bg-border-strong" />
+        <span>Cards, UPI &amp; netbanking accepted</span>
       </div>
 
       {error && <p className="text-sm text-red mt-4 text-center">{error}</p>}

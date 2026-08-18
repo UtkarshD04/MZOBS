@@ -6,6 +6,7 @@ import { initialsOf } from '../utils/initials.js'
 import { createResetToken, hashResetToken, resetPasswordEmailHtml } from '../utils/passwordReset.js'
 import { sendMail } from '../utils/mailer.js'
 import Employee from '../models/Employee.js'
+import Payment from '../models/Payment.js'
 
 function issueToken(employee) {
   return jwt.sign({ sub: employee._id.toString(), type: 'employee' }, env.jwtSecret, {
@@ -48,7 +49,7 @@ export const login = asyncHandler(async (req, res) => {
 })
 
 export const signup = asyncHandler(async (req, res) => {
-  const { name, email, phone, password, experience, graduation } = req.body ?? {}
+  const { name, email, phone, password, experience, graduation, paymentOrderId } = req.body ?? {}
   const required = { name, email, phone, password, graduation }
   if (Object.values(required).some((v) => typeof v !== 'string' || !v.trim())) {
     return res.status(400).json({ message: 'Name, email, phone, password and graduation are required' })
@@ -61,6 +62,21 @@ export const signup = asyncHandler(async (req, res) => {
   const existing = await Employee.findOne({ email: normalizedEmail })
   if (existing) return res.status(409).json({ message: 'An account with this email already exists' })
 
+  // If the marketing site's "pay first" flow already collected the ₹99 fee,
+  // it hands back the order id here — claim that unlinked payment onto the
+  // new account so it starts out already subscribed. A missing/invalid/
+  // already-claimed id just means the account starts unpaid, same as before
+  // this flow existed.
+  let claimedPayment = null
+  if (typeof paymentOrderId === 'string' && paymentOrderId.trim()) {
+    claimedPayment = await Payment.findOne({
+      razorpayOrderId: paymentOrderId.trim(),
+      purpose: 'employee_subscription',
+      employee: null,
+      status: 'paid',
+    })
+  }
+
   const passwordHash = await bcrypt.hash(password, 10)
   const employee = await Employee.create({
     name: name.trim(),
@@ -71,7 +87,13 @@ export const signup = asyncHandler(async (req, res) => {
     graduation,
     status: 'active',
     lastActiveAt: new Date(),
+    subscription: claimedPayment ? { status: 'paid', amount: claimedPayment.amount, paidOn: claimedPayment.paidAt } : undefined,
   })
+
+  if (claimedPayment) {
+    claimedPayment.employee = employee._id
+    await claimedPayment.save()
+  }
 
   res.status(201).json(authResponse(employee))
 })

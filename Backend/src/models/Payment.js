@@ -18,6 +18,9 @@ const paymentSchema = new Schema(
     status: { type: String, enum: ['created', 'paid', 'failed'], default: 'created', index: true },
     receipt: { type: String, required: true },
     paidAt: { type: Date, default: null },
+    // True when Razorpay wasn't configured and this order/payment was
+    // simulated locally for dev/testing — never set for a real transaction.
+    isMock: { type: Boolean, default: false },
   },
   { timestamps: true }
 )

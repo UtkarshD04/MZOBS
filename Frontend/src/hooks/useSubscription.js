@@ -17,3 +17,11 @@ export function useVerifySubscriptionPaymentMutation() {
     onSuccess: (data) => queryClient.setQueryData(queryKeys.subscription, data),
   })
 }
+
+export function useConfirmMockSubscriptionPaymentMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: subscriptionService.confirmMockSubscriptionPayment,
+    onSuccess: (data) => queryClient.setQueryData(queryKeys.subscription, data),
+  })
+}

@@ -12,13 +12,22 @@ import { useSubscriptionQuery } from '../hooks/useSubscription'
 import { useProfileQuery } from '../hooks/useProfile'
 
 const UNLOCKS = [
-  [ShieldCheck, 'Resume verification', 'Our team reviews your resume line by line and verifies your work history before any employer sees it.'],
-  [Video, 'Mock interview with our panel', 'A real interview round with a Mzobs panel member, with written feedback and a score.'],
-  [Layers, 'Skill track assignment', 'We place you in the track that matches your strengths, so you are matched against the right requirements.'],
-  [Send, 'Profile dispatch to employers', 'When a matching requirement opens, we shortlist and send your resume to the company directly.'],
-  [GraduationCap, 'Training & assessments', 'Full access to courses, practice tests and live sessions for your track.'],
-  [MessageSquare, 'Placement desk support', 'Direct line to the Mzobs team through your entire job search.'],
+  [ShieldCheck, 'Resume verification', 'Our team reviews your resume line by line and verifies your work history before any employer sees it.', 'navy'],
+  [Video, 'Mock interview with our panel', 'A real interview round with a Mzobs panel member, with written feedback and a score.', 'gold'],
+  [Layers, 'Skill track assignment', 'We place you in the track that matches your strengths, so you are matched against the right requirements.', 'violet'],
+  [Send, 'Profile dispatch to employers', 'When a matching requirement opens, we shortlist and send your resume to the company directly.', 'teal'],
+  [GraduationCap, 'Training & assessments', 'Full access to courses, practice tests and live sessions for your track.', 'amber'],
+  [MessageSquare, 'Placement desk support', 'Direct line to the Mzobs team through your entire job search.', 'green'],
 ]
+
+const TINT = {
+  navy: 'bg-navy-tint text-navy',
+  gold: 'bg-gold-tint text-gold-strong',
+  violet: 'bg-violet-tint text-violet',
+  teal: 'bg-teal-tint text-teal',
+  amber: 'bg-amber-tint text-amber',
+  green: 'bg-green-tint text-green',
+}
 
 export default function Subscription() {
   const { data: subscription, isLoading: subLoading, isError: subError, refetch: refetchSub } = useSubscriptionQuery()
@@ -81,10 +90,10 @@ export default function Subscription() {
 
       <StaggerItem className="text-xl font-bold mb-3">What your ₹{fee} unlocks</StaggerItem>
       <StaggerItem className="grid md:grid-cols-3 gap-5 mb-6">
-        {UNLOCKS.map(([Icon, title, desc]) => (
-          <Card key={title} pad>
+        {UNLOCKS.map(([Icon, title, desc, tone]) => (
+          <Card key={title} pad hover>
             <div className="flex items-center justify-between">
-              <div className="w-9 h-9 rounded-[10px] bg-navy-tint text-navy flex items-center justify-center">
+              <div className={`w-9 h-9 rounded-[10px] flex items-center justify-center ${TINT[tone]}`}>
                 <Icon size={17} />
               </div>
               <Check size={15} className="text-green" />

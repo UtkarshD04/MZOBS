@@ -24,7 +24,6 @@ export const NAV_LINKS = [
   { label: 'Who We Are', href: '#who-we-are', to: '/about' },
   { label: 'Employers', to: '/employers' },
   { label: 'Employees', to: '/employees' },
-  { label: 'Job Opening', href: '#', to: null },
 ]
 
 export const HERO_DATA = {
@@ -41,19 +40,9 @@ export const HERO_DATA = {
 
 export const WHO_WE_ARE_DATA = {
   badge: "WHO WE ARE",
-  statement: [
-    { text: "Mzobs is a " },
-    { text: "people-first", italic: true },
-    { text: " hiring platform " },
-    { text: "helping", italic: true },
-    { text: " job seekers " },
-    { text: "navigate", italic: true },
-    { text: " to roles they qualify for, and helping employers " },
-    { text: "refine", italic: true },
-    { text: " their pipelines down to candidates worth their time — so both sides " },
-    { text: "achieve", italic: true },
-    { text: " a faster, better hire." }
-  ],
+  heroTitleLine1: "Built On Trust,",
+  heroTitleLine2: "Made For Both Sides.",
+  heroSubtitle: "Every profile checked, every pipeline refined — a hiring platform where job seekers find roles they're right for, and employers find people worth hiring.",
   stats: [
     {
       number: "12,400+",
@@ -424,12 +413,16 @@ export const CTA_BAND_DATA = {
 }
 
 export const FOOTER_DATA = {
-  logoText: "Mzobs",
   logoSub: "HIRING PLATFORM",
   desc: "Mzobs connects verified job seekers with employers who need them — every profile and every requirement reviewed by a real person before it goes live.",
   ctaText: "Contact Us",
   menuTitle: "Menu",
-  menuItems: ["Home", "Services", "Who We Are", "Contact"],
+  menuItems: [
+    { label: "Home", to: "/" },
+    { label: "Services", to: "/#services" },
+    { label: "Who We Are", to: "/about" },
+    { label: "Contact", to: "/contact" },
+  ],
   socialsTitle: "Socials",
   socialsItems: ["Instagram", "Facebook", "LinkedIn", "Twitter (X)"],
   contactTitle: "Contact",

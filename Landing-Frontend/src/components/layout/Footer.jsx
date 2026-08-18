@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6'
-import { ShieldAlert } from 'lucide-react'
 import Reveal from '../ui/Reveal'
 import { FOOTER_DATA } from '../../lib/content'
 
@@ -16,45 +15,20 @@ export default function Footer() {
   return (
     <footer className="bg-[#F5F5F5] pt-16 pb-8 px-6 md:px-12 border-t border-[#e0e0e0]">
       <div className="max-w-7xl mx-auto space-y-10">
-        {/* Fraud Caution Notice */}
-        <Reveal direction="up" duration={0.8}>
-          <div className="flex items-start gap-3 bg-white border border-[#e0e0e0] rounded-2xl px-5 py-4 text-[12px] text-[#666] leading-relaxed">
-            <motion.div
-              animate={{ scale: [1, 1.15, 1] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-              className="shrink-0 mt-0.5"
-            >
-              <ShieldAlert size={18} className="text-[var(--careers-accent)]" />
-            </motion.div>
-            <p>
-              <span className="font-black text-black">Beware of fraud: </span>
-              Mzobs never asks candidates to pay for a job offer, interview call or verification. Report suspicious
-              offers to{' '}
-              <a href={`mailto:${FOOTER_DATA.email}`} className="text-[var(--careers-accent)] font-bold hover:underline">
-                {FOOTER_DATA.email}
-              </a>
-              .
-            </p>
-          </div>
-        </Reveal>
-
         {/* Main Footer Grid */}
         <Reveal direction="up" duration={0.9} scale={0.96} className="grid grid-cols-1 md:grid-cols-12 gap-10">
           {/* Brand Column */}
           <div className="md:col-span-5 space-y-5">
-            <Link to="/" className="flex items-center gap-2.5 group w-fit">
-              <motion.div
-                whileHover={{ rotate: -8, scale: 1.08 }}
+            <Link to="/" className="flex items-center gap-2 group w-fit">
+              <motion.img
+                src="/images/logo.png"
+                alt="Mzobs"
+                whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-                className="w-9 h-9 rounded-xl bg-[var(--careers-accent)] flex items-center justify-center text-white font-black text-lg"
-              >
-                M
-              </motion.div>
-              <div className="flex flex-col leading-none">
-                <span className="font-black text-base text-black tracking-tight">{FOOTER_DATA.logoText}</span>
-                <span className="text-[8px] tracking-[0.18em] text-[#595959] uppercase font-bold">{FOOTER_DATA.logoSub}</span>
-              </div>
+                className="h-10 w-auto object-contain"
+              />
+              <span className="text-[8px] tracking-[0.18em] text-[#595959] uppercase font-bold">{FOOTER_DATA.logoSub}</span>
             </Link>
 
             <p className="text-[13px] text-[#666] leading-relaxed max-w-md font-medium">{FOOTER_DATA.desc}</p>
@@ -85,12 +59,12 @@ export default function Footer() {
             <ul className="space-y-2.5 text-[13px] text-[#666] font-medium">
               {FOOTER_DATA.menuItems.map((item, idx) => (
                 <li key={idx}>
-                  <a
-                    href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
+                  <Link
+                    to={item.to}
                     className="relative w-fit inline-block hover:text-[var(--careers-accent)] transition-colors after:absolute after:left-0 after:-bottom-0.5 after:h-[1px] after:w-0 after:bg-[var(--careers-accent)] after:transition-all after:duration-300 hover:after:w-full"
                   >
-                    {item}
-                  </a>
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -100,8 +74,8 @@ export default function Footer() {
           <div className="md:col-span-3 space-y-4">
             <h4 className="text-sm font-black text-black uppercase tracking-wider">{FOOTER_DATA.contactTitle}</h4>
             <div className="space-y-2.5 text-[13px] text-[#666] leading-relaxed font-medium">
-              <p className="hover:text-[var(--careers-accent)] transition-colors cursor-pointer w-fit">{FOOTER_DATA.phone}</p>
-              <p className="hover:text-[var(--careers-accent)] transition-colors cursor-pointer w-fit">{FOOTER_DATA.email}</p>
+              <a href={`tel:${FOOTER_DATA.phone}`} className="block hover:text-[var(--careers-accent)] transition-colors w-fit">{FOOTER_DATA.phone}</a>
+              <a href={`mailto:${FOOTER_DATA.email}`} className="block hover:text-[var(--careers-accent)] transition-colors w-fit">{FOOTER_DATA.email}</a>
               <p className="pt-1">{FOOTER_DATA.address}</p>
             </div>
           </div>

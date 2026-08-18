@@ -1,11 +1,13 @@
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import ScrollToTop from './components/layout/ScrollToTop'
+import CursorDot from './components/ui/CursorDot'
 import Home from './pages/Home'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Employee from './pages/Employee'
 import EmployeeSignup from './pages/EmployeeSignup'
+import EmployeePaymentSuccess from './pages/EmployeePaymentSuccess'
 import EmployeeSignin from './pages/EmployeeSignin'
 import EmployeeForgotPassword from './pages/EmployeeForgotPassword'
 import EmployeeResetPassword from './pages/EmployeeResetPassword'
@@ -22,6 +24,7 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <CursorDot />
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}
@@ -36,6 +39,7 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/employees" element={<Employee />} />
             <Route path="/employees/signup" element={<EmployeeSignup />} />
+            <Route path="/employees/payment-success" element={<EmployeePaymentSuccess />} />
             <Route path="/employees/signin" element={<EmployeeSignin />} />
             <Route path="/employees/forgot-password" element={<EmployeeForgotPassword />} />
             <Route path="/employees/reset-password" element={<EmployeeResetPassword />} />

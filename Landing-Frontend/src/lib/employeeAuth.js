@@ -15,8 +15,8 @@ export function loginEmployee({ email, password }) {
   return postJSON('/auth/login', { email, password })
 }
 
-export function signupEmployee({ name, email, phone, password, experience, graduation }) {
-  return postJSON('/auth/signup', { name, email, phone, password, experience, graduation })
+export function signupEmployee({ name, email, phone, password, experience, graduation, paymentOrderId }) {
+  return postJSON('/auth/signup', { name, email, phone, password, experience, graduation, paymentOrderId })
 }
 
 export function forgotPasswordEmployee({ email }) {
