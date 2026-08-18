@@ -195,6 +195,40 @@ export const COMPANY_WORKFLOW_DATA = {
   ]
 }
 
+export const FAQ_DATA = {
+  badge: "FAQS",
+  titlePrefix: "Questions, ",
+  titleItalic: "Answered",
+  titleSuffix: "",
+  subtitle: "Everything you need to know about hiring and getting hired on Mzobs.",
+  items: [
+    {
+      q: "What is Mzobs?",
+      a: "Mzobs is a hiring platform that verifies both sides of the match — job seekers get their resume rebuilt and screened, and employers only see candidates who are pre-verified against their requirement."
+    },
+    {
+      q: "Is Mzobs free for job seekers?",
+      a: "Yes. Creating a profile, applying to roles and getting matched is free for job seekers. We only charge employers for successful placements."
+    },
+    {
+      q: "How does candidate verification work?",
+      a: "Every applicant is manually reviewed by our team — we check their experience, rebuild their resume where needed, and run them through structured interviews before they're matched to any requirement."
+    },
+    {
+      q: "How long does it take to fill a role?",
+      a: "Most employers start receiving verified, matched candidates within days of posting a requirement, and see time-to-offer drop significantly since every candidate is already screened."
+    },
+    {
+      q: "What roles and industries does Mzobs cover?",
+      a: "From entry-level to leadership hiring across tech, operations, sales, finance and more — browse open categories on the Find Your Team section or share your requirement directly."
+    },
+    {
+      q: "How do I get started as an employer?",
+      a: "Sign up on the Employers page and post your requirement — our team verifies it and starts matching candidates from your very first job post."
+    }
+  ]
+}
+
 export const TESTIMONIALS_DATA = {
   badge: "TESTIMONIALS",
   titlePrefix: "What ",
