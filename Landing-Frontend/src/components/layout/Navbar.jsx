@@ -22,7 +22,7 @@ export default function Navbar() {
   }, [])
 
   const linkClass = ({ isActive }) =>
-    `relative py-2 text-[12px] font-bold uppercase tracking-wide border-b-2 transition-colors duration-200 ${
+    `relative py-2 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors duration-200 ${
       isActive ? 'text-[var(--careers-accent)] border-[var(--careers-accent)]' : 'text-[#595959] border-transparent hover:text-[var(--careers-accent)] hover:border-[var(--careers-accent)]'
     }`
 
@@ -37,7 +37,7 @@ export default function Navbar() {
           {/* Brand Logo */}
           <Link to="/" className="flex items-center group shrink-0">
             <motion.img
-              src="/images/logo.jpg"
+              src="/images/logo.png"
               alt="Mzobs"
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
@@ -57,7 +57,7 @@ export default function Navbar() {
                 <a
                   key={link.label}
                   href={link.href || '#'}
-                  className="py-2 text-[12px] font-bold uppercase tracking-wide text-[#595959] border-b-2 border-transparent hover:text-[var(--careers-accent)] hover:border-[var(--careers-accent)] transition-colors duration-200"
+                  className="py-2 text-sm font-bold uppercase tracking-wide text-[#595959] border-b-2 border-transparent hover:text-[var(--careers-accent)] hover:border-[var(--careers-accent)] transition-colors duration-200"
                 >
                   {link.label}
                 </a>

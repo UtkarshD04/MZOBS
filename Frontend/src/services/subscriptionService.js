@@ -11,3 +11,10 @@ export function createSubscriptionOrder() {
 export function verifySubscriptionPayment(payload) {
   return apiClient.post('/subscription/verify', payload).then((r) => r.data)
 }
+
+// Dev/testing shortcut used when the order came back with mock: true
+// (Razorpay isn't configured on the server) — skips the Checkout widget
+// entirely and just confirms the simulated order.
+export function confirmMockSubscriptionPayment(orderId) {
+  return apiClient.post('/subscription/mock-confirm', { orderId }).then((r) => r.data)
+}

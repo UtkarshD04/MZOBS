@@ -48,7 +48,7 @@ export default function EmployeeSignup() {
           {/* Right: signup card */}
           <div className="lg:col-span-6">
             <div className="bg-white rounded-3xl shadow-xl p-7 sm:p-9 border border-[#e0e0e0]">
-              <h2 className="text-xl font-black text-black">Create your free account</h2>
+              <h2 className="text-xl font-black text-black">Create your account</h2>
               <p className="text-[13.5px] text-[#595959] mt-1 mb-6">
                 Do you have an account?{' '}
                 <Link to="/employees/signin" className="font-bold text-black hover:text-[var(--careers-accent)] transition-colors">
