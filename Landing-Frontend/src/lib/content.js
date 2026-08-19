@@ -430,7 +430,10 @@ export const FOOTER_DATA = {
   email: CONTACT_EMAIL,
   address: CONTACT_ADDRESS,
   copyright: "© 2026 Mzobs. All rights reserved.",
-  rightLinks: ["Privacy Policy", "Terms of Service"]
+  rightLinks: [
+    { label: "Privacy Policy", to: "/privacy-policy" },
+    { label: "Terms of Service", to: "/terms-of-service" },
+  ]
 }
 
 export const PRICING_DATA = {
