@@ -69,14 +69,18 @@ export default function AboutDifferenceSection() {
                 className="grid grid-cols-2"
               >
                 <div
-                  className={`flex items-start gap-2.5 md:gap-3 p-4 sm:p-5 md:p-6 bg-[#FAFAFA] border-r border-[#e0e0e0] transition-all duration-300 ${
+                  className={`relative flex items-start gap-2.5 md:gap-3 p-4 sm:p-5 md:p-6 border-r border-[#e0e0e0] transition-all duration-300 ${
                     isMzobs ? 'opacity-35 scale-[0.98]' : 'opacity-100 scale-100'
                   }`}
+                  style={{
+                    backgroundImage:
+                      'repeating-linear-gradient(135deg, #fafafa, #fafafa 11px, #f1f1ef 11px, #f1f1ef 12px)',
+                  }}
                 >
-                  <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-white border border-[#d9d9d9] flex items-center justify-center shrink-0 mt-0.5">
-                    <X size={11} strokeWidth={3} className="text-[#b3b3b3]" />
+                  <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#fdf0ee] border border-dashed border-[#e5a39b] flex items-center justify-center shrink-0 mt-0.5">
+                    <X size={11} strokeWidth={3} className="text-[#b42318]" />
                   </div>
-                  <p className="text-[12px] sm:text-[13.5px] md:text-[14.5px] text-[#8a8a8a] font-semibold leading-snug">
+                  <p className="text-[12px] sm:text-[13.5px] md:text-[14.5px] text-[#7a7a75] font-serif italic font-medium leading-snug">
                     {row.traditional}
                   </p>
                 </div>

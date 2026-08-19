@@ -8,7 +8,6 @@ import CommandPalette from './components/ui/CommandPalette'
 import RequireAuth from './components/auth/RequireAuth'
 
 import MzobsShell from './components/layout/mzobs/MzobsShell'
-import Home from './pages/mzobs/Home'
 import Login from './pages/mzobs/Login'
 import Dashboard from './pages/mzobs/Dashboard'
 import Candidates from './pages/mzobs/Candidates'
@@ -26,7 +25,7 @@ export default function App() {
   return (
     <AppProvider>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
 
         <Route element={<RequireAuth />}>
@@ -50,7 +49,7 @@ export default function App() {
         </Route>
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
 
       <ModalRoot />
