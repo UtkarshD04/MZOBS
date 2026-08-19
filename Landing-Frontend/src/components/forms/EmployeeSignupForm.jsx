@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, CheckCircle2, Eye, EyeOff, Lock } from 'lucide-react'
 import { Field, Input, Select, SubmitButton, LinkButton } from '../ui/AuthField'
 import { signupEmployee } from '../../lib/employeeAuth'
@@ -257,7 +257,15 @@ export default function EmployeeSignupForm() {
       </SubmitButton>
 
       <p className="text-[11.5px] text-[#9E9E9E] text-center mt-4 leading-relaxed">
-        By signing up, you agree to Mzobs' Terms of Service and Privacy Policy.
+        By signing up, you agree to Mzobs'{' '}
+        <Link to="/terms-of-service" className="text-[#595959] font-bold hover:text-[var(--careers-accent)] transition-colors">
+          Terms of Service
+        </Link>{' '}
+        and{' '}
+        <Link to="/privacy-policy" className="text-[#595959] font-bold hover:text-[var(--careers-accent)] transition-colors">
+          Privacy Policy
+        </Link>
+        .
       </p>
     </form>
   )

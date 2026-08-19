@@ -110,9 +110,9 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             {FOOTER_DATA.rightLinks.map((link, i) => (
               <span key={i} className="flex items-center gap-4">
-                <a href="#" className="hover:text-[var(--careers-accent)] transition-colors">
-                  {link}
-                </a>
+                <Link to={link.to} className="hover:text-[var(--careers-accent)] transition-colors">
+                  {link.label}
+                </Link>
                 {i < FOOTER_DATA.rightLinks.length - 1 && <span className="text-[#C9C9C9]">|</span>}
               </span>
             ))}

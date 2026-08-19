@@ -8,6 +8,8 @@ import Contact from './pages/Contact'
 import Employee from './pages/Employee'
 import EmployeeSignup from './pages/EmployeeSignup'
 import EmployeePaymentSuccess from './pages/EmployeePaymentSuccess'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 import EmployeeSignin from './pages/EmployeeSignin'
 import EmployeeForgotPassword from './pages/EmployeeForgotPassword'
 import EmployeeResetPassword from './pages/EmployeeResetPassword'
@@ -48,6 +50,8 @@ export default function App() {
             <Route path="/employers/signin" element={<EmployerSignin />} />
             <Route path="/employers/forgot-password" element={<EmployerForgotPassword />} />
             <Route path="/employers/reset-password" element={<EmployerResetPassword />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </motion.div>
