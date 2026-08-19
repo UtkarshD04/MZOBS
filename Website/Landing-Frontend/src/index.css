@@ -270,3 +270,18 @@
 .careers-scroll-x::-webkit-scrollbar {
   display: none;
 }
+
+@keyframes careersMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.careers-marquee-track {
+  animation: careersMarquee 32s linear infinite;
+}
+.careers-marquee-track:hover {
+  animation-play-state: paused;
+}

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppProvider } from './context/AppContext'
 import ModalRoot from './components/ui/Modal'
@@ -6,8 +7,8 @@ import ToastStack from './components/ui/ToastStack'
 import CommandPalette from './components/ui/CommandPalette'
 import AppShell from './components/layout/AppShell'
 import RequireAuth from './components/auth/RequireAuth'
+import { LANDING_URL } from './lib/config'
 
-import Home from './pages/Home'
 import Onboarding from './pages/Onboarding'
 
 import Dashboard from './pages/Dashboard'
@@ -23,11 +24,21 @@ import Subscription from './pages/Subscription'
 import Settings from './pages/Settings'
 import Support from './pages/Support'
 
+// This app has no marketing page of its own — Landing-Frontend is the real
+// entry point (sign-in/sign-up happen there, see lib/config.js) — so any
+// visit here without a session just bounces straight there.
+function RedirectToLanding() {
+  useEffect(() => {
+    window.location.href = LANDING_URL
+  }, [])
+  return null
+}
+
 export default function App() {
   return (
     <AppProvider>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<RedirectToLanding />} />
 
         <Route element={<RequireAuth />}>
           <Route path="/onboarding" element={<Onboarding />} />

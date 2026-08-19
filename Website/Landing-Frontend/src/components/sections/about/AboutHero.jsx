@@ -52,8 +52,8 @@ export default function AboutHero() {
         <div className="lg:col-span-7">
           <Reveal direction="right" duration={1} delay={0.2} scale={0.9} blur>
             <motion.img
-              src="/images/new_images/our_goal.jpg"
-              alt="The team behind Mzobs"
+              src="/images/aboutimage.png"
+              alt="Mzobs connects job seekers with employers"
               fetchPriority="high"
               whileHover={{ scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 250, damping: 22 }}
