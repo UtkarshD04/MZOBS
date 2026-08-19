@@ -28,8 +28,7 @@ export default function TopNavbar() {
         <MenuIcon size={18} />
       </button>
       <div className="flex items-center gap-[9px] font-bold text-base tracking-tight w-60 flex-shrink-0 max-lg:w-auto">
-        <div className="w-[30px] h-[30px] rounded-[9px] bg-gradient-to-br from-navy-700 to-navy text-white flex items-center justify-center text-sm font-extrabold shadow-navy">M</div>
-        <span className="max-sm:hidden">Mzobs</span>
+        <img src="/images/logo.png" alt="Mzobs" className="h-12 w-auto object-contain" />
         <span className="max-sm:hidden text-[10px] font-bold tracking-wide uppercase text-navy bg-navy-tint px-1.5 py-[3px] rounded-md">for Business</span>
       </div>
 

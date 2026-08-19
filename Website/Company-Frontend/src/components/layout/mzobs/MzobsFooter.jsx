@@ -12,7 +12,7 @@ export default function MzobsFooter() {
     <footer className="mt-12 pt-6 border-t border-border">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-2.5">
-          <div className="w-[22px] h-[22px] rounded-md bg-gradient-to-br from-navy-700 to-navy text-white flex items-center justify-center text-[10px] font-extrabold">M</div>
+          <img src="/images/logo.png" alt="Mzobs" className="h-6 w-auto object-contain" />
           <span className="text-xs text-ink-tertiary">© {new Date().getFullYear()} Mzobs · Internal Operations Portal</span>
         </div>
 

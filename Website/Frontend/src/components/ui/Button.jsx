@@ -2,7 +2,7 @@ import { cn } from '../../lib/utils'
 
 const variants = {
   primary:
-    'bg-gradient-to-br from-navy-700 to-navy text-white shadow-navy hover:shadow-[0_12px_26px_-8px_rgba(28,43,78,0.45)] hover:-translate-y-px active:shadow-navy',
+    'bg-gradient-to-br from-navy-700 to-navy text-white shadow-navy hover:shadow-[0_12px_26px_-8px_rgba(61,92,52,0.45)] hover:-translate-y-px active:shadow-navy',
   secondary: 'bg-surface text-ink border border-border-strong shadow-xs hover:bg-surface-hover hover:border-ink-tertiary hover:-translate-y-px hover:shadow-sm',
   ghost: 'bg-transparent text-ink-secondary hover:bg-surface-hover hover:text-ink',
   danger: 'bg-red-tint text-red hover:bg-red hover:text-white hover:-translate-y-px',

@@ -15,7 +15,7 @@ export function openRazorpayCheckout(order) {
       name: order.name,
       description: order.description,
       prefill: order.prefill,
-      theme: { color: '#111a33' },
+      theme: { color: '#3d5c34' },
       handler: (response) => resolve(response),
       modal: { ondismiss: () => reject(new Error('Payment cancelled')) },
     })
