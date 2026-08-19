@@ -275,12 +275,10 @@ export const OUR_GOAL_DATA = {
   image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
 }
 
-export const OUR_STORY_DATA = {
-  badge: "OUR STORY",
-  titlePrefix: "How Mzobs ",
-  titleItalic: "Started",
-  titleSuffix: "",
-  desc: "Mzobs started because hiring was broken on both sides — job seekers were applying into a void, and employers were drowning in unscreened resumes. We started as a small placement team rebuilding resumes by hand, and grew into a platform that verifies every profile and every requirement before it reaches the other side.",
+export const OUR_VISION_DATA = {
+  badge: "OUR VISION",
+  heading: "We're building a future where opportunity finds the right person.",
+  desc: "Not just faster hiring — a system both sides can actually trust. Verified people, matched to relevant opportunities, inside one hiring ecosystem people rely on.",
   ctaText: "Get in touch",
   ctaHref: `mailto:${CONTACT_EMAIL}`,
   image: "/images/new_images/approach.jpg"
@@ -344,22 +342,22 @@ export const WHAT_MAKES_US_DIFFERENT_DATA = {
     {
       traditional: "Résumés vanish into an ATS black hole, sorted by keyword luck.",
       mzobs: "Every candidate is matched on verified skill and fit — not keyword luck.",
-      icon: Target, bg: "var(--careers-cyan)", ink: "#0b3b3d"
+      icon: Target, bg: "var(--careers-tint-blue)", ink: "var(--careers-tint-blue-ink)"
     },
     {
       traditional: "Anyone can upload an embellished, unchecked resume.",
       mzobs: "Every resume is manually reviewed and rebuilt before it's shared.",
-      icon: ShieldCheck, bg: "var(--careers-mint)", ink: "#1f4d1a"
+      icon: ShieldCheck, bg: "var(--careers-tint-sage)", ink: "var(--careers-tint-sage-ink)"
     },
     {
       traditional: "Weeks of filtering rounds before you ever talk to a human.",
       mzobs: "Pre-screened candidates skip the filtering — time-to-hire is cut in half.",
-      icon: Rocket, bg: "var(--careers-peach)", ink: "#7a3d0c"
+      icon: Rocket, bg: "var(--careers-tint-sand)", ink: "var(--careers-tint-sand-ink)"
     },
     {
       traditional: "Apply, and hear absolutely nothing back. Ever.",
       mzobs: "Every applicant gets a real status update, always.",
-      icon: MessageCircle, bg: "var(--careers-pink)", ink: "#7a1f42"
+      icon: MessageCircle, bg: "var(--careers-tint-rose)", ink: "var(--careers-tint-rose-ink)"
     },
     {
       traditional: "Job posts that turn out to be fake, stale or already filled.",
