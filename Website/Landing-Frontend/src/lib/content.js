@@ -15,7 +15,10 @@ import {
   Cpu,
   Server,
   GraduationCap,
-  CheckCircle2
+  CheckCircle2,
+  MessageCircle,
+  Building2,
+  Heart
 } from 'lucide-react'
 import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 
@@ -281,6 +284,94 @@ export const OUR_STORY_DATA = {
   ctaText: "Get in touch",
   ctaHref: `mailto:${CONTACT_EMAIL}`,
   image: "/images/new_images/approach.jpg"
+}
+
+export const ABOUT_GOAL_DATA = {
+  badge: "OUR GOAL",
+  titlePrefix: "What ",
+  titleItalic: "Drives",
+  titleSuffix: " Everything We Build",
+  desc: "Every feature, every screening step and every conversation on Mzobs points back to the same commitments. They're not a mission statement on a wall — they're what we measure ourselves against, on every single hire.",
+  items: [
+    {
+      title: "Fair Match",
+      desc: "Right candidate, right role — decided on skill, not luck.",
+      detail: "No black-box algorithms and no back-channel referrals deciding who gets seen. Every candidate is matched against a role on skill, experience and verified fit — so a great engineer from a small city gets the same shot as one from a big brand name.",
+      icon: Target, bg: "var(--careers-cyan)", ink: "#0b3b3d"
+    },
+    {
+      title: "Verified Profiles",
+      desc: "Every resume checked and rebuilt before it's shared.",
+      detail: "Our team manually reviews and rebuilds every resume that goes out, and screens every candidate before a profile is shared with an employer. What reaches the other side has already been checked — not just uploaded.",
+      icon: ShieldCheck, bg: "var(--careers-mint)", ink: "#1f4d1a"
+    },
+    {
+      title: "Faster Hiring",
+      desc: "Pre-screened candidates cut time-to-hire in half.",
+      detail: "Because every candidate in front of an employer is already screened and verified, interview loops skip the early filtering rounds entirely — most roles on Mzobs close in half the time of a typical job-board hire.",
+      icon: Rocket, bg: "var(--careers-peach)", ink: "#7a3d0c"
+    },
+    {
+      title: "Zero Ghosting",
+      desc: "Every applicant gets a real update, always.",
+      detail: "No application black hole. Every candidate who applies gets a real status update — selected, rejected or in-progress — instead of silence. It's a small thing that most platforms skip, and we don't.",
+      icon: MessageCircle, bg: "var(--careers-pink)", ink: "#7a1f42"
+    },
+    {
+      title: "Employer Trust",
+      desc: "Only genuine, verified requirements reach candidates.",
+      detail: "Every hiring requirement posted on Mzobs is verified before it goes live, so candidates never waste time chasing a role that doesn't exist or a company that isn't really hiring.",
+      icon: Building2, bg: "var(--careers-tint-blue)", ink: "var(--careers-tint-blue-ink)"
+    },
+    {
+      title: "Long-Term Fit",
+      desc: "We optimize for retention, not just placements.",
+      detail: "We don't stop measuring success at the offer letter. We track how long a placement stays and how well it's working for both sides, and use that to keep improving the match — not just the count of hires.",
+      icon: Heart, bg: "var(--careers-tint-sand)", ink: "var(--careers-tint-sand-ink)"
+    }
+  ]
+}
+
+export const WHAT_MAKES_US_DIFFERENT_DATA = {
+  badge: "WHY MZOBS",
+  titlePrefix: "What Makes ",
+  titleItalic: "Us",
+  titleSuffix: " Different",
+  desc: "Most hiring platforms just moved the paperwork online. We rebuilt the process itself — here's the same hire, done the old way and the Mzobs way.",
+  columnLeft: "Traditional Hiring",
+  columnRight: "The Mzobs Way",
+  rows: [
+    {
+      traditional: "Résumés vanish into an ATS black hole, sorted by keyword luck.",
+      mzobs: "Every candidate is matched on verified skill and fit — not keyword luck.",
+      icon: Target, bg: "var(--careers-cyan)", ink: "#0b3b3d"
+    },
+    {
+      traditional: "Anyone can upload an embellished, unchecked resume.",
+      mzobs: "Every resume is manually reviewed and rebuilt before it's shared.",
+      icon: ShieldCheck, bg: "var(--careers-mint)", ink: "#1f4d1a"
+    },
+    {
+      traditional: "Weeks of filtering rounds before you ever talk to a human.",
+      mzobs: "Pre-screened candidates skip the filtering — time-to-hire is cut in half.",
+      icon: Rocket, bg: "var(--careers-peach)", ink: "#7a3d0c"
+    },
+    {
+      traditional: "Apply, and hear absolutely nothing back. Ever.",
+      mzobs: "Every applicant gets a real status update, always.",
+      icon: MessageCircle, bg: "var(--careers-pink)", ink: "#7a1f42"
+    },
+    {
+      traditional: "Job posts that turn out to be fake, stale or already filled.",
+      mzobs: "Every requirement is verified as genuine before it goes live.",
+      icon: Building2, bg: "var(--careers-tint-blue)", ink: "var(--careers-tint-blue-ink)"
+    },
+    {
+      traditional: "Success measured by resumes collected, not hires that stick.",
+      mzobs: "We track retention, not just placements — long after the offer letter.",
+      icon: Heart, bg: "var(--careers-tint-sand)", ink: "var(--careers-tint-sand-ink)"
+    }
+  ]
 }
 
 export const APPROACH_DATA = {
