@@ -37,7 +37,7 @@ function validate(form) {
   if (!form.email.trim()) errors.email = 'Please enter your email.'
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Enter a valid email address.'
   if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
-  else if (form.phone.replace(/\D/g, '').length < 10) errors.phone = 'Enter a valid phone number.'
+  else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
   if (!form.password) errors.password = 'Please create a password.'
   else if (form.password.length < 8) errors.password = 'Password must be at least 8 characters.'
   if (!form.graduation) errors.graduation = 'Please select your graduation.'
@@ -183,7 +183,7 @@ export default function EmployeeSignupForm() {
       </Field>
 
       <Field label="Phone number">
-        <Input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="98765 43210" />
+        <Input type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="98765 43210" />
         {errors.phone && <span className="text-xs text-red mt-1 block">{errors.phone}</span>}
       </Field>
 
