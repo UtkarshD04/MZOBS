@@ -11,8 +11,8 @@ export default defineConfig({
     // fail loudly instead of silently hopping to another app's port
     strictPort: true,
     // leading dot = allow the domain and all its subdomains,
-    // so a new cloudflare tunnel URL works without editing this file
-    allowedHosts: ['.trycloudflare.com'],
+    // so a new tunnel URL works without editing this file
+    allowedHosts: ['.trycloudflare.com', '.loca.lt'],
   },
   preview: {
     port: 4173,
