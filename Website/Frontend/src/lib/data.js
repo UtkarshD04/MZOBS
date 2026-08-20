@@ -173,14 +173,6 @@ export const INTERVIEW_SCHEDULED = {
   sharedOn: '3 Aug 2026',
 }
 
-export const NOTIFS = [
-  { ic: 'CheckCircle2', tone: 'green', title: 'Resume verified by the Mzobs team', body: 'Version 3 passed verification and is now eligible for employer dispatch.', time: '2h ago', unread: true, cat: 'resume' },
-  { ic: 'Building2', tone: 'gold', title: 'Your profile was shared with Solace Technologies', body: 'Associate Product Analyst · Interview scheduled for 6 Aug, 11:00 AM.', time: '5h ago', unread: true, cat: 'applications' },
-  { ic: 'Layers', tone: 'navy', title: 'Skill track assigned — Analytics & Data', body: 'Based on your mock interview score of 81/100. Grade A.', time: '1d ago', unread: true, cat: 'track' },
-  { ic: 'Video', tone: 'navy', title: 'Mock interview feedback is ready', body: 'Rahul Verma has submitted your panel feedback.', time: '1d ago', unread: false, cat: 'interviews' },
-  { ic: 'GraduationCap', tone: 'navy', title: 'Training session starts tomorrow', body: 'Live session: "Case Study Interviews" at 6:00 PM.', time: '2d ago', unread: false, cat: 'training' },
-]
-
 export const COURSES = [
   { title: 'Excel for Business Analysts', mentor: 'Karan Mehta', progress: 72, lessons: 18, done: 13, category: 'analytics' },
   { title: 'SQL for Product Analytics', mentor: 'Ritika Shah', progress: 40, lessons: 16, done: 6, category: 'analytics' },
@@ -205,32 +197,5 @@ export const TESTS_DONE = [
 export const INTERVIEWS_PAST = [
   { date: '30 Jul 2026', type: 'Mzobs verification round', interviewer: 'Rahul Verma', comm: 82, tech: 74, hr: 88, overall: 81 },
 ]
-
-export const MESSAGES_THREADS = [
-  { id: 1, name: 'Priya Kapoor', role: 'Resume Verification, Mzobs', last: "Your v3 is verified — you're now eligible for employer dispatch.", time: '10:42 AM', unread: 2, av: 'PK' },
-  { id: 2, name: 'Rahul Verma', role: 'Interview Panel, Mzobs', last: 'Feedback from your mock interview is up on your portal.', time: 'Yesterday', unread: 0, av: 'RV' },
-  { id: 3, name: 'Placement Desk', role: 'Mzobs Team', last: 'Your interview link for Solace has been shared.', time: 'Mon', unread: 0, av: 'PD' },
-  { id: 4, name: 'Mzobs Support', role: 'Support', last: 'Let us know if you need anything else!', time: 'Fri', unread: 0, av: 'MS' },
-]
-
-export const CONVERSATIONS = {
-  1: [
-    ['in', "Hi Ananya! I've completed the verification review of your resume v3."],
-    ['in', 'Great improvements — quantified impact really stands out now.'],
-    ['out', 'Thank you Priya! Anything else I should fix?'],
-    ['in', "Nothing blocking. You're verified and eligible for employer dispatch."],
-  ],
-  2: [
-    ['in', 'Hi Ananya, thanks for joining the verification round today.'],
-    ['out', 'Thank you for the detailed feedback!'],
-    ['in', 'Feedback from your mock interview is up on your portal.'],
-  ],
-  3: [
-    ['in', 'Your profile was shared with Solace Technologies for the Associate Product Analyst role.'],
-    ['in', 'Interview scheduled for 6 Aug, 11:00 AM. The link is in your Interview Center.'],
-    ['out', 'Got it, thank you!'],
-  ],
-  4: [['in', 'Hi Ananya, welcome to Mzobs! Let us know if you need anything.']],
-}
 
 export const INVOICES = [{ id: SUBSCRIPTION.invoice, desc: 'Placement Support Programme — one-time', date: SUBSCRIPTION.purchasedOn, amount: PROGRAM_FEE, status: 'paid' }]

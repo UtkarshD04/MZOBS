@@ -19,4 +19,7 @@ export const queryKeys = {
   applications: ['applications'],
   mockInterview: ['mockInterview'],
   interviews: ['interviews'],
+  notifications: ['notifications'],
+  messageThreads: ['messageThreads'],
+  threadMessages: (id) => ['messageThreads', id, 'messages'],
 }
