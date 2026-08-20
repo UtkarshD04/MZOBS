@@ -277,8 +277,14 @@ export const OUR_GOAL_DATA = {
 
 export const OUR_VISION_DATA = {
   badge: "OUR VISION",
-  heading: "We're building a future where opportunity finds the right person.",
+  titlePrefix: "We're building a future where opportunity finds ",
+  titleItalic: "the right person",
+  titleSuffix: ".",
   desc: "Not just faster hiring — a system both sides can actually trust. Verified people, matched to relevant opportunities, inside one hiring ecosystem people rely on.",
+  badges: [
+    { icon: "ShieldCheck", text: "Every profile, verified" },
+    { icon: "Users", text: "Matched, not just listed" }
+  ],
   ctaText: "Get in touch",
   ctaHref: `mailto:${CONTACT_EMAIL}`,
   image: "/images/new_images/approach.jpg"
@@ -465,14 +471,14 @@ export const TRUSTED_LOGOS_DATA = {
   badge: "WHO HIRES ON MZOBS",
   title: "Companies Hiring On Mzobs",
   logos: [
-    { name: "Logoipsum", variant: 1 },
-    { name: "logo ipsum", variant: 2 },
-    { name: "LOGOIPSUM", variant: 3 },
-    { name: "logoipsum", variant: 4 },
-    { name: "LOGOIPSUM", variant: 5 },
-    { name: "logoipsum", variant: 6 },
-    { name: "logoipsum", variant: 7 },
-    { name: "Logoipsum", variant: 8 }
+    { name: "AMPIN Energy Transition", logo: "/industry-logos/ampin.png" },
+    { name: "Amplus Solar", logo: "/industry-logos/amplus.jpg" },
+    { name: "Fourth Partner Energy", logo: "/industry-logos/fourthpartner.png" },
+    { name: "Haldiram's", logo: "/industry-logos/haldirams.png" },
+    { name: "Prakash Steel", logo: "/industry-logos/prakash-steel.png" },
+    { name: "Rimjhim Ispat", logo: "/industry-logos/rimjhim-ispat.png" },
+    { name: "Sunsource Energy", logo: "/industry-logos/sunsource.svg" },
+    { name: "Sunsure Energy", logo: "/industry-logos/sunsure.svg" }
   ]
 }
 

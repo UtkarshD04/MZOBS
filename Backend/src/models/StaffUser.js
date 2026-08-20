@@ -13,6 +13,8 @@ const staffUserSchema = new Schema(
     },
     status: { type: String, enum: ['active', 'invited'], default: 'active' },
     lastActiveAt: { type: Date, default: null },
+    resetPasswordToken: { type: String, default: null, select: false },
+    resetPasswordExpires: { type: Date, default: null, select: false },
   },
   { timestamps: true }
 )
