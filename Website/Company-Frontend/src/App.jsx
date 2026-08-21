@@ -9,7 +9,6 @@ import RequireAuth from './components/auth/RequireAuth'
 
 import MzobsShell from './components/layout/mzobs/MzobsShell'
 import Login from './pages/mzobs/Login'
-import Signup from './pages/mzobs/Signup'
 import ForgotPassword from './pages/mzobs/ForgotPassword'
 import ResetPassword from './pages/mzobs/ResetPassword'
 import Dashboard from './pages/mzobs/Dashboard'
@@ -22,6 +21,7 @@ import Applications from './pages/mzobs/Applications'
 import Dispatch from './pages/mzobs/Dispatch'
 import Payments from './pages/mzobs/Payments'
 import Team from './pages/mzobs/Team'
+import ResumePool from './pages/mzobs/ResumePool'
 import ComingSoon from './pages/mzobs/ComingSoon'
 
 export default function App() {
@@ -30,7 +30,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
@@ -50,6 +49,7 @@ export default function App() {
 
           <Route path="payments" element={<Payments />} />
           <Route path="team" element={<Team />} />
+          <Route path="resume-pool" element={<ResumePool />} />
           <Route path="settings" element={<ComingSoon icon={Settings} title="Settings" subtitle="Portal preferences, rate card and notification rules." />} />
           <Route path="support" element={<ComingSoon icon={LifeBuoy} title="Support Desk" subtitle="Tickets raised by candidates and employers." />} />
         </Route>
