@@ -11,20 +11,25 @@ import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Input, Select } from '../../components/ui/Field'
 import { useApp } from '../../context/AppContext'
-import { useTeamQuery, useCreateTeammateMutation } from '../../hooks/useTeam'
+import { useTeamQuery, useCreateTeammateMutation, useUpdateTeammateMutation } from '../../hooks/useTeam'
 
 const ROLES = ['Operations Manager', 'Resume Verification Lead', 'Interview Panel', 'Employer Success', 'Compliance & KYC']
+const ACCESS_LEVELS = [
+  { value: 'staff', label: 'Staff — assigned resumes only' },
+  { value: 'admin', label: 'Admin — full portal access' },
+]
 
 function InviteTeammateModal({ app, onDone }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [role, setRole] = useState(ROLES[1])
+  const [accessLevel, setAccessLevel] = useState('staff')
   const [result, setResult] = useState(null)
   const create = useCreateTeammateMutation()
 
   function submit() {
     create.mutate(
-      { name, email, role },
+      { name, email, role, accessLevel },
       {
         onSuccess: (data) => {
           setResult(data)
@@ -82,6 +87,15 @@ function InviteTeammateModal({ app, onDone }) {
             ))}
           </Select>
         </Field>
+        <Field label="Access level" hint="Admins can create staff, allocate resumes and see everything. Staff only see resumes assigned to them.">
+          <Select value={accessLevel} onChange={(e) => setAccessLevel(e.target.value)}>
+            {ACCESS_LEVELS.map((a) => (
+              <option key={a.value} value={a.value}>
+                {a.label}
+              </option>
+            ))}
+          </Select>
+        </Field>
       </ModalBody>
       <ModalFoot>
         <Button onClick={app.closeModal} disabled={create.isPending}>
@@ -98,9 +112,21 @@ function InviteTeammateModal({ app, onDone }) {
 export default function Team() {
   const app = useApp()
   const { data: team = [], isLoading, isError, refetch } = useTeamQuery()
+  const updateTeammate = useUpdateTeammateMutation()
 
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
+
+  function toggleStatus(m) {
+    const nextStatus = m.status === 'disabled' ? 'active' : 'disabled'
+    updateTeammate.mutate(
+      { id: m.id, status: nextStatus },
+      {
+        onSuccess: () => app.addToast('success', `${m.name} ${nextStatus === 'disabled' ? 'disabled' : 'reactivated'}`),
+        onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
+      }
+    )
+  }
 
   return (
     <StaggerGroup>
@@ -120,7 +146,7 @@ export default function Team() {
             <span className="text-[15px] font-semibold">{team.length} team members</span>
           </CardHead>
           <TableWrap className="border-none rounded-none">
-            <Table columns={['Member', 'Role', 'Status', 'Last active']}>
+            <Table columns={['Member', 'Role', 'Access', 'Status', 'Last active', '']}>
               {team.map((m) => (
                 <Tr key={m.id}>
                   <Td>
@@ -134,9 +160,19 @@ export default function Team() {
                   </Td>
                   <Td>{m.role}</Td>
                   <Td>
-                    <Badge tone={m.status === 'active' ? 'green' : 'gold'}>{m.status === 'active' ? 'Active' : 'Invited'}</Badge>
+                    <Badge tone={m.accessLevel === 'admin' ? 'navy' : 'gray'}>{m.accessLevel === 'admin' ? 'Admin' : 'Staff'}</Badge>
+                  </Td>
+                  <Td>
+                    <Badge tone={m.status === 'active' ? 'green' : m.status === 'disabled' ? 'red' : 'gold'}>
+                      {m.status === 'active' ? 'Active' : m.status === 'disabled' ? 'Disabled' : 'Invited'}
+                    </Badge>
                   </Td>
                   <Td className="text-ink-tertiary">{m.lastActiveAt ? new Date(m.lastActiveAt).toLocaleDateString('en-IN') : 'Never'}</Td>
+                  <Td>
+                    <Button size="sm" onClick={() => toggleStatus(m)} disabled={updateTeammate.isPending}>
+                      {m.status === 'disabled' ? 'Reactivate' : 'Disable'}
+                    </Button>
+                  </Td>
                 </Tr>
               ))}
             </Table>

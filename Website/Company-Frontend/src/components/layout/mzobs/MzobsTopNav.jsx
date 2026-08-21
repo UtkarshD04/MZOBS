@@ -102,7 +102,7 @@ export default function MzobsTopNav() {
                 <div className="text-[13px] font-semibold">{me?.name}</div>
                 <div className="text-xs text-ink-tertiary">{me?.role}</div>
                 <div className="flex items-center gap-1 text-[11px] text-green font-semibold mt-1.5">
-                  <ShieldCheck size={12} /> Mzobs staff account
+                  <ShieldCheck size={12} /> Mzobs admin account
                 </div>
               </div>
               <div className="p-1.5">

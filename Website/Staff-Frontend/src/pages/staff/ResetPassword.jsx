@@ -77,7 +77,7 @@ export default function ResetPassword() {
             <KeyRound size={18} className="text-[#111827]" />
             <h1 className="text-2xl font-bold tracking-tight text-[#111827]">Reset your password</h1>
           </div>
-          <p className="text-sm text-[#666666] mt-2 mb-6">Choose a new password for your admin account.</p>
+          <p className="text-sm text-[#666666] mt-2 mb-6">Choose a new password for your staff account.</p>
 
           <GreenField label="New password">
             <div className="relative">

@@ -32,7 +32,7 @@ export default function ForgotPassword() {
           </div>
           <h3 className="text-lg font-bold text-[#111827]">Check your email</h3>
           <p className="text-[13.5px] text-[#595959] mt-1.5 max-w-xs">
-            If an admin account exists for <strong>{email}</strong>, we've sent a link to reset your password. It expires in 30 minutes.
+            If a staff account exists for <strong>{email}</strong>, we've sent a link to reset your password. It expires in 30 minutes.
           </p>
           <Link to="/login" className="text-xs font-bold text-[#595959] hover:text-[#111827] transition-colors mt-6">
             Back to sign in

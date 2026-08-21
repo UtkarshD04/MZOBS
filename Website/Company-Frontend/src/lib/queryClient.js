@@ -25,4 +25,6 @@ export const queryKeys = {
   payments: (filters) => ['payments', filters],
   team: ['team'],
   me: ['me'],
+  resumePool: (filters) => ['resumePool', filters],
+  resumePoolStats: ['resumePool', 'stats'],
 }

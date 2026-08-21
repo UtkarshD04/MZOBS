@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import AuthLayout from '../auth/AuthLayout'
 import { loginStaff } from '../../services/authService'
@@ -16,6 +16,7 @@ const STATS = [
 
 export default function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [showPw, setShowPw] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -43,8 +44,14 @@ export default function Login() {
         <span className="inline-block text-[10px] font-bold uppercase tracking-wide text-[#3d5c34] bg-[#e5efe0] px-2 py-[5px] rounded-md mb-3">
           Internal Operations Portal
         </span>
-        <h1 className="text-2xl font-bold tracking-tight text-[#111827]">Staff sign in</h1>
-        <p className="text-sm text-[#666666] mt-2 mb-7">Mzobs operations portal — internal use only.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-[#111827]">Admin sign in</h1>
+        <p className="text-sm text-[#666666] mt-2 mb-7">Mzobs admin portal — internal use only.</p>
+
+        {location.state?.notAdmin && (
+          <p className="text-sm text-[#b42318] bg-[#fef3f2] border border-[#fecdca] rounded-lg px-3 py-2.5 mb-4">
+            This portal is for admins only. Staff should sign in at the staff portal instead.
+          </p>
+        )}
 
         <GreenField label="Mzobs email">
           <div className="relative">
@@ -101,13 +108,6 @@ export default function Login() {
           {submitting ? 'Signing in...' : 'Sign in'}
           <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-1" />
         </button>
-
-        <p className="text-xs text-center mt-5 pt-5 border-t border-[#e0e0e0] text-[#666666]">
-          New to the ops portal?{' '}
-          <Link to="/signup" className="font-bold text-[#3d5c34] hover:text-[#314a2a] transition-colors">
-            Create an account
-          </Link>
-        </p>
       </form>
     </AuthLayout>
   )

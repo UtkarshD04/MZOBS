@@ -13,3 +13,11 @@ export function useCreateTeammateMutation() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.team }),
   })
 }
+
+export function useUpdateTeammateMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, ...input }) => teamService.updateTeammate(id, input),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.team }),
+  })
+}

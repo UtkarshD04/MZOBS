@@ -11,6 +11,7 @@ import {
   Send,
   IndianRupee,
   Users2,
+  Inbox,
   Settings,
   LifeBuoy,
   LogOut,
@@ -76,6 +77,7 @@ export default function MzobsSidebar() {
   ]
   const business = [
     { to: '/app/payments', label: 'Payments', icon: IndianRupee },
+    { to: '/app/resume-pool', label: 'Resume Pool', icon: Inbox },
     { to: '/app/team', label: 'Mzobs Team', icon: Users2 },
     { to: '/app/settings', label: 'Settings', icon: Settings },
   ]
