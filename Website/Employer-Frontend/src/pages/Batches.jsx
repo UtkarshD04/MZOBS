@@ -9,7 +9,7 @@ import EmptyState from '../components/ui/EmptyState'
 import ErrorState from '../components/ui/ErrorState'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import { useBatchesQuery } from '../hooks/useBatches'
-import { PRICING } from '../data/mock'
+import { PRICING } from '../lib/pricing'
 import { fmtDate, fmtINR } from '../lib/utils'
 
 const STATUS = {

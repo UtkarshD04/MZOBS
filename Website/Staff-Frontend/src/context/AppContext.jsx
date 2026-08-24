@@ -1,18 +1,41 @@
-import { createContext, useCallback, useContext, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 const AppContext = createContext(null)
 
 let toastId = 0
 
-// Fixed light theme, pinned via data-theme="light" on <html> in index.html
-// to match the Landing site — no dark mode here, so no toggle to manage it.
 export function AppProvider({ children }) {
+  const [themeOverride, setThemeOverride] = useState(() => localStorage.getItem('mzobs-theme') || null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
+  const [cmdkOpen, setCmdkOpen] = useState(false)
   const [modal, setModal] = useState(null)
   const [sidePanel, setSidePanel] = useState(null)
   const [toasts, setToasts] = useState([])
+
+  useEffect(() => {
+    const root = document.documentElement
+    if (themeOverride) {
+      root.setAttribute('data-theme', themeOverride)
+      localStorage.setItem('mzobs-theme', themeOverride)
+    } else {
+      root.removeAttribute('data-theme')
+      localStorage.removeItem('mzobs-theme')
+    }
+  }, [themeOverride])
+
+  const toggleTheme = useCallback(() => {
+    setThemeOverride((cur) => {
+      const active = cur || 'light'
+      return active === 'dark' ? 'light' : 'dark'
+    })
+  }, [])
+
+  const isDark = useMemo(() => {
+    return themeOverride === 'dark'
+  }, [themeOverride])
 
   const addToast = useCallback((type, message) => {
     const id = ++toastId
@@ -27,12 +50,18 @@ export function AppProvider({ children }) {
   const closeSidePanel = useCallback(() => setSidePanel(null), [])
 
   const value = {
+    isDark,
+    toggleTheme,
     sidebarCollapsed,
     setSidebarCollapsed,
     mobileSidebarOpen,
     setMobileSidebarOpen,
+    drawerOpen,
+    setDrawerOpen,
     avatarMenuOpen,
     setAvatarMenuOpen,
+    cmdkOpen,
+    setCmdkOpen,
     modal,
     openModal,
     closeModal,

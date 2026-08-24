@@ -8,7 +8,7 @@ import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import ErrorState from '../components/ui/ErrorState'
 import EmptyState from '../components/ui/EmptyState'
-import { APPLICATION_STAGES } from '../lib/data'
+import { APPLICATION_STAGES } from '../lib/constants'
 import { useApplicationsQuery } from '../hooks/useApplications'
 
 const STAGE_INDEX = { new: 1, screening: 2, shortlisted: 3, shared: 4, interview: 5, selected: 6, rejected: 6 }
