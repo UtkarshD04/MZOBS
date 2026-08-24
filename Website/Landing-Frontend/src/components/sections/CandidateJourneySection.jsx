@@ -118,19 +118,26 @@ export default function CandidateJourneySection() {
                   >
                     {/* Ambient Glow behind Photo */}
                     <div
-                      className={`absolute -inset-4 rounded-full bg-gradient-to-tr ${step.lineAccent} blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none`}
+                      className={`absolute -inset-4 rounded-full bg-gradient-to-tr ${step.lineAccent} blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-700 pointer-events-none`}
                     />
 
-                    {/* Organic Cutout Mask Placeholder */}
+                    {/* Organic Cutout Mask */}
                     <div
-                      className={`relative overflow-hidden shadow-xl transition-all duration-500 group-hover:shadow-2xl bg-slate-100 w-full h-[180px] sm:h-[220px] lg:h-[240px] ${
+                      className={`relative overflow-hidden shadow-xl transition-all duration-500 group-hover:shadow-2xl bg-slate-100 w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] mx-auto aspect-[3/2] p-2.5 sm:p-3 ${
                         step.shapeType === 'arch-left'
                           ? 'rounded-t-[3rem] rounded-b-xl'
                           : step.shapeType === 'curve-right'
                           ? 'rounded-tr-[3.5rem] rounded-bl-[2rem] rounded-tl-xl rounded-br-xl'
                           : 'rounded-[2rem]'
                       }`}
-                    />
+                    >
+                      <img
+                        src={step.image}
+                        alt={step.imageAlt}
+                        className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105 rounded-lg"
+                        loading="lazy"
+                      />
+                    </div>
                   </motion.div>
 
                   {/* EDITORIAL TYPOGRAPHY CONTAINER */}
