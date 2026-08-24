@@ -5,6 +5,7 @@ import TopNavbar from './TopNavbar'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
 import { useApp } from '../../context/AppContext'
+import { subscribeToPush } from '../../lib/webPush'
 
 export default function Shell() {
   const location = useLocation()
@@ -14,6 +15,12 @@ export default function Shell() {
     setMobileSidebarOpen(false)
     window.scrollTo(0, 0)
   }, [location.pathname, setMobileSidebarOpen])
+
+  // Only mounted once signed in (nested under <RequireAuth /> in App.jsx),
+  // so this is the first moment there's an account to link a subscription to.
+  useEffect(() => {
+    subscribeToPush()
+  }, [])
 
   useEffect(() => {
     function onKeyDown(e) {

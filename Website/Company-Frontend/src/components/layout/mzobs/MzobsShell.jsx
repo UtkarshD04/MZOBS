@@ -6,6 +6,7 @@ import MzobsSidebar from './MzobsSidebar'
 import MzobsFooter from './MzobsFooter'
 import RouteProgress from '../RouteProgress'
 import { useApp } from '../../../context/AppContext'
+import { subscribeToPush } from '../../../lib/webPush'
 
 export default function MzobsShell() {
   const location = useLocation()
@@ -17,6 +18,12 @@ export default function MzobsShell() {
     setAvatarMenuOpen(false)
     window.scrollTo(0, 0)
   }, [location.pathname, setMobileSidebarOpen, setDrawerOpen, setAvatarMenuOpen])
+
+  // Only mounted once signed in (nested under <RequireAuth /> in App.jsx),
+  // so this is the first moment there's an account to link a subscription to.
+  useEffect(() => {
+    subscribeToPush()
+  }, [])
 
   return (
     <div className="min-h-screen">
