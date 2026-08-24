@@ -12,6 +12,7 @@ import { useApp } from '../context/AppContext'
 import { openDeleteAccountModal } from '../lib/modals'
 import { cn } from '../lib/utils'
 import { useProfileQuery, useUpdateProfileMutation } from '../hooks/useProfile'
+import { sendTestPushNotification } from '../services/notificationsService'
 
 const TABS = ['Account', 'Password', 'Privacy', 'Notifications', 'Delete Account']
 
@@ -158,6 +159,22 @@ export default function Settings() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+              <div className="flex items-center justify-between mt-5 pt-5 border-t border-border">
+                <div>
+                  <div className="text-[13px] font-semibold">Push notifications</div>
+                  <div className="text-xs text-ink-tertiary mt-1">Send yourself a test push to confirm they're working on this device.</div>
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    sendTestPushNotification()
+                      .then(() => app.addToast('success', 'Test notification sent'))
+                      .catch(() => app.addToast('error', 'Could not send test notification'))
+                  }
+                >
+                  Send test notification
+                </Button>
               </div>
             </Card>
           )}
