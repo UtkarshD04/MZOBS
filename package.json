@@ -2,7 +2,8 @@
   "name": "mzobs",
   "private": true,
   "scripts": {
-    "dev": "concurrently -n backend,landing,employer,employee,staff -c blue,magenta,green,yellow,cyan \"npm --prefix Backend run dev\" \"npm --prefix Website/Landing-Frontend run dev\" \"npm --prefix Website/Employer-Frontend run dev\" \"npm --prefix Website/Frontend run dev\" \"npm --prefix Website/Company-Frontend run dev\""
+    "dev": "concurrently -n landing,employer,employee,staff,admin -c magenta,green,yellow,cyan,red \"npm --prefix Website/Landing-Frontend run dev\" \"npm --prefix Website/Employer-Frontend run dev\" \"npm --prefix Website/Frontend run dev\" \"npm --prefix Website/Staff-Frontend run dev\" \"npm --prefix Website/Admin-Frontend run dev\"",
+    "mobile": "npm --prefix Mobile-App start"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

@@ -11,7 +11,10 @@ export const queryClient = new QueryClient({
 })
 
 export const queryKeys = {
+  resumes: (filters) => ['resumes', filters],
+  mockInterviews: (filters) => ['mockInterviews', filters],
   me: ['me'],
   resumePool: (filters) => ['resumePool', filters],
   resumePoolStats: ['resumePool', 'stats'],
+  notifications: ['notifications'],
 }

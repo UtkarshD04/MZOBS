@@ -15,7 +15,7 @@ import Pagination from '../components/ui/Pagination'
 import Dropdown from '../components/ui/Dropdown'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import { useJobsQuery, useSetJobStatus, useDuplicateJob, useDeleteJob, usePayJobInvoice } from '../hooks/useJobs'
-import { PRICING } from '../data/mock'
+import { PRICING } from '../lib/pricing'
 import { fmtCompactINR, fmtINR } from '../lib/utils'
 
 const STATUS_TABS = [
