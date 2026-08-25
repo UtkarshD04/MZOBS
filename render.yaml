@@ -16,3 +16,73 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
+
+  - type: web
+    name: employer-dashboard
+    runtime: static
+    rootDir: Website/Employer-Frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_LANDING_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: staff-dashboard
+    runtime: static
+    rootDir: Website/Staff-Frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_FILE_BASE_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: admin-dashboard
+    runtime: static
+    rootDir: Website/Admin-Frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_FILE_BASE_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: mzobs-landing
+    runtime: static
+    rootDir: Website/Landing-Frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_EMPLOYEE_APP_URL
+        sync: false
+      - key: VITE_EMPLOYER_APP_URL
+        sync: false
+      - key: VITE_EMPLOYER_API_URL
+        sync: false
+      - key: VITE_EMPLOYEE_API_URL
+        sync: false
+      - key: VITE_CONTACT_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

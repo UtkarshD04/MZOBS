@@ -30,7 +30,7 @@ import DepartmentBarChart from '../components/charts/DepartmentBarChart'
 import { useDashboardQuery } from '../hooks/useDashboard'
 import { useCompanyQuery } from '../hooks/useCompany'
 import { useMeQuery } from '../hooks/useMe'
-import { PRICING } from '../data/mock'
+import { PRICING } from '../lib/pricing'
 import { cn, fmtDateTime, fmtINR } from '../lib/utils'
 
 export default function Dashboard() {

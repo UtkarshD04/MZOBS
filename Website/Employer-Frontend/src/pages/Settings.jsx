@@ -12,6 +12,7 @@ import { Tabs } from '../components/ui/Tabs'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import { useMeQuery, useUpdateMe } from '../hooks/useMe'
+import { sendTestPushNotification } from '../services/notificationsService'
 
 const TAB_LABELS = ['Profile', 'Security', 'Notifications', 'Danger Zone']
 
@@ -98,6 +99,19 @@ export default function Settings() {
                 <Switch on={notifPrefs[key]} onChange={(v) => setNotifPrefs((p) => ({ ...p, [key]: v }))} />
               </div>
             ))}
+            <div className="flex items-center justify-between pt-5 mt-2 border-t border-border">
+              <div>
+                <div className="text-[13px] font-semibold">Push notifications</div>
+                <div className="text-[12px] text-ink-tertiary mt-0.5">Send yourself a test push to confirm they're working on this device.</div>
+              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => sendTestPushNotification().then(() => toast.success('Test notification sent')).catch(() => toast.error('Could not send test notification'))}
+              >
+                Send test notification
+              </Button>
+            </div>
           </CardBody>
         )}
 
