@@ -1,8 +1,9 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Shell from './components/layout/Shell'
 import RequireAuth from './components/auth/RequireAuth'
 import { PageSkeleton } from './components/ui/Skeleton'
+import { EMPLOYER_SIGNIN_URL } from './lib/config'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Jobs = lazy(() => import('./pages/Jobs'))
@@ -18,13 +19,22 @@ const TeamMembers = lazy(() => import('./pages/TeamMembers'))
 const Notifications = lazy(() => import('./pages/Notifications'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Support = lazy(() => import('./pages/Support'))
-const Home = lazy(() => import('./pages/Home'))
+
+// This app has no marketing page of its own — Landing-Frontend is the real
+// entry point (sign-in/sign-up happen there) — so any visit here without a
+// session just bounces straight there.
+function RedirectToLanding() {
+  useEffect(() => {
+    window.location.href = EMPLOYER_SIGNIN_URL
+  }, [])
+  return null
+}
 
 export default function App() {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<RedirectToLanding />} />
 
         <Route element={<RequireAuth />}>
           <Route element={<Shell />}>
