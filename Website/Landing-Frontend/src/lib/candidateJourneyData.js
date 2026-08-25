@@ -10,7 +10,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       title: "₹99 LIFETIME SUBSCRIPTION",
       description: "Start your MZOBS journey with a one-time ₹99 subscription and get lifetime access to the candidate platform.",
       align: "image-left",
-      image: "/images/journey/step-01.jpg",
+      image: "/images/journey/step-01.png",
       imageAlt: "Candidate starting MZOBS journey with lifetime subscription",
       shapeType: "arch-left",
       lineAccent: "from-blue-400 via-indigo-300 to-purple-200"
@@ -32,7 +32,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       title: "RESUME VERIFICATION",
       description: "Our team reviews your resume and prepares your profile for relevant hiring opportunities.",
       align: "image-left",
-      image: "/images/journey/step-03.jpg",
+      image: "/images/journey/step-03.png",
       imageAlt: "Expert reviewing candidate resume and career profile",
       shapeType: "pill-left",
       lineAccent: "from-sky-300 via-violet-300 to-indigo-200"
@@ -43,7 +43,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       title: "MOCK INTERVIEW",
       description: "Prepare for real interviews through mock interview practice and receive useful feedback.",
       align: "image-right",
-      image: "/images/journey/step-04.jpg",
+      image: "/images/journey/step-04.png",
       imageAlt: "Candidate participating in a structured mock interview session",
       shapeType: "curve-right",
       lineAccent: "from-violet-300 via-purple-300 to-pink-200"
@@ -54,7 +54,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       title: "SKILL CATEGORISATION",
       description: "Your profile is categorised according to your skills and capabilities to identify suitable opportunities.",
       align: "image-left",
-      image: "/images/journey/step-05.jpg",
+      image: "/images/journey/step-05.png",
       imageAlt: "Recruiter categorising candidate skills and technical capabilities on MZOBS portal",
       shapeType: "arch-left",
       lineAccent: "from-purple-200 via-amber-200 to-orange-200"

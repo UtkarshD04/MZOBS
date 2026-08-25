@@ -1,4 +1,5 @@
-import { ShieldCheck, Video, Layers, Send, GraduationCap, MessageSquare, Download, Info, Check } from 'lucide-react'
+import { useState } from 'react'
+import { ShieldCheck, Video, Layers, Send, GraduationCap, MessageSquare, Download, Info, Check, Loader2 } from 'lucide-react'
 import Card, { CardHead } from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
@@ -8,8 +9,14 @@ import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import ErrorState from '../components/ui/ErrorState'
 import { fmtINR } from '../lib/utils'
-import { useSubscriptionQuery } from '../hooks/useSubscription'
+import {
+  useSubscriptionQuery,
+  useCreateSubscriptionOrderMutation,
+  useVerifySubscriptionPaymentMutation,
+  useConfirmMockSubscriptionPaymentMutation,
+} from '../hooks/useSubscription'
 import { useProfileQuery } from '../hooks/useProfile'
+import { openRazorpayCheckout } from '../lib/razorpay'
 
 const UNLOCKS = [
   [ShieldCheck, 'Resume verification', 'Our team reviews your resume line by line and verifies your work history before any employer sees it.', 'navy'],
@@ -32,11 +39,41 @@ const TINT = {
 export default function Subscription() {
   const { data: subscription, isLoading: subLoading, isError: subError, refetch: refetchSub } = useSubscriptionQuery()
   const { data: profile, isLoading: profileLoading, isError: profileError, refetch: refetchProfile } = useProfileQuery()
+  const createOrder = useCreateSubscriptionOrderMutation()
+  const verifyPayment = useVerifySubscriptionPaymentMutation()
+  const confirmMockPayment = useConfirmMockSubscriptionPaymentMutation()
+  const [paying, setPaying] = useState(false)
+  const [payError, setPayError] = useState('')
 
   if (subLoading || profileLoading) return <PageSkeleton />
   if (subError || profileError) return <ErrorState onRetry={() => (subError ? refetchSub() : refetchProfile())} />
 
   const fee = subscription.amount ?? 99
+
+  // Same order → Checkout → signature-verify flow as the onboarding wizard,
+  // for anyone whose subscription is still unpaid (payment skipped/failed
+  // during onboarding) — the account page had no way to retry it before.
+  async function payNow() {
+    setPayError('')
+    setPaying(true)
+    try {
+      const order = await createOrder.mutateAsync()
+      if (order.mock) {
+        await confirmMockPayment.mutateAsync(order.orderId)
+        return
+      }
+      const result = await openRazorpayCheckout(order)
+      await verifyPayment.mutateAsync({
+        razorpay_order_id: result.razorpay_order_id,
+        razorpay_payment_id: result.razorpay_payment_id,
+        razorpay_signature: result.razorpay_signature,
+      })
+    } catch (err) {
+      setPayError(err.response?.data?.message ?? err.message ?? 'Something went wrong. Please try again.')
+    } finally {
+      setPaying(false)
+    }
+  }
 
   return (
     <StaggerGroup>
@@ -69,11 +106,31 @@ export default function Subscription() {
               <div className="text-[30px] font-bold">
                 <CountUp value={fee} prefix="₹" duration={900} />
               </div>
-              <div className="text-xs text-white/60">Paid once, valid for life</div>
+              {subscription.status === 'paid' ? (
+                <div className="text-xs text-white/60">Paid once, valid for life</div>
+              ) : (
+                <Button variant="gold" size="sm" disabled={paying} onClick={payNow} className="mt-2">
+                  {paying ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" /> Processing...
+                    </>
+                  ) : (
+                    `Pay ₹${fee} now`
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </div>
       </StaggerItem>
+
+      {payError ? (
+        <StaggerItem className="mb-6">
+          <Card pad className="text-[13px] text-red">
+            {payError}
+          </Card>
+        </StaggerItem>
+      ) : null}
 
       <StaggerItem className="mb-6">
         <Card pad className="flex items-start gap-3 border-gold-dot/40 bg-gold-tint">
