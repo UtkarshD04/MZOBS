@@ -4,82 +4,18 @@ import SplitText from '../../ui/SplitText'
 import FloatingElement from '../../ui/FloatingElement'
 import { TRUSTED_LOGOS_DATA } from '../../../lib/content'
 
-function LogoMark({ variant }) {
-  switch (variant) {
-    case 1:
-      return (
-        <div className="flex items-center gap-1.5 font-black text-black text-[13px] tracking-tight">
-          <div className="w-5 h-5 rounded-md bg-black flex items-center justify-center text-white text-[10px]">S</div>
-          <span>Logoipsum</span>
-        </div>
-      )
-    case 2:
-      return (
-        <div className="flex items-center gap-1.5 font-bold text-black text-[12px]">
-          <div className="w-5 h-5 rounded-full border-2 border-black flex items-center justify-center text-[9px] font-bold text-black">+</div>
-          <span>logo <span className="font-black">ipsum</span></span>
-        </div>
-      )
-    case 3:
-      return (
-        <div className="flex items-center gap-1.5 font-black text-black text-[11px] tracking-wider uppercase">
-          <span className="bg-black text-white px-1.5 py-0.5 rounded text-[9px]">LOG</span>
-          <span>IPSUM</span>
-        </div>
-      )
-    case 4:
-      return (
-        <div className="flex items-center gap-1.5">
-          <div className="w-5 h-5 rounded-full bg-black" />
-          <span className="font-black text-black text-[12px]">logoipsum</span>
-        </div>
-      )
-    case 5:
-      return <div className="font-black text-black text-[12px] tracking-widest uppercase">LOGOIPSUM</div>
-    case 6:
-      return (
-        <div className="flex items-center gap-1.5 font-black text-black text-[12px]">
-          <div className="w-4 h-4 rotate-45 border-2 border-black bg-[#F5F5F5]" />
-          <span>logoipsum</span>
-        </div>
-      )
-    case 7:
-      return (
-        <div className="flex items-center gap-1.5 text-black text-[12px] font-bold">
-          <div className="grid grid-cols-2 gap-0.5 w-4 h-4">
-            <div className="bg-black rounded-xs" />
-            <div className="bg-[#595959] rounded-xs" />
-            <div className="bg-[#9E9E9E] rounded-xs" />
-            <div className="bg-black rounded-xs" />
-          </div>
-          <span>logoipsum</span>
-        </div>
-      )
-    case 8:
-    default:
-      return (
-        <div className="flex items-center gap-1.5 font-black text-black text-[12px]">
-          <div className="w-5 h-5 rounded-full border-2 border-black flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-black" />
-          </div>
-          <span>Logoipsum</span>
-        </div>
-      )
-  }
-}
-
 // Per-badge size/offset/animation variety so the cluster reads as scattered
 // and organic rather than a grid — position comes from flex layout + a
 // vertical nudge, not fixed coordinates, so it stays responsive.
 const VARIANTS = [
-  { size: 104, offset: -10, duration: 7, delay: 0 },
-  { size: 90, offset: 28, duration: 8.5, delay: 0.6 },
-  { size: 116, offset: -20, duration: 6.5, delay: 1.1 },
-  { size: 96, offset: 32, duration: 9, delay: 0.3 },
-  { size: 108, offset: -14, duration: 7.5, delay: 1.4 },
-  { size: 92, offset: 30, duration: 8, delay: 0.8 },
-  { size: 102, offset: -16, duration: 7, delay: 0.2 },
-  { size: 94, offset: 28, duration: 9.5, delay: 1.0 },
+  { size: 144, offset: -10, duration: 7, delay: 0 },
+  { size: 130, offset: 28, duration: 8.5, delay: 0.6 },
+  { size: 156, offset: -20, duration: 6.5, delay: 1.1 },
+  { size: 136, offset: 32, duration: 9, delay: 0.3 },
+  { size: 148, offset: -14, duration: 7.5, delay: 1.4 },
+  { size: 132, offset: 30, duration: 8, delay: 0.8 },
+  { size: 142, offset: -16, duration: 7, delay: 0.2 },
+  { size: 134, offset: 28, duration: 9.5, delay: 1.0 },
 ]
 
 export default function EmployerLogosSection() {
@@ -93,7 +29,7 @@ export default function EmployerLogosSection() {
           </h2>
         </Reveal>
 
-        <div className="max-w-3xl mx-auto flex flex-wrap items-start justify-center gap-x-6 gap-y-10 sm:gap-x-8 py-4">
+        <div className="max-w-4xl mx-auto flex flex-wrap items-start justify-center gap-x-8 gap-y-12 sm:gap-x-10 py-4">
           {TRUSTED_LOGOS_DATA.logos.map((logo, i) => {
             const v = VARIANTS[i % VARIANTS.length]
             return (
@@ -113,9 +49,9 @@ export default function EmployerLogosSection() {
 
                   <div
                     style={{ width: v.size, height: v.size }}
-                    className="rounded-full bg-white border border-[#e0e0e0] shadow-sm flex items-center justify-center px-3 transition-all duration-300 hover:shadow-xl hover:scale-110 hover:border-(--careers-accent)/30 cursor-default"
+                    className="rounded-full bg-white border border-[#e0e0e0] shadow-sm flex items-center justify-center p-4 transition-all duration-300 hover:shadow-xl hover:scale-110 hover:border-(--careers-accent)/30 cursor-default"
                   >
-                    <LogoMark variant={logo.variant} />
+                    <img src={logo.logo} alt={logo.name} className="max-w-full max-h-full object-contain" />
                   </div>
                 </div>
               </FloatingElement>

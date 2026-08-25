@@ -9,6 +9,9 @@ import RequireAuth from './components/auth/RequireAuth'
 
 import MzobsShell from './components/layout/mzobs/MzobsShell'
 import Login from './pages/mzobs/Login'
+import Signup from './pages/mzobs/Signup'
+import ForgotPassword from './pages/mzobs/ForgotPassword'
+import ResetPassword from './pages/mzobs/ResetPassword'
 import Dashboard from './pages/mzobs/Dashboard'
 import Candidates from './pages/mzobs/Candidates'
 import ResumeQueue from './pages/mzobs/ResumeQueue'
@@ -27,6 +30,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route element={<RequireAuth />}>
         <Route path="/app" element={<MzobsShell />}>
