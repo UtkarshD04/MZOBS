@@ -17,6 +17,7 @@ import {
 } from '../hooks/useSubscription'
 import { useProfileQuery } from '../hooks/useProfile'
 import { openRazorpayCheckout } from '../lib/razorpay'
+import CouponBox from '../components/ui/CouponBox'
 
 const UNLOCKS = [
   [ShieldCheck, 'Resume verification', 'Our team reviews your resume line by line and verifies your work history before any employer sees it.', 'navy'],
@@ -44,11 +45,12 @@ export default function Subscription() {
   const confirmMockPayment = useConfirmMockSubscriptionPaymentMutation()
   const [paying, setPaying] = useState(false)
   const [payError, setPayError] = useState('')
+  const [couponResult, setCouponResult] = useState(null)
 
   if (subLoading || profileLoading) return <PageSkeleton />
   if (subError || profileError) return <ErrorState onRetry={() => (subError ? refetchSub() : refetchProfile())} />
 
-  const fee = subscription.amount ?? 99
+  const fee = subscription.amount ?? 299
 
   // Same order → Checkout → signature-verify flow as the onboarding wizard,
   // for anyone whose subscription is still unpaid (payment skipped/failed
@@ -57,7 +59,7 @@ export default function Subscription() {
     setPayError('')
     setPaying(true)
     try {
-      const order = await createOrder.mutateAsync()
+      const order = await createOrder.mutateAsync(couponResult?.code)
       if (order.mock) {
         await confirmMockPayment.mutateAsync(order.orderId)
         return
@@ -103,9 +105,18 @@ export default function Subscription() {
               <div className="text-[13px] text-white/70 mt-1">Candidate ID {profile.id}</div>
             </div>
             <div className="text-right">
-              <div className="text-[30px] font-bold">
-                <CountUp value={fee} prefix="₹" duration={900} />
-              </div>
+              {couponResult ? (
+                <>
+                  <div className="text-xs text-white/50 line-through">₹{fee}</div>
+                  <div className="text-[30px] font-bold">
+                    <CountUp value={couponResult.finalAmount} prefix="₹" duration={900} />
+                  </div>
+                </>
+              ) : (
+                <div className="text-[30px] font-bold">
+                  <CountUp value={fee} prefix="₹" duration={900} />
+                </div>
+              )}
               {subscription.status === 'paid' ? (
                 <div className="text-xs text-white/60">Paid once, valid for life</div>
               ) : (
@@ -115,12 +126,17 @@ export default function Subscription() {
                       <Loader2 size={14} className="animate-spin" /> Processing...
                     </>
                   ) : (
-                    `Pay ₹${fee} now`
+                    `Pay ₹${couponResult?.finalAmount ?? fee} now`
                   )}
                 </Button>
               )}
             </div>
           </div>
+          {subscription.status !== 'paid' && (
+            <div className="mt-5 relative max-w-[360px]">
+              <CouponBox applied={couponResult} onApply={setCouponResult} onRemove={() => setCouponResult(null)} dark />
+            </div>
+          )}
         </div>
       </StaggerItem>
 

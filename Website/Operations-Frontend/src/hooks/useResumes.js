@@ -6,6 +6,10 @@ export function useResumeQueueQuery(filters = {}) {
   return useQuery({ queryKey: queryKeys.resumes(filters), queryFn: () => resumesService.listResumeQueue(filters) })
 }
 
+export function useResumeStatsQuery() {
+  return useQuery({ queryKey: queryKeys.resumeStats, queryFn: resumesService.getResumeStats })
+}
+
 export function useAssignResumeMutation() {
   const queryClient = useQueryClient()
   return useMutation({

@@ -15,3 +15,7 @@ export function approveJob(id, { vacancies, visibleToCandidates, track }) {
 export function recordJobPayment(id, { paymentMode, reference }) {
   return apiClient.patch(`/jobs/${id}/payment`, { paymentMode, reference }).then((r) => r.data)
 }
+
+export function notifyHr(id) {
+  return apiClient.post(`/jobs/${id}/notify-hr`).then((r) => r.data)
+}

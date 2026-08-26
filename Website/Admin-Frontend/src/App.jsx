@@ -1,27 +1,31 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { Settings, LifeBuoy } from 'lucide-react'
 import { AppProvider } from './context/AppContext'
 import ModalRoot from './components/ui/Modal'
-import DrawerRoot from './components/ui/Drawer'
 import ToastStack from './components/ui/ToastStack'
-import CommandPalette from './components/ui/CommandPalette'
 import RequireAuth from './components/auth/RequireAuth'
 
-import MzobsShell from './components/layout/mzobs/MzobsShell'
-import Login from './pages/mzobs/Login'
-import ForgotPassword from './pages/mzobs/ForgotPassword'
-import ResetPassword from './pages/mzobs/ResetPassword'
-import Dashboard from './pages/mzobs/Dashboard'
-import Candidates from './pages/mzobs/Candidates'
-import ResumeQueue from './pages/mzobs/ResumeQueue'
-import MockInterviews from './pages/mzobs/MockInterviews'
-import Companies from './pages/mzobs/Companies'
-import Requirements from './pages/mzobs/Requirements'
-import Applications from './pages/mzobs/Applications'
-import Payments from './pages/mzobs/Payments'
-import Team from './pages/mzobs/Team'
-import ResumePool from './pages/mzobs/ResumePool'
-import ComingSoon from './pages/mzobs/ComingSoon'
+import AdminShell from './components/layout/admin/AdminShell'
+import Login from './pages/admin/Login'
+import ForgotPassword from './pages/admin/ForgotPassword'
+import ResetPassword from './pages/admin/ResetPassword'
+import Overview from './pages/admin/Overview'
+import Resumes from './pages/admin/Resumes'
+import ResumeStats from './pages/admin/ResumeStats'
+import MockInterviews from './pages/admin/MockInterviews'
+import HRContacts from './pages/admin/HRContacts'
+import Companies from './pages/admin/Companies'
+import Requirements from './pages/admin/Requirements'
+import Shortlisted from './pages/admin/Shortlisted'
+import Queries from './pages/admin/Queries'
+import Payments from './pages/admin/Payments'
+import Coupons from './pages/admin/Coupons'
+import SubscriptionTrend from './pages/admin/SubscriptionTrend'
+import EmployerRevenueTrend from './pages/admin/EmployerRevenueTrend'
+import Team from './pages/admin/Team'
+import Placements from './pages/admin/Placements'
+import SendNotification from './pages/admin/SendNotification'
+import Employees from './pages/admin/Employees'
+import Applications from './pages/admin/Applications'
 
 export default function App() {
   return (
@@ -33,33 +37,33 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route element={<RequireAuth />}>
-        <Route path="/app" element={<MzobsShell />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-
-          <Route path="candidates" element={<Candidates />} />
-          <Route path="resumes" element={<ResumeQueue />} />
-          <Route path="mock-interviews" element={<MockInterviews />} />
-
-          <Route path="companies" element={<Companies />} />
-          <Route path="requirements" element={<Requirements />} />
-          <Route path="applications" element={<Applications />} />
-
-          <Route path="payments" element={<Payments />} />
-          <Route path="team" element={<Team />} />
-          <Route path="resume-pool" element={<ResumePool />} />
-          <Route path="settings" element={<ComingSoon icon={Settings} title="Settings" subtitle="Portal preferences, rate card and notification rules." />} />
-          <Route path="support" element={<ComingSoon icon={LifeBuoy} title="Support Desk" subtitle="Tickets raised by candidates and employers." />} />
-        </Route>
+          <Route path="/app" element={<AdminShell />}>
+            <Route index element={<Overview />} />
+            <Route path="resumes" element={<Resumes />} />
+            <Route path="resume-stats" element={<ResumeStats />} />
+            <Route path="mock-interviews" element={<MockInterviews />} />
+            <Route path="hr-contacts" element={<HRContacts />} />
+            <Route path="companies" element={<Companies />} />
+            <Route path="requirements" element={<Requirements />} />
+            <Route path="shortlisted" element={<Shortlisted />} />
+            <Route path="placements" element={<Placements />} />
+            <Route path="queries" element={<Queries />} />
+            <Route path="payments" element={<Payments />} />
+            <Route path="coupons" element={<Coupons />} />
+            <Route path="subscriptions" element={<SubscriptionTrend />} />
+            <Route path="employer-revenue" element={<EmployerRevenueTrend />} />
+            <Route path="team" element={<Team />} />
+            <Route path="notifications/send" element={<SendNotification />} />
+            <Route path="employees" element={<Employees />} />
+            <Route path="applications" element={<Applications />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
 
       <ModalRoot />
-      <DrawerRoot />
       <ToastStack />
-      <CommandPalette />
     </AppProvider>
   )
 }

@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     host: true,
-    port: 5174,
+    port: 5178,
     // fail loudly instead of silently hopping to another app's port
     strictPort: true,
     // leading dot = allow the domain and all its subdomains,
@@ -15,7 +15,7 @@ export default defineConfig({
     allowedHosts: ['.trycloudflare.com'],
   },
   preview: {
-    port: 4174,
+    port: 4178,
     strictPort: true,
   },
 })

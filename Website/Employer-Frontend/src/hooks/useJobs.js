@@ -60,11 +60,17 @@ export function useSetJobStatus() {
 // Real money changes hands here: the fee is fixed server-side when the order
 // is created, Razorpay Checkout collects the actual payment, and the job is
 // only released into sourcing once the signature-verified response comes back.
+// In dev, when the backend has no Razorpay keys configured, the order comes
+// back flagged `mock: true` — Checkout is skipped and the mock-confirm
+// endpoint releases the job directly, same as the employee subscription flow.
 export function usePayJobInvoice() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async (id) => {
       const order = await jobsService.createJobPaymentOrder(id)
+      if (order.mock) {
+        return jobsService.confirmMockJobPayment(id, order.orderId)
+      }
       const result = await openRazorpayCheckout(order)
       return jobsService.verifyJobPayment(id, {
         razorpay_order_id: result.razorpay_order_id,

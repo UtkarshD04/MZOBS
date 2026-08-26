@@ -13,3 +13,11 @@ export function useRecordSubscriptionPaymentMutation() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['payments'] }),
   })
 }
+
+export function useSubscriptionTrendQuery(params) {
+  return useQuery({ queryKey: queryKeys.subscriptionTrend(params), queryFn: () => paymentsService.getSubscriptionTrend(params) })
+}
+
+export function useEmployerRevenueTrendQuery(params) {
+  return useQuery({ queryKey: queryKeys.employerRevenueTrend(params), queryFn: () => paymentsService.getEmployerRevenueTrend(params) })
+}

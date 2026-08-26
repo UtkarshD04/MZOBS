@@ -11,3 +11,7 @@ export function createTeammate({ name, email, role, accessLevel }) {
 export function updateTeammate(id, { accessLevel, status }) {
   return apiClient.patch(`/team/${id}`, { accessLevel, status }).then((r) => r.data)
 }
+
+export function deleteTeammate(id) {
+  return apiClient.delete(`/team/${id}`).then((r) => r.data)
+}

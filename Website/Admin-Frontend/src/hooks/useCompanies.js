@@ -6,6 +6,14 @@ export function useCompaniesQuery(filters = {}) {
   return useQuery({ queryKey: queryKeys.companies(filters), queryFn: () => companiesService.listCompanies(filters) })
 }
 
+export function useCreateCompanyMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: companiesService.createCompany,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['companies'] }),
+  })
+}
+
 export function useVerifyCompanyMutation() {
   const queryClient = useQueryClient()
   return useMutation({
