@@ -7,8 +7,8 @@ export const CANDIDATE_JOURNEY_DATA = {
     {
       id: "step-01",
       num: "01",
-      title: "₹99 LIFETIME SUBSCRIPTION",
-      description: "Start your MZOBS journey with a one-time ₹99 subscription and get lifetime access to the candidate platform.",
+      title: "₹299 LIFETIME SUBSCRIPTION",
+      description: "Start your MZOBS journey with a one-time ₹299 subscription and get lifetime access to the candidate platform.",
       align: "image-left",
       image: "/images/journey/step-01.png",
       imageAlt: "Candidate starting MZOBS journey with lifetime subscription",

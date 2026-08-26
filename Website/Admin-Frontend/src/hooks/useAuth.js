@@ -7,5 +7,5 @@ export function useMeQuery({ enabled = true } = {}) {
 }
 
 export function logout() {
-  localStorage.removeItem('mzobs-staff-token')
+  localStorage.removeItem('mzobs-admin-token')
 }

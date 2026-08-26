@@ -6,16 +6,8 @@ export function useResumeQueueQuery(filters = {}) {
   return useQuery({ queryKey: queryKeys.resumes(filters), queryFn: () => resumesService.listResumeQueue(filters) })
 }
 
-export function useReviewResumeMutation() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: ({ employeeId, ...input }) => resumesService.reviewResume(employeeId, input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['resumes'] }),
-  })
-}
-
-export function useResumeQueueStatsQuery() {
-  return useQuery({ queryKey: queryKeys.resumesStats, queryFn: resumesService.getResumeQueueStats })
+export function useResumeStatsQuery() {
+  return useQuery({ queryKey: queryKeys.resumeStats, queryFn: resumesService.getResumeStats })
 }
 
 export function useAssignResumeMutation() {

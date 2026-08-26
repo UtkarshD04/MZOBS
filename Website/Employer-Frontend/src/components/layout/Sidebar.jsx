@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
+import { useNotificationsQuery } from '../../hooks/useNotifications'
 
 const main = [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
 
@@ -26,14 +27,6 @@ const recruitment = [
   { to: '/candidates', label: 'Shared Profiles', icon: Users },
   { to: '/interviews', label: 'Interviews', icon: CalendarCheck },
   { to: '/offers', label: 'Offers', icon: FileCheck },
-]
-
-const workspace = [
-  { to: '/billing', label: 'Billing', icon: CreditCard },
-  { to: '/company', label: 'Company Profile', icon: Building2 },
-  { to: '/team', label: 'Team Members', icon: Users2 },
-  { to: '/notifications', label: 'Notifications', icon: Bell, badge: 3 },
-  { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
 function NavItem({ to, label, icon: Icon, badge, collapsed }) {
@@ -72,6 +65,16 @@ function Group({ label, items, collapsed }) {
 
 export default function Sidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen } = useApp()
+  const { data: notifications } = useNotificationsQuery()
+  const unreadCount = (notifications ?? []).filter((n) => n.unread).length
+
+  const workspace = [
+    { to: '/billing', label: 'Billing', icon: CreditCard },
+    { to: '/company', label: 'Company Profile', icon: Building2 },
+    { to: '/team', label: 'Team Members', icon: Users2 },
+    { to: '/notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
+    { to: '/settings', label: 'Settings', icon: Settings },
+  ]
 
   return (
     <aside

@@ -4,8 +4,15 @@ export function getSubscription() {
   return apiClient.get('/subscription').then((r) => r.data)
 }
 
-export function createSubscriptionOrder() {
-  return apiClient.post('/subscription/order').then((r) => r.data)
+export function createSubscriptionOrder(couponCode) {
+  return apiClient.post('/subscription/order', couponCode ? { couponCode } : {}).then((r) => r.data)
+}
+
+// Prices a coupon against the fixed fee without creating an order — no auth
+// required, so it works both from the signed-in account page and the guest
+// "pay first" checkout on the marketing site.
+export function previewCoupon(code) {
+  return apiClient.post('/subscription/coupon/preview', { code }).then((r) => r.data)
 }
 
 export function verifySubscriptionPayment(payload) {

@@ -4,7 +4,7 @@ import { logout } from '../../hooks/useAuth'
 import { PageSkeleton } from '../ui/Skeleton'
 
 export default function RequireAuth() {
-  const token = localStorage.getItem('mzobs-staff-token')
+  const token = localStorage.getItem('mzobs-admin-token')
   const { data: me, isLoading, isError } = useMeQuery({ enabled: !!token })
 
   if (!token) return <Navigate to="/login" replace />
@@ -15,7 +15,7 @@ export default function RequireAuth() {
   }
   if (me?.accessLevel !== 'admin') {
     logout()
-    return <Navigate to="/login" replace state={{ wrongPortal: true }} />
+    return <Navigate to="/login" replace state={{ notAdmin: true }} />
   }
 
   return <Outlet />

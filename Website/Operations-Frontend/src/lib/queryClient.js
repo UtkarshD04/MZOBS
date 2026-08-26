@@ -17,6 +17,11 @@ export const queryKeys = {
   jobs: (filters) => ['jobs', filters],
   job: (id) => ['jobs', id],
   resumes: (filters) => ['resumes', filters],
+  shortlist: (filters) => ['shortlist', filters],
   team: ['team'],
   me: ['me'],
+  supportTickets: (filters) => ['supportTickets', filters],
+  payments: (filters) => ['payments', filters],
+  resumeStats: ['resumeStats'],
+  notifications: ['notifications'],
 }

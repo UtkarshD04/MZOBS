@@ -7,6 +7,7 @@ import Button from '../components/ui/Button'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import ErrorState from '../components/ui/ErrorState'
+import PaymentLock from '../components/ui/PaymentLock'
 import { useApp } from '../context/AppContext'
 import { openRescheduleModal } from '../lib/modals'
 import { useProfileQuery } from '../hooks/useProfile'
@@ -19,6 +20,25 @@ export default function MockInterview() {
 
   if (profileLoading || mockLoading) return <PageSkeleton />
   if (profileError || mockError) return <ErrorState onRetry={() => (profileError ? refetchProfile() : refetchMock())} />
+
+  if (profile?.subscription?.status !== 'paid') {
+    return (
+      <StaggerGroup>
+        <StaggerItem className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">Mock Interview</h1>
+          <p className="text-sm text-ink-secondary mt-1">
+            The verification round the Mzobs panel runs after your resume clears. Your score decides your skill track.
+          </p>
+        </StaggerItem>
+        <StaggerItem>
+          <PaymentLock
+            title="Activate placement support to unlock this round"
+            body="A one-time ₹299 payment unlocks resume upload and verification — once your resume clears, this is where your mock interview shows up."
+          />
+        </StaggerItem>
+      </StaggerGroup>
+    )
+  }
 
   const done = mock?.status === 'completed'
   const scheduled = mock?.status === 'scheduled'

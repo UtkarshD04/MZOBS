@@ -24,3 +24,11 @@ export function useRecordJobPaymentMutation() {
     },
   })
 }
+
+export function useNotifyHrMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id) => jobsService.notifyHr(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs'] }),
+  })
+}

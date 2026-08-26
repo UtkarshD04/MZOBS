@@ -15,3 +15,7 @@ export function markAllRead() {
 export function sendTestPushNotification() {
   return apiClient.post('/notifications/test-push').then((r) => r.data)
 }
+
+export function sendNotificationToCandidates({ candidateIds, title, body }) {
+  return apiClient.post('/notifications/send', { candidateIds, title, body }).then((r) => r.data)
+}

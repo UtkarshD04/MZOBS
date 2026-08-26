@@ -37,7 +37,7 @@ export default function CommandPalette() {
       { grp: 'Navigate', icon: Briefcase, label: 'Go to Job Openings', act: () => navigate('/app/jobs') },
       { grp: 'Navigate', icon: ClipboardList, label: 'Go to My Applications', act: () => navigate('/app/applications') },
       { grp: 'Navigate', icon: CalendarCheck, label: 'Go to Interview Center', act: () => navigate('/app/interview-center') },
-      { grp: 'Navigate', icon: MessageSquare, label: 'Go to Placement Desk', act: () => navigate('/app/messages') },
+      { grp: 'Navigate', icon: MessageSquare, label: 'Go to Customer Support', act: () => navigate('/app/customer-support') },
       { grp: 'Navigate', icon: CreditCard, label: 'Go to Subscription', act: () => navigate('/app/subscription') },
       { grp: 'Navigate', icon: Settings, label: 'Go to Settings', act: () => navigate('/app/settings') },
       { grp: 'Actions', icon: Upload, label: 'Upload a new resume', act: () => navigate('/app/resume') },

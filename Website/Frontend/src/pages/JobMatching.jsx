@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Sliders, MapPin, Bookmark, Sparkles, BarChart3, Briefcase, Users, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Sliders, MapPin, Bookmark, Sparkles, BarChart3, Briefcase, Users, ShieldCheck, Lock, CheckCircle2 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
@@ -89,6 +90,7 @@ function JobCard({ job, applied, eligible, saved, employeeTrack, onToggleSave, o
 }
 
 export default function JobMatching() {
+  const navigate = useNavigate()
   const [tab, setTab] = useState(0)
   const [saved, setSaved] = useState(() => new Set(JSON.parse(localStorage.getItem(SAVED_KEY) ?? '[]')))
 
@@ -112,7 +114,8 @@ export default function JobMatching() {
   if (profileLoading || jobsLoading) return <PageSkeleton />
   if (jobsError) return <ErrorState onRetry={refetchJobs} />
 
-  const eligible = profile?.resume?.status === 'verified'
+  const paid = profile?.subscription?.status === 'paid'
+  const eligible = paid && profile?.resume?.status === 'verified'
   const track = profile?.skillTrack
   const appliedJobIds = new Set(applications.map((a) => a.jobId))
   const savedJobs = jobs.filter((j) => saved.has(j.id))
@@ -139,17 +142,32 @@ export default function JobMatching() {
 
       <StaggerItem className="mb-5">
         <Card pad className={`flex items-start gap-3 ${eligible ? 'border-navy-ring bg-navy-tint' : 'border-gold-dot/40 bg-gold-tint'}`}>
-          <ShieldCheck size={18} className={`mt-0.5 flex-shrink-0 ${eligible ? 'text-navy' : 'text-gold-strong'}`} />
+          {paid ? (
+            <ShieldCheck size={18} className={`mt-0.5 flex-shrink-0 ${eligible ? 'text-navy' : 'text-gold-strong'}`} />
+          ) : (
+            <Lock size={18} className="mt-0.5 flex-shrink-0 text-gold-strong" />
+          )}
           <div className="flex-1 min-w-0">
             <div className="text-[13.5px] font-semibold">
-              {eligible ? `You're eligible to apply${track?.key ? ` — ${track.label || track.key}, Grade ${track.grade || '-'}` : ''}` : 'Finish verification to unlock applications'}
+              {!paid
+                ? 'Activate placement support to unlock applications'
+                : eligible
+                  ? `You're eligible to apply${track?.key ? ` — ${track.label || track.key}, Grade ${track.grade || '-'}` : ''}`
+                  : 'Finish verification to unlock applications'}
             </div>
             <p className="text-[13px] text-ink-secondary mt-0.5">
-              {eligible
-                ? 'Your resume is verified. When you apply, Mzobs screens you, shortlists against the requirement, and forwards your resume to the company.'
-                : 'Applications open once your resume is verified by the Mzobs team.'}
+              {!paid
+                ? 'A one-time ₹299 payment unlocks resume upload, verification, and applying to openings.'
+                : eligible
+                  ? 'Your resume is verified. When you apply, Mzobs screens you, shortlists against the requirement, and forwards your resume to the company.'
+                  : 'Applications open once your resume is verified by the Mzobs team.'}
             </p>
           </div>
+          {!paid && (
+            <Button variant="gold" size="sm" className="flex-shrink-0" onClick={() => navigate('/app/subscription')}>
+              Pay ₹299 & activate
+            </Button>
+          )}
         </Card>
       </StaggerItem>
 

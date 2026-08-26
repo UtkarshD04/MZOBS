@@ -1,18 +1,15 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 const AppContext = createContext(null)
 
 let toastId = 0
 
 export function AppProvider({ children }) {
-  const [themeOverride, setThemeOverride] = useState(() => localStorage.getItem('mzobs-theme') || null)
+  const [themeOverride, setThemeOverride] = useState(() => localStorage.getItem('mzobs-theme') || 'light')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
-  const [drawerOpen, setDrawerOpen] = useState(false)
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
-  const [cmdkOpen, setCmdkOpen] = useState(false)
   const [modal, setModal] = useState(null)
-  const [sidePanel, setSidePanel] = useState(null)
   const [toasts, setToasts] = useState([])
 
   useEffect(() => {
@@ -33,9 +30,7 @@ export function AppProvider({ children }) {
     })
   }, [])
 
-  const isDark = useMemo(() => {
-    return themeOverride === 'dark'
-  }, [themeOverride])
+  const isDark = useMemo(() => themeOverride === 'dark', [themeOverride])
 
   const addToast = useCallback((type, message) => {
     const id = ++toastId
@@ -46,9 +41,6 @@ export function AppProvider({ children }) {
   const openModal = useCallback((content, wide = false) => setModal({ content, wide }), [])
   const closeModal = useCallback(() => setModal(null), [])
 
-  const openSidePanel = useCallback((content, width = 480) => setSidePanel({ content, width }), [])
-  const closeSidePanel = useCallback(() => setSidePanel(null), [])
-
   const value = {
     isDark,
     toggleTheme,
@@ -56,18 +48,11 @@ export function AppProvider({ children }) {
     setSidebarCollapsed,
     mobileSidebarOpen,
     setMobileSidebarOpen,
-    drawerOpen,
-    setDrawerOpen,
     avatarMenuOpen,
     setAvatarMenuOpen,
-    cmdkOpen,
-    setCmdkOpen,
     modal,
     openModal,
     closeModal,
-    sidePanel,
-    openSidePanel,
-    closeSidePanel,
     toasts,
     addToast,
   }

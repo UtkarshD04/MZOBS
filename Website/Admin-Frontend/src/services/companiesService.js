@@ -4,6 +4,10 @@ export function listCompanies(params = {}) {
   return apiClient.get('/companies', { params: { limit: 200, ...params } }).then((r) => r.data)
 }
 
+export function createCompany({ companyName, adminName, adminEmail }) {
+  return apiClient.post('/companies', { companyName, adminName, adminEmail }).then((r) => r.data)
+}
+
 export function getCompany(id) {
   return apiClient.get(`/companies/${id}`).then((r) => r.data)
 }

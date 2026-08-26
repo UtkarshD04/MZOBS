@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowRight, CheckCircle2, Eye, EyeOff, Lock } from 'lucide-react'
-import { Field, Input, Select, SubmitButton, LinkButton } from '../ui/AuthField'
+import { Link } from 'react-router-dom'
+import { ArrowRight, Eye, EyeOff } from 'lucide-react'
+import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
+import { EMPLOYEE_APP_URL } from '../../lib/config'
 import { signupEmployee } from '../../lib/employeeAuth'
-import { createGuestSubscriptionOrder, verifyGuestSubscriptionPayment, confirmGuestMockSubscriptionPayment } from '../../lib/employeePayment'
-import { openRazorpayCheckout } from '../../lib/razorpay'
 
 const GRADUATION_OPTIONS = [
   '12th / No Degree',
@@ -24,13 +23,6 @@ const GRADUATION_OPTIONS = [
 
 const initialForm = { name: '', email: '', phone: '', password: '', experience: 'fresher', graduation: '' }
 
-const UNLOCKS = [
-  'Resume verification by the Mzobs team',
-  'A real mock interview, with written feedback',
-  'A skill track matched to your strengths',
-  'Your resume sent to employers on matching roles',
-]
-
 function validate(form) {
   const errors = {}
   if (!form.name.trim()) errors.name = 'Please enter your full name.'
@@ -45,47 +37,13 @@ function validate(form) {
 }
 
 export default function EmployeeSignupForm() {
-  const navigate = useNavigate()
-  const location = useLocation()
-
-  const [paymentOrderId, setPaymentOrderId] = useState(location.state?.paymentOrderId ?? null)
-  const [paying, setPaying] = useState(false)
-  const [payError, setPayError] = useState('')
-  const [isMockPayment, setIsMockPayment] = useState(location.state?.isMockPayment ?? false)
-
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
-  const [status, setStatus] = useState('idle') // idle | submitting | success
+  const [status, setStatus] = useState('idle') // idle | submitting
   const [showPassword, setShowPassword] = useState(false)
 
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }))
-  }
-
-  async function handlePay() {
-    setPayError('')
-    setPaying(true)
-    try {
-      const order = await createGuestSubscriptionOrder()
-
-      if (order.mock) {
-        const verified = await confirmGuestMockSubscriptionPayment(order.orderId)
-        navigate('/employees/payment-success', { state: { paymentOrderId: verified.paymentOrderId, isMockPayment: true } })
-        return
-      }
-
-      const result = await openRazorpayCheckout(order)
-      const verified = await verifyGuestSubscriptionPayment({
-        razorpay_order_id: result.razorpay_order_id,
-        razorpay_payment_id: result.razorpay_payment_id,
-        razorpay_signature: result.razorpay_signature,
-      })
-      navigate('/employees/payment-success', { state: { paymentOrderId: verified.paymentOrderId, isMockPayment: false } })
-    } catch (err) {
-      setPayError(err.message || 'Payment failed. Please try again.')
-    } finally {
-      setPaying(false)
-    }
   }
 
   async function handleSubmit(e) {
@@ -96,82 +54,20 @@ export default function EmployeeSignupForm() {
 
     setStatus('submitting')
     try {
-      await signupEmployee({ ...form, paymentOrderId })
-      setStatus('success')
+      const { token } = await signupEmployee(form)
+      // Account is created unpaid — profile setup and the one-time ₹299
+      // payment both happen inside the dashboard app, not here. Same
+      // cross-app token handoff EmployeeSigninForm uses (localStorage isn't
+      // shared across origins/ports; main.jsx on the other side reads ?token=).
+      window.location.href = `${EMPLOYEE_APP_URL}/onboarding?token=${encodeURIComponent(token)}`
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
     }
   }
 
-  if (status === 'success') {
-    return (
-      <div className="flex flex-col items-center justify-center text-center py-6">
-        <div className="w-14 h-14 rounded-full bg-green-tint text-green flex items-center justify-center mb-4">
-          <CheckCircle2 size={26} />
-        </div>
-        <h3 className="text-lg font-black text-black">You're all set, {form.name.split(' ')[0]}!</h3>
-        <p className="text-[13.5px] text-[#595959] mt-1.5 max-w-xs">
-          Your Mzobs account has been created. Sign in to complete your profile and start getting matched.
-        </p>
-        <LinkButton to="/employees/signin" className="mt-6">
-          Sign in to continue <ArrowRight size={16} />
-        </LinkButton>
-      </div>
-    )
-  }
-
-  if (!paymentOrderId) {
-    return (
-      <div>
-        <StepIndicator step={1} />
-
-        <div className="rounded-2xl border border-[#e0e0e0] bg-[#FAFAF8] p-5">
-          <div className="flex items-baseline justify-between pb-4 border-b border-[#e0e0e0]">
-            <div>
-              <div className="text-sm font-black text-black">Placement Support Programme</div>
-              <div className="text-[11px] text-[#9E9E9E] mt-0.5">One-time · lifetime access</div>
-            </div>
-            <div className="text-[26px] font-black text-black">₹99</div>
-          </div>
-          <div className="flex flex-col gap-2 mt-4">
-            {UNLOCKS.map((t) => (
-              <div key={t} className="flex items-start gap-2 text-[12.5px] text-[#595959] font-medium">
-                <CheckCircle2 size={14} className="text-[var(--careers-accent)] mt-0.5 shrink-0" />
-                <span>{t}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {payError && <p className="text-xs text-red mt-3">{payError}</p>}
-
-        <SubmitButton type="button" onClick={handlePay} disabled={paying} className="mt-5">
-          {paying ? (
-            'Processing…'
-          ) : (
-            <>
-              Pay ₹99 &amp; continue <ArrowRight size={16} />
-            </>
-          )}
-        </SubmitButton>
-
-        <div className="flex items-center justify-center gap-2 mt-4 text-[11px] text-[#9E9E9E]">
-          <Lock size={12} /> Secured by Razorpay · Cards, UPI &amp; netbanking
-        </div>
-      </div>
-    )
-  }
-
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <StepIndicator step={2} />
-      {isMockPayment && (
-        <p className="text-[11px] font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
-          Test mode — payment was simulated because Razorpay isn't configured yet.
-        </p>
-      )}
-
       <Field label="Full name">
         <Input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" />
         {errors.name && <span className="text-xs text-red mt-1 block">{errors.name}</span>}
@@ -268,29 +164,5 @@ export default function EmployeeSignupForm() {
         .
       </p>
     </form>
-  )
-}
-
-function StepIndicator({ step }) {
-  return (
-    <div className="flex items-center gap-2 mb-5">
-      <span
-        className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center shrink-0 ${
-          step >= 1 ? 'bg-[var(--careers-accent)] text-white' : 'bg-[#F5F5F5] text-[#9E9E9E]'
-        }`}
-      >
-        {step > 1 ? <CheckCircle2 size={13} /> : 1}
-      </span>
-      <span className={`text-[13px] font-bold ${step >= 1 ? 'text-black' : 'text-[#9E9E9E]'}`}>Payment</span>
-      <span className="flex-1 h-px bg-[#e0e0e0]" />
-      <span
-        className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center shrink-0 ${
-          step >= 2 ? 'bg-[var(--careers-accent)] text-white' : 'bg-[#F5F5F5] text-[#9E9E9E]'
-        }`}
-      >
-        2
-      </span>
-      <span className={`text-[13px] font-bold ${step >= 2 ? 'text-black' : 'text-[#9E9E9E]'}`}>Your details</span>
-    </div>
   )
 }
