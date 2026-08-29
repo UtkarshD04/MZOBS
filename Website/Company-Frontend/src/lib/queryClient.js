@@ -15,7 +15,6 @@ export const queryKeys = {
   resumes: (filters) => ['resumes', filters],
   resumesStats: ['resumes', 'stats'],
   mockInterviews: (filters) => ['mockInterviews', filters],
-  payments: (filters) => ['payments', filters],
   team: ['team'],
   me: ['me'],
   shortlist: (filters) => ['shortlist', filters],

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { UserPlus, AlertTriangle, Trash2 } from 'lucide-react'
+import { UserPlus, AlertTriangle, Trash2, Search, Pencil, KeyRound } from 'lucide-react'
 import Card, { CardHead } from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -12,7 +12,13 @@ import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Input, Select } from '../../components/ui/Field'
 import { useApp } from '../../context/AppContext'
-import { useTeamQuery, useCreateTeammateMutation, useUpdateTeammateMutation, useDeleteTeammateMutation } from '../../hooks/useTeam'
+import {
+  useTeamQuery,
+  useCreateTeammateMutation,
+  useUpdateTeammateMutation,
+  useResetTeammatePasswordMutation,
+  useDeleteTeammateMutation,
+} from '../../hooks/useTeam'
 import { useResumeStatsQuery } from '../../hooks/useResumes'
 import { useMockInterviewStatsQuery } from '../../hooks/useMockInterviews'
 import { useMeQuery } from '../../hooks/useAuth'
@@ -33,51 +39,22 @@ const ACCESS_LEVELS = [
 function InviteTeammateModal({ app, onDone }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [role, setRole] = useState(ROLES[1])
   const [accessLevel, setAccessLevel] = useState('staff')
-  const [result, setResult] = useState(null)
   const create = useCreateTeammateMutation()
 
   function submit() {
     create.mutate(
-      { name, email, role, accessLevel },
+      { name, email, password, role, accessLevel },
       {
-        onSuccess: (data) => {
-          setResult(data)
+        onSuccess: () => {
+          app.closeModal()
+          app.addToast('success', `${name} added — their login has been emailed to them`)
           onDone?.()
         },
         onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
       }
-    )
-  }
-
-  if (result) {
-    return (
-      <>
-        <ModalHead title="Teammate added" onClose={app.closeModal} />
-        <ModalBody>
-          <p className="text-[13px] text-ink-secondary mb-4">
-            <b className="text-ink">{result.staff.name}</b> has been added as {result.staff.role}. There's no automated invite email yet — share this
-            temporary password with them directly.
-          </p>
-          <div className="rounded-xl border border-border bg-surface-sunken p-4 text-center">
-            <div className="text-xs text-ink-tertiary mb-1">Temporary password</div>
-            <div className="text-[17px] font-bold tracking-wide font-mono">{result.tempPassword}</div>
-          </div>
-        </ModalBody>
-        <ModalFoot>
-          <Button
-            variant="primary"
-            onClick={() => {
-              navigator.clipboard?.writeText(result.tempPassword)
-              app.addToast('success', 'Password copied')
-              app.closeModal()
-            }}
-          >
-            Copy & close
-          </Button>
-        </ModalFoot>
-      </>
     )
   }
 
@@ -90,6 +67,9 @@ function InviteTeammateModal({ app, onDone }) {
         </Field>
         <Field label="Email">
           <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </Field>
+        <Field label="Password" hint="At least 8 characters. This is emailed to them along with their sign-in link.">
+          <Input type="text" value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
         <Field label="Role">
           <Select value={role} onChange={(e) => setRole(e.target.value)}>
@@ -112,8 +92,96 @@ function InviteTeammateModal({ app, onDone }) {
         <Button onClick={app.closeModal} disabled={create.isPending}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={submit} disabled={create.isPending || !name || !email}>
+        <Button variant="primary" onClick={submit} disabled={create.isPending || !name || !email || password.length < 8}>
           {create.isPending ? 'Adding...' : 'Add teammate'}
+        </Button>
+      </ModalFoot>
+    </>
+  )
+}
+
+function EditTeammateModal({ app, member, onDone }) {
+  const [name, setName] = useState(member.name)
+  const [email, setEmail] = useState(member.email)
+  const [role, setRole] = useState(member.role)
+  const update = useUpdateTeammateMutation()
+
+  function submit() {
+    update.mutate(
+      { id: member.id, name, email, role },
+      {
+        onSuccess: () => {
+          app.closeModal()
+          app.addToast('success', `${name} updated`)
+          onDone?.()
+        },
+        onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
+      }
+    )
+  }
+
+  return (
+    <>
+      <ModalHead title={`Edit ${member.name}`} onClose={app.closeModal} />
+      <ModalBody>
+        <Field label="Full name">
+          <Input value={name} onChange={(e) => setName(e.target.value)} />
+        </Field>
+        <Field label="Email">
+          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </Field>
+        <Field label="Role">
+          <Select value={role} onChange={(e) => setRole(e.target.value)}>
+            {ROLES.map((r) => (
+              <option key={r}>{r}</option>
+            ))}
+          </Select>
+        </Field>
+      </ModalBody>
+      <ModalFoot>
+        <Button onClick={app.closeModal} disabled={update.isPending}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={submit} disabled={update.isPending || !name.trim() || !email.trim()}>
+          {update.isPending ? 'Saving...' : 'Save changes'}
+        </Button>
+      </ModalFoot>
+    </>
+  )
+}
+
+function ResetPasswordModal({ app, member }) {
+  const [password, setPassword] = useState('')
+  const reset = useResetTeammatePasswordMutation()
+
+  function submit() {
+    reset.mutate(
+      { id: member.id, password },
+      {
+        onSuccess: () => {
+          app.closeModal()
+          app.addToast('success', `${member.name}'s password reset — emailed to them`)
+        },
+        onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
+      }
+    )
+  }
+
+  return (
+    <>
+      <ModalHead title={`Reset ${member.name}'s password`} onClose={app.closeModal} />
+      <ModalBody>
+        <p className="text-[13px] text-ink-secondary mb-4">This immediately invalidates their current password and emails them this new one.</p>
+        <Field label="New password" hint="At least 8 characters.">
+          <Input type="text" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </Field>
+      </ModalBody>
+      <ModalFoot>
+        <Button onClick={app.closeModal} disabled={reset.isPending}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={submit} disabled={reset.isPending || password.length < 8}>
+          {reset.isPending ? 'Resetting...' : 'Reset password'}
         </Button>
       </ModalFoot>
     </>
@@ -159,7 +227,9 @@ function DeleteTeammateModal({ app, member, onDone }) {
 
 export default function Team() {
   const app = useApp()
-  const { data: team = [], isLoading, isError, refetch } = useTeamQuery()
+  const [query, setQuery] = useState('')
+  const { data: team = [], isLoading, isError, refetch } = useTeamQuery({ search: query || undefined })
+  const { data: allTeam = [] } = useTeamQuery({})
   const { data: resumeStats } = useResumeStatsQuery()
   const { data: mockStats } = useMockInterviewStatsQuery()
   const { data: me } = useMeQuery()
@@ -177,8 +247,8 @@ export default function Team() {
     return map
   }, [mockStats])
 
-  const adminCount = useMemo(() => team.filter((m) => m.accessLevel === 'admin').length, [team])
-  const hrCount = team.length - adminCount
+  const adminCount = useMemo(() => allTeam.filter((m) => m.accessLevel === 'admin').length, [allTeam])
+  const hrCount = allTeam.length - adminCount
 
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
@@ -221,7 +291,7 @@ export default function Team() {
         <Card hover pad>
           <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Team members</span>
           <div className="text-[30px] font-bold tracking-tight mt-2 text-navy">
-            <CountUp value={team.length} />
+            <CountUp value={allTeam.length} />
           </div>
         </Card>
         <Card hover pad>
@@ -236,6 +306,18 @@ export default function Team() {
             <CountUp value={hrCount} />
           </div>
         </Card>
+      </StaggerItem>
+
+      <StaggerItem className="flex items-center justify-end mb-4">
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search name or email"
+            className="h-9 pl-8 pr-3 rounded-[9px] border border-border-strong bg-surface text-[12.5px] w-[260px] max-sm:w-full outline-none focus:border-navy focus:shadow-[0_0_0_3.5px_var(--color-navy-ring)] transition-[border-color,box-shadow]"
+          />
+        </div>
       </StaggerItem>
 
       <StaggerItem>
@@ -296,6 +378,12 @@ export default function Team() {
                     <Td className="text-ink-tertiary">{m.lastActiveAt ? new Date(m.lastActiveAt).toLocaleDateString('en-IN') : 'Never'}</Td>
                     <Td>
                       <div className="flex items-center gap-2">
+                        <Button size="sm" iconOnly title="Edit" onClick={() => app.openModal(<EditTeammateModal app={app} member={m} onDone={refetch} />)}>
+                          <Pencil size={14} />
+                        </Button>
+                        <Button size="sm" iconOnly title="Reset password" onClick={() => app.openModal(<ResetPasswordModal app={app} member={m} />)}>
+                          <KeyRound size={14} />
+                        </Button>
                         <Button size="sm" onClick={() => toggleStatus(m)} disabled={updateTeammate.isPending}>
                           {m.status === 'disabled' ? 'Reactivate' : 'Disable'}
                         </Button>

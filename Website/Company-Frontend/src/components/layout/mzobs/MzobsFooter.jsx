@@ -7,7 +7,7 @@ export default function MzobsFooter() {
 
   const links = [
     { label: 'Support Desk', to: '/app/support' },
-    ...(isAdmin ? [{ label: 'Payments', to: '/app/payments' }, { label: 'Team', to: '/app/team' }] : []),
+    ...(isAdmin ? [{ label: 'Team', to: '/app/team' }] : []),
     { label: 'Settings', to: '/app/settings' },
   ]
 

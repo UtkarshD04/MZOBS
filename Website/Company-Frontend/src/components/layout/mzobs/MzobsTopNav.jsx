@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, Search, Sun, Moon, Bell, ChevronDown, Settings, IndianRupee, LifeBuoy, LogOut, ShieldCheck, Users2 } from 'lucide-react'
+import { Menu, Search, Sun, Moon, Bell, ChevronDown, Settings, LifeBuoy, LogOut, ShieldCheck, Users2 } from 'lucide-react'
 import { useApp } from '../../../context/AppContext'
 import Avatar from '../../ui/Avatar'
 import FloatingPanel from '../../ui/FloatingPanel'
@@ -108,7 +108,7 @@ export default function MzobsTopNav() {
               </div>
               <div className="p-1.5">
                 {[
-                  ...(isAdmin ? [['/app/team', Users2, 'Mzobs Team'], ['/app/payments', IndianRupee, 'Payments']] : []),
+                  ...(isAdmin ? [['/app/team', Users2, 'Mzobs Team']] : []),
                   ['/app/settings', Settings, 'Settings'],
                   ['/app/support', LifeBuoy, 'Support Desk'],
                 ].map(([to, Icon, label]) => (

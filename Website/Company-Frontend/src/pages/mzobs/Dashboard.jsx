@@ -4,7 +4,6 @@ import {
   FileCheck,
   Video,
   IndianRupee,
-  ArrowRight,
   Clock,
   AlertTriangle,
 } from 'lucide-react'
@@ -98,9 +97,6 @@ export default function Dashboard() {
               <div className="text-[13.5px] font-semibold">{fmtINR(revenue.outstanding)} outstanding across employer invoices</div>
               <div className="text-[13px] text-ink-secondary mt-0.5">Sourcing stays on hold until the employer pays.</div>
             </div>
-            <Button size="sm" onClick={() => navigate('/app/payments')}>
-              View payments
-            </Button>
           </Card>
         </StaggerItem>
       )}
@@ -205,14 +201,11 @@ export default function Dashboard() {
         <Card pad>
           <div className="text-[15px] font-semibold mb-3">Quick actions</div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <Button onClick={() => navigate('/app/candidates')}>
-              <Users size={15} /> Candidates
+            <Button onClick={() => navigate('/app/resumes')}>
+              <FileCheck size={15} /> Resume Verification
             </Button>
             <Button onClick={() => navigate('/app/mock-interviews')}>
               <Video size={15} /> Mock Interviews
-            </Button>
-            <Button onClick={() => navigate('/app/payments')}>
-              <ArrowRight size={15} /> Payments
             </Button>
           </div>
         </Card>
