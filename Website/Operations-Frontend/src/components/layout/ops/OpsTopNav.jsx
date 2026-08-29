@@ -1,19 +1,25 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, Sun, Moon, ChevronDown, LogOut, ShieldCheck } from 'lucide-react'
+import { Menu, Sun, Moon, ChevronDown, LogOut, ShieldCheck, Bell } from 'lucide-react'
 import { useApp } from '../../../context/AppContext'
 import Avatar from '../../ui/Avatar'
 import FloatingPanel from '../../ui/FloatingPanel'
 import Badge from '../../ui/Badge'
+import OpsNotificationsPanel from './OpsNotificationsPanel'
 import { useMeQuery, logout as clearAuth } from '../../../hooks/useAuth'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
+import { useNotificationsQuery } from '../../../hooks/useNotifications'
 
 export default function OpsTopNav() {
   const { isDark, toggleTheme, avatarMenuOpen, setAvatarMenuOpen, setMobileSidebarOpen } = useApp()
   const navigate = useNavigate()
   const avatarRef = useRef(null)
+  const notifRef = useRef(null)
+  const [notifOpen, setNotifOpen] = useState(false)
   const { data: me } = useMeQuery()
   const { data: dash } = useDashboardQuery()
+  const { data: notifications = [] } = useNotificationsQuery()
+  const unreadCount = notifications.filter((n) => n.unread).length
 
   function logout() {
     clearAuth()
@@ -23,6 +29,7 @@ export default function OpsTopNav() {
   useEffect(() => {
     function onClick(e) {
       if (avatarRef.current && !avatarRef.current.contains(e.target) && !e.target.closest('[data-panel="avatar"]')) setAvatarMenuOpen(false)
+      if (notifRef.current && !notifRef.current.contains(e.target) && !e.target.closest('[data-panel="notif"]')) setNotifOpen(false)
     }
     document.addEventListener('click', onClick)
     return () => document.removeEventListener('click', onClick)
@@ -53,6 +60,25 @@ export default function OpsTopNav() {
 
         <div className="w-px h-6 bg-border mx-1 max-sm:hidden" />
 
+        <div ref={notifRef} className="relative">
+          <button
+            onClick={() => {
+              setNotifOpen((v) => !v)
+              setAvatarMenuOpen(false)
+            }}
+            title="Notifications"
+            className="relative w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors"
+          >
+            <Bell size={18} />
+            {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />}
+          </button>
+          <div data-panel="notif">
+            <FloatingPanel open={notifOpen} width={380}>
+              <OpsNotificationsPanel />
+            </FloatingPanel>
+          </div>
+        </div>
+
         <div ref={avatarRef} className="relative">
           <button
             onClick={() => setAvatarMenuOpen((v) => !v)}
@@ -67,7 +93,7 @@ export default function OpsTopNav() {
                 <div className="text-[13px] font-semibold">{me?.name}</div>
                 <div className="text-xs text-ink-tertiary">{me?.role}</div>
                 <div className="flex items-center gap-1 text-[11px] text-green font-semibold mt-1.5">
-                  <ShieldCheck size={12} /> Mzobs admin account
+                  <ShieldCheck size={12} /> {me?.accessLevel === 'admin' ? 'Mzobs admin account' : 'Mzobs staff account'}
                 </div>
               </div>
               <div className="p-1.5">

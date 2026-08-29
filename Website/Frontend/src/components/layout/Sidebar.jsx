@@ -1,11 +1,11 @@
 import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
+  Home,
   LayoutDashboard,
   User,
   FileText,
   Video,
-  Briefcase,
   ClipboardList,
   CalendarCheck,
   MessageSquare,
@@ -17,7 +17,9 @@ import {
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
+import { useNotificationsQuery } from '../../hooks/useNotifications'
 
+const home = [{ to: '/app/jobs', label: 'Home', icon: Home }]
 const verification = [
   { to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/app/profile', label: 'Profile', icon: User },
@@ -25,15 +27,8 @@ const verification = [
   { to: '/app/interview', label: 'Mock Interview', icon: Video },
 ]
 const placement = [
-  { to: '/app/jobs', label: 'Job Openings', icon: Briefcase },
   { to: '/app/applications', label: 'My Applications', icon: ClipboardList },
   { to: '/app/interview-center', label: 'Interview Center', icon: CalendarCheck },
-]
-const account = [
-  { to: '/app/messages', label: 'Placement Desk', icon: MessageSquare },
-  { to: '/app/notifications', label: 'Notifications', icon: Bell, badge: 3 },
-  { to: '/app/subscription', label: 'Subscription', icon: CreditCard },
-  { to: '/app/settings', label: 'Settings', icon: Settings },
 ]
 
 function NavItem({ to, label, icon: Icon, badge, collapsed }) {
@@ -74,6 +69,15 @@ function Group({ label, items, collapsed }) {
 
 export default function Sidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen, setMobileSidebarOpen } = useApp()
+  const { data: notifications } = useNotificationsQuery()
+  const unreadCount = (notifications ?? []).filter((n) => n.unread).length
+
+  const account = [
+    { to: '/app/customer-support', label: 'Customer Support', icon: MessageSquare },
+    { to: '/app/notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
+    { to: '/app/subscription', label: 'Subscription', icon: CreditCard },
+    { to: '/app/settings', label: 'Settings', icon: Settings },
+  ]
 
   return (
     <aside
@@ -84,6 +88,7 @@ export default function Sidebar() {
         mobileSidebarOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'
       )}
     >
+      <Group items={home} collapsed={sidebarCollapsed} />
       <Group items={verification} collapsed={sidebarCollapsed} />
       <Group label="Placement" items={placement} collapsed={sidebarCollapsed} />
       <Group label="Account" items={account} collapsed={sidebarCollapsed} />

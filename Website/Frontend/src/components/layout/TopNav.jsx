@@ -6,6 +6,7 @@ import Avatar from '../ui/Avatar'
 import FloatingPanel from '../ui/FloatingPanel'
 import NotificationsPanel from './NotificationsPanel'
 import { useProfileQuery } from '../../hooks/useProfile'
+import { useNotificationsQuery } from '../../hooks/useNotifications'
 import { EMPLOYEE_SIGNIN_URL } from '../../lib/config'
 
 function initialsOf(name = '') {
@@ -21,6 +22,8 @@ export default function TopNav() {
   const bellRef = useRef(null)
   const avatarRef = useRef(null)
   const { data: profile } = useProfileQuery()
+  const { data: notifications } = useNotificationsQuery()
+  const unreadCount = (notifications ?? []).filter((n) => n.unread).length
 
   function logout() {
     localStorage.removeItem('mzobs-employee-token')
@@ -58,7 +61,7 @@ export default function TopNav() {
         <button onClick={toggleTheme} title="Toggle theme" className="w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors">
           {isDark ? <Moon size={18} /> : <Sun size={18} />}
         </button>
-        <button onClick={() => navigate('/app/messages')} title="Messages" className="relative w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors">
+        <button onClick={() => navigate('/app/customer-support')} title="Customer Support" className="relative w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors">
           <MessageSquare size={18} />
           <span className="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />
         </button>
@@ -72,7 +75,9 @@ export default function TopNav() {
             className="relative w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors"
           >
             <Bell size={18} />
-            <span className="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />
+            {unreadCount > 0 && (
+              <span className="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />
+            )}
           </button>
           <div data-panel="notif">
             <FloatingPanel open={drawerOpen} width={380}>

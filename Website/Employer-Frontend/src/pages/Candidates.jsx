@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CalendarPlus, Download, GraduationCap, MapPin, Search, ThumbsDown, ThumbsUp, Users, Wallet } from 'lucide-react'
+import { Bell, CalendarPlus, Download, GraduationCap, MapPin, Search, ThumbsDown, ThumbsUp, Users, Wallet } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
 import Card, { CardBody } from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -16,6 +16,7 @@ import Pagination from '../components/ui/Pagination'
 import Modal from '../components/ui/Modal'
 import { useCandidatesQuery, useSetCandidateStage } from '../hooks/useCandidates'
 import { useJobsQuery } from '../hooks/useJobs'
+import { useSendCandidateNotification } from '../hooks/useNotifications'
 
 const STAGE_TABS = [
   { label: 'All', value: 'all' },
@@ -37,11 +38,38 @@ export default function Candidates() {
   const [page, setPage] = useState(1)
   const [rejectTarget, setRejectTarget] = useState(null)
   const [rejectReason, setRejectReason] = useState('')
+  const [selectedIds, setSelectedIds] = useState([])
+  const [notifyTargetIds, setNotifyTargetIds] = useState(null)
+  const [notifyTitle, setNotifyTitle] = useState('')
+  const [notifyBody, setNotifyBody] = useState('')
 
   const stage = STAGE_TABS[tab].value
   const { data: candidates = [], isLoading, isError, refetch } = useCandidatesQuery({ search, stage, jobId })
   const { data: jobs = [] } = useJobsQuery()
   const setStage = useSetCandidateStage()
+  const sendNotification = useSendCandidateNotification()
+
+  function toggleSelected(id) {
+    setSelectedIds((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]))
+  }
+
+  function closeNotifyModal() {
+    setNotifyTargetIds(null)
+    setNotifyTitle('')
+    setNotifyBody('')
+  }
+
+  function submitNotify() {
+    sendNotification.mutate(
+      { candidateIds: notifyTargetIds, title: notifyTitle, body: notifyBody },
+      {
+        onSuccess: () => {
+          setSelectedIds((ids) => ids.filter((id) => !notifyTargetIds.includes(id)))
+          closeNotifyModal()
+        },
+      }
+    )
+  }
 
   const pageCount = Math.max(1, Math.ceil(candidates.length / PAGE_SIZE))
   const paged = useMemo(() => candidates.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [candidates, page])
@@ -65,6 +93,11 @@ export default function Candidates() {
               <option key={j.id} value={j.id}>{j.title}</option>
             ))}
           </Select>
+          {selectedIds.length > 0 && (
+            <Button variant="secondary" size="sm" onClick={() => setNotifyTargetIds(selectedIds)}>
+              <Bell size={14} /> Notify {selectedIds.length} selected
+            </Button>
+          )}
         </CardBody>
         <div className="px-[22px] pb-[18px]">
           <PillTabs items={STAGE_TABS.map((t) => t.label)} active={tab} onChange={(i) => { setTab(i); setPage(1) }} />
@@ -85,6 +118,12 @@ export default function Candidates() {
             {paged.map((c) => (
               <Card key={c.id} hover pad className="flex flex-col">
                 <div className="flex items-start gap-3.5">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(c.id)}
+                    onChange={() => toggleSelected(c.id)}
+                    className="accent-navy w-[15px] h-[15px] mt-1"
+                  />
                   <Avatar initials={c.initials} size="md" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -119,6 +158,9 @@ export default function Candidates() {
                   <Button variant="secondary" size="sm" onClick={() => navigate(`/candidates/${c.id}`)}>View Profile</Button>
                   <Button variant="ghost" size="sm" iconOnly title="Download resume" onClick={() => window.print()}>
                     <Download size={15} />
+                  </Button>
+                  <Button variant="ghost" size="sm" iconOnly title="Send notification" onClick={() => setNotifyTargetIds([c.id])}>
+                    <Bell size={15} />
                   </Button>
                   <div className="ml-auto flex items-center gap-2">
                     {c.stage !== 'rejected' && c.stage !== 'hired' && (
@@ -169,6 +211,29 @@ export default function Candidates() {
       >
         <Field label="Reason" optional hint="Shared internally with your hiring team only.">
           <Textarea rows={3} value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="e.g. Not enough hands-on experience with distributed systems" />
+        </Field>
+      </Modal>
+
+      <Modal
+        open={!!notifyTargetIds}
+        onClose={closeNotifyModal}
+        title="Send notification"
+        subtitle={notifyTargetIds?.length === 1 ? 'Sent to this candidate as an in-app + push notification.' : `Sent to ${notifyTargetIds?.length ?? 0} candidates as an in-app + push notification.`}
+        size="sm"
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={closeNotifyModal}>Cancel</Button>
+            <Button variant="primary" size="sm" loading={sendNotification.isPending} disabled={!notifyTitle.trim() || !notifyBody.trim()} onClick={submitNotify}>
+              Send
+            </Button>
+          </>
+        }
+      >
+        <Field label="Title">
+          <Input value={notifyTitle} onChange={(e) => setNotifyTitle(e.target.value)} placeholder="e.g. Update on your application" maxLength={120} />
+        </Field>
+        <Field label="Message">
+          <Textarea rows={3} value={notifyBody} onChange={(e) => setNotifyBody(e.target.value)} placeholder="What do you want to tell them?" maxLength={500} />
         </Field>
       </Modal>
     </div>

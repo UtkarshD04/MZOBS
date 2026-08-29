@@ -5,6 +5,7 @@ const LINKS = [
   { label: 'HR Contacts', to: '/app/hr-contacts' },
   { label: 'Companies', to: '/app/companies' },
   { label: 'Requirements', to: '/app/requirements' },
+  { label: 'Queries', to: '/app/queries' },
 ]
 
 export default function OpsFooter() {

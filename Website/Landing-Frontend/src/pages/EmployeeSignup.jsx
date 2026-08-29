@@ -30,7 +30,7 @@ export default function EmployeeSignup() {
               Your Placement Journey <span className="text-[var(--careers-accent)]">Starts</span> Here.
             </h1>
             <p className="mt-6 text-base sm:text-lg text-[#595959] max-w-md leading-relaxed font-medium">
-              One-time ₹99 for lifetime access. Verified resumes, guided training and real mock interviews — everything between job hunting and placed.
+              One-time ₹299 for lifetime access. Verified resumes, guided training and real mock interviews — everything between job hunting and placed.
             </p>
 
             <ul className="mt-8 space-y-4">

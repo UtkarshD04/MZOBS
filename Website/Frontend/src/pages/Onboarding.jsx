@@ -1,23 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, CheckCircle2, Upload, Link as LinkIcon, BadgeCheck, GraduationCap, IndianRupee, ShieldCheck, Lock, Loader2 } from 'lucide-react'
+import { Sparkles, CheckCircle2, Lock, Link as LinkIcon, BadgeCheck, GraduationCap, Loader2, ArrowRight } from 'lucide-react'
 import { FaLinkedin, FaGithub } from 'react-icons/fa6'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
 import Chip from '../components/ui/Chip'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
 import { useProfileQuery, useUpdateProfileMutation } from '../hooks/useProfile'
-import { useUploadResumeMutation } from '../hooks/useResume'
-import {
-  useCreateSubscriptionOrderMutation,
-  useVerifySubscriptionPaymentMutation,
-  useConfirmMockSubscriptionPaymentMutation,
-} from '../hooks/useSubscription'
-import { openRazorpayCheckout } from '../lib/razorpay'
 
-const TOTAL = 17
-const PROGRAM_FEE = 99
+// Payment is no longer part of onboarding — an account is created (and its
+// resume queued) as soon as the profile steps are done. The one-time fee is
+// collected separately from the Subscription page inside the dashboard.
+const TOTAL = 16
+const PROGRAM_FEE = 299
 
 const INTERESTS = ['Software Development', 'Data & Analytics', 'Product Management', 'Design', 'Marketing', 'Sales', 'Finance', 'Operations', 'Customer Success', 'Human Resources']
 const ROLE_SUGGESTIONS = ['Business Analyst', 'Data Analyst', 'Product Analyst', 'Operations Analyst']
@@ -63,15 +59,8 @@ export default function Onboarding() {
 
   const { data: profile } = useProfileQuery()
   const updateProfile = useUpdateProfileMutation()
-  const uploadResume = useUploadResumeMutation()
-  const createOrder = useCreateSubscriptionOrderMutation()
-  const verifyPayment = useVerifySubscriptionPaymentMutation()
-  const confirmMockPayment = useConfirmMockSubscriptionPaymentMutation()
   const [profileSaved, setProfileSaved] = useState(false)
-  const [payingNow, setPayingNow] = useState(false)
-  const [isMockPayment, setIsMockPayment] = useState(false)
-  const submitting =
-    updateProfile.isPending || uploadResume.isPending || createOrder.isPending || verifyPayment.isPending || confirmMockPayment.isPending || payingNow
+  const submitting = updateProfile.isPending
 
   const [employmentStatus, setEmploymentStatus] = useState('Fresher / Student')
   const [interests, setInterests] = useState(INTERESTS.slice(0, 2))
@@ -96,7 +85,6 @@ export default function Onboarding() {
   const [maritalStatus, setMaritalStatus] = useState('Single')
   const [currentCity, setCurrentCity] = useState('Bengaluru')
   const [resumeHeadline, setResumeHeadline] = useState('')
-  const [resumeFile, setResumeFile] = useState(null)
   const [portfolioLink, setPortfolioLink] = useState('')
   const [linkedin, setLinkedin] = useState('')
   const [github, setGithub] = useState('')
@@ -132,43 +120,17 @@ export default function Onboarding() {
       linkedin,
       github,
     })
-
-    if (resumeFile) {
-      await uploadResume.mutateAsync(resumeFile)
-    }
   }
 
-  // Real money changes hands here, so this can't be a fire-and-forget promise
-  // chain like the rest of the wizard: the amount is fixed server-side when
-  // the order is created, Razorpay Checkout collects the actual payment, and
-  // only a signature-verified response advances the wizard.
-  async function activateSubscription() {
+  async function finishProfile() {
     setSubmitError('')
     try {
       if (!profileSaved) {
         await saveProfileAndResume()
         setProfileSaved(true)
       }
-
-      const order = await createOrder.mutateAsync()
-
-      if (order.mock) {
-        setIsMockPayment(true)
-        await confirmMockPayment.mutateAsync(order.orderId)
-        return true
-      }
-
-      setPayingNow(true)
-      const result = await openRazorpayCheckout(order)
-      await verifyPayment.mutateAsync({
-        razorpay_order_id: result.razorpay_order_id,
-        razorpay_payment_id: result.razorpay_payment_id,
-        razorpay_signature: result.razorpay_signature,
-      })
-      setPayingNow(false)
       return true
     } catch (err) {
-      setPayingNow(false)
       setSubmitError(err.response?.data?.message ?? err.message ?? 'Something went wrong. Please try again.')
       return false
     }
@@ -176,13 +138,13 @@ export default function Onboarding() {
 
   async function next() {
     if (step === TOTAL - 2) {
-      const ok = await activateSubscription()
+      const ok = await finishProfile()
       if (!ok) return
       setStep((s) => s + 1)
       return
     }
     if (step === TOTAL - 1) {
-      navigate('/app/dashboard')
+      navigate('/app/jobs')
       return
     }
     setStep((s) => Math.min(s + 1, TOTAL - 1))
@@ -199,7 +161,7 @@ export default function Onboarding() {
           <motion.div className="h-full bg-navy rounded-full" animate={{ width: `${((step + 1) / TOTAL) * 100}%` }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} />
         </div>
         <span className="text-xs text-ink-tertiary flex-shrink-0">{step === TOTAL - 1 ? 'Complete' : `Step ${step + 1} of ${TOTAL}`}</span>
-        <span className="text-sm text-navy font-semibold cursor-pointer hover:underline" onClick={() => navigate('/app/dashboard')}>
+        <span className="text-sm text-navy font-semibold cursor-pointer hover:underline" onClick={() => navigate('/app/jobs')}>
           Skip for now
         </span>
       </div>
@@ -426,18 +388,13 @@ export default function Onboarding() {
                       onChange={(e) => setResumeHeadline(e.target.value)}
                     />
                   </Field>
-                  <p className="text-[13px] font-semibold mb-2">Upload your resume</p>
-                  <label className="block border-[1.5px] border-dashed border-border-strong rounded-2xl p-9 text-center cursor-pointer bg-surface-sunken hover:border-navy hover:bg-navy-tint transition-all">
-                    <input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      className="hidden"
-                      onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
-                    />
-                    <Upload size={30} className="mx-auto text-ink-secondary" />
-                    <p className="text-[15px] font-semibold mt-3">{resumeFile ? resumeFile.name : 'Drag & drop your resume here'}</p>
-                    <p className="text-xs text-ink-tertiary mt-1">PDF or DOCX, up to 5MB · The Mzobs team verifies it once your programme is activated</p>
-                  </label>
+                  <div className="flex items-start gap-2.5 p-[14px] rounded-xl bg-navy-tint">
+                    <Lock size={15} className="text-navy mt-0.5 flex-shrink-0" />
+                    <p className="text-[12.5px] text-ink-secondary">
+                      Resume upload unlocks after you activate placement support (₹299, one-time) from the Subscription page — that's also when
+                      it enters the Mzobs verification queue.
+                    </p>
+                  </div>
                 </div>
               )}
 
@@ -484,13 +441,13 @@ export default function Onboarding() {
                 </div>
               )}
 
-              {step === 15 && <PaymentStep submitting={submitting} error={submitError} isMockPayment={isMockPayment} />}
-
-              {step === 16 && <CompleteStep name={profile?.name} />}
+              {step === 15 && <CompleteStep name={profile?.name} />}
             </motion.div>
           </AnimatePresence>
         </div>
       </div>
+
+      {submitError && <p className="text-sm text-red text-center px-7 pt-3 flex-shrink-0">{submitError}</p>}
 
       <div className="px-7 py-5 border-t border-border bg-surface flex justify-between items-center flex-shrink-0">
         <Button variant="ghost" onClick={back} className={step === 0 || submitting ? 'invisible' : ''}>
@@ -499,12 +456,12 @@ export default function Onboarding() {
         <Button variant="primary" size="lg" onClick={next} disabled={submitting}>
           {submitting ? (
             <>
-              <Loader2 size={16} className="animate-spin" /> Activating...
+              <Loader2 size={16} className="animate-spin" /> Saving...
             </>
           ) : step === TOTAL - 1 ? (
-            'Go to Dashboard'
+            'Browse job openings'
           ) : step === TOTAL - 2 ? (
-            `Pay ₹${PROGRAM_FEE} & activate`
+            'Finish profile'
           ) : step === 0 ? (
             'Get started'
           ) : (
@@ -516,87 +473,8 @@ export default function Onboarding() {
   )
 }
 
-function PaymentStep({ submitting, error, isMockPayment }) {
-  return (
-    <div>
-      <div className="text-center">
-        <div className="w-16 h-16 rounded-[20px] bg-gold-tint text-gold-strong flex items-center justify-center mx-auto mb-5">
-          <IndianRupee size={28} />
-        </div>
-        <Badge tone="navy" dot={false} className="mb-3">
-          ONE-TIME · NO PLANS, NO RENEWALS
-        </Badge>
-        {isMockPayment && (
-          <p className="text-[11px] font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3 max-w-[440px] mx-auto">
-            Test mode — payment was simulated because Razorpay isn't configured yet.
-          </p>
-        )}
-        <h1 className="text-[26px] font-bold tracking-tight text-balance">Activate your placement support</h1>
-        <p className="text-sm text-ink-secondary mt-3 max-w-[440px] mx-auto">
-          A single ₹{PROGRAM_FEE} payment. No renewals, no success fee, nothing deducted from your salary — ever.
-        </p>
-      </div>
-
-      <div className="relative mt-6 rounded-2xl overflow-hidden shadow-navy">
-        <div className="absolute inset-0 bg-gradient-to-br from-navy-950 to-navy-900" />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(320px 220px at 92% 0%, rgba(198,138,31,.25), transparent 65%), radial-gradient(280px 260px at 4% 100%, rgba(125,95,214,.20), transparent 65%)',
-          }}
-        />
-        <div className="relative p-[22px] sm:p-[26px] text-white">
-          <div className="flex items-baseline justify-between pb-5 border-b border-white/10">
-            <div>
-              <div className="text-[15px] font-semibold">Placement Support Programme</div>
-              <div className="text-xs text-white/60 mt-1">One-time · lifetime access</div>
-            </div>
-            <div className="text-right flex-shrink-0">
-              <div className="text-[34px] font-bold tracking-tight leading-none">₹{PROGRAM_FEE}</div>
-              <div className="text-[11px] text-white/50 mt-1.5">paid once, valid for life</div>
-            </div>
-          </div>
-
-          <div className="text-[11px] font-semibold tracking-wide uppercase text-white/50 mt-5 mb-3">What this unlocks</div>
-          <div className="grid sm:grid-cols-2 gap-x-4 gap-y-2.5">
-            {[
-              'Resume verification by the Mzobs team',
-              'A mock interview with our panel, with written feedback',
-              'A skill track assignment matched to your strengths',
-              'Your resume sent to employers on matching requirements',
-            ].map((t) => (
-              <div key={t} className="flex items-start gap-2 text-[13px] text-white/90">
-                <CheckCircle2 size={15} className="text-gold-dot mt-0.5 flex-shrink-0" />
-                <span>{t}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-start gap-2.5 mt-4 p-[14px] rounded-xl bg-navy-tint">
-        <ShieldCheck size={15} className="text-navy mt-0.5 flex-shrink-0" />
-        <p className="text-[12.5px] text-ink-secondary">
-          This is placement support, not a job guarantee. We get your profile in front of employers — the hiring decision is always theirs.
-        </p>
-      </div>
-
-      <div className="flex items-center justify-center gap-4 mt-4 text-[11px] text-ink-tertiary">
-        <span className="flex items-center gap-1.5">
-          <Lock size={12} /> Secured by Razorpay
-        </span>
-        <span className="w-1 h-1 rounded-full bg-border-strong" />
-        <span>Cards, UPI &amp; netbanking accepted</span>
-      </div>
-
-      {error && <p className="text-sm text-red mt-4 text-center">{error}</p>}
-      {submitting && <p className="text-xs text-ink-tertiary mt-3 text-center">Saving your profile and activating your programme...</p>}
-    </div>
-  )
-}
-
 function CompleteStep({ name }) {
+  const navigate = useNavigate()
   const [pieces, setPieces] = useState([])
   useEffect(() => {
     const colors = ['var(--color-navy)', 'var(--color-gold-dot)', 'var(--color-green-dot)']
@@ -618,20 +496,28 @@ function CompleteStep({ name }) {
       </div>
       <h1 className="text-[30px] font-bold tracking-tight text-balance">You're all set{name ? `, ${name.split(' ')[0]}` : ''}</h1>
       <p className="text-sm text-ink-secondary mt-3 max-w-[420px] mx-auto">
-        Your ₹{PROGRAM_FEE} programme is active and your resume is now in the Mzobs verification queue.
+        Your profile is saved. Activate placement support with a one-time ₹{PROGRAM_FEE} payment to upload your resume, apply to jobs and unlock your
+        verification interview.
       </p>
+
+      <Button variant="gold" size="lg" className="mt-5" onClick={() => navigate('/app/subscription')}>
+        Pay ₹{PROGRAM_FEE} & activate <ArrowRight size={16} />
+      </Button>
+
       <div className="bg-surface border border-border rounded-2xl mt-6 max-w-[420px] mx-auto text-left p-[22px]">
         <div className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary mb-3">What happens next</div>
         <div className="relative pl-6">
           <div className="absolute left-[5px] top-1 bottom-1 w-px bg-border" />
           {[
-            ['Resume verification by our team', 'Within 24–48 hours', 'green'],
+            ['Pay the one-time ₹299 fee', 'From the Subscription page in your dashboard', 'gold'],
+            ['Upload your resume', 'From the Resume Center, right after payment', 'gray'],
+            ['Resume verification by our team', 'Within 24–48 hours of upload', 'gray'],
             ['Mock interview with a Mzobs panel', 'Scheduled after verification', 'gray'],
             ['Skill track assigned', 'Based on your panel score', 'gray'],
             ['Apply to live employer requirements', 'We shortlist and share your resume', 'gray'],
           ].map(([title, sub, tone], i, arr) => (
             <div key={title} className={`relative ${i < arr.length - 1 ? 'pb-5' : ''}`}>
-              <div className={`absolute -left-6 top-0.5 w-[11px] h-[11px] rounded-full bg-surface border-2 ${tone === 'green' ? 'border-green-dot' : 'border-border-strong'}`} />
+              <div className={`absolute -left-6 top-0.5 w-[11px] h-[11px] rounded-full bg-surface border-2 ${tone === 'gold' ? 'border-gold-dot' : 'border-border-strong'}`} />
               <div className="text-sm font-semibold">{title}</div>
               <div className="text-xs text-ink-tertiary">{sub}</div>
             </div>

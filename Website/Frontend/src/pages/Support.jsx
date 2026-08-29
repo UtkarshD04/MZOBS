@@ -13,10 +13,10 @@ export default function Support() {
         <p className="text-sm text-ink-secondary mt-1">We usually respond within a few hours.</p>
       </StaggerItem>
       <StaggerItem className="grid md:grid-cols-3 gap-5">
-        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/messages')}>
+        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/customer-support')}>
           <MessageSquare size={22} className="text-navy" />
-          <div className="text-[15px] font-semibold mt-3">Chat with Support</div>
-          <div className="text-xs text-ink-tertiary mt-1">Get help with your account or payments</div>
+          <div className="text-[15px] font-semibold mt-3">Customer Support</div>
+          <div className="text-xs text-ink-tertiary mt-1">Raise a query about your account or payments</div>
         </Card>
         <Card hover pad className="cursor-pointer">
           <BookOpen size={22} className="text-navy" />

@@ -1,20 +1,11 @@
-import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { CheckCircle2 } from 'lucide-react'
-import CountUp from '../../components/ui/CountUp'
+import { Inbox, Contact, Building2, Briefcase, ShieldCheck } from 'lucide-react'
 
-const MOTIVATION = [
-  'Every resume you verify is someone’s shot at a better career.',
-  'The care you put in today is the trust an employer places in us tomorrow.',
-  'Small, honest work here adds up to a placement that changes someone’s life.',
-]
-
-const DEFAULT_QUOTE = "Mzobs didn't just help me find a job — my resume was rebuilt by an expert, I trained for two weeks, and I walked into my interview at Razorpay actually prepared."
-const DEFAULT_AUTHOR = { initials: 'RK', name: 'Rohit Kulkarni', role: 'Placed as Business Analyst, Razorpay' }
-const DEFAULT_STATS = [
-  [12400, '+', 'Profiles verified'],
-  [3180, '+', 'Interviews arranged'],
-  [96, '%', 'Would recommend'],
+const FEATURES = [
+  { icon: Inbox, title: 'Resumes', body: "Every subscribed candidate's resume lands here first." },
+  { icon: Contact, title: 'HR Contacts', body: 'One directory for every hiring contact, across every employer.' },
+  { icon: Building2, title: 'Companies', body: 'KYC and verification status for every registered employer.' },
+  { icon: Briefcase, title: 'Requirements', body: 'Review, approve and bill every job posting that comes in.' },
 ]
 
 function Brand({ className }) {
@@ -25,7 +16,7 @@ function Brand({ className }) {
   )
 }
 
-export default function AuthLayout({ children, quote = DEFAULT_QUOTE, author = DEFAULT_AUTHOR, stats = DEFAULT_STATS, brandTag }) {
+export default function AuthLayout({ children, brandTag }) {
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-white text-[#111827]">
       <div className="hidden lg:flex relative overflow-hidden flex-col justify-between p-11 bg-gradient-to-br from-[#eef3ea] to-[#e2ebdd]">
@@ -41,7 +32,7 @@ export default function AuthLayout({ children, quote = DEFAULT_QUOTE, author = D
           className="absolute -inset-[10%] pointer-events-none animate-[blobPulse_13s_ease-in-out_infinite]"
           style={{
             background:
-              'radial-gradient(520px 480px at 90% 90%, rgba(61,92,52,.16), transparent 60%), radial-gradient(460px 460px at 10% 0%, rgba(61,92,52,.10), transparent 65%)',
+              'radial-gradient(520px 480px at 90% 90%, rgba(61,92,52,.16), transparent 60%), radial-gradient(460px 460px at 10% 0%, rgba(198,138,31,.12), transparent 65%)',
           }}
         />
 
@@ -54,41 +45,34 @@ export default function AuthLayout({ children, quote = DEFAULT_QUOTE, author = D
           )}
         </div>
 
-        <div className="relative flex flex-col gap-5 max-w-md">
+        <div className="relative flex flex-col gap-6 max-w-md">
           <h2 className="text-[30px] leading-[1.2] font-bold tracking-tight text-[#111827]">
-            The desk that runs Mzobs, end to end.
+            The full-control desk for running Mzobs, end to end.
           </h2>
-          <ul className="flex flex-col gap-3">
-            {MOTIVATION.map((line) => (
-              <li key={line} className="flex items-start gap-2.5 text-[14px] leading-snug text-[#3d3d3d]">
-                <CheckCircle2 size={17} className="text-[#3d5c34] flex-shrink-0 mt-0.5" />
-                <span>{line}</span>
-              </li>
+          <div className="flex flex-col gap-3.5">
+            {FEATURES.map((f, i) => (
+              <motion.div
+                key={f.title}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.08 * i, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="flex items-start gap-3 bg-white/60 border border-white rounded-xl px-3.5 py-3 backdrop-blur-sm"
+              >
+                <div className="w-8 h-8 rounded-lg bg-[#3d5c34] text-white flex items-center justify-center flex-shrink-0">
+                  <f.icon size={16} />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[13.5px] font-semibold text-[#111827]">{f.title}</div>
+                  <div className="text-[12.5px] text-[#595959] leading-snug mt-0.5">{f.body}</div>
+                </div>
+              </motion.div>
             ))}
-          </ul>
+          </div>
         </div>
 
-        <div className="relative flex flex-col gap-6">
-          <p className="text-[19px] leading-relaxed font-medium tracking-tight text-[#111827]">"{quote}"</p>
-          <div className="flex items-center gap-2.5">
-            <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-white bg-[#3d5c34]">
-              {author.initials}
-            </div>
-            <div>
-              <div className="text-[13px] font-semibold">{author.name}</div>
-              <div className="text-xs text-[#666666]">{author.role}</div>
-            </div>
-          </div>
-          <div className="flex gap-7">
-            {stats.map(([n, suffix, l]) => (
-              <div key={l}>
-                <b className="text-[22px] font-bold block text-[#3d5c34]">
-                  <CountUp value={n} suffix={suffix} duration={1200} />
-                </b>
-                <span className="text-xs text-[#666666]">{l}</span>
-              </div>
-            ))}
-          </div>
+        <div className="relative flex items-center gap-2.5 text-[12.5px] text-[#595959]">
+          <ShieldCheck size={16} className="text-[#3d5c34] flex-shrink-0" />
+          Restricted to Mzobs admins — every action here is logged.
         </div>
       </div>
 
@@ -120,17 +104,7 @@ export default function AuthLayout({ children, quote = DEFAULT_QUOTE, author = D
 
         <footer className="relative w-full max-w-[400px] pt-8 flex items-center justify-between gap-4 flex-wrap">
           <span className="text-xs text-[#666666]">© {new Date().getFullYear()} Mzobs</span>
-          <div className="flex items-center gap-4">
-            <Link to="#privacy" className="text-xs text-[#666666] hover:text-[#3d5c34] transition-colors duration-200">
-              Privacy
-            </Link>
-            <Link to="#terms" className="text-xs text-[#666666] hover:text-[#3d5c34] transition-colors duration-200">
-              Terms
-            </Link>
-            <Link to="#support" className="text-xs text-[#666666] hover:text-[#3d5c34] transition-colors duration-200">
-              Support
-            </Link>
-          </div>
+          <span className="text-xs text-[#666666]">Admin Portal</span>
         </footer>
       </div>
     </div>

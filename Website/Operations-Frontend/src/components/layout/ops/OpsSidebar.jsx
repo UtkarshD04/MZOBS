@@ -1,10 +1,10 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { LayoutDashboard, Inbox, Contact, Building2, Briefcase, LogOut, PanelLeft } from 'lucide-react'
+import { LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, IndianRupee, UserCog, Send } from 'lucide-react'
 import { useApp } from '../../../context/AppContext'
 import { cn } from '../../../lib/utils'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
-import { logout as clearAuth } from '../../../hooks/useAuth'
+import { useMeQuery, logout as clearAuth } from '../../../hooks/useAuth'
 
 function NavItem({ to, label, icon: Icon, badge, collapsed }) {
   return (
@@ -47,14 +47,29 @@ export default function OpsSidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen } = useApp()
   const navigate = useNavigate()
   const { data: dash } = useDashboardQuery()
+  const { data: me } = useMeQuery()
   const kpis = dash?.kpis ?? {}
+  const isAdmin = me?.accessLevel === 'admin'
 
   const items = [
-    { to: '/app', label: 'Overview', icon: LayoutDashboard },
     { to: '/app/resumes', label: 'Resumes', icon: Inbox, badge: kpis.resumeQueue },
+    { to: '/app/shortlisted', label: 'Shortlisted', icon: Star },
+    { to: '/app/notifications/send', label: 'Send Notification', icon: Send },
+  ]
+
+  // Backend-admin-gated (staffDashboardRoutes.js / staffCompanyRoutes.js /
+  // staffJobRoutes.js / staffSupportRoutes.js / staffPaymentRoutes.js /
+  // staffTeamRoutes.js all require accessLevel: admin) — hidden from
+  // non-admin staff so the sidebar doesn't link to pages that 403 (Overview
+  // redirects non-admins to Resumes itself too).
+  const adminItems = [
+    { to: '/app', label: 'Overview', icon: LayoutDashboard },
     { to: '/app/hr-contacts', label: 'HR Contacts', icon: Contact },
     { to: '/app/companies', label: 'Companies', icon: Building2, badge: kpis.companyQueue },
     { to: '/app/requirements', label: 'Requirements', icon: Briefcase },
+    { to: '/app/queries', label: 'Queries', icon: LifeBuoy },
+    { to: '/app/payments', label: 'Payments', icon: IndianRupee },
+    { to: '/app/team', label: 'Team', icon: UserCog },
   ]
 
   function logout() {
@@ -72,6 +87,7 @@ export default function OpsSidebar() {
       )}
     >
       <Group items={items} collapsed={sidebarCollapsed} />
+      {isAdmin && <Group label="Admin" items={adminItems} collapsed={sidebarCollapsed} />}
 
       <div className="mt-auto pt-3 border-t border-border">
         <div onClick={logout} className="flex items-center gap-[11px] px-2.5 py-[9px] rounded-[9px] cursor-pointer mb-0.5 text-[13.5px] font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink">

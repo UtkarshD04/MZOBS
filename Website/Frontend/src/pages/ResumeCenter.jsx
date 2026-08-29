@@ -9,8 +9,10 @@ import { TableWrap, Table, Tr, Td } from '../components/ui/Table'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import ErrorState from '../components/ui/ErrorState'
+import PaymentLock from '../components/ui/PaymentLock'
 import { useApp } from '../context/AppContext'
 import { useResumeQuery, useUploadResumeMutation } from '../hooks/useResume'
+import { useProfileQuery } from '../hooks/useProfile'
 import { FILE_BASE_URL } from '../lib/config'
 
 const VERIFICATION_STEPS = ['Uploaded', 'Received by Mzobs', 'Expert review', 'Verified', 'Eligible for dispatch']
@@ -19,15 +21,34 @@ export default function ResumeCenter() {
   const app = useApp()
   const fileInputRef = useRef(null)
   const { data, isLoading, isError, refetch } = useResumeQuery()
+  const { data: profile, isLoading: profileLoading, isError: profileError, refetch: refetchProfile } = useProfileQuery()
   const uploadResume = useUploadResumeMutation()
 
-  if (isLoading) return <PageSkeleton />
-  if (isError) return <ErrorState onRetry={refetch} />
+  if (isLoading || profileLoading) return <PageSkeleton />
+  if (isError || profileError) return <ErrorState onRetry={() => (isError ? refetch() : refetchProfile())} />
 
   const resume = data?.resume ?? {}
   const history = data?.resumeHistory ?? []
   const verified = resume.status === 'verified'
   const stepIndex = resume.status === 'none' ? -1 : verified ? 4 : resume.status === 'pending' ? 2 : 2
+  const paid = profile?.subscription?.status === 'paid'
+
+  if (!paid) {
+    return (
+      <StaggerGroup>
+        <StaggerItem className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">Resume Center</h1>
+          <p className="text-sm text-ink-secondary mt-1">Upload your resume here — the Mzobs team verifies it before any employer sees it.</p>
+        </StaggerItem>
+        <StaggerItem>
+          <PaymentLock
+            title="Activate placement support to upload your resume"
+            body="A one-time ₹299 payment unlocks resume upload, verification, your mock interview, and job applications."
+          />
+        </StaggerItem>
+      </StaggerGroup>
+    )
+  }
 
   function handleFilePicked(e) {
     const file = e.target.files?.[0]
