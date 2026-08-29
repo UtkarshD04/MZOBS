@@ -13,11 +13,9 @@ import Login from './pages/mzobs/Login'
 import ForgotPassword from './pages/mzobs/ForgotPassword'
 import ResetPassword from './pages/mzobs/ResetPassword'
 import Dashboard from './pages/mzobs/Dashboard'
-import Candidates from './pages/mzobs/Candidates'
 import ResumeQueue from './pages/mzobs/ResumeQueue'
 import MockInterviews from './pages/mzobs/MockInterviews'
 import Shortlisted from './pages/mzobs/Shortlisted'
-import Payments from './pages/mzobs/Payments'
 import Team from './pages/mzobs/Team'
 import ComingSoon from './pages/mzobs/ComingSoon'
 
@@ -35,13 +33,11 @@ export default function App() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
 
-          <Route path="candidates" element={<Candidates />} />
           <Route path="resumes" element={<ResumeQueue />} />
           <Route path="mock-interviews" element={<MockInterviews />} />
           <Route path="shortlisted" element={<Shortlisted />} />
 
           <Route element={<RequireAdmin />}>
-            <Route path="payments" element={<Payments />} />
             <Route path="team" element={<Team />} />
           </Route>
           <Route path="settings" element={<ComingSoon icon={Settings} title="Settings" subtitle="Portal preferences, rate card and notification rules." />} />

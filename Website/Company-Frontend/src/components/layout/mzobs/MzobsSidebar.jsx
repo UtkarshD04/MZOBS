@@ -2,11 +2,9 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   LayoutDashboard,
-  Users,
   FileCheck,
   Video,
   Star,
-  IndianRupee,
   Users2,
   Settings,
   LifeBuoy,
@@ -63,16 +61,15 @@ export default function MzobsSidebar() {
   const kpis = dash?.kpis ?? {}
 
   const candidateOps = [
-    { to: '/app/candidates', label: 'Candidates', icon: Users },
     { to: '/app/resumes', label: 'Resume Verification', icon: FileCheck, badge: kpis.resumeQueue },
     { to: '/app/mock-interviews', label: 'Mock Interviews', icon: Video, badge: kpis.mockQueue },
     { to: '/app/shortlisted', label: 'Shortlisted', icon: Star },
   ]
-  // Payments/Team are backend-admin-gated (staffPaymentRoutes.js /
-  // staffTeamRoutes.js require accessLevel: admin) — hidden from non-admin
-  // staff so the sidebar doesn't link to pages that 403.
+  // Team is backend-admin-gated (staffTeamRoutes.js requires accessLevel:
+  // admin) — hidden from non-admin staff so the sidebar doesn't link to a
+  // page that 403s.
   const business = [
-    ...(isAdmin ? [{ to: '/app/payments', label: 'Payments', icon: IndianRupee }, { to: '/app/team', label: 'Mzobs Team', icon: Users2 }] : []),
+    ...(isAdmin ? [{ to: '/app/team', label: 'Mzobs Team', icon: Users2 }] : []),
     { to: '/app/settings', label: 'Settings', icon: Settings },
   ]
 

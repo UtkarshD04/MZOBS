@@ -6,7 +6,6 @@ import { useApp } from '../../../context/AppContext'
 
 const ROUTE_BY_CAT = {
   resumes: '/app/resumes',
-  payments: '/app/payments',
   interviews: '/app/mock-interviews',
   requirements: '/app/shortlisted',
 }

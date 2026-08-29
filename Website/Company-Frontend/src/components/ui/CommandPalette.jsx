@@ -7,10 +7,8 @@ import {
   LayoutDashboard,
   FileCheck,
   Video,
-  IndianRupee,
   Sun,
   LogOut,
-  Users,
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
@@ -26,10 +24,8 @@ export default function CommandPalette() {
   const commands = useMemo(() => {
     return [
       { grp: 'Navigate', icon: LayoutDashboard, label: 'Go to Dashboard', act: () => navigate('/app/dashboard') },
-      { grp: 'Navigate', icon: Users, label: 'Go to Candidates', act: () => navigate('/app/candidates') },
       { grp: 'Navigate', icon: FileCheck, label: 'Go to Resume Verification', act: () => navigate('/app/resumes') },
       { grp: 'Navigate', icon: Video, label: 'Go to Mock Interviews', act: () => navigate('/app/mock-interviews') },
-      { grp: 'Navigate', icon: IndianRupee, label: 'Go to Payments', act: () => navigate('/app/payments') },
       { grp: 'Actions', icon: Sun, label: 'Toggle theme', act: toggleTheme },
       { grp: 'Actions', icon: LogOut, label: 'Log out', act: () => navigate('/login') },
     ]

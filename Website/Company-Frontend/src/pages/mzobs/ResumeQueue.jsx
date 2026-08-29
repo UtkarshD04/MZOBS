@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { FileCheck, FileText, ShieldCheck, Download, Clock, Video, UserPlus } from 'lucide-react'
+import { FileCheck, FileText, ShieldCheck, Download, Clock, Video, UserPlus, IdCard, Link2 } from 'lucide-react'
 import Card, { CardHead } from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -14,6 +14,7 @@ import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
+import { DrawerHead, DrawerBody } from '../../components/ui/Drawer'
 import { Field, Input, Textarea, Select } from '../../components/ui/Field'
 import { useApp } from '../../context/AppContext'
 import { useTeamQuery } from '../../hooks/useTeam'
@@ -90,6 +91,160 @@ export function VerifyResumeModal({ app, employee, onDone }) {
           {reviewResume.isPending ? 'Saving...' : labels[decision]}
         </Button>
       </ModalFoot>
+    </>
+  )
+}
+
+function InfoRow({ label, value }) {
+  return (
+    <div>
+      <div className="text-[11px] font-semibold tracking-wide uppercase text-ink-tertiary">{label}</div>
+      <div className="text-[13px] mt-0.5">{value || <span className="text-ink-tertiary">—</span>}</div>
+    </div>
+  )
+}
+
+function ProfileSection({ title, children }) {
+  return (
+    <div className="pb-5 border-b border-border last:border-b-0 last:pb-0">
+      <div className="text-[13px] font-semibold mb-3">{title}</div>
+      {children}
+    </div>
+  )
+}
+
+export function CandidateProfilePanel({ app, employee: c }) {
+  const salary =
+    c.expectedSalaryMin || c.expectedSalaryMax
+      ? `₹${c.expectedSalaryMin ?? '?'} – ₹${c.expectedSalaryMax ?? '?'}`
+      : null
+
+  return (
+    <>
+      <DrawerHead title={c.name} subtitle={c.email} onClose={app.closeSidePanel} />
+      <DrawerBody className="flex flex-col gap-5">
+        <ProfileSection title="Contact & basics">
+          <div className="grid grid-cols-2 gap-4">
+            <InfoRow label="Phone" value={c.phone} />
+            <InfoRow label="Date of birth" value={c.dob} />
+            <InfoRow label="Gender" value={c.gender} />
+            <InfoRow label="Marital status" value={c.maritalStatus} />
+            <InfoRow label="Current city" value={c.currentCity} />
+            <InfoRow label="Open to relocation" value={c.relocationOk ? 'Yes' : 'No'} />
+          </div>
+        </ProfileSection>
+
+        <ProfileSection title="Current role & preferences">
+          <div className="grid grid-cols-2 gap-4">
+            <InfoRow label="Experience" value={c.experience === 'experienced' ? `${c.experienceYears || 0} yrs` : 'Fresher'} />
+            <InfoRow label="Graduation" value={c.graduation} />
+            <InfoRow label="Current company" value={c.currentCompany} />
+            <InfoRow label="Designation" value={c.designation} />
+            <InfoRow label="Current CTC" value={c.currentCtc} />
+            <InfoRow label="Notice period" value={c.noticePeriod} />
+            <InfoRow label="Preferred role" value={c.preferredRole} />
+            <InfoRow label="Expected salary" value={salary} />
+          </div>
+          {c.preferredLocations?.length > 0 && (
+            <div className="mt-3">
+              <div className="text-[11px] font-semibold tracking-wide uppercase text-ink-tertiary mb-1.5">Preferred locations</div>
+              <div className="flex flex-wrap gap-1.5">
+                {c.preferredLocations.map((l) => (
+                  <span key={l} className="text-[11px] font-semibold text-ink-secondary bg-surface-sunken px-2 py-1 rounded-md">
+                    {l}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </ProfileSection>
+
+        {c.skills?.length > 0 && (
+          <ProfileSection title="Skills">
+            <div className="flex flex-wrap gap-1.5">
+              {c.skills.map((s) => (
+                <span key={s} className="text-[11px] font-semibold text-ink-secondary bg-surface-sunken px-2 py-1 rounded-md">
+                  {s}
+                </span>
+              ))}
+            </div>
+          </ProfileSection>
+        )}
+
+        {c.education?.length > 0 && (
+          <ProfileSection title="Education">
+            <div className="flex flex-col gap-3">
+              {c.education.map((e, i) => (
+                <div key={i}>
+                  <div className="text-[13px] font-semibold">{e.degree}</div>
+                  <div className="text-xs text-ink-tertiary mt-0.5">
+                    {e.institute} {e.year && `· ${e.year}`}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ProfileSection>
+        )}
+
+        {c.workHistory?.length > 0 && (
+          <ProfileSection title="Work history">
+            <div className="flex flex-col gap-3">
+              {c.workHistory.map((w, i) => (
+                <div key={i}>
+                  <div className="text-[13px] font-semibold">
+                    {w.role} · {w.company}
+                  </div>
+                  <div className="text-xs text-ink-tertiary mt-0.5">{w.duration}</div>
+                </div>
+              ))}
+            </div>
+          </ProfileSection>
+        )}
+
+        {c.projects?.length > 0 && (
+          <ProfileSection title="Projects">
+            <div className="flex flex-col gap-3">
+              {c.projects.map((p, i) => (
+                <div key={i}>
+                  <div className="text-[13px] font-semibold">{p.name}</div>
+                  {p.description && <div className="text-xs text-ink-secondary mt-0.5">{p.description}</div>}
+                  {p.tech?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {p.tech.map((t) => (
+                        <span key={t} className="text-[10.5px] font-semibold text-ink-tertiary bg-surface-sunken px-1.5 py-0.5 rounded">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </ProfileSection>
+        )}
+
+        {(c.portfolioLink || c.linkedin || c.github) && (
+          <ProfileSection title="Links">
+            <div className="flex flex-col gap-1.5">
+              {c.portfolioLink && (
+                <a href={c.portfolioLink} target="_blank" rel="noreferrer" className="text-[13px] text-navy font-semibold hover:underline flex items-center gap-1.5">
+                  <Link2 size={13} /> Portfolio
+                </a>
+              )}
+              {c.linkedin && (
+                <a href={c.linkedin} target="_blank" rel="noreferrer" className="text-[13px] text-navy font-semibold hover:underline flex items-center gap-1.5">
+                  <Link2 size={13} /> LinkedIn
+                </a>
+              )}
+              {c.github && (
+                <a href={c.github} target="_blank" rel="noreferrer" className="text-[13px] text-navy font-semibold hover:underline flex items-center gap-1.5">
+                  <Link2 size={13} /> GitHub
+                </a>
+              )}
+            </div>
+          </ProfileSection>
+        )}
+      </DrawerBody>
     </>
   )
 }
@@ -300,6 +455,9 @@ export default function ResumeQueue() {
                 {c.resume?.note && <p className="text-[12.5px] text-ink-secondary mt-3">Reviewer note: {c.resume.note}</p>}
 
                 <div className="flex items-center gap-2 mt-4 pt-3.5 border-t border-border flex-wrap">
+                  <Button size="sm" onClick={() => app.openSidePanel(<CandidateProfilePanel app={app} employee={c} />)}>
+                    <IdCard size={14} /> View profile
+                  </Button>
                   {c.resume?.file && (
                     <Button variant="primary" size="sm" onClick={() => app.openModal(<VerifyResumeModal app={app} employee={c} onDone={refetch} />)}>
                       <ShieldCheck size={14} /> {c.resume.status === 'verified' ? 'Re-verify' : 'Review & decide'}
