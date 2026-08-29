@@ -16,7 +16,7 @@ import { useTeamQuery, useCreateTeammateMutation, useUpdateTeammateMutation } fr
 const ROLES = ['Operations Manager', 'Resume Verification Lead', 'Interview Panel', 'Employer Success', 'Compliance & KYC']
 const ACCESS_LEVELS = [
   { value: 'staff', label: 'Worker — assigned resumes only' },
-  { value: 'admin', label: 'Admin — full portal access' },
+  { value: 'admin', label: 'Owner — full portal access' },
 ]
 
 function InviteTeammateModal({ app, onDone }) {
@@ -87,7 +87,7 @@ function InviteTeammateModal({ app, onDone }) {
             ))}
           </Select>
         </Field>
-        <Field label="Access level" hint="Admin can create accounts, allocate resumes and see everything. Workers only see resumes assigned to them.">
+        <Field label="Access level" hint="Owner can create accounts, allocate resumes and see everything. Workers only see resumes assigned to them.">
           <Select value={accessLevel} onChange={(e) => setAccessLevel(e.target.value)}>
             {ACCESS_LEVELS.map((a) => (
               <option key={a.value} value={a.value}>
@@ -160,7 +160,7 @@ export default function Team() {
                   </Td>
                   <Td>{m.role}</Td>
                   <Td>
-                    <Badge tone={m.accessLevel === 'admin' ? 'navy' : 'gray'}>{m.accessLevel === 'admin' ? 'Admin' : 'Worker'}</Badge>
+                    <Badge tone={m.accessLevel === 'admin' ? 'navy' : 'gray'}>{m.accessLevel === 'admin' ? 'Owner' : 'Worker'}</Badge>
                   </Td>
                   <Td>
                     <Badge tone={m.status === 'active' ? 'green' : m.status === 'disabled' ? 'red' : 'gold'}>

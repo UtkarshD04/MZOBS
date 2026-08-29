@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, Search, Sun, Moon, Bell, ChevronDown, Settings, LifeBuoy, LogOut, ShieldCheck, Users2 } from 'lucide-react'
+import { Menu, Search, Sun, Moon, Bell, ChevronDown, Settings, LifeBuoy, LogOut } from 'lucide-react'
 import { useApp } from '../../../context/AppContext'
 import Avatar from '../../ui/Avatar'
 import FloatingPanel from '../../ui/FloatingPanel'
@@ -16,8 +16,7 @@ export default function MzobsTopNav() {
   const bellRef = useRef(null)
   const avatarRef = useRef(null)
   const { data: me } = useMeQuery()
-  const isAdmin = me?.accessLevel === 'admin'
-  const { data: dash } = useDashboardQuery({ enabled: isAdmin })
+  const { data: dash } = useDashboardQuery()
 
   function logout() {
     clearAuth()
@@ -42,7 +41,7 @@ export default function MzobsTopNav() {
       </button>
       <div className="flex items-center gap-[9px] font-bold text-base tracking-tight w-60 flex-shrink-0 max-lg:w-auto">
         <img src="/images/logo.png" alt="Mzobs" className="h-12 w-auto object-contain" />
-        <span className="max-sm:hidden text-[10px] font-bold tracking-wide uppercase text-gold-strong bg-gold-tint px-1.5 py-[3px] rounded-md">Internal Ops</span>
+        <span className="max-sm:hidden text-[10px] font-bold tracking-wide uppercase text-gold-strong bg-gold-tint px-1.5 py-[3px] rounded-md">Company Operations</span>
       </div>
 
       <button
@@ -102,13 +101,9 @@ export default function MzobsTopNav() {
               <div className="px-4 py-3.5 border-b border-border">
                 <div className="text-[13px] font-semibold">{me?.name}</div>
                 <div className="text-xs text-ink-tertiary">{me?.role}</div>
-                <div className="flex items-center gap-1 text-[11px] text-green font-semibold mt-1.5">
-                  <ShieldCheck size={12} /> {isAdmin ? 'Mzobs admin account' : 'Mzobs worker account'}
-                </div>
               </div>
               <div className="p-1.5">
                 {[
-                  ...(isAdmin ? [['/app/team', Users2, 'Mzobs Team']] : []),
                   ['/app/settings', Settings, 'Settings'],
                   ['/app/support', LifeBuoy, 'Support Desk'],
                 ].map(([to, Icon, label]) => (

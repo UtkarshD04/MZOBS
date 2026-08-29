@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { Settings, LifeBuoy } from 'lucide-react'
+import { LifeBuoy } from 'lucide-react'
 import { AppProvider } from './context/AppContext'
 import ModalRoot from './components/ui/Modal'
 import DrawerRoot from './components/ui/Drawer'
@@ -17,6 +17,7 @@ import ResumeQueue from './pages/mzobs/ResumeQueue'
 import MockInterviews from './pages/mzobs/MockInterviews'
 import Shortlisted from './pages/mzobs/Shortlisted'
 import Team from './pages/mzobs/Team'
+import Settings from './pages/mzobs/Settings'
 import ComingSoon from './pages/mzobs/ComingSoon'
 
 export default function App() {
@@ -40,7 +41,7 @@ export default function App() {
           <Route element={<RequireAdmin />}>
             <Route path="team" element={<Team />} />
           </Route>
-          <Route path="settings" element={<ComingSoon icon={Settings} title="Settings" subtitle="Portal preferences, rate card and notification rules." />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="support" element={<ComingSoon icon={LifeBuoy} title="Support Desk" subtitle="Tickets raised by candidates and employers." />} />
         </Route>
         </Route>

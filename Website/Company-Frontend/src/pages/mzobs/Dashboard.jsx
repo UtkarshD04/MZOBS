@@ -1,4 +1,4 @@
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   Users,
   FileCheck,
@@ -30,16 +30,15 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const { data: me, isLoading: meLoading } = useMeQuery()
   const isAdmin = me?.accessLevel === 'admin'
-  const { data: dash, isLoading: dashLoading, isError: dashError, refetch: refetchDash } = useDashboardQuery({ enabled: isAdmin })
+  const { data: dash, isLoading: dashLoading, isError: dashError, refetch: refetchDash } = useDashboardQuery()
   const { data: pendingResumes = [] } = useResumeQueueQuery({ status: 'pending', limit: 3 })
 
-  if (meLoading) return <PageSkeleton />
-  // This dashboard aggregates platform-wide data that's admin-gated on the
-  // backend — non-admin staff land on the resume queue instead.
-  if (!isAdmin) return <Navigate to="/app/resumes" replace />
-
-  if (dashLoading) return <PageSkeleton />
+  if (meLoading || dashLoading) return <PageSkeleton />
   if (dashError) return <ErrorState onRetry={refetchDash} />
+
+  const firstName = me?.name?.split(' ')[0] ?? 'there'
+
+  if (!isAdmin) return <WorkerDashboard firstName={firstName} dash={dash} pendingResumes={pendingResumes} navigate={navigate} />
 
   const kpis = dash.kpis ?? {}
   const revenue = dash.revenue ?? {}
@@ -48,7 +47,7 @@ export default function Dashboard() {
     <StaggerGroup>
       <StaggerItem className="flex items-start justify-between gap-5 flex-wrap mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Mzobs Operations</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome back, {firstName}</h1>
           <p className="text-sm text-ink-secondary mt-1">Everything moving between candidates and employers passes through this desk.</p>
         </div>
         <div className="flex items-center gap-2.5 flex-shrink-0">
@@ -201,6 +200,112 @@ export default function Dashboard() {
         <Card pad>
           <div className="text-[15px] font-semibold mb-3">Quick actions</div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <Button onClick={() => navigate('/app/resumes')}>
+              <FileCheck size={15} /> Resume Verification
+            </Button>
+            <Button onClick={() => navigate('/app/mock-interviews')}>
+              <Video size={15} /> Mock Interviews
+            </Button>
+          </div>
+        </Card>
+      </StaggerItem>
+    </StaggerGroup>
+  )
+}
+
+function WorkerDashboard({ firstName, dash, pendingResumes, navigate }) {
+  const kpis = dash.kpis ?? {}
+  const upcomingMockInterviews = dash.upcomingMockInterviews ?? []
+
+  return (
+    <StaggerGroup>
+      <StaggerItem className="flex items-start justify-between gap-5 flex-wrap mb-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome back, {firstName}</h1>
+          <p className="text-sm text-ink-secondary mt-1">Here's what's on your plate today.</p>
+        </div>
+        <div className="flex items-center gap-2.5 flex-shrink-0">
+          <Button onClick={() => navigate('/app/resumes')}>
+            <FileCheck size={15} /> Verification queue
+          </Button>
+        </div>
+      </StaggerItem>
+
+      <StaggerItem className="grid grid-cols-2 gap-4 mb-4">
+        <Card hover pad>
+          <FileCheck size={15} className="text-navy" />
+          <div className="text-[26px] font-bold tracking-tight mt-2.5">
+            <CountUp value={kpis.resumeQueue ?? 0} />
+          </div>
+          <div className="text-xs text-ink-tertiary mt-1 leading-snug">Resumes to verify</div>
+        </Card>
+        <Card hover pad>
+          <Video size={15} className="text-navy" />
+          <div className="text-[26px] font-bold tracking-tight mt-2.5">
+            <CountUp value={kpis.mockQueue ?? 0} />
+          </div>
+          <div className="text-xs text-ink-tertiary mt-1 leading-snug">Mocks scheduled</div>
+        </Card>
+      </StaggerItem>
+
+      <StaggerItem className="grid lg:grid-cols-2 gap-5 mb-4">
+        <QueueCard
+          icon={FileCheck}
+          tone="gold"
+          title="Resumes to verify"
+          count={kpis.resumeQueue ?? 0}
+          onOpen={() => navigate('/app/resumes')}
+          rows={pendingResumes.slice(0, 3).map((c) => ({
+            key: c.id,
+            initials: c.name?.slice(0, 2)?.toUpperCase(),
+            primary: c.name,
+            secondary: c.resume?.uploadedOn ? `Uploaded ${new Date(c.resume.uploadedOn).toLocaleDateString('en-IN')}` : '',
+          }))}
+        />
+        <Card>
+          <CardHead>
+            <span className="text-[15px] font-semibold">My resume queue</span>
+          </CardHead>
+          <div className="p-[22px] pt-4">
+            {(dash.resumeStatus ?? []).every((s) => s.value === 0) ? (
+              <p className="text-[13px] text-ink-secondary">Nothing assigned to you yet.</p>
+            ) : (
+              <HBarList data={dash.resumeStatus ?? []} tone="navy" />
+            )}
+          </div>
+        </Card>
+      </StaggerItem>
+
+      <StaggerItem className="mb-4">
+        <Card>
+          <CardHead>
+            <span className="text-[15px] font-semibold">Your mock interviews</span>
+            <span className="text-navy font-semibold text-[13px] cursor-pointer hover:underline" onClick={() => navigate('/app/mock-interviews')}>
+              View all
+            </span>
+          </CardHead>
+          <div className="p-[22px] pt-3.5 flex flex-col gap-3">
+            {upcomingMockInterviews.length === 0 && <p className="text-[13px] text-ink-secondary">Nothing scheduled.</p>}
+            {upcomingMockInterviews.map((iv) => (
+              <div key={iv.id} className="flex items-center gap-3 p-3 border border-border rounded-xl">
+                <Avatar initials={iv.employee?.name?.slice(0, 2)?.toUpperCase()} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13.5px] font-semibold truncate">{iv.employee?.name}</div>
+                  <div className="text-xs text-ink-tertiary mt-1 flex items-center gap-1">
+                    <Clock size={12} /> {iv.when ? new Date(iv.when).toLocaleString('en-IN') : ''} · Panel {iv.panel}
+                  </div>
+                </div>
+                <Badge tone="gold">Scheduled</Badge>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </StaggerItem>
+
+      <StaggerItem>
+        <Card pad>
+          <div className="text-[15px] font-semibold mb-3">Quick actions</div>
+          <div className="grid grid-cols-2 gap-3">
             <Button onClick={() => navigate('/app/resumes')}>
               <FileCheck size={15} /> Resume Verification
             </Button>
