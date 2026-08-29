@@ -5,7 +5,6 @@ import {
   FileCheck,
   Video,
   Star,
-  Users2,
   Settings,
   LifeBuoy,
   LogOut,
@@ -14,7 +13,7 @@ import {
 import { useApp } from '../../../context/AppContext'
 import { cn } from '../../../lib/utils'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
-import { useMeQuery, logout as clearAuth } from '../../../hooks/useAuth'
+import { logout as clearAuth } from '../../../hooks/useAuth'
 
 function NavItem({ to, label, icon: Icon, badge, collapsed }) {
   return (
@@ -55,9 +54,7 @@ function Group({ label, items, collapsed }) {
 export default function MzobsSidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen } = useApp()
   const navigate = useNavigate()
-  const { data: me } = useMeQuery()
-  const isAdmin = me?.accessLevel === 'admin'
-  const { data: dash } = useDashboardQuery({ enabled: isAdmin })
+  const { data: dash } = useDashboardQuery()
   const kpis = dash?.kpis ?? {}
 
   const candidateOps = [
@@ -65,13 +62,7 @@ export default function MzobsSidebar() {
     { to: '/app/mock-interviews', label: 'Mock Interviews', icon: Video, badge: kpis.mockQueue },
     { to: '/app/shortlisted', label: 'Shortlisted', icon: Star },
   ]
-  // Team is backend-admin-gated (staffTeamRoutes.js requires accessLevel:
-  // admin) — hidden from non-admin staff so the sidebar doesn't link to a
-  // page that 403s.
-  const business = [
-    ...(isAdmin ? [{ to: '/app/team', label: 'Mzobs Team', icon: Users2 }] : []),
-    { to: '/app/settings', label: 'Settings', icon: Settings },
-  ]
+  const business = [{ to: '/app/settings', label: 'Settings', icon: Settings }]
 
   function logout() {
     clearAuth()
@@ -87,7 +78,7 @@ export default function MzobsSidebar() {
         mobileSidebarOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'
       )}
     >
-      {isAdmin && <Group items={[{ to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard }]} collapsed={sidebarCollapsed} />}
+      <Group items={[{ to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard }]} collapsed={sidebarCollapsed} />
       <Group label="Candidate Ops" items={candidateOps} collapsed={sidebarCollapsed} />
       <Group label="Business" items={business} collapsed={sidebarCollapsed} />
 
