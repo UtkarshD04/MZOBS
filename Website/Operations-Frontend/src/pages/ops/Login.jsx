@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import AuthLayout from '../auth/AuthLayout'
 import { loginStaff } from '../../services/authService'
@@ -7,7 +7,6 @@ import { GreenField, greenInputClass } from './authFieldHelpers'
 
 export default function Login() {
   const navigate = useNavigate()
-  const location = useLocation()
   const [showPw, setShowPw] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -36,12 +35,6 @@ export default function Login() {
         </span>
         <h1 className="text-2xl font-bold tracking-tight text-[#111827]">Sign in</h1>
         <p className="text-sm text-[#666666] mt-2 mb-7">Mzobs operations portal — internal use only.</p>
-
-        {location.state?.notAdmin && (
-          <p className="text-sm text-[#b42318] bg-[#fef3f2] border border-[#fecdca] rounded-lg px-3 py-2.5 mb-4">
-            This portal is for admins only.
-          </p>
-        )}
 
         <GreenField label="Mzobs email">
           <div className="relative">

@@ -7,7 +7,11 @@ export function useSubscriptionQuery() {
 }
 
 export function useCreateSubscriptionOrderMutation() {
-  return useMutation({ mutationFn: subscriptionService.createSubscriptionOrder })
+  return useMutation({ mutationFn: (couponCode) => subscriptionService.createSubscriptionOrder(couponCode) })
+}
+
+export function usePreviewCouponMutation() {
+  return useMutation({ mutationFn: subscriptionService.previewCoupon })
 }
 
 export function useVerifySubscriptionPaymentMutation() {

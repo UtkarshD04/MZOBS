@@ -11,3 +11,7 @@ export function assignResume(employeeId, staffId) {
 export function bulkAssignResumes(employeeIds, staffId) {
   return apiClient.patch('/resumes/assign', { employeeIds, staffId }).then((r) => r.data)
 }
+
+export function getResumeStats() {
+  return apiClient.get('/resumes/stats').then((r) => r.data)
+}

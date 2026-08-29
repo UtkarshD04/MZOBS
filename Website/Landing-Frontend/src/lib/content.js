@@ -620,7 +620,7 @@ export const EMPLOYEE_FEATURES = [
   {
     icon: Target,
     title: "Lifetime Platform Access",
-    desc: "One-time ₹99 subscription gives you lifetime access to profile matching, resume reviews, and placement tools.",
+    desc: "One-time ₹299 subscription gives you lifetime access to profile matching, resume reviews, and placement tools.",
     image: "/images/new_images/emp_feature_1.jpg"
   },
   {

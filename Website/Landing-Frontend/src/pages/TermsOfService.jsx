@@ -25,7 +25,7 @@ const SECTIONS = [
   {
     title: '3. Fees and payment — non-refundable',
     body: [
-      'The Placement Support Programme costs a one-time fee of ₹99. There are no recurring charges, subscriptions, or paid tiers — you are never charged again after this payment.',
+      'The Placement Support Programme costs a one-time fee of ₹299. There are no recurring charges, subscriptions, or paid tiers — you are never charged again after this payment.',
       'All payments made to Mzobs are final and non-refundable. This applies regardless of outcome, including if you are not shortlisted by any employer, not selected after an interview, or if your resume verification does not go the way you expected. By paying, you acknowledge and accept this no-refund policy.',
     ],
   },

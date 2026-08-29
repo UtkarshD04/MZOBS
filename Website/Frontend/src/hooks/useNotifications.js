@@ -3,7 +3,12 @@ import * as notificationsService from '../services/notificationsService'
 import { queryKeys } from '../lib/queryClient'
 
 export function useNotificationsQuery() {
-  return useQuery({ queryKey: queryKeys.notifications, queryFn: notificationsService.listNotifications })
+  return useQuery({
+    queryKey: queryKeys.notifications,
+    queryFn: notificationsService.listNotifications,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
+  })
 }
 
 export function useMarkNotificationReadMutation() {

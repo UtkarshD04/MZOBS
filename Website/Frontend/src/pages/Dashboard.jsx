@@ -1,18 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import {
-  Upload,
-  Video,
-  Briefcase,
-  TrendingUp,
-  User,
-  FileText,
-  CreditCard,
-  Clock,
-  Zap,
-  MessageSquare,
-  Building2,
-  EyeOff,
-} from 'lucide-react'
+import { Upload, Video, Briefcase, Clock, Building2, EyeOff } from 'lucide-react'
 import Card, { CardHead } from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Ring from '../components/ui/Ring'
@@ -75,13 +62,17 @@ export default function Dashboard() {
   const trackJobs = track ? jobs.filter((j) => j.track === track) : jobs
   const activity = recentActivity(profile, applications)
   const completion = profileCompletion(profile)
+  const activeApplications = applications.filter((a) => !['selected', 'rejected'].includes(a.status)).length
 
   return (
     <StaggerGroup>
       <StaggerItem className="flex items-start justify-between gap-5 flex-wrap mb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Good afternoon, {profile?.name?.split(' ')[0] ?? ''}</h1>
-          <p className="text-sm text-ink-secondary mt-1">Here's where you stand in the Mzobs placement programme today.</p>
+          <p className="text-sm text-ink-secondary mt-1">
+            {activeApplications > 0 ? `${activeApplications} application${activeApplications === 1 ? '' : 's'} in progress` : 'No active applications yet'}
+            {' · '}Profile {completion}% complete
+          </p>
         </div>
         <div className="flex items-center gap-2.5 flex-shrink-0">
           <Button onClick={() => navigate('/app/resume')}>
@@ -94,31 +85,22 @@ export default function Dashboard() {
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
-        <Card hover pad>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Profile Completion</span>
-            <User size={15} className="text-navy" />
-          </div>
+        <Card pad>
+          <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Profile Completion</span>
           <div className="flex items-center gap-3 mt-3">
             <Ring value={completion} size={52} thick={6} />
             <div className="text-[13px] text-ink-secondary">{completion < 100 ? 'Complete your profile for better matches' : 'Your profile is complete'}</div>
           </div>
         </Card>
-        <Card hover pad>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Resume Score</span>
-            <TrendingUp size={15} className="text-gold-strong" />
-          </div>
+        <Card pad>
+          <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Resume Score</span>
           <div className="text-[30px] font-bold tracking-tight mt-2 text-navy">
             <CountUp value={profile?.resume?.score ?? 0} /> <span className="text-[19px] font-semibold text-ink-tertiary">/100</span>
           </div>
           <Bar value={profile?.resume?.score ?? 0} tone="gold" thin className="mt-2" />
         </Card>
-        <Card hover pad>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Resume Status</span>
-            <FileText size={15} className="text-navy" />
-          </div>
+        <Card pad>
+          <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Resume Status</span>
           <div className="mt-3">
             <Badge tone={profile?.resume?.status === 'verified' ? 'green' : profile?.resume?.status === 'pending' ? 'gold' : 'navy'}>
               {profile?.resume?.status === 'verified' ? 'Verified by Mzobs' : profile?.resume?.status === 'pending' ? 'Under review' : 'Not uploaded'}
@@ -128,17 +110,18 @@ export default function Dashboard() {
             {profile?.resume?.version ? `Score ${profile.resume.score ?? '—'}/100 · v${profile.resume.version}` : 'Upload your resume to get started'}
           </div>
         </Card>
-        <Card hover pad>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Subscription</span>
-            <CreditCard size={15} className="text-navy" />
-          </div>
+        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/subscription')}>
+          <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Subscription</span>
           <div className="mt-3">
-            <Badge tone="navy">{profile?.subscription?.status === 'paid' ? 'Active' : 'Inactive'}</Badge>
+            <Badge tone={profile?.subscription?.status === 'paid' ? 'navy' : 'gold'}>{profile?.subscription?.status === 'paid' ? 'Active' : 'Inactive'}</Badge>
           </div>
-          <div className="text-xs text-ink-tertiary mt-2">
-            {profile?.subscription?.paidOn ? `Paid ${new Date(profile.subscription.paidOn).toLocaleDateString('en-IN')} · ` : ''}₹{PROGRAM_FEE} one-time
-          </div>
+          {profile?.subscription?.status === 'paid' ? (
+            <div className="text-xs text-ink-tertiary mt-2">
+              {profile?.subscription?.paidOn ? `Paid ${new Date(profile.subscription.paidOn).toLocaleDateString('en-IN')} · ` : ''}₹{PROGRAM_FEE} one-time
+            </div>
+          ) : (
+            <div className="text-xs text-gold-strong font-semibold mt-2">Pay ₹{PROGRAM_FEE} to activate →</div>
+          )}
         </Card>
       </StaggerItem>
 
@@ -287,30 +270,10 @@ export default function Dashboard() {
       </StaggerItem>
 
       <StaggerItem>
-        <Card pad>
-          <div className="text-[15px] font-semibold mb-3">Quick actions</div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <Button onClick={() => navigate('/app/resume')}>
-              <Upload size={15} /> Resume Center
-            </Button>
-            <Button onClick={() => navigate('/app/interview')}>
-              <Video size={15} /> Mock Interview
-            </Button>
-            <Button onClick={() => navigate('/app/jobs')}>
-              <Briefcase size={15} /> Job Openings
-            </Button>
-            <Button onClick={() => navigate('/app/messages')}>
-              <MessageSquare size={15} /> Placement Desk
-            </Button>
-          </div>
-          <div className="flex items-start gap-2.5 mt-4 pt-4 border-t border-border">
-            <Zap size={14} className="text-gold-strong mt-0.5 flex-shrink-0" />
-            <p className="text-[12.5px] text-ink-secondary">
-              Mzobs provides placement support, not a job guarantee. Your ₹{PROGRAM_FEE} covers verification, coaching and getting your resume in front
-              of hiring companies — selection is always the employer's call.
-            </p>
-          </div>
-        </Card>
+        <p className="text-xs text-ink-tertiary text-center py-2">
+          Mzobs provides placement support, not a job guarantee. Your ₹{PROGRAM_FEE} covers verification, coaching and getting your resume in front of
+          hiring companies — selection is always the employer's call.
+        </p>
       </StaggerItem>
     </StaggerGroup>
   )

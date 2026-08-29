@@ -5,14 +5,14 @@ const VB_W = 600
 const PAD_TOP = 18
 const PAD_BOTTOM = 28
 
-export default function AreaLineChart({ data, height = 220, formatValue = (v) => v, className }) {
+export function AreaLineChart({ data, height = 220, formatValue = (v) => v, className }) {
   const [hover, setHover] = useState(null)
   const svgRef = useRef(null)
   const gradId = useId()
 
   const points = useMemo(() => {
     const values = data.map((d) => d.value)
-    const maxV = Math.max(...values)
+    const maxV = Math.max(...values, 1)
     const minV = Math.min(0, ...values)
     const usableH = height - PAD_TOP - PAD_BOTTOM
     const stepX = data.length > 1 ? VB_W / (data.length - 1) : VB_W
@@ -24,7 +24,7 @@ export default function AreaLineChart({ data, height = 220, formatValue = (v) =>
 
   const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')
   const baseY = height - PAD_BOTTOM
-  const areaPath = `${linePath} L${points[points.length - 1].x.toFixed(1)},${baseY} L${points[0].x.toFixed(1)},${baseY} Z`
+  const areaPath = points.length ? `${linePath} L${points[points.length - 1].x.toFixed(1)},${baseY} L${points[0].x.toFixed(1)},${baseY} Z` : ''
 
   function onMove(e) {
     const rect = svgRef.current.getBoundingClientRect()
@@ -71,11 +71,15 @@ export default function AreaLineChart({ data, height = 220, formatValue = (v) =>
           if (!r) return null
           return <circle key={i} cx={p.x} cy={p.y} r={r} fill={isLast ? 'var(--color-gold-dot)' : 'var(--color-navy)'} stroke="var(--color-surface)" strokeWidth="2" />
         })}
-        {points.map((p, i) => (
-          <text key={i} x={p.x} y={height - 8} textAnchor="middle" fontSize="11" fontWeight="600" fill="var(--color-ink-tertiary)">
-            {p.label}
-          </text>
-        ))}
+        {points.map((p, i) => {
+          const showEvery = Math.max(1, Math.ceil(points.length / 10))
+          if (i % showEvery !== 0 && i !== points.length - 1) return null
+          return (
+            <text key={i} x={p.x} y={height - 8} textAnchor="middle" fontSize="11" fontWeight="600" fill="var(--color-ink-tertiary)">
+              {p.label}
+            </text>
+          )
+        })}
       </svg>
       {hp && (
         <div

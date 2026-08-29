@@ -29,6 +29,10 @@ export function verifyJobPayment(id, payload) {
   return apiClient.post(`/jobs/${id}/pay/verify`, payload).then((r) => r.data)
 }
 
+export function confirmMockJobPayment(id, orderId) {
+  return apiClient.post(`/jobs/${id}/pay/mock-confirm`, { orderId }).then((r) => r.data)
+}
+
 export function duplicateJob(id) {
   return apiClient.post(`/jobs/${id}/duplicate`).then((r) => r.data)
 }

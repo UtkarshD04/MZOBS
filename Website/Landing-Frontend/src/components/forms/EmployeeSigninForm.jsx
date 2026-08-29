@@ -34,7 +34,7 @@ export default function EmployeeSigninForm() {
     setStatus('submitting')
     try {
       const { token } = await loginEmployee(form)
-      window.location.href = `${EMPLOYEE_APP_URL}/app/dashboard?token=${encodeURIComponent(token)}`
+      window.location.href = `${EMPLOYEE_APP_URL}/app/jobs?token=${encodeURIComponent(token)}`
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })

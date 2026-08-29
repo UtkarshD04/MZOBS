@@ -1,26 +1,40 @@
 import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Inbox, Contact, Building2, Briefcase, ArrowRight } from 'lucide-react'
-import Card from '../../components/ui/Card'
+import { useNavigate, Navigate } from 'react-router-dom'
+import { Inbox, Contact, Building2, Briefcase, ArrowRight, IndianRupee, Users, AlertTriangle, UserCog } from 'lucide-react'
+import Card, { CardHead } from '../../components/ui/Card'
 import CountUp from '../../components/ui/CountUp'
+import { HBarList } from '../../components/ui/Charts'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
+import { useMeQuery } from '../../hooks/useAuth'
 import { useDashboardQuery } from '../../hooks/useDashboard'
 import { useCompaniesQuery } from '../../hooks/useCompanies'
+import { useResumeStatsQuery } from '../../hooks/useResumes'
+import { fmtINR } from '../../lib/utils'
 
 export default function Overview() {
   const navigate = useNavigate()
+  const { data: me, isLoading: meLoading } = useMeQuery()
   const { data: dash, isLoading: dashLoading, isError: dashError, refetch: refetchDash } = useDashboardQuery()
   const { data: companies = [], isLoading: coLoading, isError: coError, refetch: refetchCo } = useCompaniesQuery({})
+  const { data: resumeStats } = useResumeStatsQuery()
 
   const hrContactCount = useMemo(() => companies.reduce((n, co) => n + (co.hiringContacts?.length ?? 0), 0), [companies])
   const verifiedCompanies = useMemo(() => companies.filter((co) => co.verificationStatus === 'verified').length, [companies])
+
+  if (meLoading) return <PageSkeleton />
+  // This dashboard aggregates platform-wide data (all companies, all
+  // revenue) that's admin-gated on the backend — non-admin staff land on
+  // their resume queue instead, same place "HR — assigned resumes only"
+  // access is scoped to everywhere else.
+  if (me?.accessLevel !== 'admin') return <Navigate to="/app/resumes" replace />
 
   if (dashLoading || coLoading) return <PageSkeleton />
   if (dashError || coError) return <ErrorState onRetry={() => (dashError ? refetchDash() : refetchCo())} />
 
   const kpis = dash?.kpis ?? {}
+  const revenue = dash?.revenue ?? {}
   const cards = [
     {
       to: '/app/resumes',
@@ -41,9 +55,9 @@ export default function Overview() {
     {
       to: '/app/companies',
       icon: Building2,
-      label: 'Verified companies',
-      value: verifiedCompanies,
-      hint: `${kpis.companyQueue ?? 0} pending verification`,
+      label: 'Companies',
+      value: kpis.companies ?? verifiedCompanies,
+      hint: `${verifiedCompanies} verified · ${kpis.companyQueue ?? 0} pending your approval`,
       cls: 'text-green',
     },
     {
@@ -55,6 +69,9 @@ export default function Overview() {
       cls: 'text-teal',
     },
   ]
+
+  const funnel = dash?.funnel ?? []
+  const perStaff = resumeStats?.perStaff ?? []
 
   return (
     <StaggerGroup>
@@ -79,6 +96,110 @@ export default function Overview() {
             </div>
           </Card>
         ))}
+      </StaggerItem>
+
+      <StaggerItem className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/payments')}>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Employer revenue</span>
+            <Building2 size={15} className="text-navy" />
+          </div>
+          <div className="text-[26px] font-bold tracking-tight mt-2 text-navy">
+            <CountUp value={revenue.collected ?? 0} prefix="₹" />
+          </div>
+        </Card>
+        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/payments')}>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Subscription revenue</span>
+            <Users size={15} className="text-gold-strong" />
+          </div>
+          <div className="text-[26px] font-bold tracking-tight mt-2 text-gold-strong">
+            <CountUp value={revenue.subscriptions ?? 0} prefix="₹" />
+          </div>
+          <p className="text-[12px] text-ink-tertiary mt-1.5">{kpis.subscribedCandidates ?? 0} candidates paid</p>
+        </Card>
+        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/payments')}>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Outstanding</span>
+            <AlertTriangle size={15} className="text-red" />
+          </div>
+          <div className="text-[26px] font-bold tracking-tight mt-2 text-red">
+            <CountUp value={revenue.outstanding ?? 0} prefix="₹" />
+          </div>
+        </Card>
+        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/team')}>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Employers &amp; staff</span>
+            <UserCog size={15} className="text-teal" />
+          </div>
+          <div className="text-[26px] font-bold tracking-tight mt-2">
+            <CountUp value={kpis.employers ?? 0} />
+          </div>
+          <p className="text-[12px] text-ink-tertiary mt-1.5">{kpis.staff ?? 0} operations/HR accounts</p>
+        </Card>
+      </StaggerItem>
+
+      <StaggerItem className="grid lg:grid-cols-2 gap-5 mt-4">
+        <Card>
+          <CardHead>
+            <span className="text-[15px] font-semibold">Candidate pipeline</span>
+            <span className="text-xs text-ink-tertiary">Registered → Selected</span>
+          </CardHead>
+          <div className="p-[22px] pt-4">
+            {funnel.length === 0 ? <p className="text-[13px] text-ink-secondary">No candidates yet.</p> : <HBarList data={funnel} />}
+          </div>
+        </Card>
+        <Card>
+          <CardHead>
+            <span className="text-[15px] font-semibold">Resumes by HR</span>
+            <span className="text-navy font-semibold text-[13px] cursor-pointer hover:underline" onClick={() => navigate('/app/team')}>
+              Manage team
+            </span>
+          </CardHead>
+          <div className="p-[22px] pt-4 flex flex-col gap-3">
+            {perStaff.length === 0 ? (
+              <p className="text-[13px] text-ink-secondary">No resumes assigned to HR yet — transfer some from the Resumes queue.</p>
+            ) : (
+              perStaff.map((s) => (
+                <div key={s.staffId} className="flex items-center gap-3 p-3 border border-border rounded-xl">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[13px] font-semibold truncate">{s.name}</div>
+                    <div className="text-xs text-ink-tertiary mt-0.5">{s.total} resume(s) assigned</div>
+                  </div>
+                  <div className={`text-[13px] font-bold ${s.pending > 0 ? 'text-gold-strong' : 'text-ink-tertiary'}`}>{s.pending} pending</div>
+                </div>
+              ))
+            )}
+          </div>
+        </Card>
+      </StaggerItem>
+
+      <StaggerItem className="mt-4">
+        <Card>
+          <CardHead>
+            <span className="text-[15px] font-semibold">Recent activity</span>
+          </CardHead>
+          <div className="p-[22px] pt-4">
+            {(dash?.activity ?? []).length === 0 ? (
+              <p className="text-[13px] text-ink-secondary">No activity yet.</p>
+            ) : (
+              <div className="relative pl-[26px]">
+                <div className="absolute left-[5px] top-1 bottom-1 w-px bg-border" />
+                {dash.activity.map((a, i, arr) => (
+                  <div key={i} className={i < arr.length - 1 ? 'pb-5 relative' : 'relative'}>
+                    <div
+                      className={`absolute -left-[26px] top-0.5 w-[11px] h-[11px] rounded-full bg-surface border-2 ${
+                        a.tone === 'green' ? 'border-green-dot' : a.tone === 'gold' ? 'border-gold-dot' : 'border-navy'
+                      }`}
+                    />
+                    <div className="text-[13px]">{a.text}</div>
+                    <div className="text-xs text-ink-tertiary mt-0.5">{a.time}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </Card>
       </StaggerItem>
     </StaggerGroup>
   )

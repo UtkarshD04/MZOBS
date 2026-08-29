@@ -19,7 +19,7 @@ import JobMatching from './pages/JobMatching'
 import Applications from './pages/Applications'
 import InterviewCenter from './pages/InterviewCenter'
 import Notifications from './pages/Notifications'
-import Messages from './pages/Messages'
+import CustomerSupport from './pages/CustomerSupport'
 import Subscription from './pages/Subscription'
 import Settings from './pages/Settings'
 import Support from './pages/Support'
@@ -53,7 +53,7 @@ export default function App() {
             <Route path="applications" element={<Applications />} />
             <Route path="interview-center" element={<InterviewCenter />} />
             <Route path="notifications" element={<Notifications />} />
-            <Route path="messages" element={<Messages />} />
+            <Route path="customer-support" element={<CustomerSupport />} />
             <Route path="subscription" element={<Subscription />} />
             <Route path="settings" element={<Settings />} />
             <Route path="support" element={<Support />} />
