@@ -1,8 +1,7 @@
-import { Briefcase, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Reveal from '../../ui/Reveal'
-import SectionLabel from '../../ui/SectionLabel'
 import SplitText from '../../ui/SplitText'
 import FloatingElement from '../../ui/FloatingElement'
 
@@ -15,14 +14,6 @@ export default function EmployerHero() {
       <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-24 grid lg:grid-cols-12 gap-12 items-center">
         {/* Left: Headline, Copy, CTAs */}
         <div className="lg:col-span-5">
-          <Reveal direction="up" duration={0.7} scale={0.95} blur>
-            <SectionLabel>
-              <span className="inline-flex items-center gap-1.5">
-                <Briefcase size={14} /> For Employers
-              </span>
-            </SectionLabel>
-          </Reveal>
-
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[54px] font-black text-black leading-[1.1] tracking-tight">
             <SplitText text="Hire Verified Talent," />
             <br />

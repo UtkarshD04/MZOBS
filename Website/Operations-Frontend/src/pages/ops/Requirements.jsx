@@ -41,9 +41,9 @@ function ReviewJobModal({ app, job, onDone }) {
     approve.mutate(
       { id: job.id, vacancies, visibleToCandidates: visible, track: job.track },
       {
-        onSuccess: () => {
+        onSuccess: (savedJob) => {
           app.closeModal()
-          app.addToast('success', `Approved — invoice of ${fmtINR(fee)} raised to ${job.company?.name ?? 'employer'}`)
+          app.addToast('success', `Approved — invoice of ${fmtINR(savedJob?.feeTotal ?? fee)} raised to ${job.company?.name ?? 'employer'}`)
           onDone?.()
         },
         onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),

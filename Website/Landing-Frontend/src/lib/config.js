@@ -17,6 +17,11 @@ export const EMPLOYEE_API_URL = import.meta.env.VITE_EMPLOYEE_API_URL ?? 'http:/
 // Same Backend — public contact form submissions.
 export const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL ?? 'http://localhost:4000/api/contact'
 
+// Google OAuth Web Client ID — must match GOOGLE_CLIENT_ID on the backend,
+// since it checks this as the token audience. Left blank, the Google button
+// renders but fails on click instead of crashing the app.
+export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''
+
 export const CONTACT_EMAIL = 'hello@mzobs.com'
 export const CONTACT_PHONE = '+91 98765 43210'
 export const CONTACT_ADDRESS = '4th Floor, Cyber Towers, HITEC City, Hyderabad, IN 500081'

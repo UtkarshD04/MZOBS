@@ -669,6 +669,28 @@ export const EMPLOYER_FEATURES = [
     image: "/images/new_images/employer_feature_4.jpg"
   }
 ]
+export const EMPLOYER_QUALITY_POINTS = [
+  {
+    icon: ShieldCheck,
+    title: "Manually Verified Resumes",
+    desc: "Every resume is personally checked by our operations team — not just auto-filtered by keywords."
+  },
+  {
+    icon: Target,
+    title: "Real Skills, Not Just Claims",
+    desc: "Technical skills, certificates and past experience are validated before a profile is shortlisted."
+  },
+  {
+    icon: MessageCircle,
+    title: "Mock Interviews Conducted",
+    desc: "Candidates go through a mock interview round so you meet people who can actually communicate and perform."
+  },
+  {
+    icon: CheckCircle2,
+    title: "Curated Shortlists, No Resume Dumps",
+    desc: "You receive only genuine, job-ready profiles matched to your requirement — never a mass forward of unread resumes."
+  }
+]
 export const HOME_STATS = WHO_WE_ARE_DATA.stats.map(s => ({ display: s.number, label: s.label }))
 export const EMPLOYEE_STATS = HOME_STATS
 export const EMPLOYER_STATS = HOME_STATS

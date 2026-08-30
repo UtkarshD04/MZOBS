@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
+import { logout as clearAuth } from '../../hooks/useAuth'
 
 export default function CommandPalette() {
   const app = useApp()
@@ -27,7 +28,15 @@ export default function CommandPalette() {
       { grp: 'Navigate', icon: FileCheck, label: 'Go to Resume Verification', act: () => navigate('/app/resumes') },
       { grp: 'Navigate', icon: Video, label: 'Go to Mock Interviews', act: () => navigate('/app/mock-interviews') },
       { grp: 'Actions', icon: Sun, label: 'Toggle theme', act: toggleTheme },
-      { grp: 'Actions', icon: LogOut, label: 'Log out', act: () => navigate('/login') },
+      {
+        grp: 'Actions',
+        icon: LogOut,
+        label: 'Log out',
+        act: () => {
+          clearAuth()
+          navigate('/login')
+        },
+      },
     ]
   }, [navigate, toggleTheme])
 

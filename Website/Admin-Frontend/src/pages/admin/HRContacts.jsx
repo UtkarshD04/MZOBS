@@ -1,49 +1,58 @@
 import { useMemo, useState } from 'react'
-import { Contact, Search, Mail, Phone, ShieldCheck, Building2 } from 'lucide-react'
+import { Contact, Search, Mail, FileText } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
+import Avatar from '../../components/ui/Avatar'
 import CountUp from '../../components/ui/CountUp'
-import { PillTabs } from '../../components/ui/Tabs'
 import EmptyState from '../../components/ui/EmptyState'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
-import { useCompaniesQuery } from '../../hooks/useCompanies'
+import { useTeamQuery } from '../../hooks/useTeam'
+import { useResumeStatsQuery } from '../../hooks/useResumes'
+import { useMockInterviewStatsQuery } from '../../hooks/useMockInterviews'
 
-const TABS = ['All', 'Verified companies', 'Pending companies']
-const TAB_STATUS = [null, 'verified', 'pending']
-const STATUS_TONE = { pending: 'gold', verified: 'green', rejected: 'red' }
+const RESUME_STAGES = [
+  { key: 'pending', label: 'Pending', tone: 'gold' },
+  { key: 'verified', label: 'Verified', tone: 'green' },
+  { key: 'changes', label: 'Changes', tone: 'navy' },
+  { key: 'rejected', label: 'Rejected', tone: 'red' },
+]
 
 export default function HRContacts() {
-  const [tab, setTab] = useState(0)
   const [query, setQuery] = useState('')
-  const { data: companies = [], isLoading, isError, refetch } = useCompaniesQuery({})
+  const { data: team = [], isLoading, isError, refetch } = useTeamQuery({})
+  const { data: resumeStats } = useResumeStatsQuery()
+  const { data: mockStats } = useMockInterviewStatsQuery()
 
-  const contacts = useMemo(() => {
-    return companies.flatMap((co) =>
-      (co.hiringContacts ?? []).map((contact) => ({
-        ...contact,
-        companyId: co.id,
-        companyName: co.name,
-        companyLogo: co.logo || co.name?.slice(0, 2).toUpperCase(),
-        industry: co.industry,
-        verificationStatus: co.verificationStatus,
-      }))
-    )
-  }, [companies])
+  const hrList = useMemo(() => team.filter((m) => m.accessLevel !== 'admin'), [team])
+
+  const statsByStaff = useMemo(() => {
+    const map = new Map()
+    for (const row of resumeStats?.perStaff ?? []) map.set(row.staffId, row)
+    return map
+  }, [resumeStats])
+
+  const mockStatsByStaff = useMemo(() => {
+    const map = new Map()
+    for (const row of mockStats?.perStaff ?? []) map.set(row.staffId, row)
+    return map
+  }, [mockStats])
 
   const filtered = useMemo(() => {
-    const status = TAB_STATUS[tab]
-    let rows = status ? contacts.filter((c) => c.verificationStatus === status) : contacts
-    if (query) {
-      const q = query.toLowerCase()
-      rows = rows.filter((c) => `${c.name} ${c.email} ${c.companyName}`.toLowerCase().includes(q))
-    }
-    return rows
-  }, [contacts, tab, query])
+    if (!query) return hrList
+    const q = query.toLowerCase()
+    return hrList.filter((m) => `${m.name} ${m.email} ${m.role}`.toLowerCase().includes(q))
+  }, [hrList, query])
 
-  const verifiedCompanies = useMemo(() => new Set(companies.filter((c) => c.verificationStatus === 'verified').map((c) => c.id)).size, [companies])
-  const pendingCompanies = useMemo(() => new Set(companies.filter((c) => c.verificationStatus === 'pending').map((c) => c.id)).size, [companies])
+  const totalResumesAssigned = useMemo(
+    () => hrList.reduce((sum, m) => sum + (statsByStaff.get(m.id)?.total ?? 0), 0),
+    [hrList, statsByStaff]
+  )
+  const totalMockInterviews = useMemo(
+    () => hrList.reduce((sum, m) => sum + (mockStatsByStaff.get(m.id)?.total ?? 0), 0),
+    [hrList, mockStatsByStaff]
+  )
 
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
@@ -52,14 +61,14 @@ export default function HRContacts() {
     <StaggerGroup>
       <StaggerItem className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">HR Contacts</h1>
-        <p className="text-sm text-ink-secondary mt-1">Every hiring contact registered by an employer, in one directory.</p>
+        <p className="text-sm text-ink-secondary mt-1">Every HR in MZOBS, with their resume and mock interview workload.</p>
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
         {[
-          ['HR contacts', contacts.length, 'text-navy'],
-          ['Verified companies', verifiedCompanies, 'text-green'],
-          ['Pending companies', pendingCompanies, 'text-gold-strong'],
+          ['HR contacts', hrList.length, 'text-navy'],
+          ['Resumes assigned', totalResumesAssigned, 'text-green'],
+          ['Mock interviews', totalMockInterviews, 'text-gold-strong'],
         ].map(([label, val, cls]) => (
           <Card key={label} hover pad>
             <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">{label}</span>
@@ -70,14 +79,13 @@ export default function HRContacts() {
         ))}
       </StaggerItem>
 
-      <StaggerItem className="flex items-center justify-between gap-3 flex-wrap mb-4">
-        <PillTabs items={TABS} active={tab} onChange={setTab} />
+      <StaggerItem className="flex items-center justify-end mb-4">
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search name, email, company"
+            placeholder="Search name, email, role"
             className="h-9 pl-8 pr-3 rounded-[9px] border border-border-strong bg-surface text-[12.5px] w-[260px] max-sm:w-full outline-none focus:border-navy focus:shadow-[0_0_0_3.5px_var(--color-navy-ring)] transition-[border-color,box-shadow]"
           />
         </div>
@@ -90,40 +98,62 @@ export default function HRContacts() {
           </Card>
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
-            {filtered.map((c) => (
-              <Card key={`${c.companyId}-${c.id}`} hover pad>
-                <div className="flex items-start gap-3">
-                  <div className="w-11 h-11 rounded-[11px] bg-navy-tint text-navy flex items-center justify-center text-sm font-bold flex-shrink-0">
-                    {c.name?.slice(0, 2)?.toUpperCase()}
+            {filtered.map((m) => {
+              const stat = statsByStaff.get(m.id)
+              const mockStat = mockStatsByStaff.get(m.id)
+              return (
+                <Card key={m.id} hover pad>
+                  <div className="flex items-start gap-3">
+                    <Avatar initials={m.name?.slice(0, 2)?.toUpperCase()} size="sm" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[15px] font-semibold truncate">{m.name}</div>
+                      <div className="text-[13px] text-ink-secondary mt-0.5">{m.role}</div>
+                    </div>
+                    <Badge tone={m.status === 'active' ? 'green' : m.status === 'disabled' ? 'red' : 'gold'}>
+                      {m.status === 'active' ? 'Active' : m.status === 'disabled' ? 'Disabled' : 'Invited'}
+                    </Badge>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[15px] font-semibold truncate">{c.name || 'Unnamed contact'}</div>
-                    <div className="text-[13px] text-ink-secondary mt-0.5">{c.role || 'Role not set'}</div>
+
+                  <div className="flex flex-col gap-1.5 mt-3.5 text-xs text-ink-tertiary">
+                    {m.email && (
+                      <span className="flex items-center gap-1.5">
+                        <Mail size={12} /> {m.email}
+                      </span>
+                    )}
                   </div>
-                  <Badge tone={STATUS_TONE[c.verificationStatus] ?? 'navy'}>{c.verificationStatus}</Badge>
-                </div>
 
-                <div className="flex flex-col gap-1.5 mt-3.5 text-xs text-ink-tertiary">
-                  {c.email && (
-                    <span className="flex items-center gap-1.5">
-                      <Mail size={12} /> {c.email}
-                    </span>
-                  )}
-                  {c.phone && (
-                    <span className="flex items-center gap-1.5">
-                      <Phone size={12} /> {c.phone}
-                    </span>
-                  )}
-                </div>
+                  <div className="mt-3.5 pt-3 border-t border-border">
+                    <div className="flex items-center gap-1.5 text-[12.5px] font-semibold mb-1.5">
+                      <FileText size={13} className="text-ink-tertiary" />
+                      Resumes {stat?.total ? `(${stat.total})` : ''}
+                    </div>
+                    {stat && stat.total > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {RESUME_STAGES.filter((s) => stat[s.key] > 0).map((s) => (
+                          <Badge key={s.key} tone={s.tone} dot={false}>
+                            {s.label} {stat[s.key]}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-ink-tertiary text-[12.5px]">No resumes assigned</span>
+                    )}
+                  </div>
 
-                <div className="flex items-center gap-1.5 mt-3.5 pt-3 border-t border-border text-[12.5px]">
-                  <Building2 size={13} className="text-ink-tertiary" />
-                  <span className="font-semibold">{c.companyName}</span>
-                  {c.industry && <span className="text-ink-tertiary">· {c.industry}</span>}
-                  {c.verificationStatus === 'verified' && <ShieldCheck size={13} className="text-green ml-auto flex-shrink-0" />}
-                </div>
-              </Card>
-            ))}
+                  <div className="mt-3 text-[12.5px]">
+                    <span className="font-semibold">Mock interviews:</span>{' '}
+                    {mockStat && mockStat.total > 0 ? (
+                      <>
+                        <b className="text-green">{mockStat.completed}</b> completed ·{' '}
+                        <span className="text-ink-tertiary">{mockStat.scheduled} scheduled</span>
+                      </>
+                    ) : (
+                      <span className="text-ink-tertiary">None yet</span>
+                    )}
+                  </div>
+                </Card>
+              )
+            })}
           </div>
         )}
       </StaggerItem>

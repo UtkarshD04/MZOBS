@@ -8,6 +8,7 @@ import Badge from '../../ui/Badge'
 import MzobsNotificationsPanel from './MzobsNotificationsPanel'
 import { useMeQuery, logout as clearAuth } from '../../../hooks/useAuth'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
+import { useNotificationsQuery } from '../../../hooks/useNotifications'
 
 export default function MzobsTopNav() {
   const app = useApp()
@@ -17,6 +18,8 @@ export default function MzobsTopNav() {
   const avatarRef = useRef(null)
   const { data: me } = useMeQuery()
   const { data: dash } = useDashboardQuery()
+  const { data: notifications = [] } = useNotificationsQuery()
+  const hasUnread = notifications.some((n) => n.unread)
 
   function logout() {
     clearAuth()
@@ -74,7 +77,7 @@ export default function MzobsTopNav() {
             className="relative w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors"
           >
             <Bell size={18} />
-            <span className="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />
+            {hasUnread && <span className="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />}
           </button>
           <div data-panel="notif">
             <FloatingPanel open={drawerOpen} width={380}>

@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
-import SectionLabel from '../../ui/SectionLabel'
 import SplitText from '../../ui/SplitText'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { FAQ_DATA } from '../../../lib/content'
@@ -58,7 +57,6 @@ export default function FAQSection() {
     <section className="bg-white py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-3xl mx-auto">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl mx-auto text-center space-y-5">
-          <SectionLabel>{FAQ_DATA.badge}</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight leading-tight">
             <SplitText text={`${FAQ_DATA.titlePrefix}${FAQ_DATA.titleItalic}${FAQ_DATA.titleSuffix}`} />
           </h2>

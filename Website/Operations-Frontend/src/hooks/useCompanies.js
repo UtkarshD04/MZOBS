@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as companiesService from '../services/companiesService'
 import { queryKeys } from '../lib/queryClient'
 
-export function useCompaniesQuery(filters = {}) {
-  return useQuery({ queryKey: queryKeys.companies(filters), queryFn: () => companiesService.listCompanies(filters) })
+export function useCompaniesQuery(filters = {}, { enabled = true } = {}) {
+  return useQuery({ queryKey: queryKeys.companies(filters), queryFn: () => companiesService.listCompanies(filters), enabled })
 }
 
 export function useVerifyCompanyMutation() {

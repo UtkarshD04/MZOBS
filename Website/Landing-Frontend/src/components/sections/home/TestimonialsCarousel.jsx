@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
-import SectionLabel from '../../ui/SectionLabel'
 import SplitText from '../../ui/SplitText'
 import TiltCard from '../../ui/TiltCard'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { TESTIMONIALS_DATA } from '../../../lib/content'
 
-export default function TestimonialsCarousel({ items, badge, heading }) {
+export default function TestimonialsCarousel({ items, heading }) {
   const testimonialItems = items || TESTIMONIALS_DATA.items
   const trackRef = useRef(null)
   const [canPrev, setCanPrev] = useState(false)
@@ -43,7 +42,6 @@ export default function TestimonialsCarousel({ items, badge, heading }) {
     <section id="testimonials" className="bg-white py-16 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-end justify-between gap-6 mb-10">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-xl">
-          <SectionLabel>{badge || TESTIMONIALS_DATA.badge}</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-[42px] font-black text-black tracking-tight leading-tight">
             {heading || <SplitText text={`${TESTIMONIALS_DATA.titlePrefix}${TESTIMONIALS_DATA.titleItalic}${TESTIMONIALS_DATA.titleSuffix}`} />}
           </h2>

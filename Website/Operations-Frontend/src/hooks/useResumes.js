@@ -6,8 +6,8 @@ export function useResumeQueueQuery(filters = {}) {
   return useQuery({ queryKey: queryKeys.resumes(filters), queryFn: () => resumesService.listResumeQueue(filters) })
 }
 
-export function useResumeStatsQuery() {
-  return useQuery({ queryKey: queryKeys.resumeStats, queryFn: resumesService.getResumeStats })
+export function useResumeStatsQuery({ enabled = true } = {}) {
+  return useQuery({ queryKey: queryKeys.resumeStats, queryFn: resumesService.getResumeStats, enabled })
 }
 
 export function useAssignResumeMutation() {

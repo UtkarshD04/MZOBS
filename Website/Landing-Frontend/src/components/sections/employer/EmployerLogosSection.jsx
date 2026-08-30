@@ -1,5 +1,4 @@
 import Reveal from '../../ui/Reveal'
-import SectionLabel from '../../ui/SectionLabel'
 import SplitText from '../../ui/SplitText'
 import FloatingElement from '../../ui/FloatingElement'
 import { TRUSTED_LOGOS_DATA } from '../../../lib/content'
@@ -23,7 +22,6 @@ export default function EmployerLogosSection() {
     <section className="bg-(--careers-tint-sage) py-12 md:py-16 px-6 md:px-12 overflow-hidden">
       <div className="max-w-7xl mx-auto space-y-10">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl mx-auto text-center">
-          <SectionLabel className="mx-auto">{TRUSTED_LOGOS_DATA.badge}</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-[42px] font-black text-black tracking-tight leading-tight">
             <SplitText text={TRUSTED_LOGOS_DATA.title} className="justify-center" />
           </h2>

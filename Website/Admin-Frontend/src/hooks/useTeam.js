@@ -1,9 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as teamService from '../services/teamService'
 import { queryKeys } from '../lib/queryClient'
 
 export function useTeamQuery(filters = {}) {
-  return useQuery({ queryKey: [...queryKeys.team, filters], queryFn: () => teamService.listTeam(filters) })
+  return useQuery({ queryKey: [...queryKeys.team, filters], queryFn: () => teamService.listTeam(filters), placeholderData: keepPreviousData })
 }
 
 export function useCreateTeammateMutation() {

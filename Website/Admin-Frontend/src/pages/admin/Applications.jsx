@@ -95,15 +95,18 @@ export default function Applications() {
 
   async function applyBulk() {
     setBulkPending(true)
-    try {
-      await Promise.all(selectedIds.map((id) => update.mutateAsync({ id, status: bulkStatus })))
-      app.addToast('success', `${selectedIds.length} application${selectedIds.length === 1 ? '' : 's'} moved to ${bulkStatus}`)
-      setSelectedIds([])
-    } catch (err) {
-      app.addToast('error', err.response?.data?.message ?? 'Something went wrong')
-    } finally {
-      setBulkPending(false)
+    const results = await Promise.allSettled(selectedIds.map((id) => update.mutateAsync({ id, status: bulkStatus })))
+    const failedIds = selectedIds.filter((_, i) => results[i].status === 'rejected')
+    const succeededCount = selectedIds.length - failedIds.length
+
+    if (succeededCount > 0) {
+      app.addToast('success', `${succeededCount} application${succeededCount === 1 ? '' : 's'} moved to ${bulkStatus}`)
     }
+    if (failedIds.length > 0) {
+      app.addToast('error', `${failedIds.length} application${failedIds.length === 1 ? '' : 's'} failed to update`)
+    }
+    setSelectedIds(failedIds)
+    setBulkPending(false)
   }
 
   return (

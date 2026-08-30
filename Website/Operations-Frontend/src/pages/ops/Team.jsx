@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { UserPlus } from 'lucide-react'
+import { UserPlus, ShieldAlert } from 'lucide-react'
 import Card, { CardHead } from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -111,6 +111,38 @@ function InviteTeammateModal({ app, onDone }) {
   )
 }
 
+function ConfirmTeamActionModal({ app, title, body, confirmLabel, onConfirm }) {
+  const [pending, setPending] = useState(false)
+
+  async function submit() {
+    setPending(true)
+    await onConfirm()
+    setPending(false)
+  }
+
+  return (
+    <>
+      <ModalHead title={title} onClose={app.closeModal} />
+      <ModalBody>
+        <div className="flex items-start gap-3">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 bg-red-tint text-red">
+            <ShieldAlert size={20} />
+          </div>
+          <p className="text-[13px] text-ink-secondary">{body}</p>
+        </div>
+      </ModalBody>
+      <ModalFoot>
+        <Button onClick={app.closeModal} disabled={pending}>
+          Cancel
+        </Button>
+        <Button variant="danger" onClick={submit} disabled={pending}>
+          {pending ? 'Saving...' : confirmLabel}
+        </Button>
+      </ModalFoot>
+    </>
+  )
+}
+
 export default function Team() {
   const app = useApp()
   const { data: team = [], isLoading, isError, refetch } = useTeamQuery()
@@ -129,25 +161,55 @@ export default function Team() {
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
 
+  function runUpdate(id, input, successMsg) {
+    return new Promise((resolve) => {
+      updateTeammate.mutate(
+        { id, ...input },
+        {
+          onSuccess: () => {
+            app.addToast('success', successMsg)
+            app.closeModal()
+            resolve()
+          },
+          onError: (err) => {
+            app.addToast('error', err.response?.data?.message ?? 'Something went wrong')
+            resolve()
+          },
+        }
+      )
+    })
+  }
+
   function toggleStatus(m) {
     const nextStatus = m.status === 'disabled' ? 'active' : 'disabled'
-    updateTeammate.mutate(
-      { id: m.id, status: nextStatus },
-      {
-        onSuccess: () => app.addToast('success', `${m.name} ${nextStatus === 'disabled' ? 'disabled' : 'reactivated'}`),
-        onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
-      }
+    if (nextStatus === 'active') {
+      return runUpdate(m.id, { status: nextStatus }, `${m.name} reactivated`)
+    }
+    app.openModal(
+      <ConfirmTeamActionModal
+        app={app}
+        title={`Disable ${m.name}?`}
+        body={`${m.name} will immediately lose access to the panel. This can be reversed later from this page.`}
+        confirmLabel="Disable account"
+        onConfirm={() => runUpdate(m.id, { status: nextStatus }, `${m.name} disabled`)}
+      />
     )
   }
 
   function toggleAccess(m) {
     const nextAccess = m.accessLevel === 'admin' ? 'staff' : 'admin'
-    updateTeammate.mutate(
-      { id: m.id, accessLevel: nextAccess },
-      {
-        onSuccess: () => app.addToast('success', `${m.name} is now ${nextAccess === 'admin' ? 'an admin' : 'HR-only'}`),
-        onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
-      }
+    app.openModal(
+      <ConfirmTeamActionModal
+        app={app}
+        title={nextAccess === 'admin' ? `Make ${m.name} an admin?` : `Remove admin access from ${m.name}?`}
+        body={
+          nextAccess === 'admin'
+            ? `${m.name} will get full panel access — every company, payment, and resume, plus the ability to manage other accounts.`
+            : `${m.name} will be scoped down to only the resumes assigned to them.`
+        }
+        confirmLabel={nextAccess === 'admin' ? 'Grant admin access' : 'Remove admin access'}
+        onConfirm={() => runUpdate(m.id, { accessLevel: nextAccess }, `${m.name} is now ${nextAccess === 'admin' ? 'an admin' : 'HR-only'}`)}
+      />
     )
   }
 

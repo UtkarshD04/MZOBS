@@ -10,3 +10,14 @@ apiClient.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && window.location.pathname !== '/login') {
+      localStorage.removeItem('mzobs-staff-token')
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
