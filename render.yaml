@@ -34,25 +34,9 @@ services:
         destination: /index.html
 
   - type: web
-    name: staff-dashboard
-    runtime: static
-    rootDir: Website/Staff-Frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        sync: false
-      - key: VITE_FILE_BASE_URL
-        sync: false
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-
-  - type: web
     name: admin-dashboard
     runtime: static
-    rootDir: Website/Admin-Frontend
+    rootDir: Website/Company-Frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     envVars:

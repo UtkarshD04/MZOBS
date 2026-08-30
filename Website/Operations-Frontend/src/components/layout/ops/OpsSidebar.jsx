@@ -46,10 +46,10 @@ function Group({ label, items, collapsed }) {
 export default function OpsSidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen } = useApp()
   const navigate = useNavigate()
-  const { data: dash } = useDashboardQuery()
   const { data: me } = useMeQuery()
-  const kpis = dash?.kpis ?? {}
   const isAdmin = me?.accessLevel === 'admin'
+  const { data: dash } = useDashboardQuery({ enabled: isAdmin })
+  const kpis = dash?.kpis ?? {}
 
   const items = [
     { to: '/app/resumes', label: 'Resumes', icon: Inbox, badge: kpis.resumeQueue },

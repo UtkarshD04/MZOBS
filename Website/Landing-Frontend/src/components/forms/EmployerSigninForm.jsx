@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Eye, EyeOff } from 'lucide-react'
+import { ArrowRight, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { Field, Input, SubmitButton } from '../ui/AuthField'
+import { GoogleAuthButton, OrDivider } from '../ui/GoogleAuthButton'
 import { EMPLOYER_APP_URL } from '../../lib/config'
-import { loginEmployer } from '../../lib/employerAuth'
+import { loginEmployer, loginEmployerWithGoogle } from '../../lib/employerAuth'
 
 const initialForm = { email: '', password: '' }
 
@@ -41,16 +42,32 @@ export default function EmployerSigninForm() {
     }
   }
 
+  async function handleGoogleCredential(credential) {
+    setErrors({})
+    setStatus('submitting')
+    try {
+      const { token } = await loginEmployerWithGoogle({ credential })
+      window.location.href = `${EMPLOYER_APP_URL}/dashboard?token=${encodeURIComponent(token)}`
+    } catch (err) {
+      setStatus('idle')
+      setErrors({ form: err.message })
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit} noValidate>
+      <GoogleAuthButton onCredential={handleGoogleCredential} onError={(message) => setErrors({ form: message })} />
+      <OrDivider />
+
       <Field label="Work email">
-        <Input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@company.com" />
+        <Input icon={Mail} type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@company.com" />
         {errors.email && <span className="text-xs text-red mt-1 block">{errors.email}</span>}
       </Field>
 
       <Field label="Password">
         <div className="relative">
           <Input
+            icon={Lock}
             type={showPassword ? 'text' : 'password'}
             value={form.password}
             onChange={(e) => update('password', e.target.value)}

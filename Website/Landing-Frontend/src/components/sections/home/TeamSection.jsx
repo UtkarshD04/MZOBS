@@ -1,5 +1,4 @@
 import Reveal from '../../ui/Reveal'
-import SectionLabel from '../../ui/SectionLabel'
 import SplitText from '../../ui/SplitText'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { TEAM } from '../../../lib/content'
@@ -9,7 +8,6 @@ export default function TeamSection() {
     <section id="team" className="bg-white py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-7xl mx-auto space-y-10">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl mx-auto text-center">
-          <SectionLabel className="mx-auto">Our People</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-[42px] font-black text-black tracking-tight leading-tight">
             <SplitText text="Meet The Team Behind Mzobs" className="justify-center" />
           </h2>

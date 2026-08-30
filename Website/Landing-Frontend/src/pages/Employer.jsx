@@ -4,6 +4,7 @@ import FloatingQuickNav from '../components/ui/FloatingQuickNav'
 import EmployerHero from '../components/sections/employer/EmployerHero'
 import StatsTimeline from '../components/sections/home/StatsTimeline'
 import EmployerWhySection from '../components/sections/employer/EmployerWhySection'
+import EmployerQualitySection from '../components/sections/employer/EmployerQualitySection'
 import EmployerLogosSection from '../components/sections/employer/EmployerLogosSection'
 import EmployerCTABand from '../components/sections/employer/EmployerCTABand'
 
@@ -22,10 +23,13 @@ export default function Employer() {
       {/* 3. Why employers choose Mzobs: feature grid */}
       <EmployerWhySection />
 
-      {/* 4. Trusted by / companies hiring on Mzobs */}
+      {/* 4. Genuine, verified candidates — no fake resumes */}
+      <EmployerQualitySection />
+
+      {/* 5. Trusted by / companies hiring on Mzobs */}
       <EmployerLogosSection />
 
-      {/* 5. Closing CTA */}
+      {/* 6. Closing CTA */}
       <EmployerCTABand />
 
       <Footer />

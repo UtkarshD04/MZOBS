@@ -22,6 +22,7 @@ import {
 import { useResumeStatsQuery } from '../../hooks/useResumes'
 import { useMockInterviewStatsQuery } from '../../hooks/useMockInterviews'
 import { useMeQuery } from '../../hooks/useAuth'
+import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 
 const RESUME_STAGES = [
   { key: 'pending', label: 'Pending', tone: 'gold' },
@@ -228,7 +229,8 @@ function DeleteTeammateModal({ app, member, onDone }) {
 export default function Team() {
   const app = useApp()
   const [query, setQuery] = useState('')
-  const { data: team = [], isLoading, isError, refetch } = useTeamQuery({ search: query || undefined })
+  const debouncedQuery = useDebouncedValue(query, 300)
+  const { data: team = [], isLoading, isError, refetch } = useTeamQuery({ search: debouncedQuery || undefined })
   const { data: allTeam = [] } = useTeamQuery({})
   const { data: resumeStats } = useResumeStatsQuery()
   const { data: mockStats } = useMockInterviewStatsQuery()

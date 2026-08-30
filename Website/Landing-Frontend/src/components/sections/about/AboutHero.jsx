@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import Reveal from '../../ui/Reveal'
-import SectionLabel from '../../ui/SectionLabel'
 import SplitText from '../../ui/SplitText'
 import FloatingElement from '../../ui/FloatingElement'
 import { WHO_WE_ARE_DATA } from '../../../lib/content'
@@ -14,10 +13,6 @@ export default function AboutHero() {
       <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-24 grid lg:grid-cols-12 gap-12 items-center">
         {/* Left: Headline & Copy */}
         <div className="lg:col-span-5">
-          <Reveal direction="up" duration={0.7} scale={0.95} blur>
-            <SectionLabel>{WHO_WE_ARE_DATA.badge}</SectionLabel>
-          </Reveal>
-
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-black text-black leading-[1.15] tracking-tight">
             <SplitText text={WHO_WE_ARE_DATA.heroTitleLine1} />
             <br />

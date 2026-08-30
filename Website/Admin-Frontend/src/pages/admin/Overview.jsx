@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Inbox, Contact, Building2, Briefcase, ArrowRight, IndianRupee, Users, AlertTriangle, UserCog } from 'lucide-react'
+import { Inbox, Contact, Building2, Briefcase, ArrowRight, Users, AlertTriangle, UserCog } from 'lucide-react'
 import Card, { CardHead } from '../../components/ui/Card'
 import CountUp from '../../components/ui/CountUp'
 import { HBarList } from '../../components/ui/Charts'
@@ -9,16 +9,17 @@ import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
 import { useDashboardQuery } from '../../hooks/useDashboard'
 import { useCompaniesQuery } from '../../hooks/useCompanies'
+import { useTeamQuery } from '../../hooks/useTeam'
 import { useResumeStatsQuery } from '../../hooks/useResumes'
-import { fmtINR } from '../../lib/utils'
 
 export default function Overview() {
   const navigate = useNavigate()
   const { data: dash, isLoading: dashLoading, isError: dashError, refetch: refetchDash } = useDashboardQuery()
   const { data: companies = [], isLoading: coLoading, isError: coError, refetch: refetchCo } = useCompaniesQuery({})
+  const { data: team = [] } = useTeamQuery({})
   const { data: resumeStats } = useResumeStatsQuery()
 
-  const hrContactCount = useMemo(() => companies.reduce((n, co) => n + (co.hiringContacts?.length ?? 0), 0), [companies])
+  const hrContactCount = useMemo(() => team.filter((m) => m.accessLevel !== 'admin').length, [team])
   const verifiedCompanies = useMemo(() => companies.filter((co) => co.verificationStatus === 'verified').length, [companies])
 
   if (dashLoading || coLoading) return <PageSkeleton />
@@ -40,7 +41,7 @@ export default function Overview() {
       icon: Contact,
       label: 'HR contacts',
       value: hrContactCount,
-      hint: 'Hiring contacts across every registered company',
+      hint: 'HR staff accounts at MZOBS',
       cls: 'text-navy',
     },
     {

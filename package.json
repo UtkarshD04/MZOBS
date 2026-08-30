@@ -2,7 +2,7 @@
   "name": "mzobs",
   "private": true,
   "scripts": {
-    "dev": "concurrently -n backend,landing,employer,employee,admin,company,ops -c blue,magenta,green,yellow,cyan,red,white \"npm --prefix Backend run dev\" \"npm --prefix Website/Landing-Frontend run dev\" \"npm --prefix Website/Employer-Frontend run dev\" \"npm --prefix Website/Frontend run dev\" \"npm --prefix Website/Admin-Frontend run dev\" \"npm --prefix Website/Company-Frontend run dev\" \"npm --prefix Website/Operations-Frontend run dev\"",
+    "dev": "concurrently -n backend,landing,employer,employee,company,ops,admin -c blue,magenta,green,yellow,red,white,cyan \"npm --prefix Backend run dev\" \"npm --prefix Website/Landing-Frontend run dev\" \"npm --prefix Website/Employer-Frontend run dev\" \"npm --prefix Website/Frontend run dev\" \"npm --prefix Website/Company-Frontend run dev\" \"npm --prefix Website/Operations-Frontend run dev\" \"npm --prefix Website/Admin-Frontend run dev\"",
     "install:all": "npm install && npm install --prefix Backend && npm install --prefix Website/Landing-Frontend && npm install --prefix Website/Employer-Frontend && npm install --prefix Website/Frontend && npm install --prefix Website/Admin-Frontend && npm install --prefix Website/Company-Frontend && npm install --prefix Website/Operations-Frontend"
   },
   "devDependencies": {

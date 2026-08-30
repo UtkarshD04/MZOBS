@@ -1,7 +1,6 @@
 import { Fragment } from 'react'
 import { ChevronRight } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
-import SectionLabel from '../../ui/SectionLabel'
 import SplitText from '../../ui/SplitText'
 import TiltCard from '../../ui/TiltCard'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
@@ -22,7 +21,6 @@ export default function HowWeHireSection() {
 
       <div className="relative max-w-7xl mx-auto">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-3xl mx-auto text-center space-y-5">
-          <SectionLabel>{OUR_GOAL_DATA.badge}</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight leading-tight">
             <SplitText text={`${OUR_GOAL_DATA.titlePrefix}${OUR_GOAL_DATA.titleItalic}${OUR_GOAL_DATA.titleSuffix}`} />
           </h2>

@@ -31,7 +31,7 @@ export default function Home() {
       <CategoryGrid />
 
       {/* 6. Companies hiring on Mzobs */}
-      <EmployerLogosSection />
+      <EmployerLogosSection showBadge={false} />
 
       {/* 7. How companies hire: colorful workflow steps */}
       <CompanyWorkflowSection />

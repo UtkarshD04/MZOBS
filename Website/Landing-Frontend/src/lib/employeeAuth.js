@@ -19,6 +19,14 @@ export function signupEmployee({ name, email, phone, password, experience, gradu
   return postJSON('/auth/signup', { name, email, phone, password, experience, graduation, paymentOrderId })
 }
 
+export function loginEmployeeWithGoogle({ credential }) {
+  return postJSON('/auth/google-login', { credential })
+}
+
+export function signupEmployeeWithGoogle({ credential, phone, experience, graduation, paymentOrderId }) {
+  return postJSON('/auth/google-signup', { credential, phone, experience, graduation, paymentOrderId })
+}
+
 export function forgotPasswordEmployee({ email }) {
   return postJSON('/auth/forgot-password', { email })
 }

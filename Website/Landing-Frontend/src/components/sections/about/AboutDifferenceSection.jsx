@@ -3,10 +3,9 @@ import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import SplitText from '../../ui/SplitText'
-import SectionLabel from '../../ui/SectionLabel'
 import { WHAT_MAKES_US_DIFFERENT_DATA } from '../../../lib/content'
 
-const { badge, titlePrefix, titleItalic, titleSuffix, desc, columnLeft, columnRight, rows } =
+const { titlePrefix, titleItalic, titleSuffix, desc, columnLeft, columnRight, rows } =
   WHAT_MAKES_US_DIFFERENT_DATA
 
 export default function AboutDifferenceSection() {
@@ -17,7 +16,6 @@ export default function AboutDifferenceSection() {
     <section className="py-16 md:py-24 px-6 md:px-12 bg-white">
       <div className="max-w-5xl mx-auto">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="text-center mb-12">
-          <SectionLabel className="mx-auto">{badge}</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight leading-tight mt-1">
             <SplitText text={`${titlePrefix}${titleItalic}${titleSuffix}`} className="justify-center" />
           </h2>

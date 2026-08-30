@@ -1,5 +1,4 @@
 import Reveal from '../../ui/Reveal'
-import SectionLabel from '../../ui/SectionLabel'
 import SplitText from '../../ui/SplitText'
 import TiltCard from '../../ui/TiltCard'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
@@ -20,7 +19,6 @@ export default function AboutApproachSection() {
 
       <div className="relative max-w-7xl mx-auto">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-3xl mx-auto text-center space-y-5">
-          <SectionLabel className="mx-auto">HOW WE WORK</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight leading-tight">
             <SplitText text="Verification, Not Just Listings" className="justify-center" />
           </h2>

@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import SectionLabel from '../../ui/SectionLabel'
 import SplitText from '../../ui/SplitText'
 import Reveal from '../../ui/Reveal'
 import TiltCard from '../../ui/TiltCard'
@@ -88,7 +87,6 @@ export default function CompanyWorkflowSection() {
     <section className="bg-[#F5F5F5] py-16 md:py-24 px-6 md:px-12 overflow-hidden">
       <div className="max-w-5xl mx-auto">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl mx-auto text-center space-y-5">
-          <SectionLabel>{COMPANY_WORKFLOW_DATA.badge}</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight leading-tight">
             <SplitText text={`${COMPANY_WORKFLOW_DATA.titlePrefix}${COMPANY_WORKFLOW_DATA.titleItalic}${COMPANY_WORKFLOW_DATA.titleSuffix}`} />
           </h2>

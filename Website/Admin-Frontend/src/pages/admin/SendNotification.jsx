@@ -9,6 +9,7 @@ import { Field, Input, Textarea } from '../../components/ui/Field'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { useApp } from '../../context/AppContext'
 import { useRecipientsQuery, useSendNotificationMutation } from '../../hooks/useSendNotification'
+import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 
 const AUDIENCES = [
   { key: 'employee', label: 'Employees', plural: 'employees', icon: Users },
@@ -26,7 +27,8 @@ export default function SendNotification() {
   const [body, setBody] = useState('')
 
   const audience = AUDIENCES[tab]
-  const { data: recipients = [], isLoading } = useRecipientsQuery({ audience: audience.key, search })
+  const debouncedSearch = useDebouncedValue(search, 300)
+  const { data: recipients = [], isLoading } = useRecipientsQuery({ audience: audience.key, search: debouncedSearch })
   const send = useSendNotificationMutation()
 
   function switchAudience(i) {
