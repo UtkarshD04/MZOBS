@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Sliders, MapPin, Bookmark, Sparkles, BarChart3, Briefcase, Users, ShieldCheck, Lock, CheckCircle2 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
@@ -11,7 +11,7 @@ import EmptyState from '../components/ui/EmptyState'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import ErrorState from '../components/ui/ErrorState'
-import { categoryOf } from '../lib/category'
+import { categoryOf, trackKeysForCategoryTitle } from '../lib/category'
 import { useApp } from '../context/AppContext'
 import { openApplyModal, openJobDetailModal, fmtSalaryRange } from '../lib/modals'
 import { useProfileQuery } from '../hooks/useProfile'
@@ -91,6 +91,8 @@ function JobCard({ job, applied, eligible, saved, employeeTrack, onToggleSave, o
 
 export default function JobMatching() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const categoryTitle = searchParams.get('category')
   const [tab, setTab] = useState(0)
   const [saved, setSaved] = useState(() => new Set(JSON.parse(localStorage.getItem(SAVED_KEY) ?? '[]')))
 
@@ -120,6 +122,8 @@ export default function JobMatching() {
   const appliedJobIds = new Set(applications.map((a) => a.jobId))
   const savedJobs = jobs.filter((j) => saved.has(j.id))
   const trackJobs = track?.key ? jobs.filter((j) => j.track === track.key) : []
+  const categoryTrackKeys = categoryTitle ? trackKeysForCategoryTitle(categoryTitle) : null
+  const categoryJobs = categoryTrackKeys ? jobs.filter((j) => categoryTrackKeys.includes(j.track)) : []
 
   const cardProps = (job) => ({
     job,
@@ -171,89 +175,125 @@ export default function JobMatching() {
         </Card>
       </StaggerItem>
 
-      <StaggerItem className="flex items-center justify-between flex-wrap gap-3 mb-4">
-        <PillTabs items={['All openings', 'My track', 'Saved', 'Compare']} active={tab} onChange={setTab} />
-        <div className="flex gap-2">
-          <Button size="sm">
-            <Sliders size={14} /> Filters
+      {categoryTitle ? (
+        <StaggerItem className="flex items-center justify-between flex-wrap gap-3 mb-4">
+          <Badge tone="navy" dot={false}>
+            Filtered by {categoryTitle}
+          </Badge>
+          <Button size="sm" onClick={() => navigate('/app/jobs')}>
+            Clear filter · All openings
           </Button>
-          <Select className="h-8 text-[12.5px]" defaultValue="Newest">
-            <option>Newest</option>
-          </Select>
-        </div>
-      </StaggerItem>
+        </StaggerItem>
+      ) : (
+        <StaggerItem className="flex items-center justify-between flex-wrap gap-3 mb-4">
+          <PillTabs items={['All openings', 'My track', 'Saved', 'Compare']} active={tab} onChange={setTab} />
+          <div className="flex gap-2">
+            <Button size="sm">
+              <Sliders size={14} /> Filters
+            </Button>
+            <Select className="h-8 text-[12.5px]" defaultValue="Newest">
+              <option>Newest</option>
+            </Select>
+          </div>
+        </StaggerItem>
+      )}
 
       <StaggerItem>
-        {tab === 0 &&
-          (jobs.length ? (
+        {categoryTitle ? (
+          categoryJobs.length ? (
             <div className="flex flex-col gap-4">
-              {jobs.map((j) => (
-                <JobCard key={j.id} {...cardProps(j)} />
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <EmptyState icon={Briefcase} title="No live openings right now" body="Check back soon — new requirements post here as employers pay for sourcing." />
-            </Card>
-          ))}
-
-        {tab === 1 &&
-          (trackJobs.length ? (
-            <div className="flex flex-col gap-4">
-              {trackJobs.map((j) => (
+              {categoryJobs.map((j) => (
                 <JobCard key={j.id} {...cardProps(j)} />
               ))}
             </div>
           ) : (
             <Card>
               <EmptyState
-                icon={Sparkles}
-                title={track?.key ? `No live ${track.label || track.key} requirements right now` : 'No track assigned yet'}
-                body={track?.key ? "We'll notify you the moment a company posts one matching your track." : 'Complete your mock interview to get a skill track assigned.'}
+                icon={Briefcase}
+                title="No openings available right now"
+                body={`We don't have any live ${categoryTitle} requirements at the moment. Check back soon, or browse everything that's open.`}
                 action={
-                  <Button variant="primary" className="mt-2" onClick={() => setTab(0)}>
+                  <Button variant="primary" className="mt-2" onClick={() => navigate('/app/jobs')}>
                     Browse all openings
                   </Button>
                 }
               />
             </Card>
-          ))}
-
-        {tab === 2 &&
-          (savedJobs.length ? (
-            <div className="flex flex-col gap-4">
-              {savedJobs.map((j) => (
-                <JobCard key={j.id} {...cardProps(j)} />
+          )
+        ) : (
+          <>
+            {tab === 0 &&
+              (jobs.length ? (
+                <div className="flex flex-col gap-4">
+                  {jobs.map((j) => (
+                    <JobCard key={j.id} {...cardProps(j)} />
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <EmptyState icon={Briefcase} title="No live openings right now" body="Check back soon — new requirements post here as employers pay for sourcing." />
+                </Card>
               ))}
-            </div>
-          ) : (
-            <Card>
-              <EmptyState
-                icon={Bookmark}
-                title="No saved openings yet"
-                body="Tap the bookmark icon on any opening to save it for later."
-                action={
-                  <Button variant="primary" className="mt-2" onClick={() => setTab(0)}>
-                    Browse all openings
-                  </Button>
-                }
-              />
-            </Card>
-          ))}
 
-        {tab === 3 && (
-          <Card>
-            <EmptyState
-              icon={BarChart3}
-              title="Select openings to compare"
-              body="Choose up to 3 roles to compare salary, location and requirements side by side."
-              action={
-                <Button variant="primary" className="mt-2" onClick={() => setTab(0)}>
-                  Go to all openings
-                </Button>
-              }
-            />
-          </Card>
+            {tab === 1 &&
+              (trackJobs.length ? (
+                <div className="flex flex-col gap-4">
+                  {trackJobs.map((j) => (
+                    <JobCard key={j.id} {...cardProps(j)} />
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <EmptyState
+                    icon={Sparkles}
+                    title={track?.key ? `No live ${track.label || track.key} requirements right now` : 'No track assigned yet'}
+                    body={track?.key ? "We'll notify you the moment a company posts one matching your track." : 'Complete your mock interview to get a skill track assigned.'}
+                    action={
+                      <Button variant="primary" className="mt-2" onClick={() => setTab(0)}>
+                        Browse all openings
+                      </Button>
+                    }
+                  />
+                </Card>
+              ))}
+
+            {tab === 2 &&
+              (savedJobs.length ? (
+                <div className="flex flex-col gap-4">
+                  {savedJobs.map((j) => (
+                    <JobCard key={j.id} {...cardProps(j)} />
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <EmptyState
+                    icon={Bookmark}
+                    title="No saved openings yet"
+                    body="Tap the bookmark icon on any opening to save it for later."
+                    action={
+                      <Button variant="primary" className="mt-2" onClick={() => setTab(0)}>
+                        Browse all openings
+                      </Button>
+                    }
+                  />
+                </Card>
+              ))}
+
+            {tab === 3 && (
+              <Card>
+                <EmptyState
+                  icon={BarChart3}
+                  title="Select openings to compare"
+                  body="Choose up to 3 roles to compare salary, location and requirements side by side."
+                  action={
+                    <Button variant="primary" className="mt-2" onClick={() => setTab(0)}>
+                      Go to all openings
+                    </Button>
+                  }
+                />
+              </Card>
+            )}
+          </>
         )}
       </StaggerItem>
     </StaggerGroup>

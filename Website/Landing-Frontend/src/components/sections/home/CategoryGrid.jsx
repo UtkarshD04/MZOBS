@@ -28,7 +28,7 @@ export default function CategoryGrid() {
               <StaggerItem key={cat.title}>
                 <SpotlightCard
                   as="a"
-                  href={`${EMPLOYEE_APP_URL}?category=${encodeURIComponent(cat.title)}`}
+                  href={`${EMPLOYEE_APP_URL}/app/jobs?category=${encodeURIComponent(cat.title)}`}
                   glow="rgba(255,255,255,0.35)"
                   className={`flex items-center gap-4 rounded-2xl p-4 border border-black/[0.04] hover:bg-[var(--careers-accent)] transition-colors duration-300 ${TINTS[i % TINTS.length]}`}
                 >

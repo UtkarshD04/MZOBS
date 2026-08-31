@@ -22,7 +22,7 @@ export default function EmployerHero() {
 
           <Reveal direction="up" delay={0.35} duration={0.85} scale={0.96}>
             <p className="mt-6 text-base sm:text-lg text-[#595959] max-w-xl leading-relaxed font-medium">
-              A single pipeline for requirements, interviews, offers and billing — filled only with candidates our team has personally screened.
+              Connect with verified talent and discover candidates relevant to your requirements — all within a hiring ecosystem built for better employer–candidate connections.
             </p>
           </Reveal>
 

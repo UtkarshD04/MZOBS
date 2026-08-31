@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Search, ArrowUpRight, MapPin } from 'lucide-react'
+import { Search, ArrowUpRight, ShieldCheck } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import RotatingWord from '../../ui/RotatingWord'
 import SplitText from '../../ui/SplitText'
 import FloatingElement from '../../ui/FloatingElement'
-import { HERO_DATA, WHO_WE_ARE_DATA } from '../../../lib/content'
+import { HERO_DATA } from '../../../lib/content'
 import { EMPLOYEE_APP_URL } from '../../../lib/config'
 
 const ROTATING_WORD_COLORS = [
@@ -17,7 +17,6 @@ const ROTATING_WORD_COLORS = [
 
 export default function CareersHero() {
   const [query, setQuery] = useState('')
-  const companyStat = WHO_WE_ARE_DATA.stats[1]
 
   function handleSearch(e) {
     e.preventDefault()
@@ -73,9 +72,9 @@ export default function CareersHero() {
           </Reveal>
 
           <Reveal direction="up" delay={0.55} duration={0.75}>
-            <div className="mt-5 flex items-center gap-2 text-[13px] font-bold text-[#595959]">
-              <MapPin size={15} className="text-[var(--careers-accent)]" />
-              Hiring across India — {companyStat.number} companies actively recruiting on Mzobs
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--careers-tint-sage)] pl-3 pr-4 py-2 text-[13px] font-bold text-[var(--careers-tint-sage-ink)] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.15)]">
+              <ShieldCheck size={16} className="text-[var(--careers-accent)] shrink-0" />
+              Verified Talent. Genuine Opportunities. Across India.
             </div>
           </Reveal>
         </div>
