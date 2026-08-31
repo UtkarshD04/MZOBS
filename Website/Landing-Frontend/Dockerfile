@@ -3,7 +3,11 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY . .
-RUN ls -la /app
+# node:22-alpine's bundled npm has a known bug mis-reporting a valid
+# lockfileVersion-3 file as missing when it contains platform-specific
+# optional deps (this lockfile was generated on macOS) — upgrading npm
+# before `ci` avoids it.
+RUN npm install -g npm@latest && npm --version
 RUN npm ci
 
 
