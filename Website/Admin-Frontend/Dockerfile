@@ -3,7 +3,7 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY . .
-RUN npm ci
+RUN npm ci --no-audit --no-fund || (echo "--- npm debug log ---"; cat /root/.npm/_logs/*-debug-0.log; exit 1)
 
 # Vite inlines these into the JS bundle at build time, so they must be
 # passed as --build-arg, not as runtime container env vars.
