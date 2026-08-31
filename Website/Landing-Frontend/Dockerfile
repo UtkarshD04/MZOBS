@@ -2,12 +2,8 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 
-# Cache-buster: the server's builder is serving a stale layer for the steps
-# below despite content/instruction changes. This RUN's literal text is
-# unique per push, so it cannot be served from any prior cache.
-RUN echo "cachebust-20260831-114500"
-
 COPY . .
+RUN ls -la /app
 RUN npm ci
 
 
