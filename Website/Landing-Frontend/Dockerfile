@@ -3,12 +3,7 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY . .
-RUN echo "--- env ---" && env | sort && \
-    echo "--- npm config list -l (relevant) ---" && npm config list -l | grep -iE "lock|omit|include" && \
-    echo "--- explicit package-lock value ---" && npm config get package-lock && \
-    echo "--- node -p require path check ---" && node -p "require('fs').existsSync('/app/package-lock.json')" && \
-    echo "--- realpath ---" && realpath package-lock.json
-RUN npm ci --package-lock=true --no-audit --no-fund
+RUN npm ci --no-audit --no-fund || (echo "--- npm debug log ---"; cat /root/.npm/_logs/*-debug-0.log; exit 1)
 
 
 ARG VITE_CONTACT_API_URL
