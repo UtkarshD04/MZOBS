@@ -3,12 +3,12 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY . .
-# node:22-alpine's bundled npm has a known bug mis-reporting a valid
-# lockfileVersion-3 file as missing when it contains platform-specific
-# optional deps (this lockfile was generated on macOS) — upgrading npm
-# before `ci` avoids it.
-RUN npm install -g npm@latest && npm --version
-RUN npm ci
+RUN echo "--- env ---" && env | sort && \
+    echo "--- npm config list -l (relevant) ---" && npm config list -l | grep -iE "lock|omit|include" && \
+    echo "--- explicit package-lock value ---" && npm config get package-lock && \
+    echo "--- node -p require path check ---" && node -p "require('fs').existsSync('/app/package-lock.json')" && \
+    echo "--- realpath ---" && realpath package-lock.json
+RUN npm ci --package-lock=true --no-audit --no-fund
 
 
 ARG VITE_CONTACT_API_URL
