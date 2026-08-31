@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import Reveal from '../../ui/Reveal'
 import SplitText from '../../ui/SplitText'
 import FloatingElement from '../../ui/FloatingElement'
@@ -27,12 +28,12 @@ export default function AboutHero() {
 
           <Reveal direction="up" delay={0.45} duration={0.8} scale={0.97}>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a
-                href="#our-story"
+              <Link
+                to="/our-story"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--careers-accent)] text-white text-sm font-bold border border-[var(--careers-accent)] hover:bg-white hover:text-[#595959] hover:border-[#666] transition-colors"
               >
                 Our Story
-              </a>
+              </Link>
               <a
                 href="#team"
                 className="inline-flex items-center px-6 py-3 rounded-full bg-white text-[#595959] text-sm font-bold border border-[#666] hover:bg-[var(--careers-accent)] hover:text-white hover:border-[var(--careers-accent)] transition-colors"

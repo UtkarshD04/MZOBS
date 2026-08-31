@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
-import { ChevronRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ChevronRight, ArrowRight } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import SplitText from '../../ui/SplitText'
 import TiltCard from '../../ui/TiltCard'
@@ -58,6 +59,15 @@ export default function HowWeHireSection() {
             )
           })}
         </StaggerGroup>
+
+        <Reveal direction="up" delay={0.15} duration={0.7} className="mt-10 text-center">
+          <Link
+            to="/our-story"
+            className="inline-flex items-center gap-1.5 text-[13px] font-bold text-[var(--careers-accent)] hover:text-black transition-colors"
+          >
+            Our Story <ArrowRight size={14} />
+          </Link>
+        </Reveal>
       </div>
     </section>
   )

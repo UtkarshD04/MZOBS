@@ -33,7 +33,7 @@ export const HERO_DATA = {
   titleLine1: "Hiring, Built",
   titleItalic: "Right From",
   titleLine2: "Both Sides.",
-  subtitle: "Mzobs connects verified job seekers with employers who need them — every profile and every requirement checked by a real person before it goes live.",
+  subtitle: "MZOBS bridges the gap between verified talent and genuine employment opportunities — connecting job seekers with employers through a trusted, human-verified hiring process.",
   ctaText: "Get Started",
   bgImage: "/images/hero-bg.jpg",
   rotatingPrefix: "It's time to",
@@ -75,25 +75,29 @@ export const SERVICES_DATA = {
       icon: Target,
       title: "Verified Candidate Pipeline",
       desc: "Every profile is screened and resume-checked by our team before it reaches an employer.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=85"
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=85",
+      expandedText: "Every candidate profile that reaches an employer on Mzobs has already been reviewed by our team, not just run through an automated filter. We check the details on each profile, rebuild resumes where needed, and only pass a candidate forward once they're verified against the role. That means employers spend their time meeting people who are actually qualified — not sifting through a pile of unscreened applications."
     },
     {
       icon: Settings,
       title: "Guided Job Matching",
       desc: "Curated openings filtered to your track — no scrolling through noise.",
-      image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=85"
+      image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=85",
+      expandedText: "Instead of handing job seekers a search bar and leaving them to scroll through hundreds of unrelated postings, Mzobs curates openings around the track they've told us they're targeting. Every opening a candidate sees is guided by what they actually want and are qualified for, so the matches are relevant from the start — cutting out the noise of a generic job board."
     },
     {
       icon: Sparkles,
       title: "Structured Interviews",
       desc: "Schedule, track and score interviews from one shared pipeline.",
-      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=85"
+      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=85",
+      expandedText: "Once a candidate is matched to a role, the interview process runs through one shared pipeline instead of scattered emails and calendar invites. Scheduling, tracking and scoring each round happens in the same place, so both our team and the employer can see exactly where a candidate stands at every stage — from first interview to final decision."
     },
     {
       icon: BarChart3,
       title: "Offer & Hiring Analytics",
       desc: "Track offers, acceptance and time-to-fill with full visibility.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=85"
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=85",
+      expandedText: "From the moment an offer goes out, Mzobs tracks its status — sent, accepted or declined — alongside how long each requirement took to fill. Employers get full visibility into where every hire stands, without having to chase updates across email threads or spreadsheets to find out."
     }
   ],
   featuredCard: {
@@ -269,8 +273,8 @@ export const OUR_GOAL_DATA = {
   badge: "OUR MISSION",
   titlePrefix: "Turning ",
   titleItalic: "Hiring",
-  titleSuffix: " Into A Fair Match",
-  desc: "Mzobs started because hiring was broken on both sides — job seekers were applying into a void, and employers were drowning in unscreened resumes. Our team brings together operations, recruiting and product expertise with one shared mission: verify every profile and every requirement before it reaches the other side, so both sides get a faster, better hire.",
+  titleSuffix: " Into a Trusted Match",
+  desc: "MZOBS is built to make hiring more trustworthy and relevant for both sides — helping job seekers showcase their skills and helping employers discover candidates who better fit their requirements.",
   ctaText: "Meet Our Team",
   image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
 }
@@ -395,28 +399,28 @@ export const APPROACH_DATA = {
       num: "01",
       icon: Lightbulb,
       title: "Create Your Profile",
-      desc: "Job seekers sign up and tell us their target role; employers share their hiring requirement.",
+      desc: "Job seekers create their profile with their skills, experience and preferred opportunities, while employers share the roles and requirements they are looking to fill.",
       image: "/images/new_images/step_01.jpg"
     },
     {
       num: "02",
       icon: BarChart2,
-      title: "Get Verified",
-      desc: "Our team reviews and rebuilds every resume, and screens every candidate before they're matched.",
+      title: "Build Your Trust Profile",
+      desc: "MZOBS helps build credibility through profile verification and trust-based information, giving both job seekers and employers greater confidence in the hiring process.",
       image: "/images/new_images/step_02.jpg"
     },
     {
       num: "03",
       icon: Rocket,
-      title: "Match & Interview",
-      desc: "Verified candidates and open roles are matched, then run through structured interviews.",
+      title: "Discover & Match",
+      desc: "Job seekers can discover relevant opportunities, while employers can find talent based on the requirements of their roles.",
       image: "/images/new_images/step_03.jpg"
     },
     {
       num: "04",
       icon: Target,
-      title: "Hire & Get Placed",
-      desc: "Offers are issued, accepted and tracked — from first application to signed offer.",
+      title: "Connect & Hire",
+      desc: "Once the right opportunity and candidate come together, both sides can move forward with the hiring process through MZOBS.",
       image: "/images/new_images/step_04.jpg"
     }
   ]
