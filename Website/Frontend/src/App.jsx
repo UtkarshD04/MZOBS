@@ -29,7 +29,7 @@ import Support from './pages/Support'
 // visit here without a session just bounces straight there.
 function RedirectToLanding() {
   useEffect(() => {
-    window.location.href = LANDING_URL
+    window.location.href = `${LANDING_URL}/employees`
   }, [])
   return null
 }
