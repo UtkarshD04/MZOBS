@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { CheckCircle2, Send } from 'lucide-react'
-import { Field, Input, Select, Textarea } from '../ui/Field'
-import Button from '../ui/Button'
+import { CheckCircle2, Send, User, Mail, Tag, MessageSquare } from 'lucide-react'
+import { Field, Input, Select, Textarea, SubmitButton } from '../ui/AuthField'
 import { submitContactMessage } from '../../lib/contact'
 
 const initialForm = { name: '', email: '', role: 'Job Seeker', subject: '', message: '' }
@@ -47,29 +46,33 @@ export default function ContactForm() {
   if (status === 'success') {
     return (
       <div className="flex flex-col items-center justify-center text-center h-full py-10">
-        <div className="w-14 h-14 rounded-full bg-green-tint text-green flex items-center justify-center mb-4">
+        <div className="w-14 h-14 rounded-full bg-[var(--careers-tint-sage)] text-[var(--careers-accent)] flex items-center justify-center mb-4">
           <CheckCircle2 size={26} />
         </div>
-        <h3 className="text-lg font-bold tracking-tight">Message sent</h3>
-        <p className="text-[13.5px] text-ink-secondary mt-1.5 max-w-xs">
+        <h3 className="text-lg font-black text-black tracking-tight">Message sent</h3>
+        <p className="text-[13.5px] text-[#595959] font-medium mt-1.5 max-w-xs">
           Thanks for reaching out — our team will get back to you within one business day.
         </p>
-        <Button variant="secondary" size="md" className="mt-6" onClick={() => setStatus('idle')}>
+        <button
+          type="button"
+          onClick={() => setStatus('idle')}
+          className="mt-6 h-10 px-5 inline-flex items-center justify-center rounded-full border border-[#e0e0e0] bg-white text-sm font-bold text-black hover:border-[var(--careers-accent)] hover:text-[var(--careers-accent)] transition-colors duration-150"
+        >
           Send another message
-        </Button>
+        </button>
       </div>
     )
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <div className="grid sm:grid-cols-2 gap-x-4">
+      <div className="grid sm:grid-cols-2 sm:gap-x-4">
         <Field label="Full name">
-          <Input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" />
+          <Input icon={User} value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" />
           {errors.name && <span className="text-xs text-red mt-1 block">{errors.name}</span>}
         </Field>
         <Field label="Email">
-          <Input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@example.com" />
+          <Input icon={Mail} type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@example.com" />
           {errors.email && <span className="text-xs text-red mt-1 block">{errors.email}</span>}
         </Field>
       </div>
@@ -83,7 +86,7 @@ export default function ContactForm() {
       </Field>
 
       <Field label="Subject">
-        <Input value={form.subject} onChange={(e) => update('subject', e.target.value)} placeholder="What's this about?" />
+        <Input icon={Tag} value={form.subject} onChange={(e) => update('subject', e.target.value)} placeholder="What's this about?" />
         {errors.subject && <span className="text-xs text-red mt-1 block">{errors.subject}</span>}
       </Field>
 
@@ -94,7 +97,7 @@ export default function ContactForm() {
 
       {submitError && <p className="text-xs text-red mb-3">{submitError}</p>}
 
-      <Button type="submit" variant="primary" size="lg" pill disabled={status === 'submitting'} className="w-full sm:w-auto mt-2">
+      <SubmitButton disabled={status === 'submitting'} className="w-full sm:w-auto sm:px-8 mt-2">
         {status === 'submitting' ? (
           'Sending...'
         ) : (
@@ -102,7 +105,7 @@ export default function ContactForm() {
             Send Message <Send size={15} />
           </>
         )}
-      </Button>
+      </SubmitButton>
     </form>
   )
 }

@@ -85,12 +85,14 @@ export default function Footer() {
             <h4 className="text-sm font-black text-black uppercase tracking-wider">{FOOTER_DATA.socialsTitle}</h4>
             <div className="flex flex-wrap gap-2.5">
               {FOOTER_DATA.socialsItems.map((item, idx) => {
-                const Icon = SOCIAL_ICONS[item]
+                const Icon = SOCIAL_ICONS[item.label]
                 return (
                   <motion.a
                     key={idx}
-                    href="#"
-                    aria-label={item}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.label}
                     whileHover={{ scale: 1.15, rotate: -10, backgroundColor: '#3D5C34', color: '#fff' }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ type: 'spring', stiffness: 350, damping: 15 }}
