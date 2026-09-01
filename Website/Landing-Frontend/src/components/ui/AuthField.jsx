@@ -45,6 +45,10 @@ export function Select({ icon: Icon, className, children, ...props }) {
   )
 }
 
+export function Textarea({ className, ...props }) {
+  return <textarea className={cn(inputClass, 'h-auto min-h-[110px] py-2.5 resize-none', className)} {...props} />
+}
+
 export function SubmitButton({ children, className, ...props }) {
   return (
     <button

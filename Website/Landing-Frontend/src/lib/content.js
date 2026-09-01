@@ -523,7 +523,12 @@ export const FOOTER_DATA = {
     { label: "Contact", to: "/contact" },
   ],
   socialsTitle: "Socials",
-  socialsItems: ["Instagram", "Facebook", "LinkedIn", "Twitter (X)"],
+  socialsItems: [
+    { label: "Instagram", href: "https://www.instagram.com/mzobs2601?igsi=MXA5ODdrZGFzbWptYw==" },
+    { label: "Facebook", href: "#" },
+    { label: "LinkedIn", href: "#" },
+    { label: "Twitter (X)", href: "#" },
+  ],
   contactTitle: "Contact",
   phone: CONTACT_PHONE,
   email: CONTACT_EMAIL,
