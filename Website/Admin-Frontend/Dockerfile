@@ -2,7 +2,10 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 
-COPY . .
+# This Dokploy app's build context is the repo root (not this subfolder),
+# so paths here are prefixed with the app's path instead of relying on
+# a subfolder-scoped context like the other Website frontends use.
+COPY Website/Admin-Frontend/ .
 RUN npm ci --no-audit --no-fund || (echo "--- npm debug log ---"; cat /root/.npm/_logs/*-debug-0.log; exit 1)
 
 # Vite inlines these into the JS bundle at build time, so they must be
@@ -16,7 +19,7 @@ RUN npm run build
 
 # ---- Serve ----
 FROM nginx:1.27-alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY Website/Admin-Frontend/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
