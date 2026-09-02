@@ -246,6 +246,11 @@ export default function Employees() {
                   <span className="text-ink-secondary">
                     Subscription: <b className="text-ink">{e.subscription?.status === 'paid' ? 'Active' : 'Unpaid'}</b>
                   </span>
+                  {e.subscription?.status === 'paid' && (
+                    <span className="text-ink-secondary">
+                      Paid: <b className="text-ink">₹{e.subscription.amount}</b>
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
