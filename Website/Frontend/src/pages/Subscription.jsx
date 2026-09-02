@@ -9,6 +9,7 @@ import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import ErrorState from '../components/ui/ErrorState'
 import { fmtINR } from '../lib/utils'
+import { downloadInvoice } from '../services/subscriptionService'
 import {
   useSubscriptionQuery,
   useCreateSubscriptionOrderMutation,
@@ -46,6 +47,8 @@ export default function Subscription() {
   const [paying, setPaying] = useState(false)
   const [payError, setPayError] = useState('')
   const [couponResult, setCouponResult] = useState(null)
+  const [downloadingInvoice, setDownloadingInvoice] = useState(false)
+  const [invoiceError, setInvoiceError] = useState('')
 
   if (subLoading || profileLoading) return <PageSkeleton />
   if (subError || profileError) return <ErrorState onRetry={() => (subError ? refetchSub() : refetchProfile())} />
@@ -74,6 +77,18 @@ export default function Subscription() {
       setPayError(err.response?.data?.message ?? err.message ?? 'Something went wrong. Please try again.')
     } finally {
       setPaying(false)
+    }
+  }
+
+  async function handleDownloadInvoice() {
+    setInvoiceError('')
+    setDownloadingInvoice(true)
+    try {
+      await downloadInvoice()
+    } catch (err) {
+      setInvoiceError(err.response?.data?.message ?? err.message ?? 'Could not download invoice. Please try again.')
+    } finally {
+      setDownloadingInvoice(false)
     }
   }
 
@@ -207,6 +222,7 @@ export default function Subscription() {
           <CardHead>
             <span className="text-[15px] font-semibold">Payment history</span>
           </CardHead>
+          {invoiceError ? <div className="px-[22px] pt-3 text-[13px] text-red">{invoiceError}</div> : null}
           <TableWrap className="border-none rounded-none">
             <Table columns={['Description', 'Date', 'Amount', 'Status', '']}>
               {subscription.status === 'paid' ? (
@@ -218,8 +234,8 @@ export default function Subscription() {
                     <Badge tone="green">Paid</Badge>
                   </Td>
                   <Td>
-                    <Button variant="ghost" size="sm" disabled>
-                      <Download size={14} /> Invoice
+                    <Button variant="ghost" size="sm" disabled={downloadingInvoice} onClick={handleDownloadInvoice}>
+                      {downloadingInvoice ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />} Invoice
                     </Button>
                   </Td>
                 </Tr>
