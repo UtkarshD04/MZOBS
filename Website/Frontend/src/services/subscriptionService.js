@@ -4,6 +4,24 @@ export function getSubscription() {
   return apiClient.get('/subscription').then((r) => r.data)
 }
 
+// Triggers a browser download of the PDF — response comes back as a blob
+// (not JSON) since it's a file, so it bypasses the usual `.then((r) => r.data)`
+// JSON unwrap the other calls in this file use.
+export async function downloadInvoice() {
+  const res = await apiClient.get('/subscription/invoice', { responseType: 'blob' })
+  const filenameMatch = res.headers['content-disposition']?.match(/filename="(.+)"/)
+  const filename = filenameMatch?.[1] ?? 'mzobs-invoice.pdf'
+
+  const url = window.URL.createObjectURL(res.data)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.URL.revokeObjectURL(url)
+}
+
 export function createSubscriptionOrder(couponCode) {
   return apiClient.post('/subscription/order', couponCode ? { couponCode } : {}).then((r) => r.data)
 }
