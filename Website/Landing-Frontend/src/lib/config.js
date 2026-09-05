@@ -17,10 +17,20 @@ export const EMPLOYEE_API_URL = import.meta.env.VITE_EMPLOYEE_API_URL ?? 'http:/
 // Same Backend — public contact form submissions.
 export const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL ?? 'http://localhost:4000/api/contact'
 
+// Same Backend — public, unauthenticated feed of jobs admin/ops have
+// approved and pushed live, for the home page's "Latest jobs" section.
+export const PUBLIC_JOBS_API_URL = import.meta.env.VITE_PUBLIC_JOBS_API_URL ?? 'http://localhost:4000/api/jobs'
+
 // Google OAuth Web Client ID — must match GOOGLE_CLIENT_ID on the backend,
 // since it checks this as the token audience. Left blank, the Google button
 // renders but fails on click instead of crashing the app.
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''
+
+// MSG91 OTP widget credentials (Widget ID + Token Auth from the MSG91
+// dashboard) — these are meant to live in client-side JS by design, unlike
+// the backend's MSG91 Auth Key which must stay server-only.
+export const MSG91_WIDGET_ID = import.meta.env.VITE_MSG91_WIDGET_ID ?? ''
+export const MSG91_TOKEN_AUTH = import.meta.env.VITE_MSG91_TOKEN_AUTH ?? ''
 
 export const CONTACT_EMAIL = 'hello@mzobs.com'
 export const CONTACT_PHONE = '+91 98765 43210'

@@ -15,6 +15,7 @@ import MockInterviews from './pages/admin/MockInterviews'
 import HRContacts from './pages/admin/HRContacts'
 import Companies from './pages/admin/Companies'
 import Requirements from './pages/admin/Requirements'
+import PostJob from './pages/admin/PostJob'
 import Shortlisted from './pages/admin/Shortlisted'
 import Queries from './pages/admin/Queries'
 import Payments from './pages/admin/Payments'
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="hr-contacts" element={<HRContacts />} />
             <Route path="companies" element={<Companies />} />
             <Route path="requirements" element={<Requirements />} />
+            <Route path="requirements/new" element={<PostJob />} />
             <Route path="shortlisted" element={<Shortlisted />} />
             <Route path="placements" element={<Placements />} />
             <Route path="queries" element={<Queries />} />

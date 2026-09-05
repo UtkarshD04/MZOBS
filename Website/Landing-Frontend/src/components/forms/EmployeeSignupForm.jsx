@@ -4,7 +4,8 @@ import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Graduat
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
 import { EMPLOYEE_APP_URL } from '../../lib/config'
-import { signupEmployee, signupEmployeeWithGoogle } from '../../lib/employeeAuth'
+import { signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../lib/employeeAuth'
+import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 
 const GRADUATION_OPTIONS = [
   '12th / No Degree',
@@ -39,6 +40,9 @@ function validate(form, hasGoogle) {
   return errors
 }
 
+const otpButtonClass =
+  'h-11 px-4 rounded-xl text-[13px] font-bold border border-[#C9C9C9] bg-white text-[#595959] hover:border-[var(--careers-accent)] hover:text-[var(--careers-accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+
 export default function EmployeeSignupForm() {
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
@@ -46,8 +50,54 @@ export default function EmployeeSignupForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [googleCredential, setGoogleCredential] = useState(null)
 
+  const [otp, setOtp] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
+  const [sendingOtp, setSendingOtp] = useState(false)
+  const [verifyingOtp, setVerifyingOtp] = useState(false)
+  const [otpError, setOtpError] = useState('')
+  const [phoneToken, setPhoneToken] = useState(null)
+
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }))
+    // Phone changed after verifying — the token was minted for the old
+    // number, so it can't be trusted for the new one anymore.
+    if (key === 'phone') {
+      setPhoneToken(null)
+      setOtpSent(false)
+      setOtp('')
+      setOtpError('')
+    }
+  }
+
+  async function handleSendOtp() {
+    setOtpError('')
+    setSendingOtp(true)
+    try {
+      if (otpSent) await retryWidgetOtp('SMS')
+      else await sendWidgetOtp(form.phone)
+      setOtpSent(true)
+    } catch (err) {
+      setOtpError(err.message)
+    } finally {
+      setSendingOtp(false)
+    }
+  }
+
+  async function handleVerifyOtp() {
+    setOtpError('')
+    setVerifyingOtp(true)
+    try {
+      // MSG91's widget verifies the code itself and hands back a signed
+      // access-token — that still has to be confirmed server-to-server
+      // before we trust it (a client can't just assert "verified").
+      const widgetResult = await verifyWidgetOtp(otp)
+      const { phoneToken: token } = await verifyEmployeePhoneWidget({ phone: form.phone, accessToken: widgetResult.message })
+      setPhoneToken(token)
+    } catch (err) {
+      setOtpError(err.message)
+    } finally {
+      setVerifyingOtp(false)
+    }
   }
 
   function handleGoogleCredential(credential) {
@@ -60,6 +110,7 @@ export default function EmployeeSignupForm() {
   async function handleSubmit(e) {
     e.preventDefault()
     const nextErrors = validate(form, Boolean(googleCredential))
+    if (!phoneToken) nextErrors.phone = nextErrors.phone ?? 'Please verify your mobile number.'
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
@@ -71,8 +122,9 @@ export default function EmployeeSignupForm() {
             phone: form.phone,
             experience: form.experience,
             graduation: form.graduation,
+            phoneToken,
           })
-        : await signupEmployee(form)
+        : await signupEmployee({ ...form, phoneToken })
       // Account is created unpaid — profile setup and the one-time ₹299
       // payment both happen inside the dashboard app, not here. Same
       // cross-app token handoff EmployeeSigninForm uses (localStorage isn't
@@ -115,9 +167,49 @@ export default function EmployeeSignupForm() {
           value={form.phone}
           onChange={(e) => update('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
           placeholder="98765 43210"
+          disabled={Boolean(phoneToken)}
         />
         {errors.phone && <span className="text-xs text-red mt-1 block">{errors.phone}</span>}
       </Field>
+
+      {phoneToken ? (
+        <div className="flex items-center gap-2 -mt-2 mb-4 text-[13px] font-semibold text-[var(--careers-tint-sage-ink)]">
+          <CheckCircle2 size={15} className="shrink-0" />
+          Mobile number verified
+        </div>
+      ) : otpSent ? (
+        <div className="-mt-2 mb-4">
+          <Field label="Enter OTP">
+            <Input
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              placeholder="6-digit code"
+              inputMode="numeric"
+            />
+          </Field>
+          <div className="flex items-center gap-3 -mt-2">
+            <button type="button" className={otpButtonClass} onClick={handleVerifyOtp} disabled={verifyingOtp || otp.length !== 6}>
+              {verifyingOtp ? 'Verifying...' : 'Verify'}
+            </button>
+            <button
+              type="button"
+              onClick={handleSendOtp}
+              disabled={sendingOtp}
+              className="text-[12.5px] font-bold text-[var(--careers-accent)] hover:underline disabled:opacity-50"
+            >
+              {sendingOtp ? 'Resending...' : 'Resend OTP'}
+            </button>
+          </div>
+          {otpError && <span className="text-xs text-red mt-2 block">{otpError}</span>}
+        </div>
+      ) : (
+        <div className="-mt-2 mb-4">
+          <button type="button" className={otpButtonClass} onClick={handleSendOtp} disabled={sendingOtp || form.phone.replace(/\D/g, '').length !== 10}>
+            {sendingOtp ? 'Sending...' : 'Send OTP'}
+          </button>
+          {otpError && <span className="text-xs text-red mt-2 block">{otpError}</span>}
+        </div>
+      )}
 
       {!googleCredential && (
         <Field label="Password">
@@ -181,7 +273,7 @@ export default function EmployeeSignupForm() {
 
       {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
 
-      <SubmitButton disabled={status === 'submitting'} className="mt-2">
+      <SubmitButton disabled={status === 'submitting' || !phoneToken} className="mt-2">
         {status === 'submitting' ? (
           'Creating your account...'
         ) : (

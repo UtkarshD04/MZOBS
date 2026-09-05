@@ -1,51 +1,52 @@
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
-import CareersHero from '../components/sections/home/CareersHero'
-import SpotlightGrid from '../components/sections/home/SpotlightGrid'
-import HowWeHireSection from '../components/sections/home/HowWeHireSection'
+import JobSearchHero from '../components/sections/home/JobSearchHero'
+import QuickDiscoveryStrip from '../components/sections/home/QuickDiscoveryStrip'
+import LatestJobs from '../components/sections/home/LatestJobs'
 import CategoryGrid from '../components/sections/home/CategoryGrid'
-import EmployerLogosSection from '../components/sections/employer/EmployerLogosSection'
-import CompanyWorkflowSection from '../components/sections/home/CompanyWorkflowSection'
-import FAQSection from '../components/sections/home/FAQSection'
-import StatsTimeline from '../components/sections/home/StatsTimeline'
+import CompaniesHiring from '../components/sections/home/CompaniesHiring'
+import HowItWorksSteps from '../components/sections/home/HowItWorksSteps'
+import CareerSupportSection from '../components/sections/home/CareerSupportSection'
+import HomeEmployerCTA from '../components/sections/home/HomeEmployerCTA'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>Mzobs — Hiring, Built Right From Both Sides</title>
+    // id="services" preserves the shared Footer's "/#services" link
+    // (Footer.jsx / FOOTER_DATA, rendered on every page) now that this
+    // redesign has no dedicated services section of its own — it just
+    // scrolls back to the top of the job-discovery home page instead
+    // of landing on a missing anchor.
+    <div id="services" className="min-h-screen bg-white text-(--jobs-navy) font-sans antialiased selection:bg-(--jobs-teal-tint)">
+      <title>Mzobs — Find Verified Jobs & Hire Job-Ready Talent</title>
 
-      {/* 1. Navbar */}
+      {/* 1. Sticky job-discovery navigation (sitewide header) */}
       <Navbar />
 
-      {/* 2. Hero: rotating headline + job search + banner image */}
-      <CareersHero />
+      {/* 2. Hero: headline + job search bar + popular searches */}
+      <JobSearchHero />
 
-      {/* 3. Spotlight: what Mzobs offers, pastel cards */}
-      <SpotlightGrid />
+      {/* 3. Quick job-discovery strip: freshers, remote, top metros */}
+      <QuickDiscoveryStrip />
 
-      {/* 4. How We Hire: mission narrative + 4-step process */}
-      <HowWeHireSection />
+      {/* 4. Latest opportunities — first content section after the hero */}
+      <LatestJobs />
 
-      {/* 5. Find Your Team: browse jobs by category */}
+      {/* 5. Explore jobs by category */}
       <CategoryGrid />
 
-      {/* 6. Companies hiring on Mzobs */}
-      <EmployerLogosSection showBadge={false} />
+      {/* 6. Companies hiring through MZOBS (single, consolidated company section) */}
+      <CompaniesHiring />
 
-      {/* 7. How companies hire: colorful workflow steps */}
-      <CompanyWorkflowSection />
+      {/* 7. How it works: search, chat, get hired */}
+      <HowItWorksSteps />
 
-      
-     
+      {/* 8. MZOBS career support: resume, interview prep, matching, employer access */}
+      <CareerSupportSection />
 
-      {/* 9. Mzobs by the numbers */}
+      {/* 9. Employer CTA band */}
+      <HomeEmployerCTA />
 
-      <StatsTimeline />
-
-      {/* 8. Frequently asked questions */}
- <FAQSection />
-      {/* 10. Footer */}
       <Footer />
 
       {/* Floating quick-links button */}
