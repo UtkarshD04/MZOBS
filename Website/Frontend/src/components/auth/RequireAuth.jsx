@@ -6,7 +6,13 @@ export default function RequireAuth() {
   const token = localStorage.getItem('mzobs-employee-token')
 
   useEffect(() => {
-    if (!token) window.location.href = EMPLOYEE_SIGNIN_URL
+    // Carries the page the visitor was headed to (e.g. a specific job to
+    // apply to) through sign-in and back — EmployeeSigninForm reads this
+    // same `redirect` param to send them on after login.
+    if (!token) {
+      const redirect = encodeURIComponent(window.location.pathname + window.location.search)
+      window.location.href = `${EMPLOYEE_SIGNIN_URL}?redirect=${redirect}`
+    }
   }, [token])
 
   if (!token) return null

@@ -14,6 +14,7 @@ import Resumes from './pages/ops/Resumes'
 import HRContacts from './pages/ops/HRContacts'
 import Companies from './pages/ops/Companies'
 import Requirements from './pages/ops/Requirements'
+import PostJob from './pages/ops/PostJob'
 import Shortlisted from './pages/ops/Shortlisted'
 import Queries from './pages/ops/Queries'
 import Payments from './pages/ops/Payments'
@@ -38,6 +39,7 @@ export default function App() {
               <Route path="hr-contacts" element={<HRContacts />} />
               <Route path="companies" element={<Companies />} />
               <Route path="requirements" element={<Requirements />} />
+              <Route path="requirements/new" element={<PostJob />} />
               <Route path="queries" element={<Queries />} />
               <Route path="payments" element={<Payments />} />
               <Route path="team" element={<Team />} />

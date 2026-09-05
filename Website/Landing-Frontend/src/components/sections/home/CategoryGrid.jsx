@@ -1,47 +1,49 @@
 import { ArrowUpRight } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
-import SplitText from '../../ui/SplitText'
-import SpotlightCard from '../../ui/SpotlightCard'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { CATEGORY_DATA } from '../../../lib/content'
 import { EMPLOYEE_APP_URL } from '../../../lib/config'
+import { buildJobsUrl } from '../../../lib/jobsUrl'
 
-// Brighter, more saturated than the site's default muted tint tokens —
-// this grid reads too monochrome at the softer shade, so it uses its own
-// punchier palette instead of the shared `--careers-tint-*` vars.
-const TINTS = ['bg-[#cfe8fb]', 'bg-[#cdeec5]', 'bg-[#ffe2b0]', 'bg-[#ffd0de]']
+function categoryHref(cat) {
+  if (cat.browseCategory) return `${EMPLOYEE_APP_URL}/app/jobs?category=${encodeURIComponent(cat.browseCategory)}`
+  if (cat.searchParams) return buildJobsUrl(cat.searchParams)
+  return `${EMPLOYEE_APP_URL}/app/jobs`
+}
 
 export default function CategoryGrid() {
   return (
-    <section className="bg-white py-16 md:py-24 px-6 md:px-12">
-      <div className="max-w-7xl mx-auto space-y-10">
-        <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl">
-          <h2 className="text-3xl sm:text-4xl md:text-[42px] font-black text-black tracking-tight leading-tight">
-            <SplitText text={`${CATEGORY_DATA.titlePrefix}${CATEGORY_DATA.titleItalic}${CATEGORY_DATA.titleSuffix}`} />
-          </h2>
-          <p className="mt-2 text-[15px] text-[#595959] leading-relaxed font-medium">{CATEGORY_DATA.subtitle}</p>
+    <section id="categories" className="bg-(--jobs-bg-subtle) py-16 md:py-20 px-6 md:px-10">
+      <div className="max-w-7xl mx-auto">
+        <Reveal direction="up" duration={0.7} className="max-w-xl mb-9">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-(--jobs-navy) tracking-tight">{CATEGORY_DATA.title}</h2>
+          <p className="mt-2 text-[15px] text-(--jobs-ink-soft)">{CATEGORY_DATA.subtitle}</p>
         </Reveal>
 
-        <StaggerGroup className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {CATEGORY_DATA.categories.map((cat, i) => {
+        <StaggerGroup className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+          {CATEGORY_DATA.categories.map((cat) => {
+            const Icon = cat.icon
             return (
               <StaggerItem key={cat.title}>
-                <SpotlightCard
-                  as="a"
-                  href={`${EMPLOYEE_APP_URL}/app/jobs?category=${encodeURIComponent(cat.title)}`}
-                  glow="rgba(255,255,255,0.35)"
-                  className={`flex items-center gap-4 rounded-2xl p-4 border border-black/[0.04] hover:bg-[var(--careers-accent)] transition-colors duration-300 ${TINTS[i % TINTS.length]}`}
+                <a
+                  href={categoryHref(cat)}
+                  className="group flex flex-col gap-3 h-full bg-white border border-(--jobs-border) rounded-xl p-4 hover:border-(--jobs-teal-dark) hover:shadow-sm hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-teal-dark) transition-all duration-200"
                 >
-                  {cat.image && (
-                    <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-white/60 shadow-sm">
-                      <img src={cat.image} alt={cat.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover/spotlight:scale-110" />
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="w-10 h-10 rounded-lg bg-(--jobs-teal-tint) flex items-center justify-center text-(--jobs-teal-dark) group-hover:bg-(--jobs-teal-dark) group-hover:text-white transition-colors">
+                      <Icon size={19} strokeWidth={1.75} aria-hidden="true" />
                     </div>
-                  )}
-                  <span className="font-black text-[15px] text-black group-hover/spotlight:text-white transition-colors duration-300">
-                    {cat.title}
-                  </span>
-                  <ArrowUpRight size={18} className="ml-auto text-black/40 group-hover/spotlight:text-white group-hover/spotlight:translate-x-1 group-hover/spotlight:-translate-y-1 transition-all duration-300" />
-                </SpotlightCard>
+                    <ArrowUpRight
+                      size={14}
+                      className="text-(--jobs-ink-soft) opacity-0 group-hover:opacity-100 transition-opacity"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div>
+                    <span className="font-bold text-[14px] text-(--jobs-navy)">{cat.title}</span>
+                    <span className="block text-[12.5px] text-(--jobs-ink-soft)">{cat.count} openings</span>
+                  </div>
+                </a>
               </StaggerItem>
             )
           })}

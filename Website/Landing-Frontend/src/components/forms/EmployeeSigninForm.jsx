@@ -8,6 +8,17 @@ import { loginEmployee, loginEmployeeWithGoogle } from '../../lib/employeeAuth'
 
 const initialForm = { email: '', password: '' }
 
+// RequireAuth (in the dashboard app) bounces an unauthenticated visitor here
+// with `?redirect=` set to wherever they were headed — e.g. a specific job
+// to apply to. Only a same-origin `/app/...` path is honored, so this can't
+// be turned into an open redirect by a crafted query string.
+function postLoginUrl(appUrl, token) {
+  const redirect = new URLSearchParams(window.location.search).get('redirect')
+  const path = redirect && redirect.startsWith('/app/') ? redirect : '/app/jobs'
+  const separator = path.includes('?') ? '&' : '?'
+  return `${appUrl}${path}${separator}token=${encodeURIComponent(token)}`
+}
+
 function validate(form) {
   const errors = {}
   if (!form.email.trim()) errors.email = 'Please enter your email.'
@@ -35,7 +46,7 @@ export default function EmployeeSigninForm() {
     setStatus('submitting')
     try {
       const { token } = await loginEmployee(form)
-      window.location.href = `${EMPLOYEE_APP_URL}/app/jobs?token=${encodeURIComponent(token)}`
+      window.location.href = postLoginUrl(EMPLOYEE_APP_URL, token)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
@@ -47,7 +58,7 @@ export default function EmployeeSigninForm() {
     setStatus('submitting')
     try {
       const { token } = await loginEmployeeWithGoogle({ credential })
-      window.location.href = `${EMPLOYEE_APP_URL}/app/jobs?token=${encodeURIComponent(token)}`
+      window.location.href = postLoginUrl(EMPLOYEE_APP_URL, token)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Sliders, MapPin, Bookmark, Sparkles, BarChart3, Briefcase, Users, ShieldCheck, Lock, CheckCircle2 } from 'lucide-react'
+import { Sliders, MapPin, Bookmark, Sparkles, BarChart3, Briefcase, Users, ShieldCheck, CheckCircle2 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
@@ -90,11 +90,14 @@ function JobCard({ job, applied, eligible, saved, employeeTrack, onToggleSave, o
 }
 
 export default function JobMatching() {
+  const app = useApp()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const categoryTitle = searchParams.get('category')
+  const jobIdParam = searchParams.get('jobId')
   const [tab, setTab] = useState(0)
   const [saved, setSaved] = useState(() => new Set(JSON.parse(localStorage.getItem(SAVED_KEY) ?? '[]')))
+  const [autoOpened, setAutoOpened] = useState(false)
 
   const { data: profile, isLoading: profileLoading } = useProfileQuery()
   const { data: jobs = [], isLoading: jobsLoading, isError: jobsError, refetch: refetchJobs } = useJobsQuery()
@@ -103,6 +106,16 @@ export default function JobMatching() {
   useEffect(() => {
     localStorage.setItem(SAVED_KEY, JSON.stringify([...saved]))
   }, [saved])
+
+  // Arrived via a job's "Apply now" link on the marketing site (?jobId=) —
+  // jump straight into the apply modal for that job, same as clicking Apply
+  // through Mzobs on its card, instead of leaving them to hunt for it.
+  useEffect(() => {
+    if (!jobIdParam || autoOpened || jobsLoading || !jobs.length) return
+    const job = jobs.find((j) => j.id === jobIdParam)
+    if (job) openApplyModal(app, job, refetchApplications)
+    setAutoOpened(true)
+  }, [jobIdParam, autoOpened, jobsLoading, jobs, app, refetchApplications])
 
   function toggleSave(id) {
     setSaved((s) => {
@@ -116,10 +129,12 @@ export default function JobMatching() {
   if (profileLoading || jobsLoading) return <PageSkeleton />
   if (jobsError) return <ErrorState onRetry={refetchJobs} />
 
-  const paid = profile?.subscription?.status === 'paid'
-  const eligible = paid && profile?.resume?.status === 'verified'
+  const eligible = profile?.resume?.status === 'verified'
   const track = profile?.skillTrack
-  const appliedJobIds = new Set(applications.map((a) => a.jobId))
+  // Applications come back with `job` populated (for title/company display
+  // elsewhere), and a populated ref keeps its object shape rather than
+  // collapsing to the `jobId` string form — so read the id from there.
+  const appliedJobIds = new Set(applications.map((a) => a.job?.id))
   const savedJobs = jobs.filter((j) => saved.has(j.id))
   const trackJobs = track?.key ? jobs.filter((j) => j.track === track.key) : []
   const categoryTrackKeys = categoryTitle ? trackKeysForCategoryTitle(categoryTitle) : null
@@ -146,32 +161,19 @@ export default function JobMatching() {
 
       <StaggerItem className="mb-5">
         <Card pad className={`flex items-start gap-3 ${eligible ? 'border-navy-ring bg-navy-tint' : 'border-gold-dot/40 bg-gold-tint'}`}>
-          {paid ? (
-            <ShieldCheck size={18} className={`mt-0.5 flex-shrink-0 ${eligible ? 'text-navy' : 'text-gold-strong'}`} />
-          ) : (
-            <Lock size={18} className="mt-0.5 flex-shrink-0 text-gold-strong" />
-          )}
+          <ShieldCheck size={18} className={`mt-0.5 flex-shrink-0 ${eligible ? 'text-navy' : 'text-gold-strong'}`} />
           <div className="flex-1 min-w-0">
             <div className="text-[13.5px] font-semibold">
-              {!paid
-                ? 'Activate placement support to unlock applications'
-                : eligible
-                  ? `You're eligible to apply${track?.key ? ` — ${track.label || track.key}, Grade ${track.grade || '-'}` : ''}`
-                  : 'Finish verification to unlock applications'}
+              {eligible
+                ? `You're eligible to apply${track?.key ? ` — ${track.label || track.key}, Grade ${track.grade || '-'}` : ''}`
+                : 'Finish verification to unlock applications'}
             </div>
             <p className="text-[13px] text-ink-secondary mt-0.5">
-              {!paid
-                ? 'A one-time ₹299 payment unlocks resume upload, verification, and applying to openings.'
-                : eligible
-                  ? 'Your resume is verified. When you apply, Mzobs screens you, shortlists against the requirement, and forwards your resume to the company.'
-                  : 'Applications open once your resume is verified by the Mzobs team.'}
+              {eligible
+                ? 'Your resume is verified. When you apply, Mzobs screens you, shortlists against the requirement, and forwards your resume to the company.'
+                : 'Applications open once your resume is verified by the Mzobs team.'}
             </p>
           </div>
-          {!paid && (
-            <Button variant="gold" size="sm" className="flex-shrink-0" onClick={() => navigate('/app/subscription')}>
-              Pay ₹299 & activate
-            </Button>
-          )}
         </Card>
       </StaggerItem>
 

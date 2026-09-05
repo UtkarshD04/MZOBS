@@ -285,3 +285,33 @@
 .careers-marquee-track:hover {
   animation-play-state: paused;
 }
+
+/* ============================================================
+   JOB-DISCOVERY REDESIGN — bright teal/navy job-marketplace
+   palette. Used by the sitewide layout/Navbar.jsx (so the header
+   never visibly changes between routes) plus the redesigned Home
+   page's own sections (JobSearchHero, CategoryGrid, LatestJobs,
+   CompaniesHiring, HowItWorksSteps, HomeEmployerCTA). Fixed light values
+   (not theme-adaptive) for the same reason as --careers-* above:
+   this look must stay a bright, professional job board regardless
+   of OS dark-mode preference.
+   Note: --jobs-teal (#12A594) is for icons/borders/large accent
+   text only — at body-text size it fails WCAG AA on white, so
+   buttons and small colored text use the darker --jobs-teal-dark
+   (~6:1 contrast on white) instead.
+============================================================ */
+:root {
+  --jobs-navy: #102a43;
+  --jobs-navy-deep: #0b1f33;
+  --jobs-ink-soft: #51697e;
+  --jobs-teal: #12a594;
+  --jobs-teal-dark: #0a6f64;
+  --jobs-teal-tint: #e8f8f5;
+  --jobs-blue: #2563eb;
+  --jobs-blue-dark: #1d4ed8;
+  --jobs-blue-tint: #eef6ff;
+  --jobs-bg-subtle: #f7f9fb;
+  --jobs-border: #e2e8f0;
+  --jobs-gold: #d4af6a;
+  --jobs-gold-soft: rgba(212, 175, 106, 0.14);
+}

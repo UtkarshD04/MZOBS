@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Briefcase, MapPin, Search, IndianRupee, Users, FileText, BellRing } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Briefcase, MapPin, Search, IndianRupee, Users, FileText, BellRing, Plus } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -164,6 +165,7 @@ function RecordPaymentModal({ app, job, onDone }) {
 
 export default function Requirements() {
   const app = useApp()
+  const navigate = useNavigate()
   const [tab, setTab] = useState(0)
   const [query, setQuery] = useState('')
   const status = TAB_FILTER[tab]?.[0]
@@ -193,11 +195,16 @@ export default function Requirements() {
 
   return (
     <StaggerGroup>
-      <StaggerItem className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Requirements</h1>
-        <p className="text-sm text-ink-secondary mt-1">
-          Job posts raised by verified employers. Each opening is billed at {fmtINR(PER_OPENING_FEE)} and owes {RESUMES_PER_OPENING} shortlisted resumes.
-        </p>
+      <StaggerItem className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Requirements</h1>
+          <p className="text-sm text-ink-secondary mt-1">
+            Job posts raised by verified employers. Each opening is billed at {fmtINR(PER_OPENING_FEE)} and owes {RESUMES_PER_OPENING} shortlisted resumes.
+          </p>
+        </div>
+        <Button variant="primary" onClick={() => navigate('/app/requirements/new')}>
+          <Plus size={15} /> Post a job
+        </Button>
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">

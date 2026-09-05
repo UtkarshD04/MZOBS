@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { motion, useScroll, useSpring } from 'framer-motion'
+import { Link } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
 
+// Sitewide header — same on every route, including Home, so it never
+// visibly changes when navigating (e.g. clicking "For Employers").
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
   const lastY = useRef(0)
-  const { scrollYProgress } = useScroll()
-  const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 })
 
   useEffect(() => {
     function onScroll() {
@@ -21,107 +21,93 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const linkClass = ({ isActive }) =>
-    `relative py-2 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors duration-200 ${
-      isActive ? 'text-[var(--careers-accent)] border-[var(--careers-accent)]' : 'text-[#595959] border-transparent hover:text-[var(--careers-accent)] hover:border-[var(--careers-accent)]'
-    }`
-
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-[76px] bg-white/75 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_30px_-14px_rgba(17,24,39,0.18)] border-b border-black/5 transition-transform duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 h-19 bg-white border-b border-(--jobs-border) transition-transform duration-300 ${
           hidden ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
-        <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between">
-          {/* Brand Logo */}
-          <Link to="/" className="flex items-center group shrink-0">
-            <motion.img
-              src="/images/logo.png"
-              alt="Mzobs"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-              className="h-16 w-auto object-contain"
-            />
+        <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between gap-6">
+          <Link to="/" className="flex items-center shrink-0">
+            <img src="/images/logo.png" alt="Mzobs" className="h-11 w-auto object-contain" />
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.map((link) =>
-              link.to ? (
-                <NavLink key={link.label} to={link.to} end={link.to === '/'} className={linkClass}>
-                  {link.label}
-                </NavLink>
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href || '#'}
-                  className="py-2 text-sm font-bold uppercase tracking-wide text-[#595959] border-b-2 border-transparent hover:text-[var(--careers-accent)] hover:border-[var(--careers-accent)] transition-colors duration-200"
-                >
-                  {link.label}
-                </a>
-              )
-            )}
+          <nav aria-label="Primary" className="hidden lg:flex items-center gap-7">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.label}
+                to={link.to}
+                className="text-[14px] font-semibold text-(--jobs-navy)/75 hover:text-(--jobs-teal-dark) transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* Mobile Toggle */}
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
+            <Link
+              to="/employees/signin"
+              className="text-[13.5px] font-semibold text-(--jobs-navy) hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
+            >
+              Sign in
+            </Link>
+          </div>
+
           <button
-            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white border border-[#e0e0e0] shadow-sm text-[#595959]"
-            onClick={() => setOpen(!open)}
+            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg border border-(--jobs-border) text-(--jobs-navy)"
+            onClick={() => setOpen((v) => !v)}
             aria-label="Toggle navigation"
             aria-expanded={open}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
-
-        {/* Scroll progress indicator */}
-        <motion.div
-          className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[var(--careers-accent)] origin-left"
-          style={{ scaleX: progress }}
-        />
       </header>
 
-      {/* Mobile Drawer Backdrop (sibling of header, so it stays viewport-fixed) */}
-      {open && (
-        <div
-          className="lg:hidden fixed inset-0 top-[76px] bg-black/30 z-40"
-          onClick={() => setOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Mobile Drawer */}
-      <div
-        className={`lg:hidden fixed top-[76px] left-0 bottom-0 w-[300px] max-w-[80vw] bg-white shadow-2xl overflow-y-auto z-40 transition-transform duration-300 ease-in-out ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="p-6 flex flex-col gap-1">
-          {NAV_LINKS.map((link) =>
-            link.to ? (
-              <Link
-                key={link.label}
-                to={link.to}
-                onClick={() => setOpen(false)}
-                className="py-3 text-[13px] font-bold uppercase tracking-wide text-[#595959] border-b border-[#e0e0e0] hover:text-[var(--careers-accent)]"
-              >
-                {link.label}
-              </Link>
-            ) : (
-              <a
-                key={link.label}
-                href={link.href || '#'}
-                onClick={() => setOpen(false)}
-                className="py-3 text-[13px] font-bold uppercase tracking-wide text-[#595959] border-b border-[#e0e0e0] hover:text-[var(--careers-accent)]"
-              >
-                {link.label}
-              </a>
-            )
-          )}
-        </div>
-      </div>
+      <AnimatePresence>
+        {open && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 top-19 bg-black/30 z-40"
+              onClick={() => setOpen(false)}
+              aria-hidden="true"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden fixed top-19 left-0 right-0 bg-white border-b border-(--jobs-border) shadow-lg z-40"
+            >
+              <div className="p-5 flex flex-col gap-1">
+                {NAV_LINKS.map((link) => (
+                  <Link
+                    key={link.label}
+                    to={link.to}
+                    onClick={() => setOpen(false)}
+                    className="py-3 text-[14px] font-semibold text-(--jobs-navy) border-b border-(--jobs-border)"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="flex flex-col gap-2 pt-4">
+                  <Link
+                    to="/employees/signin"
+                    onClick={() => setOpen(false)}
+                    className="h-10 flex items-center justify-center rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"
+                  >
+                    Sign in
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   )
 }

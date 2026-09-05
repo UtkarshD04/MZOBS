@@ -6,6 +6,14 @@ export function useJobsQuery(filters = {}) {
   return useQuery({ queryKey: queryKeys.jobs(filters), queryFn: () => jobsService.listJobs(filters) })
 }
 
+export function useCreateJobMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: jobsService.createJob,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs'] }),
+  })
+}
+
 export function useApproveJobMutation() {
   const queryClient = useQueryClient()
   return useMutation({
