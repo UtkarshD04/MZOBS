@@ -3,7 +3,6 @@ import { ArrowUpRight, Sparkles } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { COMPANIES_HIRING_DATA } from '../../../lib/content'
-import { EMPLOYEE_APP_URL } from '../../../lib/config'
 
 function initialsOf(name) {
   return name
@@ -83,9 +82,8 @@ export default function CompaniesHiring() {
             const isTopHirer = company.openRoles === topRoles
             return (
               <StaggerItem key={company.name}>
-                <a
-                  href={`${EMPLOYEE_APP_URL}/app/jobs`}
-                  className="group relative flex flex-col gap-4 h-full bg-white border border-(--jobs-border) rounded-2xl p-5 hover:border-(--jobs-teal-dark) hover:shadow-md hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-teal-dark) transition-all duration-200"
+                <div
+                  className="group relative flex flex-col gap-4 h-full bg-white border border-(--jobs-border) rounded-2xl p-5 hover:border-(--jobs-teal-dark) hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                 >
                   {isTopHirer && (
                     <span className="absolute -top-2.5 right-4 inline-flex items-center gap-1 text-[10.5px] font-bold px-2 py-0.5 rounded-full bg-(--jobs-gold-soft) text-(--jobs-navy)">
@@ -116,19 +114,16 @@ export default function CompaniesHiring() {
                       aria-hidden="true"
                     />
                   </div>
-                </a>
+                </div>
               </StaggerItem>
             )
           })}
         </StaggerGroup>
 
         <div className="mt-10 flex justify-center">
-          <a
-            href={`${EMPLOYEE_APP_URL}/app/jobs`}
-            className="inline-flex items-center gap-1.5 text-[14.5px] font-bold text-(--jobs-blue) hover:text-(--jobs-blue-dark) transition-colors"
-          >
+          <span className="inline-flex items-center gap-1.5 text-[14.5px] font-bold text-(--jobs-blue)">
             Explore all opportunities <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
+          </span>
         </div>
       </div>
     </section>
