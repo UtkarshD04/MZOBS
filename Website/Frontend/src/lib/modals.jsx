@@ -8,7 +8,7 @@ import { CompanyLogo } from '../components/ui/Avatar'
 import { applyToJob } from '../services/applicationsService'
 
 export function fmtSalaryRange(job) {
-  if (!job.salaryMin && !job.salaryMax) return ''
+  if (!job.salaryMin && !job.salaryMax) return 'Depends on interview & experience'
   const fmt = (n) => (n >= 100000 ? `₹${(n / 100000).toFixed(n % 100000 === 0 ? 0 : 1)}L` : `₹${n}`)
   return `${fmt(job.salaryMin)} – ${fmt(job.salaryMax)}`
 }

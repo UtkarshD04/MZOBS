@@ -1,11 +1,10 @@
 import { EMPLOYEE_APP_URL } from './config'
 
-// The real job listing (Website/Frontend's /app/jobs route) only reads a
-// `category` query param today — `q`/`location`/`experience` aren't consumed
-// there yet, but passing them now means every search entry point on this
-// marketing site (hero search, quick-discovery pills, popular searches) is
-// forward-compatible with that page adding support later, without any
-// change on this side.
+// The real job listing (Website/Frontend's /app/jobs route, see JobMatching.jsx
+// + lib/jobSearchFilters.js there) reads these same param names — `category`,
+// `q`, `location`, `experience` — to filter its already-fetched job list, so
+// every search entry point on this marketing site (hero search, quick-
+// discovery pills, popular searches, category cards) lands pre-filtered.
 export function buildJobsUrl({ q, location, experience } = {}) {
   const params = new URLSearchParams()
   if (q?.trim()) params.set('q', q.trim())
