@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, Clock3, FileUp, Loader2 } from 'lucide-react'
-import { GoogleAuthButton, OrDivider } from '../../ui/GoogleAuthButton'
-import { loginEmployee, loginEmployeeWithGoogle } from '../../../lib/employeeAuth'
+import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../../ui/GoogleAuthButton'
+import { loginEmployee, loginEmployeeWithGoogle, signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../../lib/employeeAuth'
+import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../../lib/msg91Widget'
+import { GRADUATION_OPTIONS } from '../../../lib/graduationOptions'
 import { fetchEmployeeProfile, uploadEmployeeResume, applyToJob } from '../../../lib/employeeApi'
 
 const TOKEN_KEY = 'mzobs-employee-token'
@@ -10,6 +11,10 @@ const inputClass =
   'w-full h-11 px-3.5 rounded-lg border border-(--jobs-border) bg-white text-[13.5px] text-(--jobs-navy) outline-none transition-colors placeholder:text-(--jobs-ink-soft)/60 focus:border-(--jobs-teal-dark)'
 const primaryButtonClass =
   'inline-flex items-center justify-center gap-2 h-11 px-6 rounded-lg bg-(--jobs-teal-dark) text-white text-[13.5px] font-bold hover:bg-(--jobs-navy) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-teal-dark) transition-colors disabled:opacity-60 disabled:cursor-not-allowed'
+const otpButtonClass =
+  'h-11 px-4 rounded-lg text-[12.5px] font-bold border border-(--jobs-border) bg-white text-(--jobs-navy) hover:border-(--jobs-teal-dark) hover:text-(--jobs-teal-dark) transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+const labelClass = 'block text-[12.5px] font-semibold text-(--jobs-navy) mb-1.5'
+const errorClass = 'text-[12px] text-red-600 mt-1 mb-2'
 
 function BackRow({ onBack, children }) {
   return (
@@ -84,28 +89,299 @@ function InlineLoginForm({ onSuccess }) {
   )
 }
 
-// New accounts go through onboarding (phone OTP, graduation) before landing
-// in the dashboard — that step isn't duplicated inline here, so signup keeps
-// using the existing dedicated flow rather than re-implementing it.
-function SignupPrompt({ job }) {
+function SignupPrompt({ job, onCreateAccount }) {
   return (
     <div className="rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle) p-4">
       <p className="text-[13px] text-(--jobs-ink-soft) leading-relaxed">
         New to Mzobs? Create a free account — you'll verify your phone, then come straight back to apply for{' '}
         <span className="font-semibold text-(--jobs-navy)">{job.title}</span>.
       </p>
-      <Link
-        to="/employees/signup"
+      <button
+        type="button"
+        onClick={onCreateAccount}
         className="mt-3 inline-flex items-center justify-center gap-2 h-11 px-6 rounded-lg border border-(--jobs-navy) text-(--jobs-navy) text-[13.5px] font-bold hover:bg-(--jobs-navy) hover:text-white transition-colors"
       >
         Create free account
-      </Link>
+      </button>
     </div>
+  )
+}
+
+const initialSignupForm = { name: '', email: '', phone: '', password: '', city: '', state: '', pincode: '', experience: 'fresher', graduation: '' }
+
+function validateSignup(form, hasGoogle) {
+  const errors = {}
+  if (!hasGoogle) {
+    if (!form.name.trim()) errors.name = 'Please enter your full name.'
+    if (!form.email.trim()) errors.email = 'Please enter your email.'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Enter a valid email address.'
+    if (!form.password) errors.password = 'Please create a password.'
+    else if (form.password.length < 8) errors.password = 'Password must be at least 8 characters.'
+  }
+  if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
+  else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
+  if (!form.city.trim()) errors.city = 'Please enter your city.'
+  if (!form.state.trim()) errors.state = 'Please enter your state.'
+  if (!form.pincode.trim()) errors.pincode = 'Please enter your pincode.'
+  else if (!/^\d{6}$/.test(form.pincode.trim())) errors.pincode = 'Enter a valid 6-digit pincode.'
+  if (!form.graduation) errors.graduation = 'Please select your graduation.'
+  return errors
+}
+
+// Same signup as the dedicated /employees/signup page (Google + phone OTP +
+// graduation + city/state/pincode), just re-themed to this panel's --jobs-*
+// palette and, on success, handed straight to `onSuccess` instead of
+// redirecting to the dashboard app's onboarding — the resume-upload/apply
+// steps right below already cover what onboarding would otherwise do.
+function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
+  const [form, setForm] = useState(initialSignupForm)
+  const [errors, setErrors] = useState({})
+  const [status, setStatus] = useState('idle')
+  const [googleCredential, setGoogleCredential] = useState(null)
+
+  const [otp, setOtp] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
+  const [sendingOtp, setSendingOtp] = useState(false)
+  const [verifyingOtp, setVerifyingOtp] = useState(false)
+  const [otpError, setOtpError] = useState('')
+  const [phoneToken, setPhoneToken] = useState(null)
+
+  function update(key, value) {
+    setForm((f) => ({ ...f, [key]: value }))
+    // Phone changed after verifying — the token was minted for the old
+    // number, so it can't be trusted for the new one anymore.
+    if (key === 'phone') {
+      setPhoneToken(null)
+      setOtpSent(false)
+      setOtp('')
+      setOtpError('')
+    }
+  }
+
+  async function handleSendOtp() {
+    setOtpError('')
+    setSendingOtp(true)
+    try {
+      if (otpSent) await retryWidgetOtp('SMS')
+      else await sendWidgetOtp(form.phone)
+      setOtpSent(true)
+    } catch (err) {
+      setOtpError(err.message)
+    } finally {
+      setSendingOtp(false)
+    }
+  }
+
+  async function handleVerifyOtp() {
+    setOtpError('')
+    setVerifyingOtp(true)
+    try {
+      const widgetResult = await verifyWidgetOtp(otp)
+      const { phoneToken: verifiedToken } = await verifyEmployeePhoneWidget({ phone: form.phone, accessToken: widgetResult.message })
+      setPhoneToken(verifiedToken)
+    } catch (err) {
+      setOtpError(err.message)
+    } finally {
+      setVerifyingOtp(false)
+    }
+  }
+
+  function handleGoogleCredential(credential) {
+    const { name, email } = decodeGoogleCredential(credential)
+    setGoogleCredential(credential)
+    setForm((f) => ({ ...f, name: name || f.name, email: email || f.email, password: '' }))
+    setErrors({})
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    const nextErrors = validateSignup(form, Boolean(googleCredential))
+    if (!phoneToken) nextErrors.phone = nextErrors.phone ?? 'Please verify your mobile number.'
+    setErrors(nextErrors)
+    if (Object.keys(nextErrors).length > 0) return
+
+    setStatus('submitting')
+    try {
+      const shared = { phone: form.phone, experience: form.experience, graduation: form.graduation, city: form.city, state: form.state, pincode: form.pincode, phoneToken }
+      const { token } = googleCredential
+        ? await signupEmployeeWithGoogle({ credential: googleCredential, ...shared })
+        : await signupEmployee({ ...form, ...shared })
+      onSuccess(token)
+    } catch (err) {
+      setStatus('idle')
+      setErrors({ form: err.message })
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} noValidate>
+      <GoogleAuthButton onCredential={handleGoogleCredential} onError={(message) => setErrors({ form: message })} label="Continue with Google" />
+      <OrDivider />
+
+      {googleCredential ? (
+        <div className="flex items-center gap-2 mb-3 px-3.5 py-2.5 rounded-lg bg-(--jobs-teal-tint) text-[12.5px] font-semibold text-(--jobs-teal-dark)">
+          <CheckCircle2 size={15} className="shrink-0" aria-hidden="true" />
+          Signed in as {form.name || form.email} — no password needed.
+        </div>
+      ) : (
+        <>
+          <label className={labelClass}>Full name</label>
+          <input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" className={`${inputClass} mb-1`} />
+          {errors.name && <p className={errorClass}>{errors.name}</p>}
+
+          <label className={labelClass}>Email</label>
+          <input
+            type="email"
+            value={form.email}
+            onChange={(e) => update('email', e.target.value)}
+            placeholder="you@example.com"
+            className={`${inputClass} mb-1`}
+          />
+          {errors.email && <p className={errorClass}>{errors.email}</p>}
+        </>
+      )}
+
+      <label className={labelClass}>Phone number</label>
+      <input
+        type="tel"
+        value={form.phone}
+        onChange={(e) => update('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+        placeholder="98765 43210"
+        disabled={Boolean(phoneToken)}
+        className={`${inputClass} mb-1`}
+      />
+      {errors.phone && <p className={errorClass}>{errors.phone}</p>}
+
+      {phoneToken ? (
+        <p className="flex items-center gap-1.5 mb-3 text-[12.5px] font-semibold text-(--jobs-teal-dark)">
+          <CheckCircle2 size={14} className="shrink-0" aria-hidden="true" /> Mobile number verified
+        </p>
+      ) : otpSent ? (
+        <div className="mb-3">
+          <label className={labelClass}>Enter OTP</label>
+          <input
+            value={otp}
+            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            placeholder="6-digit code"
+            inputMode="numeric"
+            className={`${inputClass} mb-2`}
+          />
+          <div className="flex items-center gap-3">
+            <button type="button" className={otpButtonClass} onClick={handleVerifyOtp} disabled={verifyingOtp || otp.length !== 6}>
+              {verifyingOtp ? 'Verifying…' : 'Verify'}
+            </button>
+            <button
+              type="button"
+              onClick={handleSendOtp}
+              disabled={sendingOtp}
+              className="text-[12.5px] font-bold text-(--jobs-blue) hover:underline disabled:opacity-50"
+            >
+              {sendingOtp ? 'Resending…' : 'Resend OTP'}
+            </button>
+          </div>
+          {otpError && <p className={errorClass}>{otpError}</p>}
+        </div>
+      ) : (
+        <div className="mb-3">
+          <button type="button" className={otpButtonClass} onClick={handleSendOtp} disabled={sendingOtp || form.phone.replace(/\D/g, '').length !== 10}>
+            {sendingOtp ? 'Sending…' : 'Send OTP'}
+          </button>
+          {otpError && <p className={errorClass}>{otpError}</p>}
+        </div>
+      )}
+
+      {!googleCredential && (
+        <>
+          <label className={labelClass}>Password</label>
+          <input
+            type="password"
+            value={form.password}
+            onChange={(e) => update('password', e.target.value)}
+            placeholder="At least 8 characters"
+            className={`${inputClass} mb-1`}
+          />
+          {errors.password && <p className={errorClass}>{errors.password}</p>}
+        </>
+      )}
+
+      <div className="grid grid-cols-2 gap-3 mb-1">
+        <div>
+          <label className={labelClass}>City</label>
+          <input value={form.city} onChange={(e) => update('city', e.target.value)} placeholder="Bengaluru" className={inputClass} />
+          {errors.city && <p className={errorClass}>{errors.city}</p>}
+        </div>
+        <div>
+          <label className={labelClass}>State</label>
+          <input value={form.state} onChange={(e) => update('state', e.target.value)} placeholder="Karnataka" className={inputClass} />
+          {errors.state && <p className={errorClass}>{errors.state}</p>}
+        </div>
+      </div>
+
+      <label className={labelClass}>Pincode</label>
+      <input
+        value={form.pincode}
+        onChange={(e) => update('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
+        placeholder="560001"
+        inputMode="numeric"
+        className={`${inputClass} mb-1`}
+      />
+      {errors.pincode && <p className={errorClass}>{errors.pincode}</p>}
+
+      <label className={labelClass}>You are a...</label>
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        {[
+          { value: 'fresher', label: 'Fresher' },
+          { value: 'experienced', label: 'Experienced' },
+        ].map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => update('experience', opt.value)}
+            className={`h-11 rounded-lg text-[13px] font-bold border transition-colors ${
+              form.experience === opt.value
+                ? 'bg-(--jobs-teal-dark) border-(--jobs-teal-dark) text-white'
+                : 'bg-white border-(--jobs-border) text-(--jobs-ink-soft) hover:border-(--jobs-teal-dark)'
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      <label className={labelClass}>Graduation</label>
+      <select value={form.graduation} onChange={(e) => update('graduation', e.target.value)} className={`${inputClass} mb-1 appearance-none`}>
+        <option value="" disabled>
+          Select your graduation
+        </option>
+        {GRADUATION_OPTIONS.map((g) => (
+          <option key={g} value={g}>
+            {g}
+          </option>
+        ))}
+      </select>
+      {errors.graduation && <p className={errorClass}>{errors.graduation}</p>}
+
+      {errors.form && <p className="text-[12.5px] text-red-600 mb-3">{errors.form}</p>}
+
+      <button type="submit" disabled={status === 'submitting' || !phoneToken} className={`${primaryButtonClass} w-full mt-2`}>
+        {status === 'submitting' && <Loader2 size={15} className="animate-spin" aria-hidden="true" />}
+        {status === 'submitting' ? 'Creating your account…' : 'Create account'}
+      </button>
+
+      <button
+        type="button"
+        onClick={onSwitchToLogin}
+        className="mt-3 w-full text-center text-[12.5px] font-semibold text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors"
+      >
+        Already have an account? Log in
+      </button>
+    </form>
   )
 }
 
 export default function ApplyPanel({ job, onClose }) {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY))
+  const [authMode, setAuthMode] = useState('login') // 'login' | 'signup'
   const [profile, setProfile] = useState(null)
   const [profileLoading, setProfileLoading] = useState(false)
   const [profileError, setProfileError] = useState('')
@@ -165,17 +441,31 @@ export default function ApplyPanel({ job, onClose }) {
     return (
       <div>
         <BackRow onBack={onClose}>Back to job details</BackRow>
-        <h3 className="font-extrabold text-lg text-(--jobs-navy) leading-snug">Sign in to apply</h3>
-        <p className="mt-1.5 text-[13px] text-(--jobs-ink-soft)">
-          Applying to <span className="font-semibold text-(--jobs-navy)">{job.title}</span> at {job.company}. Mzobs screens every applicant before
-          forwarding a shortlist to the employer.
-        </p>
-        <div className="mt-5">
-          <InlineLoginForm onSuccess={handleLoggedIn} />
-        </div>
-        <div className="mt-4">
-          <SignupPrompt job={job} />
-        </div>
+        {authMode === 'signup' ? (
+          <>
+            <h3 className="font-extrabold text-lg text-(--jobs-navy) leading-snug">Create your free account</h3>
+            <p className="mt-1.5 text-[13px] text-(--jobs-ink-soft)">
+              Verify your phone and you're set up to apply to <span className="font-semibold text-(--jobs-navy)">{job.title}</span> right here.
+            </p>
+            <div className="mt-5">
+              <InlineSignupForm onSuccess={handleLoggedIn} onSwitchToLogin={() => setAuthMode('login')} />
+            </div>
+          </>
+        ) : (
+          <>
+            <h3 className="font-extrabold text-lg text-(--jobs-navy) leading-snug">Sign in to apply</h3>
+            <p className="mt-1.5 text-[13px] text-(--jobs-ink-soft)">
+              Applying to <span className="font-semibold text-(--jobs-navy)">{job.title}</span> at {job.company}. Mzobs screens every applicant before
+              forwarding a shortlist to the employer.
+            </p>
+            <div className="mt-5">
+              <InlineLoginForm onSuccess={handleLoggedIn} />
+            </div>
+            <div className="mt-4">
+              <SignupPrompt job={job} onCreateAccount={() => setAuthMode('signup')} />
+            </div>
+          </>
+        )}
       </div>
     )
   }

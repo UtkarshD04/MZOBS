@@ -1,29 +1,14 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, GraduationCap } from 'lucide-react'
+import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, GraduationCap, MapPin, Landmark, Hash } from 'lucide-react'
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
 import { EMPLOYEE_APP_URL } from '../../lib/config'
 import { signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../lib/employeeAuth'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
+import { GRADUATION_OPTIONS } from '../../lib/graduationOptions'
 
-const GRADUATION_OPTIONS = [
-  '12th / No Degree',
-  'Diploma',
-  'B.Tech / B.E.',
-  'B.Sc',
-  'B.Com',
-  'BA',
-  'BBA',
-  'BCA',
-  'M.Tech / M.E.',
-  'MBA',
-  'MCA',
-  'M.Sc',
-  'Other'
-]
-
-const initialForm = { name: '', email: '', phone: '', password: '', experience: 'fresher', graduation: '' }
+const initialForm = { name: '', email: '', phone: '', password: '', city: '', state: '', pincode: '', experience: 'fresher', graduation: '' }
 
 function validate(form, hasGoogle) {
   const errors = {}
@@ -36,6 +21,10 @@ function validate(form, hasGoogle) {
   }
   if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
   else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
+  if (!form.city.trim()) errors.city = 'Please enter your city.'
+  if (!form.state.trim()) errors.state = 'Please enter your state.'
+  if (!form.pincode.trim()) errors.pincode = 'Please enter your pincode.'
+  else if (!/^\d{6}$/.test(form.pincode.trim())) errors.pincode = 'Enter a valid 6-digit pincode.'
   if (!form.graduation) errors.graduation = 'Please select your graduation.'
   return errors
 }
@@ -122,6 +111,9 @@ export default function EmployeeSignupForm() {
             phone: form.phone,
             experience: form.experience,
             graduation: form.graduation,
+            city: form.city,
+            state: form.state,
+            pincode: form.pincode,
             phoneToken,
           })
         : await signupEmployee({ ...form, phoneToken })
@@ -255,6 +247,29 @@ export default function EmployeeSignupForm() {
             </button>
           ))}
         </div>
+      </Field>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="City">
+          <Input icon={MapPin} value={form.city} onChange={(e) => update('city', e.target.value)} placeholder="Bengaluru" />
+          {errors.city && <span className="text-xs text-red mt-1 block">{errors.city}</span>}
+        </Field>
+
+        <Field label="State">
+          <Input icon={Landmark} value={form.state} onChange={(e) => update('state', e.target.value)} placeholder="Karnataka" />
+          {errors.state && <span className="text-xs text-red mt-1 block">{errors.state}</span>}
+        </Field>
+      </div>
+
+      <Field label="Pincode">
+        <Input
+          icon={Hash}
+          value={form.pincode}
+          onChange={(e) => update('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
+          placeholder="560001"
+          inputMode="numeric"
+        />
+        {errors.pincode && <span className="text-xs text-red mt-1 block">{errors.pincode}</span>}
       </Field>
 
       <Field label="Graduation">
