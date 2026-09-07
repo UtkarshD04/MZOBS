@@ -6,8 +6,6 @@ import QuickDiscoveryStrip from '../components/sections/home/QuickDiscoveryStrip
 import LatestJobs from '../components/sections/home/LatestJobs'
 import CategoryGrid from '../components/sections/home/CategoryGrid'
 import CompaniesHiring from '../components/sections/home/CompaniesHiring'
-import HowItWorksSteps from '../components/sections/home/HowItWorksSteps'
-import CareerSupportSection from '../components/sections/home/CareerSupportSection'
 import HomeEmployerCTA from '../components/sections/home/HomeEmployerCTA'
 
 export default function Home() {
@@ -38,13 +36,7 @@ export default function Home() {
       {/* 6. Companies hiring through MZOBS (single, consolidated company section) */}
       <CompaniesHiring />
 
-      {/* 7. How it works: search, chat, get hired */}
-      <HowItWorksSteps />
-
-      {/* 8. MZOBS career support: resume, interview prep, matching, employer access */}
-      <CareerSupportSection />
-
-      {/* 9. Employer CTA band */}
+      {/* 7. Employer CTA band */}
       <HomeEmployerCTA />
 
       <Footer />

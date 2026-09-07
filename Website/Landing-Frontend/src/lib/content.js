@@ -21,10 +21,7 @@ import {
   Megaphone,
   PenTool,
   Headset,
-  Globe,
-  FileCheck2,
-  MessageSquare,
-  Handshake
+  Globe
 } from 'lucide-react'
 import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 
@@ -36,7 +33,6 @@ import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 export const NAV_LINKS = [
   { label: 'Find Jobs', to: '/#job-search' },
   { label: 'Companies', to: '/#companies' },
-  { label: 'Career Support', to: '/#career-support' },
   { label: 'For Employers', to: '/employers' },
 ]
 
@@ -873,31 +869,6 @@ export const HOME_EMPLOYER_CTA_DATA = {
   ctaTo: "/employers/signup"
 }
 
-// "How it works" — 3-step explainer, common on Naukri/Indeed home pages.
-// Step 2 deliberately foregrounds direct employer chat instead of a
-// generic "apply" step.
-export const HOW_IT_WORKS_DATA = {
-  title: "How Mzobs gets you hired",
-  subtitle: "Not just a job board — here's exactly what Mzobs does for you, from profile to offer.",
-  steps: [
-    {
-      icon: ShieldCheck,
-      title: "Build your verified profile",
-      desc: "Share your skills and experience — our team personally reviews and rebuilds your resume, so it actually gets seen by employers."
-    },
-    {
-      icon: Sparkles,
-      title: "Get matched & interview-ready",
-      desc: "We match you to roles based on your verified skills, not keyword luck, and run you through mock interviews before you meet an employer."
-    },
-    {
-      icon: Target,
-      title: "Interview & get hired",
-      desc: "Meet only vetted, verified employers, get a real status update on every application, and get support from our team through your first month."
-    }
-  ]
-}
-
 // Compact discovery row directly under the hero — quick, one-tap filters
 // for the searches people run most (fresher-friendly, remote, or a specific
 // metro), each just a preset query string onto the same /app/jobs listing
@@ -911,31 +882,3 @@ export const QUICK_DISCOVERY_DATA = [
   { label: "Hyderabad", params: { location: "Hyderabad" } }
 ]
 
-// "MZOBS career support" — what Mzobs does beyond listing jobs. Kept to
-// four factual, non-guarantee points (see CareerSupportSection.jsx).
-export const CAREER_SUPPORT_DATA = {
-  title: "More than a job list",
-  subtitle: "Our operations team supports every candidate from application to offer.",
-  points: [
-    {
-      icon: FileCheck2,
-      title: "Resume review",
-      desc: "Our team reviews your resume and helps rebuild it so it's ready for real employers."
-    },
-    {
-      icon: MessageSquare,
-      title: "Interview preparation",
-      desc: "Get guidance and mock interviews before you meet an employer."
-    },
-    {
-      icon: Target,
-      title: "Job matching",
-      desc: "We match your skills and experience to roles that genuinely fit."
-    },
-    {
-      icon: Handshake,
-      title: "Direct employer access",
-      desc: "Once shortlisted, connect straight with the employer — no black box in between."
-    }
-  ]
-}

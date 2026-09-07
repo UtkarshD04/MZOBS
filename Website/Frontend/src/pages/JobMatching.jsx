@@ -12,6 +12,7 @@ import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import ErrorState from '../components/ui/ErrorState'
 import { categoryOf, trackKeysForCategoryTitle } from '../lib/category'
+import { matchesJobSearch, experienceLabel } from '../lib/jobSearchFilters'
 import { useApp } from '../context/AppContext'
 import { openApplyModal, openJobDetailModal, fmtSalaryRange } from '../lib/modals'
 import { useProfileQuery } from '../hooks/useProfile'
@@ -95,6 +96,10 @@ export default function JobMatching() {
   const [searchParams] = useSearchParams()
   const categoryTitle = searchParams.get('category')
   const jobIdParam = searchParams.get('jobId')
+  const qParam = searchParams.get('q') ?? ''
+  const locationParam = searchParams.get('location') ?? ''
+  const experienceParam = searchParams.get('experience') ?? ''
+  const hasSearchFilters = !categoryTitle && Boolean(qParam || locationParam || experienceParam)
   const [tab, setTab] = useState(0)
   const [saved, setSaved] = useState(() => new Set(JSON.parse(localStorage.getItem(SAVED_KEY) ?? '[]')))
   const [autoOpened, setAutoOpened] = useState(false)
@@ -139,6 +144,8 @@ export default function JobMatching() {
   const trackJobs = track?.key ? jobs.filter((j) => j.track === track.key) : []
   const categoryTrackKeys = categoryTitle ? trackKeysForCategoryTitle(categoryTitle) : null
   const categoryJobs = categoryTrackKeys ? jobs.filter((j) => categoryTrackKeys.includes(j.track)) : []
+  const searchFilters = { q: qParam, location: locationParam, experience: experienceParam }
+  const searchJobs = hasSearchFilters ? jobs.filter((j) => matchesJobSearch(j, searchFilters)) : []
 
   const cardProps = (job) => ({
     job,
@@ -186,6 +193,29 @@ export default function JobMatching() {
             Clear filter · All openings
           </Button>
         </StaggerItem>
+      ) : hasSearchFilters ? (
+        <StaggerItem className="flex items-center justify-between flex-wrap gap-3 mb-4">
+          <div className="flex items-center gap-2 flex-wrap">
+            {qParam && (
+              <Badge tone="navy" dot={false}>
+                "{qParam}"
+              </Badge>
+            )}
+            {locationParam && (
+              <Badge tone="navy" dot={false}>
+                <MapPin size={11} /> {locationParam}
+              </Badge>
+            )}
+            {experienceParam && (
+              <Badge tone="navy" dot={false}>
+                {experienceLabel(experienceParam)}
+              </Badge>
+            )}
+          </div>
+          <Button size="sm" onClick={() => navigate('/app/jobs')}>
+            Clear filters · All openings
+          </Button>
+        </StaggerItem>
       ) : (
         <StaggerItem className="flex items-center justify-between flex-wrap gap-3 mb-4">
           <PillTabs items={['All openings', 'My track', 'Saved', 'Compare']} active={tab} onChange={setTab} />
@@ -214,6 +244,27 @@ export default function JobMatching() {
                 icon={Briefcase}
                 title="No openings available right now"
                 body={`We don't have any live ${categoryTitle} requirements at the moment. Check back soon, or browse everything that's open.`}
+                action={
+                  <Button variant="primary" className="mt-2" onClick={() => navigate('/app/jobs')}>
+                    Browse all openings
+                  </Button>
+                }
+              />
+            </Card>
+          )
+        ) : hasSearchFilters ? (
+          searchJobs.length ? (
+            <div className="flex flex-col gap-4">
+              {searchJobs.map((j) => (
+                <JobCard key={j.id} {...cardProps(j)} />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <EmptyState
+                icon={Briefcase}
+                title="No matching openings"
+                body="Try a broader search term, a different location, or another experience range."
                 action={
                   <Button variant="primary" className="mt-2" onClick={() => navigate('/app/jobs')}>
                     Browse all openings
