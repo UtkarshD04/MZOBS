@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as applicationsService from '../services/applicationsService'
 import { queryKeys } from '../lib/queryClient'
 
-export function useApplicationsQuery() {
-  return useQuery({ queryKey: queryKeys.applications, queryFn: applicationsService.listApplications })
+export function useApplicationsQuery(options = {}) {
+  return useQuery({ queryKey: queryKeys.applications, queryFn: applicationsService.listApplications, ...options })
 }
 
 export function useApplyToJobMutation() {

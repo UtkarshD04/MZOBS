@@ -5,6 +5,7 @@ import ScrollToTop from './components/layout/ScrollToTop'
 import CursorDot from './components/ui/CursorDot'
 import { requestNotificationPermission } from './lib/webPush'
 import Home from './pages/Home'
+import JobDetail from './pages/JobDetail'
 import About from './pages/About'
 import OurStory from './pages/OurStory'
 import Contact from './pages/Contact'
@@ -43,6 +44,7 @@ export default function App() {
         >
           <Routes location={location}>
             <Route path="/" element={<Home />} />
+            <Route path="/jobs/:id" element={<JobDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/our-story" element={<OurStory />} />
             <Route path="/contact" element={<Contact />} />

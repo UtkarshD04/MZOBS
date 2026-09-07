@@ -6,6 +6,7 @@ import Badge from '../components/ui/Badge'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
 import { CompanyLogo } from '../components/ui/Avatar'
 import { applyToJob } from '../services/applicationsService'
+import { hasEmployeeToken, signInUrl } from './auth'
 
 export function fmtSalaryRange(job) {
   if (!job.salaryMin && !job.salaryMax) return 'Depends on interview & experience'
@@ -82,6 +83,12 @@ function ApplyModalContent({ app, job, onApplied }) {
 }
 
 export function openApplyModal(app, job, onApplied) {
+  // Browsing/filtering is public; applying still needs an account — send a
+  // guest to sign-in (carrying them back here) instead of opening the modal.
+  if (!hasEmployeeToken()) {
+    window.location.href = signInUrl()
+    return
+  }
   app.openModal(<ApplyModalContent app={app} job={job} onApplied={onApplied} />)
 }
 

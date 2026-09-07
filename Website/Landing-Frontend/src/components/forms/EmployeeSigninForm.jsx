@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, Mail, Lock } from 'lucide-react'
-import { Field, Input, SubmitButton } from '../ui/AuthField'
+import { Field, Input, PrimaryButton } from '../ui/JobsAuthField'
 import { GoogleAuthButton, OrDivider } from '../ui/GoogleAuthButton'
 import { EMPLOYEE_APP_URL } from '../../lib/config'
 import { loginEmployee, loginEmployeeWithGoogle } from '../../lib/employeeAuth'
@@ -68,14 +68,13 @@ export default function EmployeeSigninForm() {
   return (
     <form onSubmit={handleSubmit} noValidate>
       <GoogleAuthButton onCredential={handleGoogleCredential} onError={(message) => setErrors({ form: message })} />
-      <OrDivider />
+      <OrDivider label="or sign in with email" />
 
-      <Field label="Email">
-        <Input icon={Mail} type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@example.com" />
-        {errors.email && <span className="text-xs text-red mt-1 block">{errors.email}</span>}
+      <Field label="Email address" error={errors.email}>
+        <Input icon={Mail} type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@example.com" autoComplete="email" error={errors.email} />
       </Field>
 
-      <Field label="Password">
+      <Field label="Password" error={errors.password}>
         <div className="relative">
           <Input
             icon={Lock}
@@ -83,29 +82,30 @@ export default function EmployeeSigninForm() {
             value={form.password}
             onChange={(e) => update('password', e.target.value)}
             placeholder="Enter your password"
+            autoComplete="current-password"
             className="pr-10"
+            error={errors.password}
           />
           <button
             type="button"
             onClick={() => setShowPassword((s) => !s)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9E9E9E] hover:text-black transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         </div>
-        {errors.password && <span className="text-xs text-red mt-1 block">{errors.password}</span>}
       </Field>
 
       <div className="flex justify-end -mt-2 mb-4">
-        <Link to="/employees/forgot-password" className="text-xs font-bold text-[#595959] hover:text-black transition-colors">
+        <Link to="/employees/forgot-password" className="text-xs font-bold text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors">
           Forgot password?
         </Link>
       </div>
 
-      {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
+      {errors.form && <p className="text-xs text-red-600 mb-4 -mt-2">{errors.form}</p>}
 
-      <SubmitButton disabled={status === 'submitting'} className="mt-2">
+      <PrimaryButton disabled={status === 'submitting'} className="mt-2">
         {status === 'submitting' ? (
           'Signing in...'
         ) : (
@@ -113,7 +113,7 @@ export default function EmployeeSigninForm() {
             Sign in <ArrowRight size={16} />
           </>
         )}
-      </SubmitButton>
+      </PrimaryButton>
     </form>
   )
 }

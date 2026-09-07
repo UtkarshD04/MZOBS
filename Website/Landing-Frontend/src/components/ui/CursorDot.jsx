@@ -1,7 +1,15 @@
 import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 
+// Auth pages (signup/signin/etc.) use a focused white/blue/navy job-portal
+// look — this olive custom-cursor dot is a sitewide decorative touch for
+// the marketing pages and clashes with that palette, so it's hidden there
+// rather than changed globally.
+const HIDDEN_ON_PREFIXES = ['/employees/signup', '/employees/signin', '/employees/forgot-password', '/employees/reset-password']
+
 export default function CursorDot() {
+  const location = useLocation()
   const x = useMotionValue(-100)
   const y = useMotionValue(-100)
   const springX = useSpring(x, { stiffness: 500, damping: 40, mass: 0.5 })
@@ -15,6 +23,8 @@ export default function CursorDot() {
     window.addEventListener('mousemove', handleMove)
     return () => window.removeEventListener('mousemove', handleMove)
   }, [x, y])
+
+  if (HIDDEN_ON_PREFIXES.some((prefix) => location.pathname.startsWith(prefix))) return null
 
   return (
     <motion.div

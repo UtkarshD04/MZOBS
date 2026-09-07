@@ -42,14 +42,21 @@ export default function App() {
 
         <Route element={<RequireAuth />}>
           <Route path="/onboarding" element={<Onboarding />} />
+        </Route>
 
-          <Route path="/app" element={<AppShell />}>
+        <Route path="/app" element={<AppShell />}>
+          {/* Public — browsing/searching/filtering openings needs no account,
+              matching the now-public /jobs API. Everything else here still
+              needs a session; RequireAuth bounces a guest to sign-in and
+              carries them back via ?redirect=. */}
+          <Route path="jobs" element={<JobMatching />} />
+
+          <Route element={<RequireAuth />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
             <Route path="resume" element={<ResumeCenter />} />
             <Route path="interview" element={<MockInterview />} />
-            <Route path="jobs" element={<JobMatching />} />
             <Route path="applications" element={<Applications />} />
             <Route path="interview-center" element={<InterviewCenter />} />
             <Route path="notifications" element={<Notifications />} />

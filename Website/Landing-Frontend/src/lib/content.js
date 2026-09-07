@@ -796,51 +796,57 @@ export const JOB_SEARCH_DATA = {
 // with a specific fabricated title/salary/date. Shape mirrors the real
 // Job model (Backend/src/models/Job.js) so swapping in a live feed
 // later is a data change, not a component rewrite.
+// experienceMin/Max, salaryMin/Max, employmentType and track are the same
+// raw fields the public API now returns (see Backend's publicJobsController
+// toLatestJobSummary) — kept on the fallback sample too so the "Filters"
+// panel in JobFiltersPanel.jsx has something real to filter against even
+// before a live feed exists. track values match Website/Frontend's
+// lib/category.js CATEGORIES keys.
 export const LATEST_JOBS_DATA = [
   {
-    title: "Senior React Developer", company: "Brightloop Technologies", location: "Bengaluru, Karnataka", experience: "3–6 yrs", salary: "₹12L – ₹18L", workMode: "Hybrid", postedDaysAgo: 1, recruiterOnline: true,
+    title: "Senior React Developer", company: "Brightloop Technologies", location: "Bengaluru, Karnataka", experience: "3–6 yrs", experienceMin: 3, experienceMax: 6, salary: "₹12L – ₹18L", salaryMin: 1200000, salaryMax: 1800000, workMode: "Hybrid", employmentType: "Full-time", track: "tech", postedDaysAgo: 1, recruiterOnline: true,
     description: "Brightloop Technologies is looking for a Senior React Developer to lead the frontend for their core product — a React + TypeScript codebase serving over 200,000 monthly users.",
     highlights: ["Own frontend architecture across two product squads", "Mentor two mid-level engineers and review their PRs", "Partner directly with design and product on new features"],
     benefits: ["Health insurance for you and your family", "Flexible hybrid schedule — 2 days in office", "Annual learning & conference budget"]
   },
   {
-    title: "Sales Executive", company: "Northgate Distributors", location: "Pune, Maharashtra", experience: "1–3 yrs", salary: "₹4L – ₹6L", workMode: "On-site", postedDaysAgo: 2,
+    title: "Sales Executive", company: "Northgate Distributors", location: "Pune, Maharashtra", experience: "1–3 yrs", experienceMin: 1, experienceMax: 3, salary: "₹4L – ₹6L", salaryMin: 400000, salaryMax: 600000, workMode: "On-site", employmentType: "Full-time", track: "sales", postedDaysAgo: 2,
     description: "Northgate Distributors is hiring a Sales Executive to manage B2B accounts across the Pune region and grow their distributor network.",
     highlights: ["Manage and grow a portfolio of 30+ B2B accounts", "Visit distributor sites across the Pune region weekly", "Report pipeline and forecasts to the regional sales lead"],
     benefits: ["Fixed salary plus monthly incentive on targets", "Travel allowance for field visits", "Provident fund and health cover"]
   },
   {
-    title: "HR Executive", company: "Solace Manufacturing", location: "Gurugram, Haryana", experience: "2–4 yrs", salary: "₹5L – ₹7.5L", workMode: "On-site", postedDaysAgo: 2, recruiterOnline: true,
+    title: "HR Executive", company: "Solace Manufacturing", location: "Gurugram, Haryana", experience: "2–4 yrs", experienceMin: 2, experienceMax: 4, salary: "₹5L – ₹7.5L", salaryMin: 500000, salaryMax: 750000, workMode: "On-site", employmentType: "Full-time", track: "hr", postedDaysAgo: 2, recruiterOnline: true,
     description: "Solace Manufacturing needs an HR Executive to run hiring and employee relations for their Gurugram plant, covering roughly 180 staff.",
     highlights: ["Run end-to-end hiring for shop-floor and office roles", "Handle onboarding, attendance and employee queries", "Coordinate monthly engagement activities on-site"],
     benefits: ["Health insurance and annual bonus", "On-site cafeteria", "Five-day work week"]
   },
   {
-    title: "Data Analyst", company: "Vertex Financial Services", location: "Mumbai, Maharashtra", experience: "2–5 yrs", salary: "₹8L – ₹12L", workMode: "Hybrid", postedDaysAgo: 3,
+    title: "Data Analyst", company: "Vertex Financial Services", location: "Mumbai, Maharashtra", experience: "2–5 yrs", experienceMin: 2, experienceMax: 5, salary: "₹8L – ₹12L", salaryMin: 800000, salaryMax: 1200000, workMode: "Hybrid", employmentType: "Full-time", track: "analytics", postedDaysAgo: 3,
     description: "Vertex Financial Services is hiring a Data Analyst to support their risk and operations teams with reporting and dashboards built on SQL and Power BI.",
     highlights: ["Build and maintain dashboards for risk and ops teams", "Write and optimize SQL queries against large datasets", "Present monthly analysis to department leads"],
     benefits: ["Hybrid schedule — 3 days in office", "Health insurance and annual performance bonus", "Sponsored certifications in analytics tools"]
   },
   {
-    title: "Customer Support Associate", company: "Clearline Healthcare", location: "Hyderabad, Telangana", experience: "0–2 yrs", salary: "₹3L – ₹4.5L", workMode: "Remote", postedDaysAgo: 3, recruiterOnline: true,
+    title: "Customer Support Associate", company: "Clearline Healthcare", location: "Hyderabad, Telangana", experience: "0–2 yrs", experienceMin: 0, experienceMax: 2, salary: "₹3L – ₹4.5L", salaryMin: 300000, salaryMax: 450000, workMode: "Remote", employmentType: "Full-time", track: "support", postedDaysAgo: 3, recruiterOnline: true,
     description: "Clearline Healthcare is looking for a remote Customer Support Associate to handle patient and provider queries over chat and phone.",
     highlights: ["Resolve patient and provider queries over chat and call", "Log every interaction accurately in the support tool", "Escalate unresolved cases to the right internal team"],
     benefits: ["Fully remote — work from anywhere in India", "Health insurance from day one", "Fixed rotational shifts, no night shifts"]
   },
   {
-    title: "Graphic Designer", company: "Sundial Media", location: "Ahmedabad, Gujarat", experience: "1–3 yrs", salary: "₹4.5L – ₹6.5L", workMode: "Hybrid", postedDaysAgo: 4,
+    title: "Graphic Designer", company: "Sundial Media", location: "Ahmedabad, Gujarat", experience: "1–3 yrs", experienceMin: 1, experienceMax: 3, salary: "₹4.5L – ₹6.5L", salaryMin: 450000, salaryMax: 650000, workMode: "Hybrid", employmentType: "Full-time", track: "design", postedDaysAgo: 4,
     description: "Sundial Media is hiring a Graphic Designer to produce social and campaign creatives for a roster of consumer brand clients.",
     highlights: ["Design social, print and campaign creatives for clients", "Turn around revisions within agreed client timelines", "Maintain brand guidelines across every deliverable"],
     benefits: ["Hybrid schedule with flexible hours", "Latest design software and hardware provided", "Health insurance"]
   },
   {
-    title: "Operations Manager", company: "Anchorpoint Logistics", location: "Chennai, Tamil Nadu", experience: "4–7 yrs", salary: "₹10L – ₹14L", workMode: "On-site", postedDaysAgo: 5, recruiterOnline: true,
+    title: "Operations Manager", company: "Anchorpoint Logistics", location: "Chennai, Tamil Nadu", experience: "4–7 yrs", experienceMin: 4, experienceMax: 7, salary: "₹10L – ₹14L", salaryMin: 1000000, salaryMax: 1400000, workMode: "On-site", employmentType: "Full-time", track: "ops", postedDaysAgo: 5, recruiterOnline: true,
     description: "Anchorpoint Logistics needs an Operations Manager to run day-to-day warehouse and dispatch operations out of their Chennai hub.",
     highlights: ["Oversee daily warehouse and dispatch operations", "Manage a team of 25+ warehouse staff and supervisors", "Track SLAs and cut down dispatch delays"],
     benefits: ["Health insurance for you and your family", "Annual performance bonus", "Company transport for late shifts"]
   },
   {
-    title: "Business Development Associate", company: "Meridian Retail Group", location: "Noida, Uttar Pradesh", experience: "1–2 yrs", salary: "₹3.5L – ₹5L", workMode: "Remote", postedDaysAgo: 6,
+    title: "Business Development Associate", company: "Meridian Retail Group", location: "Noida, Uttar Pradesh", experience: "1–2 yrs", experienceMin: 1, experienceMax: 2, salary: "₹3.5L – ₹5L", salaryMin: 350000, salaryMax: 500000, workMode: "Remote", employmentType: "Full-time", track: "sales", postedDaysAgo: 6,
     description: "Meridian Retail Group is hiring a remote Business Development Associate to source and qualify new retail partnership leads.",
     highlights: ["Source and qualify new retail partnership leads", "Run discovery calls and maintain the CRM pipeline", "Coordinate handoffs to the partnerships team"],
     benefits: ["Fully remote role", "Performance-linked incentives", "Health insurance"]

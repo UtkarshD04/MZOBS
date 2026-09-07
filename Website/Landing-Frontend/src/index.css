@@ -314,4 +314,20 @@
   --jobs-border: #e2e8f0;
   --jobs-gold: #d4af6a;
   --jobs-gold-soft: rgba(212, 175, 106, 0.14);
+
+  /* Explorer — restrained palette for the Latest Jobs list/detail explorer
+     (LatestJobs.jsx, JobDetailPanel.jsx, jobCardPrimitives.jsx, and the
+     standalone mobile JobDetail page that reuses those same pieces). Kept
+     separate from --jobs-* above since that set is shared by the hero/navbar
+     and uses a brighter teal/navy this explorer intentionally dials back. */
+  --explorer-navy: #16324f;
+  --explorer-muted: #64748b;
+  --explorer-blue: #2563eb;
+  --explorer-blue-hover: #1d4ed8;
+  --explorer-teal: #0f766e;
+  --explorer-teal-hover: #115e59;
+  --explorer-teal-surface: #f0fdfa;
+  --explorer-teal-border: #99f6e4;
+  --explorer-bg: #f8fafc;
+  --explorer-border: #e2e8f0;
 }
