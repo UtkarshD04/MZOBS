@@ -3,15 +3,7 @@ import { ArrowUpRight, ArrowRight, Flame } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { CATEGORY_DATA } from '../../../lib/content'
-import { EMPLOYEE_APP_URL } from '../../../lib/config'
-import { buildJobsUrl } from '../../../lib/jobsUrl'
 import { fetchCategoryCounts } from '../../../lib/publicJobs'
-
-function categoryHref(cat) {
-  if (cat.browseCategory) return `${EMPLOYEE_APP_URL}/app/jobs?category=${encodeURIComponent(cat.browseCategory)}`
-  if (cat.searchParams) return buildJobsUrl(cat.searchParams)
-  return `${EMPLOYEE_APP_URL}/app/jobs`
-}
 
 // Cycled per row so the list reads as a curated palette rather than one
 // flat teal chip repeated nine times — same "array of literal class strings"
@@ -73,9 +65,8 @@ export default function CategoryGrid() {
         <Reveal direction="up" duration={0.7} delay={0.05} className="grid lg:grid-cols-5 gap-4">
           {/* Spotlight tile — the one category with the most openings, given
               real visual weight instead of blending into a uniform grid. */}
-          <a
-            href={categoryHref(featured)}
-            className="group lg:col-span-2 relative overflow-hidden flex flex-col justify-between min-h-80 rounded-3xl p-7 bg-linear-to-br from-(--jobs-navy) to-(--jobs-navy-deep) text-white transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          <div
+            className="group lg:col-span-2 relative overflow-hidden flex flex-col justify-between min-h-80 rounded-3xl p-7 bg-linear-to-br from-(--jobs-navy) to-(--jobs-navy-deep) text-white transition-transform duration-200 hover:-translate-y-0.5"
           >
             <FeaturedIcon
               size={220}
@@ -101,7 +92,7 @@ export default function CategoryGrid() {
                 <ArrowUpRight size={15} aria-hidden="true" />
               </span>
             </span>
-          </a>
+          </div>
 
           {/* Everything else: a dense, scannable list rather than nine more
               boxes — each row inverts to a solid navy fill on hover instead
@@ -113,9 +104,8 @@ export default function CategoryGrid() {
               const tone = TONES[i % TONES.length]
               return (
                 <StaggerItem key={cat.title}>
-                  <a
-                    href={categoryHref(cat)}
-                    className="group flex items-center gap-3 h-full bg-white rounded-2xl p-4 hover:bg-(--jobs-navy) transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-teal-dark)"
+                  <div
+                    className="group flex items-center gap-3 h-full bg-white rounded-2xl p-4 hover:bg-(--jobs-navy) transition-colors duration-200"
                   >
                     <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${tone}`}>
                       <Icon size={16} strokeWidth={1.75} aria-hidden="true" />
@@ -129,7 +119,7 @@ export default function CategoryGrid() {
                       className="shrink-0 text-white opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
                       aria-hidden="true"
                     />
-                  </a>
+                  </div>
                 </StaggerItem>
               )
             })}
