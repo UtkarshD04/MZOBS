@@ -1,0 +1,7 @@
+import { PUBLIC_API_URL } from './config'
+
+export async function fetchFeaturedJobs(limit = 8) {
+  const res = await fetch(`${PUBLIC_API_URL}/jobs/featured?limit=${limit}`)
+  if (!res.ok) throw new Error('Could not load jobs right now')
+  return res.json()
+}
