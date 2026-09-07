@@ -1,374 +1,325 @@
-import { useEffect, useRef, useState } from 'react'
-import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, Users, TrendingUp, Share2, Check } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { MapPin, TrendingUp, IndianRupee, Clock, ChevronDown, X, SearchX, SlidersHorizontal, Loader2 } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
-import ApplyPanel from './ApplyPanel'
+import JobFiltersPanel from './JobFiltersPanel'
+import JobDetailPanel from './JobDetailPanel'
+import { LOGO_TONES, WORK_MODE_STYLE, NEUTRAL_PILL, NewBadge, initialsOf, Avatar, Pill } from './jobCardPrimitives'
 import { LATEST_JOBS_DATA } from '../../../lib/content'
-import { EMPLOYEE_APP_URL } from '../../../lib/config'
 import { fetchLatestJobs } from '../../../lib/publicJobs'
+import { matchesJobSearch, hasActiveFilters, countActiveFilters, buildFilterChips } from '../../../lib/jobFilters'
 
-// Kept to this page's own --jobs-* palette (not the shared Badge/CompanyLogo
-// tone system, which is a separate, differently-shaded color set used
-// elsewhere on the site) so every pill and avatar here stays visually
-// consistent with the rest of this redesign's blue/teal theme.
-const LOGO_TONES = ['bg-(--jobs-blue-tint) text-(--jobs-blue-dark)', 'bg-(--jobs-teal-tint) text-(--jobs-teal-dark)']
-const WORK_MODE_STYLE = {
-  Remote: 'bg-(--jobs-teal-tint) text-(--jobs-teal-dark)',
-  Hybrid: 'bg-(--jobs-blue-tint) text-(--jobs-blue-dark)',
-  'On-site': 'bg-(--jobs-bg-subtle) text-(--jobs-ink-soft)',
-}
-const NEUTRAL_PILL = 'bg-(--jobs-bg-subtle) text-(--jobs-ink-soft)'
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Newest' },
+  { value: 'salary_desc', label: 'Highest salary' },
+  { value: 'salary_asc', label: 'Lowest salary' },
+]
 
-function initialsOf(name) {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase()
+// Only used against the curated LATEST_JOBS_DATA fallback — a live result
+// set already comes back pre-sorted by Backend for whichever `sort` value
+// was sent (see jobQueryFilters.js), so this never runs against real data.
+function sortFallbackJobs(list, sort) {
+  const arr = [...list]
+  if (sort === 'salary_desc') return arr.sort((a, b) => (b.salaryMax ?? 0) - (a.salaryMax ?? 0))
+  if (sort === 'salary_asc') return arr.sort((a, b) => (a.salaryMin ?? Infinity) - (b.salaryMin ?? Infinity))
+  return arr.sort((a, b) => (a.postedDaysAgo ?? 0) - (b.postedDaysAgo ?? 0))
 }
 
-function Avatar({ initials, tone, size = 'sm' }) {
-  const sizeClass = size === 'lg' ? 'w-14 h-14 rounded-2xl text-base' : 'w-[26px] h-[26px] rounded-lg text-[10px]'
-  return <div className={`flex items-center justify-center font-bold shrink-0 ${sizeClass} ${tone}`}>{initials}</div>
+// Debounce before asking Backend for a new filtered result set — chip
+// clicks in the Filters panel can fire in quick succession, so this avoids
+// spamming a request per click. The hero search bar / suggestion selection
+// only ever calls onSearch once per submit, so in practice this window is
+// rarely visible for that path.
+const FETCH_DEBOUNCE_MS = 250
+const RESULTS_LIMIT = 8
+
+// Matches the `lg` breakpoint the list/detail grid switches on below —
+// under it there's no side-by-side room for a detail panel at all, so a
+// card tap goes to its own page (pages/JobDetail.jsx) instead of updating
+// an inline panel the visitor would have to scroll down to see.
+const DESKTOP_BREAKPOINT = 1024
+
+function resultSummaryText(total, filters) {
+  const qTerms = filters.q ?? []
+  const locationTerms = filters.location ?? []
+  const qPart = qTerms.length ? ` for ${qTerms.map((v) => `“${v}”`).join(' or ')}` : ''
+  const locationPart = locationTerms.length ? ` in ${locationTerms.join(' or ')}` : ''
+  return `${total} job${total === 1 ? '' : 's'} found${qPart}${locationPart}`
 }
 
-function Pill({ children, className = '', icon }) {
-  return (
-    <span className={`inline-flex items-center gap-1.5 text-[11.5px] font-semibold px-2.5 py-0.75 rounded-full ${className}`}>
-      {icon}
-      {children}
-    </span>
-  )
-}
+export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, onClearFilters }) {
+  const navigate = useNavigate()
+  const [filtersOpen, setFiltersOpen] = useState(false)
+  const [sort, setSort] = useState('newest')
+  const isFiltered = hasActiveFilters(filters)
 
-// Deep-links straight to this job's apply flow in the dashboard app (see
-// JobMatching.jsx, which opens the apply modal for a matching `?jobId=`) —
-// same "click apply on the listing, land in the apply flow" pattern as
-// Indeed/Naukri. Falls back to a title search for the curated sample data,
-// which has no real id to link to.
-function jobHref(job) {
-  if (job.applyUrl) return job.applyUrl
-  if (job.id) return `${EMPLOYEE_APP_URL}/app/jobs?jobId=${encodeURIComponent(job.id)}`
-  return `${EMPLOYEE_APP_URL}/app/jobs?q=${encodeURIComponent(job.title)}`
-}
-
-function BulletList({ title, items }) {
-  if (!items?.length) return null
-  return (
-    <div className="mt-5">
-      <h4 className="font-bold text-[13.5px] text-(--jobs-navy)">{title}</h4>
-      <ul className="mt-2 flex flex-col gap-1.5">
-        {items.map((item) => (
-          <li key={item} className="flex items-start gap-2 text-[13.5px] text-(--jobs-ink-soft) leading-relaxed">
-            <span className="mt-1.75 w-1 h-1 rounded-full bg-(--jobs-ink-soft) shrink-0" aria-hidden="true" />
-            {item}
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-// Skills read better as scannable tags than prose bullets — kept as a
-// separate layout from BulletList rather than forcing one shape on both.
-function TagList({ title, items }) {
-  if (!items?.length) return null
-  return (
-    <div className="mt-5">
-      <h4 className="font-bold text-[13.5px] text-(--jobs-navy)">{title}</h4>
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        {items.map((item) => (
-          <span key={item} className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-(--jobs-bg-subtle) text-(--jobs-ink-soft)">
-            {item}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// Indeed-style "job details" row — an icon, a bold label, and one or more
-// value chips underneath it. Skips rendering entirely if every chip inside
-// it turned out empty, so a row never shows up as just a bare label.
-function DetailRow({ icon, label, children }) {
-  const hasContent = Array.isArray(children) ? children.some(Boolean) : Boolean(children)
-  if (!hasContent) return null
-  return (
-    <div className="flex items-start gap-3">
-      <span className="mt-0.5 flex items-center justify-center w-5 h-5 text-(--jobs-ink-soft) shrink-0" aria-hidden="true">{icon}</span>
-      <div className="min-w-0">
-        <p className="font-bold text-[13.5px] text-(--jobs-navy)">{label}</p>
-        <div className="mt-1.5 flex flex-wrap gap-2">{children}</div>
-      </div>
-    </div>
-  )
-}
-
-function DetailChip({ children }) {
-  return <span className="text-[13px] font-semibold px-3 py-1.5 rounded-lg bg-(--jobs-bg-subtle) text-(--jobs-navy)">{children}</span>
-}
-
-function SectionHeading({ title, subtitle }) {
-  return (
-    <div className="mt-6 mb-4">
-      <h4 className="font-extrabold text-[16px] text-(--jobs-navy)">{title}</h4>
-      {subtitle && <p className="mt-0.5 text-[12.5px] text-(--jobs-ink-soft)">{subtitle}</p>}
-    </div>
-  )
-}
-
-function Divider() {
-  return <hr className="mt-6 border-(--jobs-border)" />
-}
-
-export default function LatestJobs({ jobs: jobsProp }) {
-  // Live jobs are whatever admin/ops have approved and pushed to the public
-  // feed. Falls back to the curated LATEST_JOBS_DATA sample while that
-  // request is in flight, if it fails, or once it comes back empty — so the
-  // section never renders looking broken or blank before real jobs exist.
-  const [liveJobs, setLiveJobs] = useState(null)
+  // `jobs`/`total` always come from exactly one source at a time — the live
+  // API, or (only on a genuine fetch failure) the curated LATEST_JOBS_DATA
+  // sample filtered the same way — never a blend of the two. `usingFallback`
+  // just tracks which one so the rest of the component doesn't need to care.
+  const [jobs, setJobs] = useState(jobsProp ?? [])
+  const [total, setTotal] = useState(jobsProp?.length ?? 0)
+  const [loading, setLoading] = useState(!jobsProp)
+  const [usingFallback, setUsingFallback] = useState(false)
 
   useEffect(() => {
     if (jobsProp) return
     let cancelled = false
-    fetchLatestJobs({ limit: 8 })
-      .then((data) => {
-        if (!cancelled) setLiveJobs(data)
-      })
-      .catch(() => {
-        if (!cancelled) setLiveJobs([])
-      })
+    const controller = new AbortController()
+    setLoading(true)
+
+    const timer = setTimeout(() => {
+      fetchLatestJobs({ ...filters, sort, limit: RESULTS_LIMIT }, { signal: controller.signal })
+        .then(({ jobs: fetchedJobs, total: fetchedTotal }) => {
+          if (cancelled) return
+          setJobs(fetchedJobs)
+          setTotal(fetchedTotal)
+          setUsingFallback(false)
+        })
+        .catch((err) => {
+          if (cancelled || err?.name === 'AbortError') return
+          // Public API unreachable — filter the curated sample the exact
+          // same way a live request would have been filtered, so the
+          // section degrades gracefully instead of looking broken. Never
+          // reached when the API responds successfully with zero matches —
+          // that's a real empty result, not a fallback case.
+          const matched = isFiltered ? LATEST_JOBS_DATA.filter((j) => matchesJobSearch(j, filters)) : LATEST_JOBS_DATA.slice()
+          const filtered = sortFallbackJobs(matched, sort).slice(0, RESULTS_LIMIT)
+          setJobs(filtered)
+          setTotal(filtered.length)
+          setUsingFallback(true)
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false)
+        })
+    }, FETCH_DEBOUNCE_MS)
+
     return () => {
       cancelled = true
+      clearTimeout(timer)
+      controller.abort()
     }
-  }, [jobsProp])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, sort, jobsProp])
 
-  const jobs = jobsProp ?? (liveJobs?.length ? liveJobs : LATEST_JOBS_DATA)
   const [selected, setSelected] = useState(0)
-  const [copied, setCopied] = useState(false)
-  const [applyOpen, setApplyOpen] = useState(false)
-  const detailRef = useRef(null)
   const job = jobs[selected]
 
-  function selectJob(i) {
-    setSelected(i)
-    setCopied(false)
-    setApplyOpen(false)
-    // On narrow screens the detail panel sits below the list (grid
-    // collapses to one column) — jump to it so picking a job doesn't
-    // silently update content off-screen.
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-      requestAnimationFrame(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  // Whatever was selected in the previous result set is meaningless once the
+  // filters change the list underneath it — jump back to the first match.
+  // `filters` is a fresh object every time Home.jsx updates it, so this only
+  // fires on an actual filter change (covers the array-valued fields too —
+  // workMode/employmentType/track — that a scalar dependency list would miss).
+  useEffect(() => {
+    setSelected(0)
+  }, [filters, sort])
+
+  // Desktop: select the job for the sticky side panel to show. Mobile: that
+  // panel isn't rendered at all (see the `hidden lg:block` wrapper below),
+  // so instead this opens the job on its own page — the id-less curated
+  // fallback sample still works there since the full job object rides along
+  // as router state, not just the URL.
+  function openJob(i) {
+    const j = jobs[i]
+    if (typeof window !== 'undefined' && window.innerWidth < DESKTOP_BREAKPOINT) {
+      navigate(`/jobs/${j.id ?? encodeURIComponent(j.title)}`, { state: { job: j } })
+      return
     }
+    setSelected(i)
   }
 
-  // Native share sheet where supported (mobile browsers), otherwise falls
-  // back to copying the apply link so the button still does something useful
-  // on desktop.
-  async function shareJob() {
-    const url = jobHref(job)
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: job.title, text: `${job.title} at ${job.company}`, url })
-        return
-      }
-      await navigator.clipboard.writeText(url)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // Share sheet dismissed or clipboard unavailable — nothing to recover.
-    }
-  }
+  const activeFilterCount = countActiveFilters(filters)
+  const hasStructuredFilters = Boolean(
+    filters.workMode?.length || filters.salary || filters.employmentType?.length || filters.track?.length || filters.postedWithin
+  )
+  const clearAllLabel = hasStructuredFilters ? 'Clear filters' : 'Clear search'
+  const filterChips = isFiltered ? buildFilterChips(filters) : []
+  const showEmptyState = !loading && jobs.length === 0
+  const showInitialLoading = loading && jobs.length === 0 && !jobsProp
 
   return (
-    <section id="latest-jobs" className="bg-white py-16 md:py-20 px-6 md:px-10">
+    <section id="latest-jobs" className="bg-(--explorer-bg) py-16 md:py-20 px-6 md:px-10 scroll-mt-20">
       <div className="max-w-7xl mx-auto">
-        <Reveal direction="up" duration={0.7} className="mb-8 flex items-end justify-between gap-4">
+        <Reveal direction="up" duration={0.7} className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-(--jobs-navy) tracking-tight">Latest jobs</h2>
-            <p className="mt-2 text-[15px] text-(--jobs-ink-soft)">Fresh, screened openings added by verified employers — select a role to see the full description.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-(--explorer-navy) tracking-tight">Latest jobs</h2>
+            {isFiltered ? (
+              <p className="mt-2 text-[15px] text-(--explorer-muted) flex items-center gap-2">
+                {resultSummaryText(total, filters)}
+                {loading && <Loader2 size={14} className="animate-spin text-(--explorer-muted)" aria-hidden="true" />}
+              </p>
+            ) : (
+              <p className="mt-2 text-[15px] text-(--explorer-muted)">Fresh, screened openings added by verified employers — select a role to see the full description.</p>
+            )}
           </div>
-          <a
-            href={`${EMPLOYEE_APP_URL}/app/jobs`}
-            className="hidden sm:inline-flex shrink-0 items-center gap-1.5 text-[14.5px] font-bold text-(--jobs-blue) hover:text-(--jobs-blue-dark) transition-colors"
-          >
-            View all jobs <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
+          <div className="flex shrink-0 items-center gap-3">
+            <button
+              type="button"
+              aria-expanded={filtersOpen}
+              onClick={() => setFiltersOpen((v) => !v)}
+              className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border text-[13.5px] font-bold transition-colors ${
+                filtersOpen
+                  ? 'border-(--explorer-teal-border) bg-(--explorer-teal-surface) text-(--explorer-teal)'
+                  : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-teal)'
+              }`}
+            >
+              <SlidersHorizontal size={15} aria-hidden="true" /> Filters
+              {activeFilterCount > 0 && (
+                <span className="flex items-center justify-center w-4.5 h-4.5 rounded-full bg-(--explorer-teal) text-white text-[10px] font-bold">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
         </Reveal>
 
-        <Reveal direction="up" duration={0.7} delay={0.05} className="grid lg:grid-cols-[380px_1fr] gap-5 items-start">
-          <div className="flex flex-col gap-2.5 lg:max-h-184 lg:overflow-y-auto lg:pr-1.5">
-            {jobs.map((j, i) => {
-              const active = i === selected
-              return (
-                <button
-                  key={j.id ?? `${j.title}-${j.company}`}
-                  type="button"
-                  aria-pressed={active}
-                  onClick={() => selectJob(i)}
-                  className={`text-left rounded-xl border p-4 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-blue) ${
-                    active
-                      ? 'border-(--jobs-blue) bg-(--jobs-blue-tint)'
-                      : 'border-(--jobs-border) bg-white hover:border-(--jobs-navy)/30 hover:bg-(--jobs-bg-subtle)'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <span aria-hidden="true">
-                      <Avatar initials={initialsOf(j.company)} tone={LOGO_TONES[i % LOGO_TONES.length]} size="sm" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-bold text-[14px] text-(--jobs-navy) leading-snug truncate">{j.title}</h3>
-                      <p className="text-[12.5px] text-(--jobs-ink-soft) truncate">{j.company}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-(--jobs-ink-soft)">
-                    <span className="flex items-center gap-1">
-                      <MapPin size={11} className="shrink-0" aria-hidden="true" />
-                      {j.location.split(',')[0]}
-                    </span>
-                    {j.salary && (
-                      <span className="flex items-center gap-1">
-                        <IndianRupee size={11} className="shrink-0" aria-hidden="true" />
-                        {j.salary}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mt-2.5 flex items-center justify-between gap-2">
-                    <Pill className={WORK_MODE_STYLE[j.workMode] || NEUTRAL_PILL}>{j.workMode}</Pill>
-                    <span className="flex items-center gap-1 text-[11px] text-(--jobs-ink-soft)">
-                      <Clock size={11} className="shrink-0" aria-hidden="true" />
-                      {j.postedDaysAgo === 0 ? 'Today' : `${j.postedDaysAgo}d ago`}
-                    </span>
-                  </div>
-                </button>
-              )
-            })}
+        {isFiltered && (
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            {filterChips.map((chip) => (
+              <button
+                key={chip.id}
+                type="button"
+                onClick={() => onFiltersChange(chip.clear(filters))}
+                className="inline-flex items-center gap-1.5 h-8 pl-3 pr-2 rounded-full border border-(--explorer-border) bg-white text-[12.5px] font-semibold text-(--explorer-navy) hover:border-(--explorer-teal) transition-colors"
+              >
+                {chip.label}
+                <X size={12} aria-hidden="true" />
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={onClearFilters}
+              className="inline-flex items-center gap-1 text-[13px] font-bold text-(--explorer-teal) hover:text-(--explorer-navy) transition-colors"
+            >
+              <X size={13} aria-hidden="true" /> {clearAllLabel}
+            </button>
           </div>
+        )}
 
-          <div ref={detailRef} className="lg:sticky lg:top-24 bg-white border border-(--jobs-border) rounded-xl p-6 sm:p-7 scroll-mt-24">
-            {applyOpen ? (
-              <ApplyPanel job={job} onClose={() => setApplyOpen(false)} />
-            ) : (
-              <>
-            <div className="flex items-start gap-4">
-              <span aria-hidden="true">
-                <Avatar initials={initialsOf(job.company)} tone={LOGO_TONES[selected % LOGO_TONES.length]} size="lg" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <h3 className="font-extrabold text-xl text-(--jobs-navy) leading-snug">{job.title}</h3>
-                <p className="mt-1 text-[13.5px] text-(--jobs-ink-soft) flex flex-wrap items-center gap-x-1.5">
-                  <span className="font-semibold text-(--jobs-navy)">{job.company}</span>
-                  <span aria-hidden="true">·</span>
-                  <span>{job.location}</span>
-                  {job.workMode && (
-                    <>
-                      <span aria-hidden="true">·</span>
-                      <span>{job.workMode}</span>
-                    </>
-                  )}
-                </p>
-                {job.salary && <p className="mt-1.5 text-[16px] font-extrabold text-(--jobs-navy)">{job.salary}</p>}
-                {job.recruiterOnline && (
-                  <span className="mt-1.5 inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-(--jobs-teal-dark)">
-                    <span className="relative flex h-1.5 w-1.5 shrink-0">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-(--jobs-teal) opacity-75" />
-                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-(--jobs-teal-dark)" />
-                    </span>
-                    Recruiter online
-                  </span>
-                )}
+        <JobFiltersPanel open={filtersOpen} filters={filters} onChange={onFiltersChange} onClear={onClearFilters} />
+
+        {usingFallback && (
+          <p className="mb-4 text-[12.5px] text-(--explorer-muted)">Showing sample openings while we reconnect to live listings.</p>
+        )}
+
+        {showInitialLoading ? (
+          <div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
+            <Loader2 size={26} className="animate-spin text-(--explorer-muted)" aria-hidden="true" />
+            <p className="text-[13.5px] text-(--explorer-muted)">Loading jobs…</p>
+          </div>
+        ) : showEmptyState ? (
+          <Reveal
+            direction="up"
+            duration={0.7}
+            delay={0.05}
+            className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-(--explorer-border) py-16 px-6 text-center"
+          >
+            <SearchX size={26} className="text-(--explorer-muted)" aria-hidden="true" />
+            <p className="text-[15px] font-bold text-(--explorer-navy)">No jobs match your search</p>
+            <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">Try a different city, role or experience level.</p>
+            <button
+              type="button"
+              onClick={onClearFilters}
+              className="mt-1.5 inline-flex items-center gap-1.5 h-10 px-5 rounded-lg bg-(--explorer-blue) text-white text-[13.5px] font-bold hover:bg-(--explorer-blue-hover) transition-colors"
+            >
+              Clear filters
+            </button>
+          </Reveal>
+        ) : (
+          <Reveal direction="up" duration={0.7} delay={0.05} className="grid lg:grid-cols-[380px_1fr] gap-4 sm:gap-5 items-start">
+            <div className="flex flex-col bg-white border border-(--explorer-border) rounded-xl shadow-[0_1px_2px_rgba(16,42,67,0.04)] overflow-hidden lg:max-h-184">
+              <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-(--explorer-border) shrink-0">
+                <div className="min-w-0">
+                  <p className="font-bold text-[13.5px] text-(--explorer-navy) truncate">Latest opportunities</p>
+                  <p className="mt-0.5 text-[12px] text-(--explorer-muted)">
+                    {total} role{total === 1 ? '' : 's'} available
+                  </p>
+                </div>
+                <div className="relative shrink-0">
+                  <select
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                    aria-label="Sort jobs"
+                    className="h-8 pl-2.5 pr-7 rounded-md border border-(--explorer-border) bg-white text-[12px] font-semibold text-(--explorer-navy) outline-none appearance-none hover:border-(--explorer-navy)/25 focus:border-(--explorer-teal) focus:ring-[3px] focus:ring-(--explorer-teal)/15 transition-colors"
+                  >
+                    {SORT_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-(--explorer-muted) pointer-events-none" aria-hidden="true" />
+                </div>
+              </div>
+
+              <div className="flex flex-col lg:overflow-y-auto">
+                {jobs.map((j, i) => {
+                  const active = i === selected
+                  const isRecent = j.postedDaysAgo != null && j.postedDaysAgo <= 1
+                  return (
+                    <button
+                      key={j.id ?? `${j.title}-${j.company}`}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => openJob(i)}
+                      className={`relative text-left p-3 border-b border-(--explorer-border) last:border-b-0 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) ${
+                        active ? 'lg:bg-(--explorer-teal-surface) lg:pl-4' : 'bg-white hover:bg-(--explorer-bg)'
+                      }`}
+                    >
+                      {active && <span className="hidden lg:block absolute left-0 top-0 bottom-0 w-1 bg-(--explorer-teal)" aria-hidden="true" />}
+
+                      <div className="flex items-start gap-2.5">
+                        <span aria-hidden="true">
+                          <Avatar initials={initialsOf(j.company)} tone={LOGO_TONES[i % LOGO_TONES.length]} size="sm" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start gap-1.5">
+                            <h3 className="font-bold text-[13.5px] text-(--explorer-navy) leading-snug truncate">{j.title}</h3>
+                            {isRecent && <span className="shrink-0 mt-0.5"><NewBadge /></span>}
+                          </div>
+                          <p className="text-[12px] text-(--explorer-muted) truncate">{j.company}</p>
+                        </div>
+                      </div>
+
+                      <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11.5px] text-(--explorer-muted)">
+                        <span className="flex items-center gap-1">
+                          <MapPin size={10.5} className="shrink-0" aria-hidden="true" />
+                          {j.location.split(',')[0]}
+                        </span>
+                        {j.experience && (
+                          <span className="flex items-center gap-1">
+                            <TrendingUp size={10.5} className="shrink-0" aria-hidden="true" />
+                            {j.experience}
+                          </span>
+                        )}
+                        {j.salary && (
+                          <span className="flex items-center gap-1 font-semibold text-(--explorer-navy)">
+                            <IndianRupee size={10.5} className="shrink-0" aria-hidden="true" />
+                            {j.salary}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-2.5 flex items-center justify-between gap-2">
+                        <Pill className={WORK_MODE_STYLE[j.workMode] || NEUTRAL_PILL}>{j.workMode}</Pill>
+                        <span className="flex items-center gap-1 text-[11px] text-(--explorer-muted)">
+                          <Clock size={11} className="shrink-0" aria-hidden="true" />
+                          {j.postedDaysAgo === 0 ? 'Today' : `${j.postedDaysAgo}d ago`}
+                        </span>
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
-            <div className="mt-5 flex items-center gap-2">
-              {job.applyUrl ? (
-                <a
-                  href={job.applyUrl}
-                  className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-lg bg-(--jobs-teal-dark) text-white text-[14.5px] font-bold hover:bg-(--jobs-navy) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-teal-dark) transition-colors"
-                >
-                  Apply now <ArrowUpRight size={16} aria-hidden="true" />
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setApplyOpen(true)}
-                  className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-lg bg-(--jobs-teal-dark) text-white text-[14.5px] font-bold hover:bg-(--jobs-navy) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-teal-dark) transition-colors"
-                >
-                  Apply now <ArrowUpRight size={16} aria-hidden="true" />
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={shareJob}
-                aria-label="Share this job"
-                className="flex items-center justify-center w-12 h-12 rounded-lg bg-(--jobs-bg-subtle) text-(--jobs-navy) hover:bg-(--jobs-border)/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-blue) transition-colors"
-              >
-                {copied ? <Check size={18} aria-hidden="true" /> : <Share2 size={18} aria-hidden="true" />}
-              </button>
+            {/* Desktop only — under `lg` there's no side-by-side room, and a
+                card tap goes to its own page (pages/JobDetail.jsx) instead. */}
+            <div className="hidden lg:block lg:sticky lg:top-24 bg-white border border-(--explorer-border) rounded-xl shadow-[0_1px_2px_rgba(16,42,67,0.04)] p-6 sm:p-7 lg:max-h-184 lg:overflow-y-auto">
+              {job && <JobDetailPanel job={job} toneIndex={selected} />}
             </div>
-            <span className="mt-2.5 flex items-center gap-1.5 text-[13px] text-(--jobs-ink-soft)">
-              <Clock size={13} className="shrink-0" aria-hidden="true" />
-              {copied ? 'Link copied' : `Posted ${job.postedDaysAgo === 0 ? 'today' : `${job.postedDaysAgo} days ago`}`}
-            </span>
-
-            <Divider />
-
-            <SectionHeading title="Job details" />
-            <div className="flex flex-col gap-4">
-              <DetailRow icon={<IndianRupee size={16} aria-hidden="true" />} label="Pay">
-                {job.salary && <DetailChip>{job.salary}</DetailChip>}
-              </DetailRow>
-              <DetailRow icon={<Briefcase size={16} aria-hidden="true" />} label="Job type">
-                {job.employmentType && <DetailChip>{job.employmentType}</DetailChip>}
-              </DetailRow>
-              <DetailRow icon={<TrendingUp size={16} aria-hidden="true" />} label="Experience">
-                {job.experience && <DetailChip>{job.experience}</DetailChip>}
-              </DetailRow>
-              <DetailRow icon={<MapPin size={16} aria-hidden="true" />} label="Location">
-                {job.location && <DetailChip>{job.location}</DetailChip>}
-              </DetailRow>
-              <DetailRow icon={<Users size={16} aria-hidden="true" />} label="Openings">
-                {job.vacancies > 0 && <DetailChip>{job.vacancies} opening{job.vacancies === 1 ? '' : 's'}</DetailChip>}
-              </DetailRow>
-            </div>
-
-            {job.benefits?.length > 0 && (
-              <>
-                <Divider />
-                <SectionHeading title="Benefits" subtitle="Pulled from the full job description" />
-                <ul className="flex flex-col gap-1.5">
-                  {job.benefits.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-[13.5px] text-(--jobs-ink-soft) leading-relaxed">
-                      <span className="mt-1.75 w-1 h-1 rounded-full bg-(--jobs-ink-soft) shrink-0" aria-hidden="true" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-
-            <Divider />
-
-            <SectionHeading title="Full job description" />
-            {job.description && <p className="text-[14.5px] text-(--jobs-navy) leading-relaxed">{job.description}</p>}
-            <BulletList title="What you'll do" items={job.highlights} />
-            <TagList title="Skills" items={job.skills} />
-              </>
-            )}
-          </div>
-        </Reveal>
-
-        <div className="mt-8 flex justify-center sm:hidden">
-          <a
-            href={`${EMPLOYEE_APP_URL}/app/jobs`}
-            className="inline-flex items-center gap-1.5 text-[14.5px] font-bold text-(--jobs-blue) hover:text-(--jobs-blue-dark) transition-colors"
-          >
-            View all jobs <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
-        </div>
+          </Reveal>
+        )}
       </div>
     </section>
   )

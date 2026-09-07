@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { Menu, Search, Sun, Moon, MessageSquare, Bell, ChevronDown, User, Settings, CreditCard, LifeBuoy, LogOut } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import Avatar from '../ui/Avatar'
+import Button from '../ui/Button'
 import FloatingPanel from '../ui/FloatingPanel'
 import NotificationsPanel from './NotificationsPanel'
 import { useProfileQuery } from '../../hooks/useProfile'
 import { useNotificationsQuery } from '../../hooks/useNotifications'
 import { EMPLOYEE_SIGNIN_URL } from '../../lib/config'
+import { hasEmployeeToken, signInUrl } from '../../lib/auth'
 
 function initialsOf(name = '') {
   const parts = name.trim().split(/\s+/).filter(Boolean)
@@ -21,8 +23,9 @@ export default function TopNav() {
   const navigate = useNavigate()
   const bellRef = useRef(null)
   const avatarRef = useRef(null)
-  const { data: profile } = useProfileQuery()
-  const { data: notifications } = useNotificationsQuery()
+  const authed = hasEmployeeToken()
+  const { data: profile } = useProfileQuery({ enabled: authed })
+  const { data: notifications } = useNotificationsQuery({ enabled: authed })
   const unreadCount = (notifications ?? []).filter((n) => n.unread).length
 
   function logout() {
@@ -65,71 +68,79 @@ export default function TopNav() {
           <MessageSquare size={18} />
           <span className="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />
         </button>
-        <div ref={bellRef} className="relative">
-          <button
-            onClick={() => {
-              setDrawerOpen((v) => !v)
-              setAvatarMenuOpen(false)
-            }}
-            title="Notifications"
-            className="relative w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors"
-          >
-            <Bell size={18} />
-            {unreadCount > 0 && (
-              <span className="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />
-            )}
-          </button>
-          <div data-panel="notif">
-            <FloatingPanel open={drawerOpen} width={380}>
-              <NotificationsPanel onNavigate={() => setDrawerOpen(false)} />
-            </FloatingPanel>
+        {authed && (
+          <div ref={bellRef} className="relative">
+            <button
+              onClick={() => {
+                setDrawerOpen((v) => !v)
+                setAvatarMenuOpen(false)
+              }}
+              title="Notifications"
+              className="relative w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors"
+            >
+              <Bell size={18} />
+              {unreadCount > 0 && (
+                <span className="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />
+              )}
+            </button>
+            <div data-panel="notif">
+              <FloatingPanel open={drawerOpen} width={380}>
+                <NotificationsPanel onNavigate={() => setDrawerOpen(false)} />
+              </FloatingPanel>
+            </div>
           </div>
-        </div>
-        <div ref={avatarRef} className="relative">
-          <button
-            onClick={() => {
-              setAvatarMenuOpen((v) => !v)
-              setDrawerOpen(false)
-            }}
-            className="flex items-center gap-2 pr-2 pl-1 py-1 rounded-full cursor-pointer hover:bg-surface-hover"
-          >
-            <Avatar initials={initialsOf(profile?.name)} />
-            <ChevronDown size={14} className="text-ink-tertiary" />
-          </button>
-          <div data-panel="avatar">
-            <FloatingPanel open={avatarMenuOpen} width={230}>
-              <div className="px-4 py-3.5 border-b border-border">
-                <div className="text-[13px] font-semibold">{profile?.name}</div>
-                <div className="text-xs text-ink-tertiary">{profile?.email}</div>
-              </div>
-              <div className="p-1.5">
-                {[
-                  ['/app/profile', User, 'View Profile'],
-                  ['/app/settings', Settings, 'Settings'],
-                  ['/app/subscription', CreditCard, 'Subscription'],
-                  ['/app/support', LifeBuoy, 'Support'],
-                ].map(([to, Icon, label]) => (
-                  <div
-                    key={to}
-                    onClick={() => {
-                      navigate(to)
-                      setAvatarMenuOpen(false)
-                    }}
-                    className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px]"
-                  >
-                    <Icon size={16} />
-                    <span>{label}</span>
-                  </div>
-                ))}
-                <div className="h-px bg-border my-1.5" />
-                <div onClick={logout} className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px] text-red">
-                  <LogOut size={16} />
-                  <span>Log out</span>
+        )}
+        {authed ? (
+          <div ref={avatarRef} className="relative">
+            <button
+              onClick={() => {
+                setAvatarMenuOpen((v) => !v)
+                setDrawerOpen(false)
+              }}
+              className="flex items-center gap-2 pr-2 pl-1 py-1 rounded-full cursor-pointer hover:bg-surface-hover"
+            >
+              <Avatar initials={initialsOf(profile?.name)} />
+              <ChevronDown size={14} className="text-ink-tertiary" />
+            </button>
+            <div data-panel="avatar">
+              <FloatingPanel open={avatarMenuOpen} width={230}>
+                <div className="px-4 py-3.5 border-b border-border">
+                  <div className="text-[13px] font-semibold">{profile?.name}</div>
+                  <div className="text-xs text-ink-tertiary">{profile?.email}</div>
                 </div>
-              </div>
-            </FloatingPanel>
+                <div className="p-1.5">
+                  {[
+                    ['/app/profile', User, 'View Profile'],
+                    ['/app/settings', Settings, 'Settings'],
+                    ['/app/subscription', CreditCard, 'Subscription'],
+                    ['/app/support', LifeBuoy, 'Support'],
+                  ].map(([to, Icon, label]) => (
+                    <div
+                      key={to}
+                      onClick={() => {
+                        navigate(to)
+                        setAvatarMenuOpen(false)
+                      }}
+                      className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px]"
+                    >
+                      <Icon size={16} />
+                      <span>{label}</span>
+                    </div>
+                  ))}
+                  <div className="h-px bg-border my-1.5" />
+                  <div onClick={logout} className="flex items-center gap-2.5 px-2.5 py-[9px] rounded-lg cursor-pointer hover:bg-surface-hover text-[13px] text-red">
+                    <LogOut size={16} />
+                    <span>Log out</span>
+                  </div>
+                </div>
+              </FloatingPanel>
+            </div>
           </div>
-        </div>
+        ) : (
+          <Button variant="primary" size="sm" onClick={() => (window.location.href = signInUrl())}>
+            Sign in
+          </Button>
+        )}
       </div>
     </header>
   )

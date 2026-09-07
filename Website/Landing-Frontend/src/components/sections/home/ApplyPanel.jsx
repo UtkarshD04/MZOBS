@@ -25,11 +25,11 @@ import { fetchEmployeeProfile, uploadEmployeeResume, applyToJob } from '../../..
 
 const TOKEN_KEY = 'mzobs-employee-token'
 const inputClass =
-  'w-full h-11 px-3.5 rounded-lg border border-(--jobs-border) bg-white text-[13.5px] text-(--jobs-navy) outline-none transition-colors placeholder:text-(--jobs-ink-soft)/60 focus:border-(--jobs-teal-dark)'
+  'w-full h-11 px-3.5 rounded-xl border border-(--jobs-border) bg-white text-[13.5px] text-(--jobs-navy) outline-none transition-all duration-150 placeholder:text-(--jobs-ink-soft)/60 hover:border-(--jobs-navy)/25 focus:border-(--jobs-blue) focus:ring-[3px] focus:ring-(--jobs-blue)/15'
 const primaryButtonClass =
-  'inline-flex items-center justify-center gap-2 h-11 px-6 rounded-lg bg-(--jobs-teal-dark) text-white text-[13.5px] font-bold hover:bg-(--jobs-navy) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-teal-dark) transition-colors disabled:opacity-60 disabled:cursor-not-allowed'
+  'inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-(--jobs-blue) text-white text-sm font-bold shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_20px_-8px_var(--jobs-blue)] hover:bg-(--jobs-blue-dark) hover:shadow-[0_1px_2px_rgba(0,0,0,0.06),0_10px_24px_-8px_var(--jobs-blue-dark)] active:scale-[0.985] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100'
 const otpButtonClass =
-  'h-11 px-4 rounded-lg text-[12.5px] font-bold border border-(--jobs-border) bg-white text-(--jobs-navy) hover:border-(--jobs-teal-dark) hover:text-(--jobs-teal-dark) transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+  'h-11 px-4 rounded-xl text-[13px] font-bold border border-(--jobs-border) bg-white text-(--jobs-navy) hover:border-(--jobs-blue) hover:text-(--jobs-blue-dark) transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
 const labelClass = 'block text-[12.5px] font-semibold text-(--jobs-navy) mb-1.5'
 const errorClass = 'text-[12px] text-red-600 mt-1 mb-2'
 
@@ -65,7 +65,7 @@ function IconSelect({ icon: Icon, className = '', children, ...props }) {
   )
 }
 
-function PasswordInput({ value, onChange, placeholder, className = '' }) {
+function PasswordInput({ value, onChange, placeholder, className = '', autoComplete = 'current-password' }) {
   const [visible, setVisible] = useState(false)
   return (
     <div className="relative">
@@ -75,6 +75,7 @@ function PasswordInput({ value, onChange, placeholder, className = '' }) {
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        autoComplete={autoComplete}
         className={`${inputClass} pl-10 pr-10 ${className}`}
       />
       <button
@@ -132,13 +133,20 @@ function InlineLoginForm({ onSuccess }) {
         icon={Mail}
         type="email"
         required
+        autoComplete="email"
         value={form.email}
         onChange={(e) => update('email', e.target.value)}
         placeholder="you@example.com"
         className="mb-3"
       />
       <label className={labelClass}>Password</label>
-      <PasswordInput value={form.password} onChange={(e) => update('password', e.target.value)} placeholder="Enter your password" className="mb-3" />
+      <PasswordInput
+        value={form.password}
+        onChange={(e) => update('password', e.target.value)}
+        placeholder="Enter your password"
+        autoComplete="current-password"
+        className="mb-3"
+      />
       {error && <p className="text-[12.5px] text-red-600 mb-3">{error}</p>}
       <button type="submit" disabled={submitting} className={`${primaryButtonClass} w-full`}>
         {submitting && <Loader2 size={15} className="animate-spin" aria-hidden="true" />}
@@ -158,7 +166,7 @@ function SignupPrompt({ job, onCreateAccount }) {
       <button
         type="button"
         onClick={onCreateAccount}
-        className="mt-3 inline-flex items-center justify-center gap-2 h-11 px-6 rounded-lg border border-(--jobs-navy) text-(--jobs-navy) text-[13.5px] font-bold hover:bg-(--jobs-navy) hover:text-white transition-colors"
+        className="mt-3 inline-flex items-center justify-center gap-2 h-11 px-6 rounded-xl border border-(--jobs-navy) text-(--jobs-navy) text-[13.5px] font-bold hover:bg-(--jobs-navy) hover:text-white transition-colors"
       >
         Create free account
       </button>
@@ -285,7 +293,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
       ) : (
         <>
           <label className={labelClass}>Full name</label>
-          <IconInput icon={User} value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" className="mb-1" />
+          <IconInput icon={User} value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" autoComplete="name" className="mb-1" />
           {errors.name && <p className={errorClass}>{errors.name}</p>}
 
           <label className={labelClass}>Email</label>
@@ -295,6 +303,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
             value={form.email}
             onChange={(e) => update('email', e.target.value)}
             placeholder="you@example.com"
+            autoComplete="email"
             className="mb-1"
           />
           {errors.email && <p className={errorClass}>{errors.email}</p>}
@@ -309,6 +318,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
         onChange={(e) => update('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
         placeholder="98765 43210"
         disabled={Boolean(phoneToken)}
+        autoComplete="tel-national"
         className="mb-1"
       />
       {errors.phone && <p className={errorClass}>{errors.phone}</p>}
@@ -355,7 +365,13 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
       {!googleCredential && (
         <>
           <label className={labelClass}>Password</label>
-          <PasswordInput value={form.password} onChange={(e) => update('password', e.target.value)} placeholder="At least 8 characters" className="mb-1" />
+          <PasswordInput
+            value={form.password}
+            onChange={(e) => update('password', e.target.value)}
+            placeholder="At least 8 characters"
+            autoComplete="new-password"
+            className="mb-1"
+          />
           {errors.password && <p className={errorClass}>{errors.password}</p>}
         </>
       )}
@@ -363,12 +379,12 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
       <div className="grid grid-cols-2 gap-3 mb-1">
         <div>
           <label className={labelClass}>City</label>
-          <IconInput icon={MapPin} value={form.city} onChange={(e) => update('city', e.target.value)} placeholder="Bengaluru" />
+          <IconInput icon={MapPin} value={form.city} onChange={(e) => update('city', e.target.value)} placeholder="Bengaluru" autoComplete="address-level2" />
           {errors.city && <p className={errorClass}>{errors.city}</p>}
         </div>
         <div>
           <label className={labelClass}>State</label>
-          <IconInput icon={Landmark} value={form.state} onChange={(e) => update('state', e.target.value)} placeholder="Karnataka" />
+          <IconInput icon={Landmark} value={form.state} onChange={(e) => update('state', e.target.value)} placeholder="Karnataka" autoComplete="address-level1" />
           {errors.state && <p className={errorClass}>{errors.state}</p>}
         </div>
       </div>
@@ -380,6 +396,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
         onChange={(e) => update('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
         placeholder="560001"
         inputMode="numeric"
+        autoComplete="postal-code"
         className="mb-1"
       />
       {errors.pincode && <p className={errorClass}>{errors.pincode}</p>}
@@ -394,10 +411,10 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
             key={opt.value}
             type="button"
             onClick={() => update('experience', opt.value)}
-            className={`h-11 rounded-lg text-[13px] font-bold border transition-colors ${
+            className={`h-11 rounded-xl text-[13px] font-bold border transition-colors ${
               form.experience === opt.value
-                ? 'bg-(--jobs-teal-dark) border-(--jobs-teal-dark) text-white'
-                : 'bg-white border-(--jobs-border) text-(--jobs-ink-soft) hover:border-(--jobs-teal-dark)'
+                ? 'bg-(--jobs-blue) border-(--jobs-blue) text-white'
+                : 'bg-white border-(--jobs-border) text-(--jobs-ink-soft) hover:border-(--jobs-blue)'
             }`}
           >
             {opt.label}

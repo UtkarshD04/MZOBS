@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { GoogleLogin } from '@react-oauth/google'
 
-export function OrDivider() {
+export function OrDivider({ label = 'or' }) {
   return (
     <div className="flex items-center gap-3 my-4">
       <div className="h-px flex-1 bg-[#e0e0e0]" />
-      <span className="text-[11px] font-bold uppercase tracking-wide text-[#9E9E9E]">or</span>
+      <span className="text-[11px] font-bold uppercase tracking-wide text-[#9E9E9E]">{label}</span>
       <div className="h-px flex-1 bg-[#e0e0e0]" />
     </div>
   )

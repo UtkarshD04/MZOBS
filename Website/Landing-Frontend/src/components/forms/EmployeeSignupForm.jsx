@@ -1,41 +1,91 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, GraduationCap, MapPin, Landmark, Hash } from 'lucide-react'
-import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  ArrowRight,
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  User,
+  Mail,
+  Phone,
+  Lock,
+  GraduationCap,
+  ShieldCheck,
+  GraduationCap as GraduationCapIcon,
+  Briefcase,
+  Check,
+} from 'lucide-react'
+import { Field, Input, Select, PrimaryButton, SecondaryButton } from '../ui/JobsAuthField'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
+import StepProgress from '../ui/StepProgress'
+import OtpInput from '../ui/OtpInput'
 import { EMPLOYEE_APP_URL } from '../../lib/config'
 import { signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../lib/employeeAuth'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 import { GRADUATION_OPTIONS } from '../../lib/graduationOptions'
 
-const initialForm = { name: '', email: '', phone: '', password: '', city: '', state: '', pincode: '', experience: 'fresher', graduation: '' }
+const STEP_LABELS = ['Account', 'Verify mobile', 'Career profile']
+const RESEND_COOLDOWN = 30
 
-function validate(form, hasGoogle) {
+const CAREER_STAGES = [
+  {
+    value: 'fresher',
+    icon: GraduationCapIcon,
+    title: 'Fresher',
+    subtitle: 'I am starting my career or have less than 1 year of experience.',
+    tag: 'Entry-level roles',
+  },
+  {
+    value: 'experienced',
+    icon: Briefcase,
+    title: 'Experienced',
+    subtitle: 'I have professional work experience and want my next opportunity.',
+    tag: 'Professional roles',
+  },
+]
+
+const initialForm = { name: '', email: '', phone: '', password: '', experience: 'fresher', graduation: '' }
+
+const stepTransition = {
+  initial: { opacity: 0, x: 12 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -12 },
+  transition: { duration: 0.18, ease: 'easeOut' },
+}
+
+function validateStep1(form, hasGoogle) {
   const errors = {}
-  if (!hasGoogle) {
-    if (!form.name.trim()) errors.name = 'Please enter your full name.'
-    if (!form.email.trim()) errors.email = 'Please enter your email.'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Enter a valid email address.'
-    if (!form.password) errors.password = 'Please create a password.'
-    else if (form.password.length < 8) errors.password = 'Password must be at least 8 characters.'
-  }
+  if (hasGoogle) return errors
+  if (!form.name.trim()) errors.name = 'Please enter your full name.'
+  if (!form.email.trim()) errors.email = 'Please enter your email.'
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Enter a valid email address.'
+  if (!form.password) errors.password = 'Please create a password.'
+  else if (form.password.length < 8) errors.password = 'Password must be at least 8 characters.'
+  return errors
+}
+
+function validateStep2(form) {
+  const errors = {}
   if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
   else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
-  if (!form.city.trim()) errors.city = 'Please enter your city.'
-  if (!form.state.trim()) errors.state = 'Please enter your state.'
-  if (!form.pincode.trim()) errors.pincode = 'Please enter your pincode.'
-  else if (!/^\d{6}$/.test(form.pincode.trim())) errors.pincode = 'Enter a valid 6-digit pincode.'
+  // OTP verification is temporarily optional — not required to continue.
+  return errors
+}
+
+function validateStep3(form) {
+  const errors = {}
+  if (!form.experience) errors.experience = 'Please select your career stage.'
   if (!form.graduation) errors.graduation = 'Please select your graduation.'
   return errors
 }
 
-const otpButtonClass =
-  'h-11 px-4 rounded-xl text-[13px] font-bold border border-[#C9C9C9] bg-white text-[#595959] hover:border-[var(--careers-accent)] hover:text-[var(--careers-accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
-
 export default function EmployeeSignupForm() {
+  const [step, setStep] = useState(1)
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
-  const [status, setStatus] = useState('idle') // idle | submitting
+  const [status, setStatus] = useState('idle') // idle | submitting | success
   const [showPassword, setShowPassword] = useState(false)
   const [googleCredential, setGoogleCredential] = useState(null)
 
@@ -45,6 +95,15 @@ export default function EmployeeSignupForm() {
   const [verifyingOtp, setVerifyingOtp] = useState(false)
   const [otpError, setOtpError] = useState('')
   const [phoneToken, setPhoneToken] = useState(null)
+  const [resendIn, setResendIn] = useState(0)
+
+  const timerRef = useRef(null)
+
+  useEffect(() => {
+    if (resendIn <= 0) return
+    timerRef.current = setTimeout(() => setResendIn((s) => s - 1), 1000)
+    return () => clearTimeout(timerRef.current)
+  }, [resendIn])
 
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }))
@@ -55,7 +114,16 @@ export default function EmployeeSignupForm() {
       setOtpSent(false)
       setOtp('')
       setOtpError('')
+      setResendIn(0)
     }
+  }
+
+  function handleChangePhoneNumber() {
+    setPhoneToken(null)
+    setOtpSent(false)
+    setOtp('')
+    setOtpError('')
+    setResendIn(0)
   }
 
   async function handleSendOtp() {
@@ -65,6 +133,8 @@ export default function EmployeeSignupForm() {
       if (otpSent) await retryWidgetOtp('SMS')
       else await sendWidgetOtp(form.phone)
       setOtpSent(true)
+      setOtp('')
+      setResendIn(RESEND_COOLDOWN)
     } catch (err) {
       setOtpError(err.message)
     } finally {
@@ -82,6 +152,7 @@ export default function EmployeeSignupForm() {
       const widgetResult = await verifyWidgetOtp(otp)
       const { phoneToken: token } = await verifyEmployeePhoneWidget({ phone: form.phone, accessToken: widgetResult.message })
       setPhoneToken(token)
+      setErrors((e) => ({ ...e, phone: undefined }))
     } catch (err) {
       setOtpError(err.message)
     } finally {
@@ -96,10 +167,25 @@ export default function EmployeeSignupForm() {
     setErrors({})
   }
 
+  function handleContinueFromStep1(e) {
+    e.preventDefault()
+    const nextErrors = validateStep1(form, Boolean(googleCredential))
+    setErrors(nextErrors)
+    if (Object.keys(nextErrors).length > 0) return
+    setStep(2)
+  }
+
+  function handleContinueFromStep2(e) {
+    e.preventDefault()
+    const nextErrors = validateStep2(form)
+    setErrors(nextErrors)
+    if (Object.keys(nextErrors).length > 0) return
+    setStep(3)
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
-    const nextErrors = validate(form, Boolean(googleCredential))
-    if (!phoneToken) nextErrors.phone = nextErrors.phone ?? 'Please verify your mobile number.'
+    const nextErrors = { ...validateStep2(form), ...validateStep3(form) }
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
@@ -111,204 +197,292 @@ export default function EmployeeSignupForm() {
             phone: form.phone,
             experience: form.experience,
             graduation: form.graduation,
-            city: form.city,
-            state: form.state,
-            pincode: form.pincode,
             phoneToken,
           })
         : await signupEmployee({ ...form, phoneToken })
+
+      setStatus('success')
       // Account is created unpaid — profile setup and the one-time ₹299
       // payment both happen inside the dashboard app, not here. Same
       // cross-app token handoff EmployeeSigninForm uses (localStorage isn't
       // shared across origins/ports; main.jsx on the other side reads ?token=).
-      window.location.href = `${EMPLOYEE_APP_URL}/onboarding?token=${encodeURIComponent(token)}`
+      setTimeout(() => {
+        window.location.href = `${EMPLOYEE_APP_URL}/onboarding?token=${encodeURIComponent(token)}`
+      }, 900)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
     }
   }
 
+  if (status === 'success') {
+    return (
+      <div className="py-10 flex flex-col items-center text-center gap-3">
+        <div className="w-14 h-14 rounded-full bg-(--jobs-teal-tint) flex items-center justify-center">
+          <CheckCircle2 size={28} className="text-(--jobs-teal-dark)" />
+        </div>
+        <p className="text-base font-black text-(--jobs-navy)">Your MZOBS account is ready.</p>
+        <p className="text-[13px] text-(--jobs-ink-soft)">Taking you to your dashboard...</p>
+      </div>
+    )
+  }
+
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      <GoogleAuthButton onCredential={handleGoogleCredential} onError={(message) => setErrors({ form: message })} />
-      <OrDivider />
-
-      {googleCredential ? (
-        <div className="flex items-center gap-2.5 mb-4 px-4 py-3 rounded-xl bg-[var(--careers-tint-sage)] text-[13px] font-semibold text-[var(--careers-tint-sage-ink)]">
-          <CheckCircle2 size={16} className="shrink-0" />
-          Signed in as {form.name || form.email} — no password needed.
+    <div>
+      <div className="flex items-start justify-between gap-3 mb-6">
+        <div>
+          <h1 className="text-lg font-black text-(--jobs-navy) tracking-tight">Create your MZOBS account</h1>
+          <p className="text-[13px] text-(--jobs-ink-soft) mt-1">
+            Already have an account?{' '}
+            <Link to="/employees/signin" className="font-bold text-(--jobs-blue-dark) hover:text-(--jobs-navy) transition-colors">
+              Sign in
+            </Link>
+          </p>
         </div>
-      ) : (
-        <>
-          <Field label="Full name">
-            <Input icon={User} value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" />
-            {errors.name && <span className="text-xs text-red mt-1 block">{errors.name}</span>}
-          </Field>
-
-          <Field label="Email">
-            <Input icon={Mail} type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@example.com" />
-            {errors.email && <span className="text-xs text-red mt-1 block">{errors.email}</span>}
-          </Field>
-        </>
-      )}
-
-      <Field label="Phone number">
-        <Input
-          icon={Phone}
-          type="tel"
-          value={form.phone}
-          onChange={(e) => update('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
-          placeholder="98765 43210"
-          disabled={Boolean(phoneToken)}
-        />
-        {errors.phone && <span className="text-xs text-red mt-1 block">{errors.phone}</span>}
-      </Field>
-
-      {phoneToken ? (
-        <div className="flex items-center gap-2 -mt-2 mb-4 text-[13px] font-semibold text-[var(--careers-tint-sage-ink)]">
-          <CheckCircle2 size={15} className="shrink-0" />
-          Mobile number verified
-        </div>
-      ) : otpSent ? (
-        <div className="-mt-2 mb-4">
-          <Field label="Enter OTP">
-            <Input
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="6-digit code"
-              inputMode="numeric"
-            />
-          </Field>
-          <div className="flex items-center gap-3 -mt-2">
-            <button type="button" className={otpButtonClass} onClick={handleVerifyOtp} disabled={verifyingOtp || otp.length !== 6}>
-              {verifyingOtp ? 'Verifying...' : 'Verify'}
-            </button>
-            <button
-              type="button"
-              onClick={handleSendOtp}
-              disabled={sendingOtp}
-              className="text-[12.5px] font-bold text-[var(--careers-accent)] hover:underline disabled:opacity-50"
-            >
-              {sendingOtp ? 'Resending...' : 'Resend OTP'}
-            </button>
-          </div>
-          {otpError && <span className="text-xs text-red mt-2 block">{otpError}</span>}
-        </div>
-      ) : (
-        <div className="-mt-2 mb-4">
-          <button type="button" className={otpButtonClass} onClick={handleSendOtp} disabled={sendingOtp || form.phone.replace(/\D/g, '').length !== 10}>
-            {sendingOtp ? 'Sending...' : 'Send OTP'}
-          </button>
-          {otpError && <span className="text-xs text-red mt-2 block">{otpError}</span>}
-        </div>
-      )}
-
-      {!googleCredential && (
-        <Field label="Password">
-          <div className="relative">
-            <Input
-              icon={Lock}
-              type={showPassword ? 'text' : 'password'}
-              value={form.password}
-              onChange={(e) => update('password', e.target.value)}
-              placeholder="At least 8 characters"
-              className="pr-10"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((s) => !s)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9E9E9E] hover:text-black transition-colors"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
-          {errors.password && <span className="text-xs text-red mt-1 block">{errors.password}</span>}
-        </Field>
-      )}
-
-      <Field label="You are a...">
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { value: 'fresher', label: 'Fresher' },
-            { value: 'experienced', label: 'Experienced' }
-          ].map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => update('experience', opt.value)}
-              className={`h-11 rounded-xl text-[13.5px] font-bold border transition-all duration-200 ${
-                form.experience === opt.value
-                  ? 'bg-[var(--careers-accent)] border-[var(--careers-accent)] text-white'
-                  : 'bg-white border-[#C9C9C9] text-[#595959] hover:border-[var(--careers-accent)]'
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </Field>
-
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="City">
-          <Input icon={MapPin} value={form.city} onChange={(e) => update('city', e.target.value)} placeholder="Bengaluru" />
-          {errors.city && <span className="text-xs text-red mt-1 block">{errors.city}</span>}
-        </Field>
-
-        <Field label="State">
-          <Input icon={Landmark} value={form.state} onChange={(e) => update('state', e.target.value)} placeholder="Karnataka" />
-          {errors.state && <span className="text-xs text-red mt-1 block">{errors.state}</span>}
-        </Field>
       </div>
 
-      <Field label="Pincode">
-        <Input
-          icon={Hash}
-          value={form.pincode}
-          onChange={(e) => update('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
-          placeholder="560001"
-          inputMode="numeric"
-        />
-        {errors.pincode && <span className="text-xs text-red mt-1 block">{errors.pincode}</span>}
-      </Field>
+      <StepProgress steps={STEP_LABELS} current={step} />
 
-      <Field label="Graduation">
-        <Select icon={GraduationCap} value={form.graduation} onChange={(e) => update('graduation', e.target.value)}>
-          <option value="" disabled>
-            Select your graduation
-          </option>
-          {GRADUATION_OPTIONS.map((g) => (
-            <option key={g} value={g}>
-              {g}
-            </option>
-          ))}
-        </Select>
-        {errors.graduation && <span className="text-xs text-red mt-1 block">{errors.graduation}</span>}
-      </Field>
+      <AnimatePresence mode="wait" initial={false}>
+        {step === 1 && (
+          <motion.form key="step-1" {...stepTransition} onSubmit={handleContinueFromStep1} noValidate>
+            <h2 className="text-base font-black text-(--jobs-navy)">Account details</h2>
+            <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5">Get matched with verified employers in minutes.</p>
 
-      {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
+            <GoogleAuthButton onCredential={handleGoogleCredential} onError={(message) => setErrors({ form: message })} />
+            <OrDivider label="or sign up with email" />
 
-      <SubmitButton disabled={status === 'submitting' || !phoneToken} className="mt-2">
-        {status === 'submitting' ? (
-          'Creating your account...'
-        ) : (
-          <>
-            Create account <ArrowRight size={16} />
-          </>
+            {googleCredential ? (
+              <div className="flex items-center gap-2.5 mb-4 px-4 py-3 rounded-xl bg-(--jobs-teal-tint) text-[13px] font-semibold text-(--jobs-teal-dark)">
+                <CheckCircle2 size={16} className="shrink-0" />
+                Signed in as {form.name || form.email} — no password needed.
+              </div>
+            ) : (
+              <>
+                <Field label="Full name" error={errors.name}>
+                  <Input icon={User} value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" autoComplete="name" error={errors.name} />
+                </Field>
+
+                <Field label="Email address" error={errors.email}>
+                  <Input icon={Mail} type="email" value={form.email} onChange={(e) => update('email', e.target.value)} placeholder="you@example.com" autoComplete="email" error={errors.email} />
+                </Field>
+
+                <Field label="Password" error={errors.password} hint={!errors.password ? 'At least 8 characters.' : undefined}>
+                  <div className="relative">
+                    <Input
+                      icon={Lock}
+                      type={showPassword ? 'text' : 'password'}
+                      value={form.password}
+                      onChange={(e) => update('password', e.target.value)}
+                      placeholder="Create a password"
+                      autoComplete="new-password"
+                      className="pr-10"
+                      error={errors.password}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </Field>
+              </>
+            )}
+
+            {errors.form && <p className="text-xs text-red-600 mb-4 -mt-2">{errors.form}</p>}
+
+            <PrimaryButton className="mt-1">
+              Continue <ArrowRight size={16} />
+            </PrimaryButton>
+          </motion.form>
         )}
-      </SubmitButton>
 
-      <p className="text-[11.5px] text-[#9E9E9E] text-center mt-4 leading-relaxed">
+        {step === 2 && (
+          <motion.form key="step-2" {...stepTransition} onSubmit={handleContinueFromStep2} noValidate>
+            <div className="flex items-center gap-2 mb-1">
+              <button type="button" onClick={() => setStep(1)} className="text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors" aria-label="Back">
+                <ArrowLeft size={16} />
+              </button>
+              <h2 className="text-base font-black text-(--jobs-navy)">Verify your mobile number</h2>
+            </div>
+            <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5 ml-6">We'll send a one-time code to confirm it's really you.</p>
+
+            <Field label="Mobile number" error={errors.phone}>
+              <div className="flex flex-wrap sm:flex-nowrap gap-2">
+                <div className="h-11 px-3.5 flex items-center rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle) text-[13.5px] font-bold text-(--jobs-navy) shrink-0">
+                  +91
+                </div>
+                <div className="flex-1 min-w-40">
+                  <Input
+                    icon={Phone}
+                    type="tel"
+                    inputMode="numeric"
+                    value={form.phone}
+                    onChange={(e) => update('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="98765 43210"
+                    disabled={Boolean(phoneToken)}
+                    autoComplete="tel-national"
+                    error={errors.phone}
+                  />
+                </div>
+                {!otpSent && !phoneToken && (
+                  <SecondaryButton
+                    onClick={handleSendOtp}
+                    disabled={sendingOtp || form.phone.replace(/\D/g, '').length !== 10}
+                    className="shrink-0 whitespace-nowrap w-full sm:w-auto"
+                  >
+                    {sendingOtp ? 'Sending...' : 'Send OTP'}
+                  </SecondaryButton>
+                )}
+              </div>
+              {!otpSent && !phoneToken && otpError && <span className="text-xs text-red-600 mt-2 block">{otpError}</span>}
+            </Field>
+
+            {phoneToken ? (
+              <div className="flex items-center gap-2 -mt-2 mb-4 px-3.5 py-2.5 rounded-xl bg-(--jobs-teal-tint) text-[13px] font-bold text-(--jobs-teal-dark)">
+                <CheckCircle2 size={16} className="shrink-0" />
+                Mobile number verified
+              </div>
+            ) : otpSent ? (
+              <div className="-mt-1 mb-4">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[12.5px] font-bold text-(--jobs-navy) tracking-tight">Enter the 6-digit code</label>
+                  <button
+                    type="button"
+                    onClick={handleChangePhoneNumber}
+                    className="text-[12px] font-bold text-(--jobs-ink-soft) hover:text-(--jobs-blue-dark) transition-colors"
+                  >
+                    Change number
+                  </button>
+                </div>
+                <div className="max-w-72">
+                  <OtpInput value={otp} onChange={setOtp} error={otpError} disabled={verifyingOtp} autoFocus />
+                </div>
+
+                <div className="flex items-center gap-3 mt-3">
+                  <SecondaryButton onClick={handleVerifyOtp} disabled={verifyingOtp || otp.length !== 6}>
+                    {verifyingOtp ? 'Verifying...' : 'Verify code'}
+                  </SecondaryButton>
+                  <button
+                    type="button"
+                    onClick={handleSendOtp}
+                    disabled={sendingOtp || resendIn > 0}
+                    className="text-[12.5px] font-bold text-(--jobs-blue-dark) hover:underline disabled:opacity-50 disabled:no-underline disabled:text-(--jobs-ink-soft)"
+                  >
+                    {sendingOtp ? 'Resending...' : resendIn > 0 ? `Resend in 0:${String(resendIn).padStart(2, '0')}` : 'Resend OTP'}
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            <PrimaryButton className="mt-1" disabled={status === 'submitting'}>
+              Verify and continue <ArrowRight size={16} />
+            </PrimaryButton>
+          </motion.form>
+        )}
+
+        {step === 3 && (
+          <motion.form key="step-3" {...stepTransition} onSubmit={handleSubmit} noValidate>
+            <div className="flex items-center gap-2 mb-1">
+              <button type="button" onClick={() => setStep(2)} className="text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors" aria-label="Back">
+                <ArrowLeft size={16} />
+              </button>
+              <h2 className="text-base font-black text-(--jobs-navy)">Career profile</h2>
+            </div>
+            <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5 ml-6">Helps us match you to the right roles.</p>
+
+            <fieldset className="mb-5">
+              <legend className="text-[13.5px] font-bold text-(--jobs-navy) mb-2.5">Where are you in your career?</legend>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Career stage">
+                {CAREER_STAGES.map(({ value, icon: Icon, title, subtitle, tag }) => {
+                  const selected = form.experience === value
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() => update('experience', value)}
+                      className={`relative text-left rounded-2xl border p-4 transition-all duration-150 ${
+                        selected
+                          ? 'border-(--jobs-blue) bg-(--jobs-blue-tint) shadow-[0_10px_24px_-14px_var(--jobs-blue)] -translate-y-0.5'
+                          : 'border-(--jobs-border) bg-white hover:border-(--jobs-navy)/25'
+                      }`}
+                    >
+                      <div
+                        className={`absolute top-3.5 right-3.5 w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
+                          selected ? 'bg-(--jobs-blue) border-(--jobs-blue)' : 'border-(--jobs-border) bg-white'
+                        }`}
+                      >
+                        {selected && <Check size={12} strokeWidth={3} className="text-white" />}
+                      </div>
+
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${
+                          selected ? 'bg-white text-(--jobs-blue-dark)' : 'bg-(--jobs-bg-subtle) text-(--jobs-ink-soft)'
+                        }`}
+                      >
+                        <Icon size={17} strokeWidth={1.8} />
+                      </div>
+
+                      <p className="text-[14px] font-black text-(--jobs-navy) pr-6">{title}</p>
+                      <p className="text-[12px] text-(--jobs-ink-soft) mt-1 leading-relaxed pr-2">{subtitle}</p>
+
+                      <span
+                        className={`inline-flex items-center h-5 px-2 mt-2.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
+                          selected ? 'bg-white text-(--jobs-blue-dark)' : 'bg-(--jobs-bg-subtle) text-(--jobs-ink-soft)'
+                        }`}
+                      >
+                        {tag}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+              {errors.experience && <span className="text-xs text-red-600 mt-2 block">{errors.experience}</span>}
+            </fieldset>
+
+            <Field label="Graduation" error={errors.graduation}>
+              <Select icon={GraduationCap} value={form.graduation} onChange={(e) => update('graduation', e.target.value)} error={errors.graduation}>
+                <option value="" disabled>
+                  Select your graduation
+                </option>
+                {GRADUATION_OPTIONS.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+
+            {errors.form && <p className="text-xs text-red-600 mb-4 -mt-2">{errors.form}</p>}
+
+            <PrimaryButton disabled={status === 'submitting'} className="mt-2">
+              {status === 'submitting' ? 'Creating your account...' : <>Create account <ArrowRight size={16} /></>}
+            </PrimaryButton>
+
+            <p className="flex items-start gap-2 mt-4 text-[11.5px] text-(--jobs-ink-soft) leading-relaxed">
+              <ShieldCheck size={14} className="shrink-0 mt-0.5 text-(--jobs-teal-dark)" />
+              Your profile is private. Employers see it only when you apply or are matched for a relevant role.
+            </p>
+          </motion.form>
+        )}
+      </AnimatePresence>
+
+      <p className="text-[11.5px] text-(--jobs-ink-soft) text-center mt-5 leading-relaxed">
         By signing up, you agree to Mzobs'{' '}
-        <Link to="/terms-of-service" className="text-[#595959] font-bold hover:text-[var(--careers-accent)] transition-colors">
+        <Link to="/terms-of-service" className="font-bold text-(--jobs-navy) hover:text-(--jobs-blue-dark) transition-colors">
           Terms of Service
         </Link>{' '}
         and{' '}
-        <Link to="/privacy-policy" className="text-[#595959] font-bold hover:text-[var(--careers-accent)] transition-colors">
+        <Link to="/privacy-policy" className="font-bold text-(--jobs-navy) hover:text-(--jobs-blue-dark) transition-colors">
           Privacy Policy
         </Link>
         .
       </p>
-    </form>
+    </div>
   )
 }

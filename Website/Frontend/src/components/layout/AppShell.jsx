@@ -7,6 +7,7 @@ import RouteProgress from './RouteProgress'
 import AppFooter from './AppFooter'
 import { useApp } from '../../context/AppContext'
 import { subscribeToPush } from '../../lib/webPush'
+import { hasEmployeeToken } from '../../lib/auth'
 
 export default function AppShell() {
   const location = useLocation()
@@ -19,10 +20,10 @@ export default function AppShell() {
     window.scrollTo(0, 0)
   }, [location.pathname, setMobileSidebarOpen, setDrawerOpen, setAvatarMenuOpen])
 
-  // Only mounted once signed in (nested under <RequireAuth /> in App.jsx),
-  // so this is the first moment there's an account to link a subscription to.
+  // /app/jobs is reachable without a session (see App.jsx), so guard for
+  // that instead of assuming AppShell only ever mounts signed in.
   useEffect(() => {
-    subscribeToPush()
+    if (hasEmployeeToken()) subscribeToPush()
   }, [])
 
   return (

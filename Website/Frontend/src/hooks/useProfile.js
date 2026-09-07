@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as profileService from '../services/profileService'
 import { queryKeys } from '../lib/queryClient'
 
-export function useProfileQuery() {
-  return useQuery({ queryKey: queryKeys.profile, queryFn: profileService.getProfile })
+export function useProfileQuery(options = {}) {
+  return useQuery({ queryKey: queryKeys.profile, queryFn: profileService.getProfile, ...options })
 }
 
 export function useUpdateProfileMutation() {

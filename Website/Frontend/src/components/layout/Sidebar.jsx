@@ -18,6 +18,7 @@ import {
 import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
 import { useNotificationsQuery } from '../../hooks/useNotifications'
+import { hasEmployeeToken } from '../../lib/auth'
 
 const home = [{ to: '/app/jobs', label: 'Home', icon: Home }]
 const verification = [
@@ -69,7 +70,7 @@ function Group({ label, items, collapsed }) {
 
 export default function Sidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen, setMobileSidebarOpen } = useApp()
-  const { data: notifications } = useNotificationsQuery()
+  const { data: notifications } = useNotificationsQuery({ enabled: hasEmployeeToken() })
   const unreadCount = (notifications ?? []).filter((n) => n.unread).length
 
   const account = [
