@@ -502,20 +502,30 @@ export const TRUSTED_LOGOS_DATA = {
 // reads in JobMatching.jsx — not a new destination. Titles with no matching
 // track (Marketing, Design, Customer Support) fall back to the unfiltered
 // listing rather than a guaranteed-empty filter.
+//
+// `trackKey` is how CategoryGrid.jsx looks its live count up from
+// GET /api/jobs/categories (fetchCategoryCounts) — it matches the
+// Backend Job.track enum exactly, or 'freshers'/'remote' for the two
+// virtual (filter-based, not track-based) tiles. `count` below is only the
+// offline fallback shown until that request resolves (or if it fails) —
+// see CategoryGrid.jsx's `usingFallback` handling, same pattern as
+// LatestJobs.jsx's own fetch fallback. Finance has no `trackKey` since no
+// Job.track value maps to it (see BROWSE_CATEGORY_TRACKS above) — its real
+// live count is genuinely 0 until jobs start carrying a finance track.
 export const CATEGORY_DATA = {
   title: "Explore jobs by category",
   subtitle: "Jump straight to openings in the field you know best.",
   categories: [
-    { title: "Technology", icon: Cpu, count: 128, browseCategory: "Engineering & Technology" },
-    { title: "Sales", icon: TrendingUp, count: 96, browseCategory: "Sales & Distribution" },
-    { title: "Marketing", icon: Megaphone, count: 42 },
-    { title: "Design", icon: PenTool, count: 35 },
+    { title: "Technology", icon: Cpu, count: 128, browseCategory: "Engineering & Technology", trackKey: "tech" },
+    { title: "Sales", icon: TrendingUp, count: 96, browseCategory: "Sales & Distribution", trackKey: "sales" },
+    { title: "Marketing", icon: Megaphone, count: 42, trackKey: "marketing" },
+    { title: "Design", icon: PenTool, count: 35, trackKey: "design" },
     { title: "Finance", icon: Wallet, count: 51, browseCategory: "Finance & Accounting" },
-    { title: "HR", icon: Users2, count: 47, browseCategory: "HR & Training" },
-    { title: "Operations", icon: Settings, count: 63, browseCategory: "Operations" },
-    { title: "Customer Support", icon: Headset, count: 39 },
-    { title: "Freshers", icon: GraduationCap, count: 84, searchParams: { experience: "0-1" } },
-    { title: "Remote Jobs", icon: Globe, count: 58, searchParams: { location: "Remote" } }
+    { title: "HR", icon: Users2, count: 47, browseCategory: "HR & Training", trackKey: "hr" },
+    { title: "Operations", icon: Settings, count: 63, browseCategory: "Operations", trackKey: "ops" },
+    { title: "Customer Support", icon: Headset, count: 39, trackKey: "support" },
+    { title: "Freshers", icon: GraduationCap, count: 84, searchParams: { experience: "0-1" }, trackKey: "freshers" },
+    { title: "Remote Jobs", icon: Globe, count: 58, searchParams: { location: "Remote" }, trackKey: "remote" }
   ]
 }
 

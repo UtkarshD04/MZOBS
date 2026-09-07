@@ -57,3 +57,14 @@ export async function fetchJobSuggestions({ q = '', type = 'all', limit } = {}, 
   const data = await res.json()
   return data.items ?? []
 }
+
+// Real, live opening counts for the home page's "Explore jobs by category"
+// section — see Backend's getPublicCategoryCounts. `tracks` keys match the
+// Job.track enum (tech/sales/marketing/design/hr/ops/support); `freshers`
+// and `remote` are counted the same way those two tiles' own filters would
+// count them (experience=0-1 / location=Remote).
+export async function fetchCategoryCounts({ signal } = {}) {
+  const res = await fetch(`${PUBLIC_JOBS_API_URL}/categories`, { signal })
+  if (!res.ok) throw new Error('Failed to load category counts')
+  return res.json()
+}

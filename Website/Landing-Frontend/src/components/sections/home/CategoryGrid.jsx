@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react'
 import { ArrowUpRight, ArrowRight, Flame } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { CATEGORY_DATA } from '../../../lib/content'
 import { EMPLOYEE_APP_URL } from '../../../lib/config'
 import { buildJobsUrl } from '../../../lib/jobsUrl'
+import { fetchCategoryCounts } from '../../../lib/publicJobs'
 
 function categoryHref(cat) {
   if (cat.browseCategory) return `${EMPLOYEE_APP_URL}/app/jobs?category=${encodeURIComponent(cat.browseCategory)}`
@@ -21,15 +23,41 @@ const TONES = [
   'bg-(--jobs-gold-soft) text-(--jobs-navy)',
 ]
 
+// Resolves a category's real, live count from GET /api/jobs/categories —
+// `counts` is `{ tracks: { tech: N, ... }, freshers: N, remote: N }`. Falls
+// back to the curated content.js number (`cat.count`) until that request
+// resolves, or if it fails outright — same graceful-degrade shape as
+// LatestJobs.jsx's own fetch fallback, just for a smaller payload.
+function liveCount(cat, counts) {
+  if (!counts) return cat.count
+  if (cat.trackKey === 'freshers') return counts.freshers ?? 0
+  if (cat.trackKey === 'remote') return counts.remote ?? 0
+  if (cat.trackKey) return counts.tracks?.[cat.trackKey] ?? 0
+  return cat.count
+}
+
 export default function CategoryGrid() {
-  const totalOpenings = CATEGORY_DATA.categories.reduce((sum, c) => sum + c.count, 0)
-  const maxCount = Math.max(...CATEGORY_DATA.categories.map((c) => c.count))
+  const [counts, setCounts] = useState(null)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchCategoryCounts({ signal: controller.signal })
+      .then(setCounts)
+      .catch((err) => {
+        if (err?.name !== 'AbortError') setCounts(null)
+      })
+    return () => controller.abort()
+  }, [])
+
+  const categories = CATEGORY_DATA.categories.map((cat) => ({ ...cat, count: liveCount(cat, counts) }))
+  const totalOpenings = categories.reduce((sum, c) => sum + c.count, 0)
+  const maxCount = Math.max(...categories.map((c) => c.count))
   // Pulls the busiest category out to headline its own spotlight tile —
   // everything else fills the compact list beside it, rather than every
   // category getting an identically-sized box.
-  const featuredIndex = CATEGORY_DATA.categories.findIndex((c) => c.count === maxCount)
-  const featured = CATEGORY_DATA.categories[featuredIndex]
-  const rest = CATEGORY_DATA.categories.filter((_, i) => i !== featuredIndex)
+  const featuredIndex = categories.findIndex((c) => c.count === maxCount)
+  const featured = categories[featuredIndex]
+  const rest = categories.filter((_, i) => i !== featuredIndex)
   const FeaturedIcon = featured.icon
 
   return (
