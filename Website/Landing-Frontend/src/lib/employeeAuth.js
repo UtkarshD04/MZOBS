@@ -15,16 +15,16 @@ export function loginEmployee({ email, password }) {
   return postJSON('/auth/login', { email, password })
 }
 
-export function signupEmployee({ name, email, phone, password, experience, graduation, paymentOrderId, phoneToken }) {
-  return postJSON('/auth/signup', { name, email, phone, password, experience, graduation, paymentOrderId, phoneToken })
+export function signupEmployee({ name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken }) {
+  return postJSON('/auth/signup', { name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken })
 }
 
 export function loginEmployeeWithGoogle({ credential }) {
   return postJSON('/auth/google-login', { credential })
 }
 
-export function signupEmployeeWithGoogle({ credential, phone, experience, graduation, paymentOrderId, phoneToken }) {
-  return postJSON('/auth/google-signup', { credential, phone, experience, graduation, paymentOrderId, phoneToken })
+export function signupEmployeeWithGoogle({ credential, phone, experience, graduation, city, state, pincode, paymentOrderId, phoneToken }) {
+  return postJSON('/auth/google-signup', { credential, phone, experience, graduation, city, state, pincode, paymentOrderId, phoneToken })
 }
 
 // The MSG91 widget verifies the OTP itself client-side and hands back an
