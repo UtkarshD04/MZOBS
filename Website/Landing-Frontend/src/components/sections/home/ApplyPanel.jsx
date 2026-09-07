@@ -1,5 +1,22 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeft, CheckCircle2, Clock3, FileUp, Loader2 } from 'lucide-react'
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Clock3,
+  FileUp,
+  Loader2,
+  ChevronDown,
+  User,
+  Mail,
+  Phone,
+  Lock,
+  MapPin,
+  Landmark,
+  Hash,
+  GraduationCap,
+  Eye,
+  EyeOff,
+} from 'lucide-react'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../../ui/GoogleAuthButton'
 import { loginEmployee, loginEmployeeWithGoogle, signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../../lib/employeeAuth'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../../lib/msg91Widget'
@@ -21,6 +38,54 @@ function BackRow({ onBack, children }) {
     <button type="button" onClick={onBack} className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors mb-4">
       <ArrowLeft size={14} aria-hidden="true" /> {children}
     </button>
+  )
+}
+
+// Icon + input, matching the leading-glyph look the rest of the site's forms
+// use (JobSearchHero, the standalone /employees/signup page) rather than a
+// bare text box.
+function IconInput({ icon: Icon, className = '', ...props }) {
+  return (
+    <div className="relative">
+      <Icon size={16} strokeWidth={1.8} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) pointer-events-none" aria-hidden="true" />
+      <input className={`${inputClass} pl-10 ${className}`} {...props} />
+    </div>
+  )
+}
+
+function IconSelect({ icon: Icon, className = '', children, ...props }) {
+  return (
+    <div className="relative">
+      <Icon size={16} strokeWidth={1.8} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) pointer-events-none" aria-hidden="true" />
+      <select className={`${inputClass} pl-10 pr-9 appearance-none ${className}`} {...props}>
+        {children}
+      </select>
+      <ChevronDown size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) pointer-events-none" aria-hidden="true" />
+    </div>
+  )
+}
+
+function PasswordInput({ value, onChange, placeholder, className = '' }) {
+  const [visible, setVisible] = useState(false)
+  return (
+    <div className="relative">
+      <Lock size={16} strokeWidth={1.8} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) pointer-events-none" aria-hidden="true" />
+      <input
+        type={visible ? 'text' : 'password'}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`${inputClass} pl-10 pr-10 ${className}`}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors"
+        aria-label={visible ? 'Hide password' : 'Show password'}
+      >
+        {visible ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
+      </button>
+    </div>
   )
 }
 
@@ -62,24 +127,18 @@ function InlineLoginForm({ onSuccess }) {
     <form onSubmit={handleSubmit}>
       <GoogleAuthButton onCredential={handleGoogle} onError={setError} label="Continue with Google" />
       <OrDivider />
-      <label className="block text-[12.5px] font-semibold text-(--jobs-navy) mb-1.5">Email</label>
-      <input
+      <label className={labelClass}>Email</label>
+      <IconInput
+        icon={Mail}
         type="email"
         required
         value={form.email}
         onChange={(e) => update('email', e.target.value)}
         placeholder="you@example.com"
-        className={`${inputClass} mb-3`}
+        className="mb-3"
       />
-      <label className="block text-[12.5px] font-semibold text-(--jobs-navy) mb-1.5">Password</label>
-      <input
-        type="password"
-        required
-        value={form.password}
-        onChange={(e) => update('password', e.target.value)}
-        placeholder="Enter your password"
-        className={`${inputClass} mb-3`}
-      />
+      <label className={labelClass}>Password</label>
+      <PasswordInput value={form.password} onChange={(e) => update('password', e.target.value)} placeholder="Enter your password" className="mb-3" />
       {error && <p className="text-[12.5px] text-red-600 mb-3">{error}</p>}
       <button type="submit" disabled={submitting} className={`${primaryButtonClass} w-full`}>
         {submitting && <Loader2 size={15} className="animate-spin" aria-hidden="true" />}
@@ -226,29 +285,31 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
       ) : (
         <>
           <label className={labelClass}>Full name</label>
-          <input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" className={`${inputClass} mb-1`} />
+          <IconInput icon={User} value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Ananya Iyer" className="mb-1" />
           {errors.name && <p className={errorClass}>{errors.name}</p>}
 
           <label className={labelClass}>Email</label>
-          <input
+          <IconInput
+            icon={Mail}
             type="email"
             value={form.email}
             onChange={(e) => update('email', e.target.value)}
             placeholder="you@example.com"
-            className={`${inputClass} mb-1`}
+            className="mb-1"
           />
           {errors.email && <p className={errorClass}>{errors.email}</p>}
         </>
       )}
 
       <label className={labelClass}>Phone number</label>
-      <input
+      <IconInput
+        icon={Phone}
         type="tel"
         value={form.phone}
         onChange={(e) => update('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
         placeholder="98765 43210"
         disabled={Boolean(phoneToken)}
-        className={`${inputClass} mb-1`}
+        className="mb-1"
       />
       {errors.phone && <p className={errorClass}>{errors.phone}</p>}
 
@@ -259,12 +320,13 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
       ) : otpSent ? (
         <div className="mb-3">
           <label className={labelClass}>Enter OTP</label>
-          <input
+          <IconInput
+            icon={Hash}
             value={otp}
             onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
             placeholder="6-digit code"
             inputMode="numeric"
-            className={`${inputClass} mb-2`}
+            className="mb-2"
           />
           <div className="flex items-center gap-3">
             <button type="button" className={otpButtonClass} onClick={handleVerifyOtp} disabled={verifyingOtp || otp.length !== 6}>
@@ -293,13 +355,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
       {!googleCredential && (
         <>
           <label className={labelClass}>Password</label>
-          <input
-            type="password"
-            value={form.password}
-            onChange={(e) => update('password', e.target.value)}
-            placeholder="At least 8 characters"
-            className={`${inputClass} mb-1`}
-          />
+          <PasswordInput value={form.password} onChange={(e) => update('password', e.target.value)} placeholder="At least 8 characters" className="mb-1" />
           {errors.password && <p className={errorClass}>{errors.password}</p>}
         </>
       )}
@@ -307,23 +363,24 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
       <div className="grid grid-cols-2 gap-3 mb-1">
         <div>
           <label className={labelClass}>City</label>
-          <input value={form.city} onChange={(e) => update('city', e.target.value)} placeholder="Bengaluru" className={inputClass} />
+          <IconInput icon={MapPin} value={form.city} onChange={(e) => update('city', e.target.value)} placeholder="Bengaluru" />
           {errors.city && <p className={errorClass}>{errors.city}</p>}
         </div>
         <div>
           <label className={labelClass}>State</label>
-          <input value={form.state} onChange={(e) => update('state', e.target.value)} placeholder="Karnataka" className={inputClass} />
+          <IconInput icon={Landmark} value={form.state} onChange={(e) => update('state', e.target.value)} placeholder="Karnataka" />
           {errors.state && <p className={errorClass}>{errors.state}</p>}
         </div>
       </div>
 
       <label className={labelClass}>Pincode</label>
-      <input
+      <IconInput
+        icon={Hash}
         value={form.pincode}
         onChange={(e) => update('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
         placeholder="560001"
         inputMode="numeric"
-        className={`${inputClass} mb-1`}
+        className="mb-1"
       />
       {errors.pincode && <p className={errorClass}>{errors.pincode}</p>}
 
@@ -349,7 +406,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
       </div>
 
       <label className={labelClass}>Graduation</label>
-      <select value={form.graduation} onChange={(e) => update('graduation', e.target.value)} className={`${inputClass} mb-1 appearance-none`}>
+      <IconSelect icon={GraduationCap} value={form.graduation} onChange={(e) => update('graduation', e.target.value)} className="mb-1">
         <option value="" disabled>
           Select your graduation
         </option>
@@ -358,7 +415,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
             {g}
           </option>
         ))}
-      </select>
+      </IconSelect>
       {errors.graduation && <p className={errorClass}>{errors.graduation}</p>}
 
       {errors.form && <p className="text-[12.5px] text-red-600 mb-3">{errors.form}</p>}
