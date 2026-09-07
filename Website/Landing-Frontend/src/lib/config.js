@@ -33,5 +33,5 @@ export const MSG91_WIDGET_ID = import.meta.env.VITE_MSG91_WIDGET_ID ?? ''
 export const MSG91_TOKEN_AUTH = import.meta.env.VITE_MSG91_TOKEN_AUTH ?? ''
 
 export const CONTACT_EMAIL = 'hello@mzobs.com'
-export const CONTACT_PHONE = '+91 98765 43210'
+export const CONTACT_PHONE = '+91 8756992444'
 export const CONTACT_ADDRESS = '4th Floor, Cyber Towers, HITEC City, Hyderabad, IN 500081'
