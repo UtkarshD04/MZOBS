@@ -18,6 +18,7 @@ import { Field, Textarea } from '../components/ui/Field'
 import { useCandidateQuery, useSetCandidateStage } from '../hooks/useCandidates'
 import { useInterviewsQuery } from '../hooks/useInterviews'
 import { fmtDateTime } from '../lib/utils'
+import { FILE_BASE_URL } from '../lib/config'
 
 export default function CandidateProfile() {
   const { id } = useParams()
@@ -207,10 +208,16 @@ export default function CandidateProfile() {
       <Modal open={resumeOpen} onClose={() => setResumeOpen(false)} title={`${candidate.name} — Resume`} size="lg">
         <div className="rounded-xl border border-dashed border-border-strong bg-surface-sunken flex flex-col items-center justify-center gap-3 py-16">
           <FileText size={30} className="text-ink-tertiary" />
-          <p className="text-[13px] text-ink-secondary text-center max-w-xs">Resume preview is available once you open this candidate from the Mzobs mobile or desktop app.</p>
-          <Button variant="secondary" size="sm" onClick={() => window.print()}>
-            <Download size={14} /> Download Resume
-          </Button>
+          {candidate.resumeUrl ? (
+            <>
+              <p className="text-[13px] text-ink-secondary text-center max-w-xs">Opens in a new tab. The link expires shortly after it's generated.</p>
+              <Button variant="secondary" size="sm" onClick={() => window.open(`${FILE_BASE_URL}${candidate.resumeUrl}`, '_blank')}>
+                <Download size={14} /> Download Resume
+              </Button>
+            </>
+          ) : (
+            <p className="text-[13px] text-ink-secondary text-center max-w-xs">This candidate's resume isn't available yet.</p>
+          )}
         </div>
       </Modal>
 
