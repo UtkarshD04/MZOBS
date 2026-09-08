@@ -4,6 +4,7 @@ import { ArrowRight, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { Field, Input, PrimaryButton } from '../ui/JobsAuthField'
 import { GoogleAuthButton, OrDivider } from '../ui/GoogleAuthButton'
 import { loginEmployee, loginEmployeeWithGoogle } from '../../lib/employeeAuth'
+import { saveEmployeeSession } from '../../lib/employeeSession'
 
 const initialForm = { email: '', password: '' }
 
@@ -36,7 +37,8 @@ export default function EmployeeSigninForm() {
     try {
       // The dashboard app isn't wired up to render anything yet — land back
       // on this site's own home page after a successful login for now.
-      await loginEmployee(form)
+      const { token, employee } = await loginEmployee(form)
+      saveEmployeeSession({ token, employee })
       navigate('/')
     } catch (err) {
       setStatus('idle')
@@ -48,7 +50,8 @@ export default function EmployeeSigninForm() {
     setErrors({})
     setStatus('submitting')
     try {
-      await loginEmployeeWithGoogle({ credential })
+      const { token, employee } = await loginEmployeeWithGoogle({ credential })
+      saveEmployeeSession({ token, employee })
       navigate('/')
     } catch (err) {
       setStatus('idle')
