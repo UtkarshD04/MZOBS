@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -21,7 +21,6 @@ import { Field, Input, Select, PrimaryButton, SecondaryButton } from '../ui/Jobs
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
 import StepProgress from '../ui/StepProgress'
 import OtpInput from '../ui/OtpInput'
-import { EMPLOYEE_APP_URL } from '../../lib/config'
 import { signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../lib/employeeAuth'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 import { GRADUATION_OPTIONS } from '../../lib/graduationOptions'
@@ -82,6 +81,7 @@ function validateStep3(form) {
 }
 
 export default function EmployeeSignupForm() {
+  const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
@@ -191,23 +191,23 @@ export default function EmployeeSignupForm() {
 
     setStatus('submitting')
     try {
-      const { token } = googleCredential
-        ? await signupEmployeeWithGoogle({
-            credential: googleCredential,
-            phone: form.phone,
-            experience: form.experience,
-            graduation: form.graduation,
-            phoneToken,
-          })
-        : await signupEmployee({ ...form, phoneToken })
+      if (googleCredential) {
+        await signupEmployeeWithGoogle({
+          credential: googleCredential,
+          phone: form.phone,
+          experience: form.experience,
+          graduation: form.graduation,
+          phoneToken,
+        })
+      } else {
+        await signupEmployee({ ...form, phoneToken })
+      }
 
       setStatus('success')
-      // Account is created unpaid — profile setup and the one-time ₹299
-      // payment both happen inside the dashboard app, not here. Same
-      // cross-app token handoff EmployeeSigninForm uses (localStorage isn't
-      // shared across origins/ports; main.jsx on the other side reads ?token=).
+      // The dashboard app isn't wired up to render anything yet — land back
+      // on this site's own home page after a successful signup for now.
       setTimeout(() => {
-        window.location.href = `${EMPLOYEE_APP_URL}/onboarding?token=${encodeURIComponent(token)}`
+        navigate('/')
       }, 900)
     } catch (err) {
       setStatus('idle')
