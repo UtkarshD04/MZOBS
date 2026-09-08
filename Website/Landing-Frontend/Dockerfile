@@ -50,6 +50,10 @@ COPY --from=build /app/dist ./dist
 # PUBLIC_JOBS_API_URL (no VITE_ prefix — this is the server process reading
 # it at request time, not Vite inlining it into the client bundle) must be
 # set at runtime, same value as VITE_PUBLIC_JOBS_API_URL above.
-ENV PORT=8080
-EXPOSE 8080
+#
+# Port 80 to match the old nginx image (see the removed nginx.conf) —
+# whatever reverse proxy/port-mapping already points at this container on
+# port 80 keeps working unchanged. Override PORT at runtime if needed.
+ENV PORT=80
+EXPOSE 80
 CMD ["node", "server.js"]
