@@ -1,16 +1,8 @@
-import { ShieldCheck, Sparkles, FileText } from 'lucide-react'
-
-const STATS = [
-  { value: '10,000+', label: 'Verified jobs' },
-  { value: '500+', label: 'Companies hiring' },
-  { value: '48h', label: 'Avg. match time' },
-]
-
 // Left-side onboarding panel for the employee signup/signin pages — a
-// visual centerpiece (an orbiting "verified" badge cluster) and a stat row
-// instead of a marketing paragraph + feature list, so this reads as a
-// designed panel rather than generated copy. Hidden on mobile in favour of
-// a compact intro strip.
+// single illustration (a stack of abstract job-card shapes) instead of any
+// headline, pitch copy, or stat numbers, so this reads as a designed visual
+// rather than generated marketing text. Hidden on mobile in favour of a
+// compact intro strip.
 export default function CareerOnboardingPanel() {
   return (
     <div className="relative h-full overflow-hidden rounded-3xl bg-(--jobs-blue-tint) border border-(--jobs-border) px-8 py-10 sm:px-10 sm:py-12 flex flex-col">
@@ -35,37 +27,40 @@ export default function CareerOnboardingPanel() {
         MZOBS Careers
       </span>
 
-      {/* Visual centerpiece — a "verified" badge orbited by the match/
-          resume icons, standing in for the old headline + bullet copy. */}
-      <div className="relative flex-1 flex items-center justify-center py-8">
-        <div className="relative w-44 h-44 sm:w-52 sm:h-52">
-          <div className="absolute inset-0 rounded-full border border-(--jobs-blue)/20" aria-hidden="true" />
-          <div className="absolute inset-7 rounded-full border border-dashed border-(--jobs-teal)/35" aria-hidden="true" />
+      {/* Illustration — a loose stack of abstract job-card shapes, the only
+          content this panel needs to make its point. */}
+      <div className="relative flex-1 flex items-center justify-center py-6">
+        <div className="relative w-56 h-64 sm:w-64 sm:h-72">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 rounded-2xl bg-white/70 border border-(--jobs-border) shadow-md rotate-[-9deg] translate-x-3"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 rounded-2xl bg-white/85 border border-(--jobs-border) shadow-md rotate-6 -translate-x-2 translate-y-2"
+          />
 
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[22px] bg-white border border-(--jobs-border) shadow-[0_1px_2px_rgba(16,42,67,0.04),0_20px_40px_-18px_rgba(16,42,67,0.25)] flex items-center justify-center">
-              <ShieldCheck size={32} strokeWidth={1.6} className="text-(--jobs-blue-dark)" />
+          <div className="absolute inset-0 rounded-2xl bg-white border border-(--jobs-border) shadow-[0_1px_2px_rgba(16,42,67,0.04),0_24px_48px_-20px_rgba(16,42,67,0.28)] p-5 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-(--jobs-teal-tint)" aria-hidden="true" />
+              <div className="flex-1 flex flex-col gap-1.5">
+                <div className="h-2.5 w-3/4 rounded-full bg-(--jobs-navy)/15" aria-hidden="true" />
+                <div className="h-2 w-1/2 rounded-full bg-(--jobs-ink-soft)/20" aria-hidden="true" />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="h-2 w-full rounded-full bg-(--jobs-border)" aria-hidden="true" />
+              <div className="h-2 w-5/6 rounded-full bg-(--jobs-border)" aria-hidden="true" />
+              <div className="h-2 w-2/3 rounded-full bg-(--jobs-border)" aria-hidden="true" />
+            </div>
+
+            <div className="mt-auto flex items-center gap-2">
+              <div className="h-6 w-16 rounded-full bg-(--jobs-blue-tint)" aria-hidden="true" />
+              <div className="h-6 w-12 rounded-full bg-(--jobs-teal-tint)" aria-hidden="true" />
             </div>
           </div>
-
-          <div className="absolute -top-1 -right-3 w-12 h-12 rounded-full bg-white border border-(--jobs-border) shadow-sm flex items-center justify-center">
-            <Sparkles size={17} strokeWidth={1.8} className="text-(--jobs-teal-dark)" />
-          </div>
-          <div className="absolute -bottom-2 -left-4 w-12 h-12 rounded-full bg-white border border-(--jobs-border) shadow-sm flex items-center justify-center">
-            <FileText size={17} strokeWidth={1.8} className="text-(--jobs-blue-dark)" />
-          </div>
         </div>
-      </div>
-
-      {/* Stat row instead of sentences — same "verified / matched /
-          supported" story, told in numbers. */}
-      <div className="relative grid grid-cols-3 gap-3 pt-6 border-t border-(--jobs-blue)/15">
-        {STATS.map((s) => (
-          <div key={s.label}>
-            <p className="text-[18px] sm:text-[19px] font-black text-(--jobs-navy) tracking-tight">{s.value}</p>
-            <p className="mt-0.5 text-[11px] text-(--jobs-ink-soft) leading-snug">{s.label}</p>
-          </div>
-        ))}
       </div>
     </div>
   )
