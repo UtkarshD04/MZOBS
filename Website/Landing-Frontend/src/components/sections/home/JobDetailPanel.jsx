@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, ArrowRight, Users, Building2, Bookmark, Share2, Check, TrendingUp, ShieldCheck } from 'lucide-react'
 import ApplyPanel from './ApplyPanel'
+import ExplorerButton from '../../ui/ExplorerButton'
 import { isJobSaved, toggleJobSaved } from '../../../lib/savedJobs'
 import {
   toneForCompany,
@@ -66,16 +66,14 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
   if (applyOpen) return <ApplyPanel job={job} onClose={() => setApplyOpen(false)} />
 
   const applyButton = (
-    <motion.a
+    <ExplorerButton
       href={job.applyUrl}
       onClick={job.applyUrl ? undefined : (e) => { e.preventDefault(); setApplyOpen(true) }}
-      whileHover={{ y: -1 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: 'spring', stiffness: 350, damping: 18 }}
-      className="inline-flex flex-1 items-center justify-center gap-2 h-12 px-6 rounded-xl bg-(--explorer-blue) text-white text-[14.5px] font-bold shadow-[0_8px_20px_-6px_rgba(37,99,235,0.55)] hover:bg-(--explorer-blue-hover) hover:shadow-[0_10px_24px_-6px_rgba(37,99,235,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) transition-[background-color,box-shadow]"
+      size="xl"
+      className="flex-1"
     >
       Apply now <ArrowUpRight size={17} aria-hidden="true" />
-    </motion.a>
+    </ExplorerButton>
   )
 
   return (
@@ -84,7 +82,7 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
       <div className="relative -m-6 mb-0 sm:-m-7 sm:mb-0 px-6 pt-6 sm:px-7 sm:pt-7 pb-6 overflow-hidden rounded-t-xl">
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(120% 100% at 15% 0%, var(--explorer-blue-surface) 0%, rgba(239,246,255,0) 60%)' }}
+          style={{ background: 'radial-gradient(120% 100% at 15% 0%, var(--explorer-teal-surface) 0%, rgba(231,245,241,0) 60%)' }}
           aria-hidden="true"
         />
         <div className="relative flex items-start gap-4">
@@ -195,7 +193,7 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
             <button
               type="button"
               onClick={() => setDescExpanded((v) => !v)}
-              className="mt-2.5 text-[13px] font-bold text-(--explorer-teal) hover:text-(--explorer-teal-hover) transition-colors"
+              className="mt-2.5 text-[13px] font-bold text-(--explorer-teal) hover:text-(--explorer-teal-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) rounded-xs"
             >
               {descExpanded ? 'Show less' : 'Read full description'}
             </button>
@@ -211,13 +209,13 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
           <button
             type="button"
             onClick={onNext}
-            className="w-full flex items-center justify-between gap-3 py-3 text-left group"
+            className="w-full flex items-center justify-between gap-3 py-3 text-left group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) rounded-xs"
           >
             <span className="min-w-0">
               <span className="block text-[11px] font-semibold uppercase tracking-wide text-(--explorer-muted)">Next opportunity</span>
               <span className="block mt-0.5 text-[13.5px] font-bold text-(--explorer-navy) truncate">{nextJob.title}</span>
             </span>
-            <ArrowRight size={16} className="shrink-0 text-(--explorer-muted) group-hover:text-(--explorer-blue) group-hover:translate-x-0.5 transition-[color,transform]" aria-hidden="true" />
+            <ArrowRight size={16} className="shrink-0 text-(--explorer-muted) group-hover:text-(--explorer-teal) group-hover:translate-x-0.5 transition-[color,transform]" aria-hidden="true" />
           </button>
         </>
       )}

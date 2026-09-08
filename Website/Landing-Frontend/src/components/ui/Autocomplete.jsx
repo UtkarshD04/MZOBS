@@ -31,7 +31,7 @@ function countLabel(count) {
 // as a combobox (WAI-ARIA combobox/listbox/option pattern) with a debounced,
 // cancellable fetch, grouped/ranked suggestions, and keyboard navigation.
 // Not a copy of any third-party job board's picker — own visuals (the
-// page's --jobs-* palette), own grouping/icon/tag rules, own markup.
+// page's --explorer-* palette), own grouping/icon/tag rules, own markup.
 //
 // `fetchItems(query, { signal })` must resolve to an array of
 // `{ value, count?, kind? }` objects, already ordered/grouped the way they
@@ -180,7 +180,7 @@ export default function Autocomplete({
   return (
     <div className={`relative flex-1 ${className}`}>
       <div className="flex flex-wrap items-center gap-1.5 px-3.5 py-2 h-full">
-        <span className="text-(--jobs-ink-soft) shrink-0 pl-0.5" aria-hidden="true">
+        <span className="text-(--explorer-muted) shrink-0 pl-0.5" aria-hidden="true">
           {icon}
         </span>
         <span className="sr-only">{label}</span>
@@ -190,7 +190,7 @@ export default function Autocomplete({
           return (
             <span
               key={`${tag.kind ?? 'tag'}-${tag.value}-${i}`}
-              className="inline-flex items-center gap-1 h-7 pl-2 pr-1 rounded-md bg-(--jobs-blue-tint) text-(--jobs-blue-dark) text-[13px] font-semibold"
+              className="inline-flex items-center gap-1 h-7 pl-2 pr-1 rounded-md bg-(--explorer-teal-surface) text-(--explorer-teal-hover) text-[13px] font-semibold"
             >
               {Icon && <Icon size={11} className="shrink-0" aria-hidden="true" />}
               <span className="max-w-32 truncate">{tag.value}</span>
@@ -198,7 +198,7 @@ export default function Autocomplete({
                 type="button"
                 onClick={() => onRemoveTag(i)}
                 aria-label={`Remove ${tag.value}`}
-                className="flex items-center justify-center w-4.5 h-4.5 rounded hover:bg-(--jobs-blue)/20 shrink-0"
+                className="flex items-center justify-center w-4.5 h-4.5 rounded hover:bg-(--explorer-teal)/20 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--explorer-teal) shrink-0"
               >
                 <X size={11} aria-hidden="true" />
               </button>
@@ -221,7 +221,7 @@ export default function Autocomplete({
           onBlur={() => setOpen(false)}
           placeholder={tags.length ? '' : placeholder}
           autoComplete="off"
-          className="flex-1 min-w-24 bg-transparent outline-none text-[14.5px] text-(--jobs-navy) placeholder:text-(--jobs-ink-soft)"
+          className="flex-1 min-w-24 bg-transparent outline-none text-[14.5px] text-(--explorer-navy) placeholder:text-(--explorer-muted)"
         />
       </div>
 
@@ -230,7 +230,7 @@ export default function Autocomplete({
           id={listboxId}
           role="listbox"
           aria-label={label}
-          className="absolute z-30 left-0 right-0 top-full mt-2 max-h-96 overflow-y-auto rounded-lg border border-(--jobs-border) bg-white shadow-lg shadow-(--jobs-navy)/10 py-1.5"
+          className="absolute z-30 left-0 right-0 top-full mt-2 max-h-96 overflow-y-auto rounded-lg border border-(--explorer-border) bg-white shadow-lg shadow-(--explorer-navy)/10 py-1.5"
         >
           {items.map((item, index) => {
             const showGroupHeader = item.kind && item.kind !== lastKind && KIND_GROUP_LABEL[item.kind]
@@ -241,7 +241,7 @@ export default function Autocomplete({
             return (
               <li key={`${item.kind ?? 'item'}-${item.value}`} role="presentation">
                 {showGroupHeader && (
-                  <p role="presentation" className="px-3.5 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wide text-(--jobs-ink-soft)">
+                  <p role="presentation" className="px-3.5 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wide text-(--explorer-muted)">
                     {KIND_GROUP_LABEL[item.kind]}
                   </p>
                 )}
@@ -260,14 +260,14 @@ export default function Autocomplete({
                   className={`flex items-center justify-between gap-3 mx-1.5 px-2.5 py-2 rounded-md text-[13.5px] ${
                     tagged
                       ? 'opacity-40 cursor-default'
-                      : `cursor-pointer ${active ? 'bg-(--jobs-blue-tint) text-(--jobs-blue-dark)' : 'text-(--jobs-navy) hover:bg-(--jobs-blue-tint)/60'}`
+                      : `cursor-pointer ${active ? 'bg-(--explorer-teal-surface) text-(--explorer-teal-hover)' : 'text-(--explorer-navy) hover:bg-(--explorer-teal-surface)/60'}`
                   }`}
                 >
                   <span className="flex items-center gap-2 min-w-0">
-                    <Icon size={14} className="shrink-0 text-(--jobs-ink-soft)" aria-hidden="true" />
+                    <Icon size={14} className="shrink-0 text-(--explorer-muted)" aria-hidden="true" />
                     <span className="truncate font-semibold">{item.value}</span>
                   </span>
-                  {countLabel(item.count) && <span className="shrink-0 text-[12px] text-(--jobs-ink-soft)">{countLabel(item.count)}</span>}
+                  {countLabel(item.count) && <span className="shrink-0 text-[12px] text-(--explorer-muted)">{countLabel(item.count)}</span>}
                 </div>
               </li>
             )
@@ -282,8 +282,8 @@ export default function Autocomplete({
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={addTypedText}
                 onMouseEnter={() => setActiveIndex(items.length)}
-                className={`flex items-center gap-2 mx-1.5 mt-1 px-2.5 py-2 rounded-md cursor-pointer text-[13.5px] font-bold border-t border-(--jobs-border) ${
-                  activeIndex === items.length ? 'bg-(--jobs-blue-tint) text-(--jobs-blue-dark)' : 'text-(--jobs-blue) hover:bg-(--jobs-blue-tint)/60'
+                className={`flex items-center gap-2 mx-1.5 mt-1 px-2.5 py-2 rounded-md cursor-pointer text-[13.5px] font-bold border-t border-(--explorer-border) ${
+                  activeIndex === items.length ? 'bg-(--explorer-teal-surface) text-(--explorer-teal-hover)' : 'text-(--explorer-teal) hover:bg-(--explorer-teal-surface)/60'
                 }`}
               >
                 <Plus size={14} className="shrink-0" aria-hidden="true" />
@@ -292,7 +292,7 @@ export default function Autocomplete({
             </li>
           )}
 
-          {!rowCount && loading && <li role="presentation" className="px-3.5 py-2.5 text-[13px] text-(--jobs-ink-soft)">Loading…</li>}
+          {!rowCount && loading && <li role="presentation" className="px-3.5 py-2.5 text-[13px] text-(--explorer-muted)">Loading…</li>}
         </ul>
       )}
     </div>

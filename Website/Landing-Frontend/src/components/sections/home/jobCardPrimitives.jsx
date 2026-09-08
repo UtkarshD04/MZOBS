@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ShieldCheck } from 'lucide-react'
 import { EMPLOYEE_APP_URL } from '../../../lib/config'
 
 // Small presentational pieces shared between the "Latest jobs" list/inline
@@ -55,6 +56,38 @@ export function Avatar({ initials, tone, size = 'sm' }) {
   return <div className={`flex items-center justify-center font-bold shrink-0 ${AVATAR_SIZE[size] || AVATAR_SIZE.sm} ${tone}`}>{initials}</div>
 }
 
+// Real company logo when the employer has uploaded one (Company.logo),
+// falling back to the same initials-avatar every other job surface uses —
+// so a job never shows a placeholder/stock logo, only genuine employer
+// branding or a refined monogram. Used by the Featured job card and the
+// compact job rows on the home page's discovery section.
+export function CompanyMark({ company, logo, size = 'sm' }) {
+  if (logo) {
+    return (
+      <img
+        src={logo}
+        alt=""
+        aria-hidden="true"
+        className={`object-contain shrink-0 bg-white border border-(--explorer-border) ${
+          size === 'lg' ? 'w-15 h-15 rounded-2xl p-2' : 'w-9 h-9 rounded-xl p-1.5'
+        }`}
+      />
+    )
+  }
+  return <Avatar initials={initialsOf(company)} tone={toneForCompany(company)} size={size} />
+}
+
+// Small teal marker shown only when Company.verificationStatus is actually
+// 'verified' (see Backend's toLatestJobSummary) — never rendered as a
+// default/assumed state, so its presence always means something real.
+export function VerifiedMark() {
+  return (
+    <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-(--explorer-teal)">
+      <ShieldCheck size={12.5} aria-hidden="true" /> Verified employer
+    </span>
+  )
+}
+
 // Recently-posted marker for the list card and detail header — "recent"
 // means today or yesterday, not just "sorted first".
 export function NewBadge() {
@@ -89,10 +122,10 @@ export function IconButton({ icon, label, onClick, active = false, href }) {
         title={label}
         aria-label={label}
         aria-pressed={href ? undefined : active}
-        className={`flex items-center justify-center w-10.5 h-10.5 rounded-full border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
+        className={`explorer-icon-btn flex items-center justify-center w-10.5 h-10.5 rounded-full border motion-safe:transition-[background-color,border-color,color,transform] duration-150 motion-safe:hover:-translate-y-px motion-safe:active:translate-y-0 motion-safe:active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) ${
           active
             ? 'border-(--explorer-teal-border) bg-(--explorer-teal-surface) text-(--explorer-teal)'
-            : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-navy)/20 hover:bg-(--explorer-bg)'
+            : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-teal-border) hover:bg-(--explorer-teal-surface) hover:text-(--explorer-teal)'
         }`}
       >
         {icon}

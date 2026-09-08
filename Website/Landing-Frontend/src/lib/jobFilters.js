@@ -4,10 +4,8 @@
 // "Latest jobs" section (LatestJobs.jsx) in place instead of sending the
 // visitor off to the employee dashboard app. LatestJobs asks Backend's
 // GET /api/jobs to do the actual filtering (see lib/publicJobs.js) — the
-// option lists, labels and `matchesJobSearch` here exist for two things:
-// the "Filters" panel's UI, and a client-side fallback filter over the
-// curated LATEST_JOBS_DATA sample for the rare case the public API itself
-// is unreachable (never mixed with real API results — see LatestJobs.jsx).
+// option lists and labels here exist purely for the "Filters" panel's UI
+// (values/labels/chip text), not for any client-side filtering of jobs.
 //
 // Option lists and matching rules mirror Website/Frontend's own
 // src/lib/jobFilters.js (the dashboard's filter sidebar) *and* Backend's
@@ -84,73 +82,6 @@ export const DEFAULT_FILTERS = {
 
 export function toggleValue(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
-}
-
-// '10+' style values are open-ended on the top end; plain 'a-b' values parse
-// straight into { min, max }. Shared by the experience (years) and salary
-// (lakhs) buckets, which use the same "a-b" / "n+" shape.
-function parseRange(value) {
-  if (!value) return null
-  if (value.endsWith('+')) return { min: Number(value.slice(0, -1)), max: Infinity }
-  const match = /^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)$/.exec(value)
-  if (!match) return null
-  return { min: Number(match[1]), max: Number(match[2]) }
-}
-
-function rangesOverlap(aMin, aMax, bMin, bMax) {
-  return aMax >= bMin && (!Number.isFinite(bMax) || aMin <= bMax)
-}
-
-export function matchesJobSearch(job, filters = {}) {
-  const { q = [], location = [], experience, workMode = [], salary, employmentType = [], track = [], postedWithin } = filters
-
-  if (q.length) {
-    const haystack = [job.title, job.company, ...(job.skills ?? [])].join(' ').toLowerCase()
-    if (!q.some((term) => haystack.includes(term.trim().toLowerCase()))) return false
-  }
-
-  if (location.length) {
-    // "Remote"/"Hybrid"/"On-site" come in through this same param
-    // (QuickDiscoveryStrip's "Remote jobs" pill, CATEGORY_DATA's Remote Jobs
-    // card) even though they describe workMode, not the location string —
-    // match either field. A job matches if ANY selected term matches.
-    const jobLocation = (job.location ?? '').toLowerCase()
-    const jobWorkMode = (job.workMode ?? '').toLowerCase()
-    const matches = location.some((term) => {
-      const needle = term.trim().toLowerCase()
-      return jobLocation.includes(needle) || jobWorkMode === needle
-    })
-    if (!matches) return false
-  }
-
-  if (experience) {
-    const range = parseRange(experience)
-    // Jobs with no numeric experience data (the curated fallback sample —
-    // see LATEST_JOBS_DATA) are never excluded by this filter, only real
-    // jobs the public feed has real min/max years for.
-    if (range && job.experienceMin != null && job.experienceMax != null) {
-      if (!rangesOverlap(job.experienceMin, job.experienceMax, range.min, range.max)) return false
-    }
-  }
-
-  if (workMode.length && !workMode.includes(job.workMode)) return false
-  if (employmentType.length && !employmentType.includes(job.employmentType)) return false
-  if (track.length && !track.includes(job.track)) return false
-
-  if (salary) {
-    const range = parseRange(salary)
-    if (range && job.salaryMin != null && job.salaryMax != null) {
-      // Bucket bounds are in lakhs, job.salaryMin/Max are raw rupees.
-      if (!rangesOverlap(job.salaryMin, job.salaryMax, range.min * 100000, Number.isFinite(range.max) ? range.max * 100000 : Infinity)) return false
-    }
-  }
-
-  if (postedWithin) {
-    const days = Number(postedWithin)
-    if (Number.isFinite(days) && job.postedDaysAgo != null && job.postedDaysAgo > days) return false
-  }
-
-  return true
 }
 
 export function countActiveFilters(filters = {}) {

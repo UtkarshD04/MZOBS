@@ -94,13 +94,10 @@
     -webkit-font-smoothing: antialiased;
   }
   html {
-    /* Lenis (see SmoothScroll.jsx) now owns smooth scrolling site-wide.
-       Leaving this on fights it — the browser's own smooth-scroll
-       interpolation and Lenis's each try to drive scrollTop every frame,
-       which compounds into the scroll suddenly feeling too fast/erratic.
-       Programmatic smooth scrolls (ScrollToTop.jsx) go through the Lenis
-       instance directly instead. */
-    scroll-behavior: auto;
+    /* Plain native scrolling — wheel/trackpad input is untouched, and this
+       just makes anchor-link jumps (navbar links, ScrollToTop.jsx's hash
+       handling) glide instead of snapping instantly. */
+    scroll-behavior: smooth;
   }
   body {
     background: var(--color-bg);
@@ -321,20 +318,80 @@
   --jobs-gold: #d4af6a;
   --jobs-gold-soft: rgba(212, 175, 106, 0.14);
 
-  /* Explorer — restrained palette for the Latest Jobs list/detail explorer
-     (LatestJobs.jsx, JobDetailPanel.jsx, jobCardPrimitives.jsx, and the
-     standalone mobile JobDetail page that reuses those same pieces). Kept
-     separate from --jobs-* above since that set is shared by the hero/navbar
-     and uses a brighter teal/navy this explorer intentionally dials back. */
+  /* Explorer — the single coherent palette for the whole job-discovery home
+     page redesign (hero, trust strip, quick-discovery strip, Latest Jobs
+     list/detail explorer, category grid, companies-hiring section, employer
+     CTA band) plus the shared Autocomplete search box. Deliberately narrow:
+     navy for headings/primary text, blue for CTAs/focus states, teal used
+     sparingly for verified/status accents only, off-white page background,
+     white surfaces with a neutral border. Kept separate from --jobs-*
+     (still used by the sitewide Navbar/Footer and the Employee/Employer
+     marketing + auth pages) so this redesign doesn't ripple palette changes
+     into flows outside this task's scope. */
   --explorer-navy: #16324f;
+  --explorer-navy-deep: #0f2338;
   --explorer-muted: #64748b;
+  /* Kept only for decorative, non-interactive tone rotation (company logo
+     tints, industry badges — see jobCardPrimitives.jsx's LOGO_TONES/
+     AVATAR_TONES, CompaniesHiring.jsx's INDUSTRY_TONES, JobDetailPanel's
+     "Salary" FactTile). Every button, link, hover accent and focus ring on
+     this page uses the teal system below instead — see the MZOBS button
+     system further down this file. */
   --explorer-blue: #2563eb;
   --explorer-blue-hover: #1d4ed8;
-  --explorer-teal: #0f766e;
-  --explorer-teal-hover: #115e59;
-  --explorer-teal-surface: #f0fdfa;
-  --explorer-teal-border: #99f6e4;
-  --explorer-bg: #f6f8fc;
   --explorer-blue-surface: #eff6ff;
-  --explorer-border: #e2e8f0;
+  --explorer-teal: #0b7a6d;
+  --explorer-teal-hover: #075f55;
+  --explorer-teal-surface: #e7f5f1;
+  --explorer-teal-border: #b8d6d0;
+  --explorer-bg: #f7f9fc;
+  --explorer-border: #e6eaf0;
+}
+
+/* ============================================================
+   MZOBS BUTTON SYSTEM (job-discovery home page redesign)
+   Shared primary/secondary/text-link/icon-only treatment — see
+   components/ui/ExplorerButton.jsx and jobCardPrimitives.jsx's
+   IconButton. A restrained deep-teal palette (no blue primaries):
+   deep teal fill for key actions, white/navy/bordered for
+   secondary actions, teal text+arrow for links, neutral icon
+   buttons that pick up teal only on hover.
+============================================================ */
+@keyframes explorerSheen {
+  from {
+    transform: translateX(-140%) skewX(-12deg);
+  }
+  to {
+    transform: translateX(240%) skewX(-12deg);
+  }
+}
+.explorer-btn-primary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.explorer-btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  transform: translateX(-140%) skewX(-12deg);
+  opacity: 0;
+  pointer-events: none;
+}
+.explorer-btn-primary:hover::after {
+  opacity: 1;
+  animation: explorerSheen 550ms var(--ease-out-premium);
+}
+@media (prefers-reduced-motion: reduce) {
+  .explorer-btn-primary::after {
+    display: none;
+  }
+  .explorer-btn-primary,
+  .explorer-btn-secondary,
+  .explorer-icon-btn,
+  .explorer-tile-btn {
+    transform: none !important;
+  }
 }

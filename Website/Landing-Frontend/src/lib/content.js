@@ -493,39 +493,34 @@ export const TRUSTED_LOGOS_DATA = {
   ]
 }
 
-// Home page — "Explore jobs by category". Each tile routes into the real,
-// existing employee job listing — see CategoryGrid.jsx for how `browseCategory`
-// / `searchParams` become a destination. `browseCategory` values match the
-// BROWSE_CATEGORY_TRACKS keys in Website/Frontend/src/lib/category.js (the
-// employee app's own "Find Your Team" category cards) so a title here lands
-// on the same, already-working `/app/jobs?category=...` filter that app
-// reads in JobMatching.jsx — not a new destination. Titles with no matching
-// track (Marketing, Design, Customer Support) fall back to the unfiltered
-// listing rather than a guaranteed-empty filter.
+// Home page — "Explore jobs by category". Every count shown is fetched live
+// from GET /api/jobs/categories (fetchCategoryCounts) — no offline/fallback
+// number is kept here, so CategoryGrid.jsx shows a loading skeleton until
+// that request resolves rather than ever displaying an invented figure.
 //
-// `trackKey` is how CategoryGrid.jsx looks its live count up from
-// GET /api/jobs/categories (fetchCategoryCounts) — it matches the
-// Backend Job.track enum exactly, or 'freshers'/'remote'/'finance' for the
-// three virtual (filter-based, not track-based) tiles. `count` below is
-// only the offline fallback shown until that request resolves (or if it
-// fails) — see CategoryGrid.jsx's `usingFallback` handling, same pattern as
-// LatestJobs.jsx's own fetch fallback. Finance has no Job.track value (see
-// BROWSE_CATEGORY_TRACKS above) — its live count instead comes from a
-// department-field match (see getPublicCategoryCounts on the Backend).
+// `trackKey` is how CategoryGrid.jsx looks a tile's live count up in that
+// response — it matches the Backend Job.track enum exactly, or
+// 'freshers'/'remote'/'finance' for the three virtual (filter-based, not
+// track-based) tiles. Clicking a tile filters the Latest jobs section the
+// same way the hero search / quick-discovery pills do (see
+// CategoryGrid.jsx) — 'finance' has no Job.track value the job *list*
+// endpoint's `track` filter accepts (only the categories-count endpoint
+// special-cases it), so that one tile filters by a plain text search
+// instead of `track` when clicked.
 export const CATEGORY_DATA = {
   title: "Explore jobs by category",
   subtitle: "Jump straight to openings in the field you know best.",
   categories: [
-    { title: "Technology", icon: Cpu, count: 128, browseCategory: "Engineering & Technology", trackKey: "tech" },
-    { title: "Sales", icon: TrendingUp, count: 96, browseCategory: "Sales & Distribution", trackKey: "sales" },
-    { title: "Marketing", icon: Megaphone, count: 42, trackKey: "marketing" },
-    { title: "Design", icon: PenTool, count: 35, trackKey: "design" },
-    { title: "Finance", icon: Wallet, count: 51, browseCategory: "Finance & Accounting", trackKey: "finance" },
-    { title: "HR", icon: Users2, count: 47, browseCategory: "HR & Training", trackKey: "hr" },
-    { title: "Operations", icon: Settings, count: 63, browseCategory: "Operations", trackKey: "ops" },
-    { title: "Customer Support", icon: Headset, count: 39, trackKey: "support" },
-    { title: "Freshers", icon: GraduationCap, count: 84, searchParams: { experience: "0-1" }, trackKey: "freshers" },
-    { title: "Remote Jobs", icon: Globe, count: 58, searchParams: { location: "Remote" }, trackKey: "remote" }
+    { title: "Technology", icon: Cpu, trackKey: "tech" },
+    { title: "Sales", icon: TrendingUp, trackKey: "sales" },
+    { title: "Marketing", icon: Megaphone, trackKey: "marketing" },
+    { title: "Design", icon: PenTool, trackKey: "design" },
+    { title: "Finance", icon: Wallet, trackKey: "finance" },
+    { title: "HR", icon: Users2, trackKey: "hr" },
+    { title: "Operations", icon: Settings, trackKey: "ops" },
+    { title: "Customer Support", icon: Headset, trackKey: "support" },
+    { title: "Freshers", icon: GraduationCap, searchParams: { experience: "0-1" }, trackKey: "freshers" },
+    { title: "Remote Jobs", icon: Globe, searchParams: { location: "Remote" }, trackKey: "remote" }
   ]
 }
 
@@ -764,9 +759,9 @@ export const GALLERY_IMAGES = [
 // ============================================================
 
 export const JOB_SEARCH_DATA = {
-  headlineLead: "Find jobs that match your",
-  headlineAccent: "skills",
-  subtitle: "Search verified opportunities from companies hiring through MZOBS.",
+  eyebrow: "Verified opportunities. Real employers.",
+  headline: "Find work that moves your career forward.",
+  subtitle: "Every listing here is reviewed by our team before it goes live — search real roles from employers who are actually hiring.",
   titlePlaceholder: "Job title, skill or company",
   locationPlaceholder: "City, state or “Remote”",
   experienceOptions: [
@@ -778,109 +773,31 @@ export const JOB_SEARCH_DATA = {
     { value: "10+", label: "10+ years" }
   ],
   searchCta: "Find jobs",
-  popularSearches: ["Software Developer", "Sales Executive", "HR Executive", "Data Analyst", "Customer Support", "Fresher Jobs"],
-  // Reuses the same verified numbers as WHO_WE_ARE_DATA.stats so this
-  // trust row never drifts out of sync with the figures shown elsewhere
-  // on the site. Only the "new roles today" figure is unique to this row.
-  trustRow: [
-    { value: "38+", label: "new roles posted today" },
-    { value: WHO_WE_ARE_DATA.stats[1].number, label: "verified companies hiring" },
-    { value: WHO_WE_ARE_DATA.stats[2].number, label: "candidates interviewed" }
-  ],
-  socialProof: {
-    avatars: [
-      { initials: "RK", tone: "teal" },
-      { initials: "AN", tone: "navy" },
-      { initials: "SP", tone: "violet" },
-      { initials: "MJ", tone: "amber" }
-    ],
-    label: "Joined by 12,400+ job seekers already placed"
-  }
+  // Trimmed to 4–5 on the hero itself (see JobSearchHero.jsx) so this stays
+  // a short, useful shortcut row rather than a wall of links.
+  popularSearches: ["Software Developer", "Sales Executive", "HR Executive", "Data Analyst", "Fresher Jobs"]
 }
 
-// Realistic Indian sample listings — Backend's /jobs routes all sit
-// behind requireAuth (see Backend/src/routes/jobRoutes.js), so there's
-// no public jobs API this marketing site can call yet. Company names
-// here are intentionally fictional (unlike COMPANIES_HIRING_DATA below,
-// which uses Mzobs' real logo partners) since each entry pairs a name
-// with a specific fabricated title/salary/date. Shape mirrors the real
-// Job model (Backend/src/models/Job.js) so swapping in a live feed
-// later is a data change, not a component rewrite.
-// experienceMin/Max, salaryMin/Max, employmentType and track are the same
-// raw fields the public API now returns (see Backend's publicJobsController
-// toLatestJobSummary) — kept on the fallback sample too so the "Filters"
-// panel in JobFiltersPanel.jsx has something real to filter against even
-// before a live feed exists. track values match Website/Frontend's
-// lib/category.js CATEGORIES keys.
-export const LATEST_JOBS_DATA = [
-  {
-    title: "Senior React Developer", company: "Brightloop Technologies", location: "Bengaluru, Karnataka", experience: "3–6 yrs", experienceMin: 3, experienceMax: 6, salary: "₹12L – ₹18L", salaryMin: 1200000, salaryMax: 1800000, workMode: "Hybrid", employmentType: "Full-time", track: "tech", postedDaysAgo: 1, recruiterOnline: true,
-    description: "Brightloop Technologies is looking for a Senior React Developer to lead the frontend for their core product — a React + TypeScript codebase serving over 200,000 monthly users.",
-    highlights: ["Own frontend architecture across two product squads", "Mentor two mid-level engineers and review their PRs", "Partner directly with design and product on new features"],
-    benefits: ["Health insurance for you and your family", "Flexible hybrid schedule — 2 days in office", "Annual learning & conference budget"]
-  },
-  {
-    title: "Sales Executive", company: "Northgate Distributors", location: "Pune, Maharashtra", experience: "1–3 yrs", experienceMin: 1, experienceMax: 3, salary: "₹4L – ₹6L", salaryMin: 400000, salaryMax: 600000, workMode: "On-site", employmentType: "Full-time", track: "sales", postedDaysAgo: 2,
-    description: "Northgate Distributors is hiring a Sales Executive to manage B2B accounts across the Pune region and grow their distributor network.",
-    highlights: ["Manage and grow a portfolio of 30+ B2B accounts", "Visit distributor sites across the Pune region weekly", "Report pipeline and forecasts to the regional sales lead"],
-    benefits: ["Fixed salary plus monthly incentive on targets", "Travel allowance for field visits", "Provident fund and health cover"]
-  },
-  {
-    title: "HR Executive", company: "Solace Manufacturing", location: "Gurugram, Haryana", experience: "2–4 yrs", experienceMin: 2, experienceMax: 4, salary: "₹5L – ₹7.5L", salaryMin: 500000, salaryMax: 750000, workMode: "On-site", employmentType: "Full-time", track: "hr", postedDaysAgo: 2, recruiterOnline: true,
-    description: "Solace Manufacturing needs an HR Executive to run hiring and employee relations for their Gurugram plant, covering roughly 180 staff.",
-    highlights: ["Run end-to-end hiring for shop-floor and office roles", "Handle onboarding, attendance and employee queries", "Coordinate monthly engagement activities on-site"],
-    benefits: ["Health insurance and annual bonus", "On-site cafeteria", "Five-day work week"]
-  },
-  {
-    title: "Data Analyst", company: "Vertex Financial Services", location: "Mumbai, Maharashtra", experience: "2–5 yrs", experienceMin: 2, experienceMax: 5, salary: "₹8L – ₹12L", salaryMin: 800000, salaryMax: 1200000, workMode: "Hybrid", employmentType: "Full-time", track: "analytics", postedDaysAgo: 3,
-    description: "Vertex Financial Services is hiring a Data Analyst to support their risk and operations teams with reporting and dashboards built on SQL and Power BI.",
-    highlights: ["Build and maintain dashboards for risk and ops teams", "Write and optimize SQL queries against large datasets", "Present monthly analysis to department leads"],
-    benefits: ["Hybrid schedule — 3 days in office", "Health insurance and annual performance bonus", "Sponsored certifications in analytics tools"]
-  },
-  {
-    title: "Customer Support Associate", company: "Clearline Healthcare", location: "Hyderabad, Telangana", experience: "0–2 yrs", experienceMin: 0, experienceMax: 2, salary: "₹3L – ₹4.5L", salaryMin: 300000, salaryMax: 450000, workMode: "Remote", employmentType: "Full-time", track: "support", postedDaysAgo: 3, recruiterOnline: true,
-    description: "Clearline Healthcare is looking for a remote Customer Support Associate to handle patient and provider queries over chat and phone.",
-    highlights: ["Resolve patient and provider queries over chat and call", "Log every interaction accurately in the support tool", "Escalate unresolved cases to the right internal team"],
-    benefits: ["Fully remote — work from anywhere in India", "Health insurance from day one", "Fixed rotational shifts, no night shifts"]
-  },
-  {
-    title: "Graphic Designer", company: "Sundial Media", location: "Ahmedabad, Gujarat", experience: "1–3 yrs", experienceMin: 1, experienceMax: 3, salary: "₹4.5L – ₹6.5L", salaryMin: 450000, salaryMax: 650000, workMode: "Hybrid", employmentType: "Full-time", track: "design", postedDaysAgo: 4,
-    description: "Sundial Media is hiring a Graphic Designer to produce social and campaign creatives for a roster of consumer brand clients.",
-    highlights: ["Design social, print and campaign creatives for clients", "Turn around revisions within agreed client timelines", "Maintain brand guidelines across every deliverable"],
-    benefits: ["Hybrid schedule with flexible hours", "Latest design software and hardware provided", "Health insurance"]
-  },
-  {
-    title: "Operations Manager", company: "Anchorpoint Logistics", location: "Chennai, Tamil Nadu", experience: "4–7 yrs", experienceMin: 4, experienceMax: 7, salary: "₹10L – ₹14L", salaryMin: 1000000, salaryMax: 1400000, workMode: "On-site", employmentType: "Full-time", track: "ops", postedDaysAgo: 5, recruiterOnline: true,
-    description: "Anchorpoint Logistics needs an Operations Manager to run day-to-day warehouse and dispatch operations out of their Chennai hub.",
-    highlights: ["Oversee daily warehouse and dispatch operations", "Manage a team of 25+ warehouse staff and supervisors", "Track SLAs and cut down dispatch delays"],
-    benefits: ["Health insurance for you and your family", "Annual performance bonus", "Company transport for late shifts"]
-  },
-  {
-    title: "Business Development Associate", company: "Meridian Retail Group", location: "Noida, Uttar Pradesh", experience: "1–2 yrs", experienceMin: 1, experienceMax: 2, salary: "₹3.5L – ₹5L", salaryMin: 350000, salaryMax: 500000, workMode: "Remote", employmentType: "Full-time", track: "sales", postedDaysAgo: 6,
-    description: "Meridian Retail Group is hiring a remote Business Development Associate to source and qualify new retail partnership leads.",
-    highlights: ["Source and qualify new retail partnership leads", "Run discovery calls and maintain the CRM pipeline", "Coordinate handoffs to the partnerships team"],
-    benefits: ["Fully remote role", "Performance-linked incentives", "Health insurance"]
-  }
-]
-
-// Reuses Mzobs' real logo partners (same assets as TRUSTED_LOGOS_DATA)
-// with illustrative industry/open-roles figures layered on — kept as a
-// separate export since TRUSTED_LOGOS_DATA is also used by LogoCloud
-// and EmployerLogosSection on other pages.
+// Reuses Mzobs' real logo partners (same assets as TRUSTED_LOGOS_DATA) —
+// name/logo/industry are real; each company's open-role count is NOT stored
+// here — CompaniesHiring.jsx fetches it live from the public jobs API
+// (matching jobs by company name, same as a "View company jobs" search
+// would) so the number shown is always real, never a fixed/illustrative
+// figure that could drift from what's actually live.
 export const COMPANIES_HIRING_DATA = [
-  { name: "AMPIN Energy Transition", logo: "/industry-logos/ampin.png", industry: "Renewable Energy", openRoles: 6 },
-  { name: "Amplus Solar", logo: "/industry-logos/amplus.jpg", industry: "Solar Energy", openRoles: 4 },
-  { name: "Fourth Partner Energy", logo: "/industry-logos/fourthpartner.png", industry: "Clean Energy", openRoles: 9 },
-  { name: "Haldiram's", logo: "/industry-logos/haldirams.png", industry: "FMCG & Food", openRoles: 12 },
-  { name: "Prakash Steel", logo: "/industry-logos/prakash-steel.png", industry: "Steel & Metals", openRoles: 5 },
-  { name: "Rimjhim Ispat", logo: "/industry-logos/rimjhim-ispat.png", industry: "Steel & Metals", openRoles: 3 },
-  { name: "Sunsource Energy", logo: "/industry-logos/sunsource.svg", industry: "Solar Energy", openRoles: 7 },
-  { name: "Sunsure Energy", logo: "/industry-logos/sunsure.svg", industry: "Renewable Energy", openRoles: 8 }
+  { name: "AMPIN Energy Transition", logo: "/industry-logos/ampin.png", industry: "Renewable Energy" },
+  { name: "Amplus Solar", logo: "/industry-logos/amplus.jpg", industry: "Solar Energy" },
+  { name: "Fourth Partner Energy", logo: "/industry-logos/fourthpartner.png", industry: "Clean Energy" },
+  { name: "Haldiram's", logo: "/industry-logos/haldirams.png", industry: "FMCG & Food" },
+  { name: "Prakash Steel", logo: "/industry-logos/prakash-steel.png", industry: "Steel & Metals" },
+  { name: "Rimjhim Ispat", logo: "/industry-logos/rimjhim-ispat.png", industry: "Steel & Metals" },
+  { name: "Sunsource Energy", logo: "/industry-logos/sunsource.svg", industry: "Solar Energy" },
+  { name: "Sunsure Energy", logo: "/industry-logos/sunsure.svg", industry: "Renewable Energy" }
 ]
 
 export const HOME_EMPLOYER_CTA_DATA = {
-  title: "Looking to hire?",
-  subtitle: "Connect with job-ready candidates through MZOBS.",
+  title: "Hiring for your team?",
+  subtitle: "Post a requirement and reach candidates MZOBS has already screened — every profile reviewed before it reaches you.",
   ctaText: "Post a requirement",
   ctaTo: "/employers/signup"
 }
