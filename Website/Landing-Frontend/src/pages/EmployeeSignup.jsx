@@ -24,7 +24,7 @@ export default function EmployeeSignup() {
 
           <div className="grid lg:grid-cols-[minmax(0,1fr)_460px] xl:grid-cols-[minmax(0,1fr)_500px] gap-6 xl:gap-8 items-stretch">
             <div className="hidden lg:block">
-              <CareerOnboardingPanel />
+              <CareerOnboardingPanel showJobPreview={false} />
             </div>
 
             <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(16,42,67,0.04),0_20px_44px_-16px_rgba(16,42,67,0.14)] border border-(--jobs-border) p-6 sm:p-8">
