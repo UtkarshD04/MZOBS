@@ -1,3 +1,5 @@
+import Seo from '../components/Seo'
+import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
@@ -11,7 +13,7 @@ import EmployerCTABand from '../components/sections/employer/EmployerCTABand'
 export default function Employer() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>For Employers — Mzobs</title>
+      <Seo path="/employers" {...STATIC_PAGE_SEO['/employers']} />
       <Navbar />
 
       {/* 1. Hero: employer headline + CTAs */}

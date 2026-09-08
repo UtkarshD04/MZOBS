@@ -8,13 +8,20 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light" />
-    <title>Mzobs — Careers &amp; Hiring Platform</title>
-    <meta name="description" content="Mzobs connects verified job seekers with employers hiring — one platform for candidates and companies." />
     <meta name="google-site-verification" content="WfJyUD2-TvGjz_28c1Yx_CffiIf8jl_Hg78RLWNowqU" />
+    <!-- Page-specific title/description/canonical/OG/Twitter/JSON-LD tags:
+         injected here as a literal string by server.js/scripts/prerender.js
+         in production. During `npm run dev` this comment is left as-is (no
+         server in front of plain `vite`) and each page's own <Seo>/<title>
+         is hoisted into <head> by React after hydration instead — this
+         placeholder is intentionally the only <title> source, so the two
+         paths never produce duplicate tags. -->
+    <!--app-head-->
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app-html--></div>
+    <!--app-tail-->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script type="module" src="/src/main.jsx"></script>
+    <script type="module" src="/src/entry-client.jsx"></script>
   </body>
 </html>

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { KeyRound } from 'lucide-react'
+import Seo from '../components/Seo'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SectionLabel from '../components/ui/SectionLabel'
@@ -9,7 +10,7 @@ import EmployerResetPasswordForm from '../components/forms/EmployerResetPassword
 export default function EmployerResetPassword() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>Reset Password — Mzobs</title>
+      <Seo path="/employers/reset-password" title="Reset Password — Mzobs" noindex />
       <Navbar />
 
       <section id="home" className="relative bg-white pt-[76px] overflow-hidden">

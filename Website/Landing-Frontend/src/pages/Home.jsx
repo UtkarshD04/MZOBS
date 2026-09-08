@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import Seo from '../components/Seo'
+import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
@@ -63,7 +65,7 @@ export default function Home() {
     // scrolls back to the top of the job-discovery home page instead
     // of landing on a missing anchor.
     <div id="services" className="min-h-screen bg-white text-(--jobs-navy) font-sans antialiased selection:bg-(--jobs-teal-tint)">
-      <title>Mzobs — Find Verified Jobs & Hire Job-Ready Talent</title>
+      <Seo path="/" {...STATIC_PAGE_SEO['/']} />
 
       {/* 1. Sticky job-discovery navigation (sitewide header) */}
       <Navbar />

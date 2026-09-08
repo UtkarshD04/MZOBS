@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import Seo from '../components/Seo'
 import AuthHeader from '../components/ui/AuthHeader'
 import CareerOnboardingPanel from '../components/ui/CareerOnboardingPanel'
 import EmployeeSigninForm from '../components/forms/EmployeeSigninForm'
@@ -6,7 +7,7 @@ import EmployeeSigninForm from '../components/forms/EmployeeSigninForm'
 export default function EmployeeSignin() {
   return (
     <div className="min-h-screen bg-white text-(--jobs-navy) font-sans antialiased selection:bg-blue-200">
-      <title>Sign In — Mzobs</title>
+      <Seo path="/employees/signin" title="Sign In — Mzobs" noindex />
       <AuthHeader prompt="Don't have an account?" linkTo="/employees/signup" linkLabel="Create one" />
 
       <section className="relative py-6 sm:py-10 lg:py-12">

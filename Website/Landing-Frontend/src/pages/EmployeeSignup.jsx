@@ -1,3 +1,4 @@
+import Seo from '../components/Seo'
 import AuthHeader from '../components/ui/AuthHeader'
 import CareerOnboardingPanel from '../components/ui/CareerOnboardingPanel'
 import EmployeeSignupForm from '../components/forms/EmployeeSignupForm'
@@ -5,7 +6,7 @@ import EmployeeSignupForm from '../components/forms/EmployeeSignupForm'
 export default function EmployeeSignup() {
   return (
     <div className="min-h-screen bg-white text-(--jobs-navy) font-sans antialiased selection:bg-blue-200">
-      <title>Create Your Account — Mzobs</title>
+      <Seo path="/employees/signup" title="Create Your Account — Mzobs" noindex />
       <AuthHeader />
 
       <section className="relative py-6 sm:py-10 lg:py-12">

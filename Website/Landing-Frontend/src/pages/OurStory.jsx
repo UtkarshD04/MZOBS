@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion'
 import { ChevronDown, Compass, Lightbulb, Users2, Target } from 'lucide-react'
+import Seo from '../components/Seo'
+import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
@@ -62,7 +64,7 @@ const STAT_TINTS = [
 export default function OurStory() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>Our Story — Mzobs</title>
+      <Seo path="/our-story" {...STATIC_PAGE_SEO['/our-story']} />
       <Navbar />
 
       {/* Hero */}

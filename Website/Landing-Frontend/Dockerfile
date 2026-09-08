@@ -25,12 +25,31 @@ ENV VITE_PUBLIC_JOBS_API_URL=${VITE_PUBLIC_JOBS_API_URL}
 ENV VITE_MSG91_WIDGET_ID=${VITE_MSG91_WIDGET_ID}
 ENV VITE_MSG91_TOKEN_AUTH=${VITE_MSG91_TOKEN_AUTH}
 
+# Builds dist/client (prerendered static pages + assets) and dist/server
+# (the SSR bundle server.js loads at runtime) — see package.json's "build"
+# script.
 RUN npm run build
 
 
-FROM nginx:1.27-alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
+# ---- Run ----
+# Nginx-only serving can't run server.js (SSR for /jobs/:id, the dynamic
+# sitemap, and the prerendered-page routing all need a Node runtime) — this
+# stage replaces the old nginx image with a slim Node one running the same
+# server.js that `npm start` runs locally.
+FROM node:22-alpine AS run
+WORKDIR /app
+ENV NODE_ENV=production
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --no-audit --no-fund
+
+COPY server.js ./
+COPY src/lib ./src/lib
+COPY --from=build /app/dist ./dist
+
+# PUBLIC_JOBS_API_URL (no VITE_ prefix — this is the server process reading
+# it at request time, not Vite inlining it into the client bundle) must be
+# set at runtime, same value as VITE_PUBLIC_JOBS_API_URL above.
+ENV PORT=8080
+EXPOSE 8080
+CMD ["node", "server.js"]

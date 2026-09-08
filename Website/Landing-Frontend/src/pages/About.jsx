@@ -1,3 +1,5 @@
+import Seo from '../components/Seo'
+import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
@@ -14,7 +16,7 @@ import AboutCTABand from '../components/sections/about/AboutCTABand'
 export default function About() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>Who We Are — Mzobs</title>
+      <Seo path="/about" {...STATIC_PAGE_SEO['/about']} />
       <Navbar />
 
       {/* 1. Hero: who we are statement */}
