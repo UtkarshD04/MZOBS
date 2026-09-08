@@ -23,9 +23,7 @@ export default function CareerOnboardingPanel() {
         className="pointer-events-none absolute inset-0 opacity-[0.4] bg-[radial-gradient(circle,rgba(37,99,235,0.12)_1px,transparent_1px)] bg-size-[22px_22px]"
       />
 
-      <span className="relative inline-flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-(--jobs-blue-dark) uppercase">
-        MZOBS Careers
-      </span>
+      <img src="/images/logo.png" alt="Mzobs" className="relative h-9 w-auto object-contain" />
 
       {/* Illustration — a loose stack of abstract job-card shapes, the only
           content this panel needs to make its point. */}
@@ -42,7 +40,9 @@ export default function CareerOnboardingPanel() {
 
           <div className="absolute inset-0 rounded-2xl bg-white border border-(--jobs-border) shadow-[0_1px_2px_rgba(16,42,67,0.04),0_24px_48px_-20px_rgba(16,42,67,0.28)] p-5 flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-(--jobs-teal-tint)" aria-hidden="true" />
+              <div className="w-10 h-10 rounded-xl bg-(--jobs-teal-tint) flex items-center justify-center p-2" aria-hidden="true">
+                <img src="/images/logo.png" alt="" className="w-full h-full object-contain" />
+              </div>
               <div className="flex-1 flex flex-col gap-1.5">
                 <div className="h-2.5 w-3/4 rounded-full bg-(--jobs-navy)/15" aria-hidden="true" />
                 <div className="h-2 w-1/2 rounded-full bg-(--jobs-ink-soft)/20" aria-hidden="true" />
