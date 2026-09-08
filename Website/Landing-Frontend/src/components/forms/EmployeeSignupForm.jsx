@@ -22,6 +22,7 @@ import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/Googl
 import StepProgress from '../ui/StepProgress'
 import OtpInput from '../ui/OtpInput'
 import { signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../lib/employeeAuth'
+import { saveEmployeeSession } from '../../lib/employeeSession'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 import { GRADUATION_OPTIONS } from '../../lib/graduationOptions'
 
@@ -191,17 +192,16 @@ export default function EmployeeSignupForm() {
 
     setStatus('submitting')
     try {
-      if (googleCredential) {
-        await signupEmployeeWithGoogle({
-          credential: googleCredential,
-          phone: form.phone,
-          experience: form.experience,
-          graduation: form.graduation,
-          phoneToken,
-        })
-      } else {
-        await signupEmployee({ ...form, phoneToken })
-      }
+      const { token, employee } = googleCredential
+        ? await signupEmployeeWithGoogle({
+            credential: googleCredential,
+            phone: form.phone,
+            experience: form.experience,
+            graduation: form.graduation,
+            phoneToken,
+          })
+        : await signupEmployee({ ...form, phoneToken })
+      saveEmployeeSession({ token, employee })
 
       setStatus('success')
       // The dashboard app isn't wired up to render anything yet — land back

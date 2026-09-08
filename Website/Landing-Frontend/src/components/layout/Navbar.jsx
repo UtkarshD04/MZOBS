@@ -1,15 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, LogOut } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
+import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange } from '../../lib/employeeSession'
 
 // Sitewide header — same on every route, including Home, so it never
 // visibly changes when navigating (e.g. clicking "For Employers").
 export default function Navbar() {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  // Starts null (not read from localStorage here) so the server-rendered/
+  // prerendered markup and the client's first paint match — localStorage
+  // doesn't exist during SSR. The real value is picked up right after mount
+  // in the effect below instead.
+  const [session, setSession] = useState(null)
   const lastY = useRef(0)
 
   useEffect(() => {
@@ -22,6 +29,20 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // Navbar is mounted once for the whole app (see comment above), so it
+  // won't naturally re-render when EmployeeSign{in,up}Form saves a session
+  // after navigating back to "/" — this picks that change up explicitly.
+  useEffect(() => {
+    setSession(getEmployeeSession())
+    return onEmployeeSessionChange(() => setSession(getEmployeeSession()))
+  }, [])
+
+  function handleSignOut() {
+    clearEmployeeSession()
+    setOpen(false)
+    navigate('/')
+  }
 
   return (
     <>
@@ -48,12 +69,24 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3 shrink-0">
-            <Link
-              to="/employees/signin"
-              className="text-[13.5px] font-semibold text-(--jobs-navy) hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
-            >
-              Sign in
-            </Link>
+            {session ? (
+              <>
+                <span className="text-[13.5px] font-semibold text-(--jobs-navy) px-3 py-2">Hi, {session.employee?.name?.split(' ')[0] ?? 'there'}</span>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center gap-1.5 text-[13.5px] font-semibold text-(--jobs-navy)/75 hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
+                >
+                  <LogOut size={15} /> Sign out
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/employees/signin"
+                className="text-[13.5px] font-semibold text-(--jobs-navy) hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
 
           <button
@@ -97,13 +130,25 @@ export default function Navbar() {
                   </Link>
                 ))}
                 <div className="flex flex-col gap-2 pt-4">
-                  <Link
-                    to="/employees/signin"
-                    onClick={() => setOpen(false)}
-                    className="h-10 flex items-center justify-center rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"
-                  >
-                    Sign in
-                  </Link>
+                  {session ? (
+                    <>
+                      <span className="h-10 flex items-center justify-center text-(--jobs-navy) text-[13.5px] font-bold">Hi, {session.employee?.name?.split(' ')[0] ?? 'there'}</span>
+                      <button
+                        onClick={handleSignOut}
+                        className="h-10 flex items-center justify-center gap-1.5 rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"
+                      >
+                        <LogOut size={15} /> Sign out
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      to="/employees/signin"
+                      onClick={() => setOpen(false)}
+                      className="h-10 flex items-center justify-center rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"
+                    >
+                      Sign in
+                    </Link>
+                  )}
                 </div>
               </div>
             </motion.div>
