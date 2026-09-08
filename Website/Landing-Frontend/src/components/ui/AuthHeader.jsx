@@ -9,7 +9,7 @@ export default function AuthHeader({ prompt = 'Already have an account?', linkTo
     <header className="sticky top-0 z-50 h-16 bg-white border-b border-(--jobs-border)">
       <div className="max-w-7xl mx-auto h-full px-5 sm:px-8 flex items-center justify-between">
         <Link to="/" className="flex items-center shrink-0">
-          <img src="/images/logo.png" alt="Mzobs" className="h-9 w-auto object-contain" />
+          <img src="/images/logo.png" alt="Mzobs" className="h-12 w-auto object-contain" />
         </Link>
 
         <p className="text-[13px] sm:text-[13.5px] font-medium text-(--jobs-ink-soft)">
