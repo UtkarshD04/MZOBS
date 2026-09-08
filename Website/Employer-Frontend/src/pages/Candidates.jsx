@@ -17,6 +17,7 @@ import Modal from '../components/ui/Modal'
 import { useCandidatesQuery, useSetCandidateStage } from '../hooks/useCandidates'
 import { useJobsQuery } from '../hooks/useJobs'
 import { useSendCandidateNotification } from '../hooks/useNotifications'
+import { FILE_BASE_URL } from '../lib/config'
 
 const STAGE_TABS = [
   { label: 'All', value: 'all' },
@@ -156,7 +157,14 @@ export default function Candidates() {
 
                 <div className="flex items-center gap-2 mt-4 pt-3.5 border-t border-border flex-wrap">
                   <Button variant="secondary" size="sm" onClick={() => navigate(`/candidates/${c.id}`)}>View Profile</Button>
-                  <Button variant="ghost" size="sm" iconOnly title="Download resume" onClick={() => window.print()}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    iconOnly
+                    title={c.resumeUrl ? 'Download resume' : 'Resume not available yet'}
+                    disabled={!c.resumeUrl}
+                    onClick={() => c.resumeUrl && window.open(`${FILE_BASE_URL}${c.resumeUrl}`, '_blank')}
+                  >
                     <Download size={15} />
                   </Button>
                   <Button variant="ghost" size="sm" iconOnly title="Send notification" onClick={() => setNotifyTargetIds([c.id])}>
