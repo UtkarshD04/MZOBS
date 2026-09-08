@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, TrendingUp, IndianRupee, Clock, ChevronDown, X, SearchX, SlidersHorizontal, Loader2 } from 'lucide-react'
+import { MapPin, TrendingUp, IndianRupee, Clock, ChevronDown, ChevronRight, X, SearchX, SlidersHorizontal, Loader2 } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import JobFiltersPanel from './JobFiltersPanel'
 import JobDetailPanel from './JobDetailPanel'
-import { LOGO_TONES, WORK_MODE_STYLE, NEUTRAL_PILL, NewBadge, initialsOf, Avatar, Pill } from './jobCardPrimitives'
+import { NEUTRAL_PILL, NewBadge, initialsOf, toneForCompany, Avatar, Pill } from './jobCardPrimitives'
 import { LATEST_JOBS_DATA } from '../../../lib/content'
 import { fetchLatestJobs } from '../../../lib/publicJobs'
 import { matchesJobSearch, hasActiveFilters, countActiveFilters, buildFilterChips } from '../../../lib/jobFilters'
@@ -226,7 +226,7 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
             </button>
           </Reveal>
         ) : (
-          <Reveal direction="up" duration={0.7} delay={0.05} className="grid lg:grid-cols-[380px_1fr] gap-4 sm:gap-5 items-start">
+          <Reveal direction="up" duration={0.7} delay={0.05} className="grid lg:grid-cols-[34%_1fr] gap-5 lg:gap-6 items-start">
             <div className="flex flex-col bg-white border border-(--explorer-border) rounded-xl shadow-[0_1px_2px_rgba(16,42,67,0.04)] overflow-hidden lg:max-h-184">
               <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-(--explorer-border) shrink-0">
                 <div className="min-w-0">
@@ -262,15 +262,15 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
                       type="button"
                       aria-pressed={active}
                       onClick={() => openJob(i)}
-                      className={`relative text-left p-3 border-b border-(--explorer-border) last:border-b-0 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) ${
-                        active ? 'lg:bg-(--explorer-teal-surface) lg:pl-4' : 'bg-white hover:bg-(--explorer-bg)'
+                      className={`group relative text-left p-3 border-b border-(--explorer-border) last:border-b-0 transition-[background-color,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) ${
+                        active ? 'lg:bg-(--explorer-teal-surface) lg:pl-4' : 'bg-white hover:bg-(--explorer-blue-surface) hover:-translate-y-0.5'
                       }`}
                     >
                       {active && <span className="hidden lg:block absolute left-0 top-0 bottom-0 w-1 bg-(--explorer-teal)" aria-hidden="true" />}
 
                       <div className="flex items-start gap-2.5">
                         <span aria-hidden="true">
-                          <Avatar initials={initialsOf(j.company)} tone={LOGO_TONES[i % LOGO_TONES.length]} size="sm" />
+                          <Avatar initials={initialsOf(j.company)} tone={toneForCompany(j.company)} size="sm" />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start gap-1.5">
@@ -279,6 +279,11 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
                           </div>
                           <p className="text-[12px] text-(--explorer-muted) truncate">{j.company}</p>
                         </div>
+                        <ChevronRight
+                          size={15}
+                          className="hidden lg:block shrink-0 mt-1 text-(--explorer-blue) opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-[opacity,transform]"
+                          aria-hidden="true"
+                        />
                       </div>
 
                       <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11.5px] text-(--explorer-muted)">
@@ -293,7 +298,7 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
                           </span>
                         )}
                         {j.salary && (
-                          <span className="flex items-center gap-1 font-semibold text-(--explorer-navy)">
+                          <span className="flex items-center gap-1 font-bold text-(--explorer-navy)">
                             <IndianRupee size={10.5} className="shrink-0" aria-hidden="true" />
                             {j.salary}
                           </span>
@@ -301,7 +306,7 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
                       </div>
 
                       <div className="mt-2.5 flex items-center justify-between gap-2">
-                        <Pill className={WORK_MODE_STYLE[j.workMode] || NEUTRAL_PILL}>{j.workMode}</Pill>
+                        <Pill className={NEUTRAL_PILL}>{j.workMode}</Pill>
                         <span className="flex items-center gap-1 text-[11px] text-(--explorer-muted)">
                           <Clock size={11} className="shrink-0" aria-hidden="true" />
                           {j.postedDaysAgo === 0 ? 'Today' : `${j.postedDaysAgo}d ago`}
@@ -316,7 +321,13 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
             {/* Desktop only — under `lg` there's no side-by-side room, and a
                 card tap goes to its own page (pages/JobDetail.jsx) instead. */}
             <div className="hidden lg:block lg:sticky lg:top-24 bg-white border border-(--explorer-border) rounded-xl shadow-[0_1px_2px_rgba(16,42,67,0.04)] p-6 sm:p-7 lg:max-h-184 lg:overflow-y-auto">
-              {job && <JobDetailPanel job={job} toneIndex={selected} />}
+              {job && (
+                <JobDetailPanel
+                  job={job}
+                  nextJob={jobs.length > 1 ? jobs[(selected + 1) % jobs.length] : null}
+                  onNext={() => setSelected((selected + 1) % jobs.length)}
+                />
+              )}
             </div>
           </Reveal>
         )}
