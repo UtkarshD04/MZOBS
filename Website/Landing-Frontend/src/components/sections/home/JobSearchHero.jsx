@@ -57,8 +57,11 @@ export default function JobSearchHero({ filters, onSearch }) {
           {JOB_SEARCH_DATA.headlineLead} {JOB_SEARCH_DATA.headlineAccent} — {JOB_SEARCH_DATA.subtitle}
         </h1>
 
-        <form
+        <motion.form
           onSubmit={handleSearch}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="relative bg-white rounded-lg ring-1 ring-(--jobs-navy)/6 focus-within:ring-2 focus-within:ring-(--jobs-blue)/40 transition-shadow duration-150 p-1.5 flex flex-col md:flex-row items-stretch gap-1.5 shadow-lg shadow-(--jobs-navy)/10"
         >
           <Autocomplete
@@ -110,16 +113,21 @@ export default function JobSearchHero({ filters, onSearch }) {
           >
             {JOB_SEARCH_DATA.searchCta}
           </motion.button>
-        </form>
+        </motion.form>
 
-        <div className="mt-4 flex flex-wrap items-center gap-x-1.5 gap-y-1.5 text-[13.5px]">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-4 flex flex-wrap items-center gap-x-1.5 gap-y-1.5 text-[13.5px]"
+        >
           <span className="text-(--jobs-ink-soft) font-medium">Popular searches:</span>
           {JOB_SEARCH_DATA.popularSearches.map((term, i) => (
             <span key={term} className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={() => onSearch?.({ q: term, location: '', experience: '' })}
-                className="font-semibold text-(--jobs-navy) hover:text-(--jobs-blue) underline-offset-4 hover:underline"
+                className="font-semibold text-(--jobs-navy) hover:text-(--jobs-blue) underline-offset-4 hover:underline transition-colors"
               >
                 {term}
               </button>
@@ -128,7 +136,7 @@ export default function JobSearchHero({ filters, onSearch }) {
               )}
             </span>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

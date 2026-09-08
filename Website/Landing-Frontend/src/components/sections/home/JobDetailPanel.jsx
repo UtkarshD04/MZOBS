@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, Users, Building2, Bookmark, Share2, Check, TrendingUp } from 'lucide-react'
 import ApplyPanel from './ApplyPanel'
 import { isJobSaved, toggleJobSaved } from '../../../lib/savedJobs'
@@ -96,20 +97,26 @@ export default function JobDetailPanel({ job, toneIndex = 0 }) {
 
       <div className="mt-5 flex items-center gap-2">
         {job.applyUrl ? (
-          <a
+          <motion.a
             href={job.applyUrl}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 18 }}
             className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-2 h-11 px-6 rounded-lg bg-(--explorer-blue) text-white text-[14px] font-bold hover:bg-(--explorer-blue-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) transition-colors"
           >
             Apply now <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
+          </motion.a>
         ) : (
-          <button
+          <motion.button
             type="button"
             onClick={() => setApplyOpen(true)}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 18 }}
             className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-2 h-11 px-6 rounded-lg bg-(--explorer-blue) text-white text-[14px] font-bold hover:bg-(--explorer-blue-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) transition-colors"
           >
             Apply now <ArrowUpRight size={16} aria-hidden="true" />
-          </button>
+          </motion.button>
         )}
         <button
           type="button"
