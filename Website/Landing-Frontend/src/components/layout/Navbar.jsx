@@ -32,7 +32,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between gap-6">
           <Link to="/" className="flex items-center shrink-0">
-            <img src="/images/logo.png" alt="Mzobs" className="h-11 w-auto object-contain" />
+            <img src="/images/logo.png" alt="Mzobs" className="h-14 w-auto object-contain" />
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:flex items-center gap-7">
