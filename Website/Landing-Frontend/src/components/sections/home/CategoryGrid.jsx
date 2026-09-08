@@ -16,14 +16,15 @@ const TONES = [
 ]
 
 // Resolves a category's real, live count from GET /api/jobs/categories —
-// `counts` is `{ tracks: { tech: N, ... }, freshers: N, remote: N }`. Falls
-// back to the curated content.js number (`cat.count`) until that request
-// resolves, or if it fails outright — same graceful-degrade shape as
-// LatestJobs.jsx's own fetch fallback, just for a smaller payload.
+// `counts` is `{ tracks: { tech: N, ... }, freshers: N, remote: N, finance: N }`.
+// Falls back to the curated content.js number (`cat.count`) until that
+// request resolves, or if it fails outright — same graceful-degrade shape
+// as LatestJobs.jsx's own fetch fallback, just for a smaller payload.
 function liveCount(cat, counts) {
   if (!counts) return cat.count
   if (cat.trackKey === 'freshers') return counts.freshers ?? 0
   if (cat.trackKey === 'remote') return counts.remote ?? 0
+  if (cat.trackKey === 'finance') return counts.finance ?? 0
   if (cat.trackKey) return counts.tracks?.[cat.trackKey] ?? 0
   return cat.count
 }
