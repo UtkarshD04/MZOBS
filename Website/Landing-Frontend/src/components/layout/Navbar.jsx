@@ -9,12 +9,14 @@ import { NAV_LINKS } from '../../lib/content'
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const lastY = useRef(0)
 
   useEffect(() => {
     function onScroll() {
       const y = window.scrollY
       setHidden(y > 140 && y > lastY.current)
+      setScrolled(y > 8)
       lastY.current = y
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -24,9 +26,9 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-19 bg-white border-b border-(--jobs-border) transition-transform duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 h-19 bg-white/90 backdrop-blur-md border-b border-(--jobs-border) transition-[transform,box-shadow] duration-300 ${
           hidden ? '-translate-y-full' : 'translate-y-0'
-        }`}
+        } ${scrolled ? 'shadow-[0_1px_2px_rgba(16,42,67,0.04),0_8px_24px_-16px_rgba(16,42,67,0.18)]' : 'shadow-none'}`}
       >
         <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between gap-6">
           <Link to="/" className="flex items-center shrink-0">
