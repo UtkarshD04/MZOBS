@@ -94,7 +94,13 @@
     -webkit-font-smoothing: antialiased;
   }
   html {
-    scroll-behavior: smooth;
+    /* Lenis (see SmoothScroll.jsx) now owns smooth scrolling site-wide.
+       Leaving this on fights it — the browser's own smooth-scroll
+       interpolation and Lenis's each try to drive scrollTop every frame,
+       which compounds into the scroll suddenly feeling too fast/erratic.
+       Programmatic smooth scrolls (ScrollToTop.jsx) go through the Lenis
+       instance directly instead. */
+    scroll-behavior: auto;
   }
   body {
     background: var(--color-bg);
