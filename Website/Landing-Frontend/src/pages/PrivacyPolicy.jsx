@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import Seo from '../components/Seo'
+import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SectionLabel from '../components/ui/SectionLabel'
@@ -75,7 +77,7 @@ const SECTIONS = [
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>Privacy Policy — Mzobs</title>
+      <Seo path="/privacy-policy" {...STATIC_PAGE_SEO['/privacy-policy']} />
       <Navbar />
 
       <section className="relative bg-white pt-[76px] overflow-hidden">

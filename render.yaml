@@ -49,12 +49,16 @@ services:
         source: /*
         destination: /index.html
 
+  # Was `runtime: static` — switched to a Node web service because SEO/SSR
+  # needs a live process: /jobs/:id is rendered per-request against the
+  # public jobs API, and /sitemap.xml is generated dynamically. Both need a
+  # Node runtime a static site can't provide.
   - type: web
     name: mzobs-landing
-    runtime: static
+    runtime: node
     rootDir: Website/Landing-Frontend
     buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    startCommand: npm start
     envVars:
       - key: VITE_EMPLOYEE_APP_URL
         sync: false
@@ -74,7 +78,10 @@ services:
         sync: false
       - key: VITE_MSG91_TOKEN_AUTH
         sync: false
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+      # Same backend jobs API as VITE_PUBLIC_JOBS_API_URL above, without the
+      # VITE_ prefix — server.js reads this directly at request time (Vite
+      # only inlines VITE_-prefixed vars into the client bundle at build
+      # time, so the Node process needs its own copy). Set it to the same
+      # value as VITE_PUBLIC_JOBS_API_URL in the Render dashboard.
+      - key: PUBLIC_JOBS_API_URL
+        sync: false

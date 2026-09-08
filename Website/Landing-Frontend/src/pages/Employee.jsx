@@ -1,3 +1,5 @@
+import Seo from '../components/Seo'
+import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
@@ -12,7 +14,7 @@ import { EMPLOYEE_TESTIMONIALS } from '../lib/content'
 export default function Employee() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>For Employees — Mzobs</title>
+      <Seo path="/employees" {...STATIC_PAGE_SEO['/employees']} />
       <Navbar />
 
       {/* 1. Hero: job-seeker headline + CTAs */}

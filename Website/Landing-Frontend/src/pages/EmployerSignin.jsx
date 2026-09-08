@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Briefcase, CalendarCheck2, ShieldCheck } from 'lucide-react'
+import Seo from '../components/Seo'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SectionLabel from '../components/ui/SectionLabel'
@@ -15,7 +16,7 @@ const PERKS = [
 export default function EmployerSignin() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>Employer Sign In — Mzobs</title>
+      <Seo path="/employers/signin" title="Employer Sign In — Mzobs" noindex />
       <Navbar />
 
       <section id="home" className="relative bg-white pt-[76px] overflow-hidden">

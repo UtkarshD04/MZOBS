@@ -1,4 +1,6 @@
 import { Clock, Mail, MapPin, Phone } from 'lucide-react'
+import Seo from '../components/Seo'
+import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SectionLabel from '../components/ui/SectionLabel'
@@ -17,7 +19,7 @@ const INFO_CARDS = [
 export default function Contact() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>Contact Us — Mzobs</title>
+      <Seo path="/contact" {...STATIC_PAGE_SEO['/contact']} />
       <Navbar />
 
       {/* Hero */}

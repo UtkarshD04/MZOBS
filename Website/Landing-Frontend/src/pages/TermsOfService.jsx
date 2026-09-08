@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ShieldAlert } from 'lucide-react'
+import Seo from '../components/Seo'
+import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import SectionLabel from '../components/ui/SectionLabel'
@@ -77,7 +79,7 @@ const SECTIONS = [
 export default function TermsOfService() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
-      <title>Terms of Service — Mzobs</title>
+      <Seo path="/terms-of-service" {...STATIC_PAGE_SEO['/terms-of-service']} />
       <Navbar />
 
       <section className="relative bg-white pt-[76px] overflow-hidden">

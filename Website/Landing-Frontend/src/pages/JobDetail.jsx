@@ -3,8 +3,11 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { ArrowLeft, Loader2, SearchX } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
+import Seo from '../components/Seo'
 import JobDetailPanel from '../components/sections/home/JobDetailPanel'
 import { fetchJobById } from '../lib/publicJobs'
+import { useInitialJob } from '../lib/initialJobContext'
+import { buildJobSeo } from '../lib/seoData'
 
 // Mobile's standalone job description page — the "Latest jobs" list
 // (LatestJobs.jsx) sends a card tap here below the `lg` breakpoint instead
@@ -15,12 +18,17 @@ export default function JobDetail() {
   const { id } = useParams()
   const location = useLocation()
   const stateJob = location.state?.job
+  // server.js already fetched and SSR'd this exact job — only reuse it when
+  // it actually matches the id in the URL (a client-side nav to a different
+  // job, e.g. via "Next opportunity", must still fetch).
+  const ssrJob = useInitialJob()
+  const initialJob = stateJob ?? (ssrJob?.id === id ? ssrJob : null)
 
-  const [job, setJob] = useState(stateJob ?? null)
-  const [status, setStatus] = useState(stateJob ? 'ready' : 'loading')
+  const [job, setJob] = useState(initialJob ?? null)
+  const [status, setStatus] = useState(initialJob ? 'ready' : 'loading')
 
   useEffect(() => {
-    if (stateJob) return
+    if (initialJob) return
     let cancelled = false
     const controller = new AbortController()
     setStatus('loading')
@@ -43,9 +51,15 @@ export default function JobDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
+  const seo = job ? buildJobSeo(job, location.pathname) : null
+
   return (
     <div className="min-h-screen bg-(--jobs-bg-subtle) flex flex-col">
-      <title>{job ? `${job.title} at ${job.company} — Mzobs` : 'Job — Mzobs'}</title>
+      {seo ? (
+        <Seo path={location.pathname} title={seo.title} description={seo.description} jsonLd={seo.jsonLd} />
+      ) : (
+        <Seo path={location.pathname} title="Job — Mzobs" description="This job is no longer available." noindex={status === 'not-found'} />
+      )}
       <Navbar />
 
       <div className="flex-1 max-w-3xl w-full mx-auto px-6 pt-25 pb-8">
@@ -78,8 +92,8 @@ export default function JobDetail() {
         )}
 
         {status === 'ready' && job && (
-          <div className="bg-white border border-(--jobs-border) rounded-xl p-6 sm:p-7">
-            <JobDetailPanel job={job} />
+          <div className="bg-white border border-(--jobs-border) rounded-xl p-6 sm:p-7 pb-24 lg:pb-7">
+            <JobDetailPanel job={job} stickyActions />
           </div>
         )}
       </div>
