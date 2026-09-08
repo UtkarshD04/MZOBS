@@ -16,6 +16,9 @@ import {
   GraduationCap as GraduationCapIcon,
   Briefcase,
   Check,
+  UploadCloud,
+  FileText,
+  Trash2,
 } from 'lucide-react'
 import { Field, Input, Select, PrimaryButton, SecondaryButton } from '../ui/JobsAuthField'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
@@ -23,6 +26,7 @@ import StepProgress from '../ui/StepProgress'
 import OtpInput from '../ui/OtpInput'
 import { signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../lib/employeeAuth'
 import { saveEmployeeSession } from '../../lib/employeeSession'
+import { uploadEmployeeResume, validateResumeFileClientSide } from '../../lib/employeeResume'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 import { GRADUATION_OPTIONS } from '../../lib/graduationOptions'
 
@@ -89,6 +93,13 @@ export default function EmployeeSignupForm() {
   const [status, setStatus] = useState('idle') // idle | submitting | success
   const [showPassword, setShowPassword] = useState(false)
   const [googleCredential, setGoogleCredential] = useState(null)
+
+  // Uploaded only after the account (and its auth token) actually exists —
+  // held here as a plain File in the meantime. Entirely optional: signup
+  // never fails because of this, it's just skipped/warned about on failure.
+  const [resumeFile, setResumeFile] = useState(null)
+  const [resumeError, setResumeError] = useState('')
+  const [resumeWarning, setResumeWarning] = useState('')
 
   const [otp, setOtp] = useState('')
   const [otpSent, setOtpSent] = useState(false)
@@ -161,6 +172,24 @@ export default function EmployeeSignupForm() {
     }
   }
 
+  function handleResumeChange(e) {
+    const file = e.target.files?.[0] ?? null
+    e.target.value = '' // lets picking the same file again after removing it still fire onChange
+    if (!file) return
+    const error = validateResumeFileClientSide(file)
+    if (error) {
+      setResumeError(error)
+      return
+    }
+    setResumeError('')
+    setResumeFile(file)
+  }
+
+  function handleRemoveResume() {
+    setResumeFile(null)
+    setResumeError('')
+  }
+
   function handleGoogleCredential(credential) {
     const { name, email } = decodeGoogleCredential(credential)
     setGoogleCredential(credential)
@@ -203,12 +232,29 @@ export default function EmployeeSignupForm() {
         : await signupEmployee({ ...form, phoneToken })
       saveEmployeeSession({ token, employee })
 
+      // Best-effort: the account already exists at this point, so a resume
+      // upload failure here shouldn't undo the signup or block navigation —
+      // just surface it, the candidate can still add a resume later.
+      let uploadFailed = false
+      if (resumeFile) {
+        try {
+          await uploadEmployeeResume(token, resumeFile)
+        } catch (err) {
+          uploadFailed = true
+          setResumeWarning(err.message || 'Could not upload your resume. You can add it later.')
+        }
+      }
+
       setStatus('success')
       // The dashboard app isn't wired up to render anything yet — land back
       // on this site's own home page after a successful signup for now.
-      setTimeout(() => {
-        navigate('/')
-      }, 900)
+      // Longer pause when there's a warning to read first.
+      setTimeout(
+        () => {
+          navigate('/')
+        },
+        uploadFailed ? 2200 : 900
+      )
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
@@ -222,7 +268,8 @@ export default function EmployeeSignupForm() {
           <CheckCircle2 size={28} className="text-(--jobs-teal-dark)" />
         </div>
         <p className="text-base font-black text-(--jobs-navy)">Your MZOBS account is ready.</p>
-        <p className="text-[13px] text-(--jobs-ink-soft)">Taking you to your dashboard...</p>
+        {resumeWarning && <p className="text-[13px] text-amber-600 font-semibold max-w-72">{resumeWarning}</p>}
+        <p className="text-[13px] text-(--jobs-ink-soft)">Taking you back home...</p>
       </div>
     )
   }
@@ -458,10 +505,33 @@ export default function EmployeeSignupForm() {
               </Select>
             </Field>
 
+            <Field label="Resume" optional error={resumeError} hint={!resumeFile ? 'PDF, DOC or DOCX — up to 5MB.' : undefined}>
+              {resumeFile ? (
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle)">
+                  <FileText size={18} className="text-(--jobs-blue-dark) shrink-0" />
+                  <span className="flex-1 min-w-0 text-[13px] font-semibold text-(--jobs-navy) truncate">{resumeFile.name}</span>
+                  <button
+                    type="button"
+                    onClick={handleRemoveResume}
+                    className="text-(--jobs-ink-soft) hover:text-red-600 transition-colors shrink-0"
+                    aria-label="Remove resume"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-(--jobs-border) bg-(--jobs-bg-subtle) cursor-pointer hover:border-(--jobs-blue)/50 transition-colors">
+                  <UploadCloud size={18} className="text-(--jobs-ink-soft) shrink-0" />
+                  <span className="text-[13px] font-semibold text-(--jobs-ink-soft)">Click to upload your resume</span>
+                  <input type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={handleResumeChange} />
+                </label>
+              )}
+            </Field>
+
             {errors.form && <p className="text-xs text-red-600 mb-4 -mt-2">{errors.form}</p>}
 
             <PrimaryButton disabled={status === 'submitting'} className="mt-2">
-              {status === 'submitting' ? 'Creating your account...' : <>Create account <ArrowRight size={16} /></>}
+              {status === 'submitting' ? (resumeFile ? 'Creating your account and uploading resume...' : 'Creating your account...') : <>Create account <ArrowRight size={16} /></>}
             </PrimaryButton>
 
             <p className="flex items-start gap-2 mt-4 text-[11.5px] text-(--jobs-ink-soft) leading-relaxed">
