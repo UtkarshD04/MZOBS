@@ -52,18 +52,27 @@ export default function CareerOnboardingPanel({
       </div>
 
       {showBenefits && (
-        <div className="relative mt-9 flex flex-col gap-4">
-          {BENEFITS.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="flex items-start gap-3">
-              <div className="shrink-0 w-9 h-9 rounded-xl bg-white border border-(--jobs-border) flex items-center justify-center shadow-sm">
-                <Icon size={16} strokeWidth={1.8} className="text-(--jobs-blue-dark)" />
+        <div className="relative mt-10">
+          {/* Connecting spine instead of three identical icon-card rows —
+              reads as one guided path (verify → match → prepare) rather
+              than a generic feature list. */}
+          <div className="absolute left-3.75 top-1.5 bottom-1.5 w-px bg-linear-to-b from-(--jobs-blue)/25 via-(--jobs-border) to-transparent" aria-hidden="true" />
+          <div className="flex flex-col gap-7">
+            {BENEFITS.map(({ icon: Icon, title, text }, i) => (
+              <div key={title} className="relative flex items-start gap-4">
+                <div className="relative z-10 shrink-0 w-7.75 h-7.75 rounded-full bg-white border-2 border-(--jobs-blue)/25 flex items-center justify-center">
+                  <Icon size={13.5} strokeWidth={2} className="text-(--jobs-blue-dark)" />
+                </div>
+                <div className="pt-0.5">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-[11px] font-black text-(--jobs-blue)/50 tabular-nums">0{i + 1}</span>
+                    <p className="text-[13.5px] font-bold text-(--jobs-navy)">{title}</p>
+                  </div>
+                  <p className="text-[12.5px] text-(--jobs-ink-soft) mt-1 leading-relaxed max-w-[26ch]">{text}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[13.5px] font-bold text-(--jobs-navy)">{title}</p>
-                <p className="text-[12.5px] text-(--jobs-ink-soft) mt-0.5">{text}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
