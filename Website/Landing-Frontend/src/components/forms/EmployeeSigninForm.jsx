@@ -1,23 +1,11 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { Field, Input, PrimaryButton } from '../ui/JobsAuthField'
 import { GoogleAuthButton, OrDivider } from '../ui/GoogleAuthButton'
-import { EMPLOYEE_APP_URL } from '../../lib/config'
 import { loginEmployee, loginEmployeeWithGoogle } from '../../lib/employeeAuth'
 
 const initialForm = { email: '', password: '' }
-
-// RequireAuth (in the dashboard app) bounces an unauthenticated visitor here
-// with `?redirect=` set to wherever they were headed — e.g. a specific job
-// to apply to. Only a same-origin `/app/...` path is honored, so this can't
-// be turned into an open redirect by a crafted query string.
-function postLoginUrl(appUrl, token) {
-  const redirect = new URLSearchParams(window.location.search).get('redirect')
-  const path = redirect && redirect.startsWith('/app/') ? redirect : '/app/jobs'
-  const separator = path.includes('?') ? '&' : '?'
-  return `${appUrl}${path}${separator}token=${encodeURIComponent(token)}`
-}
 
 function validate(form) {
   const errors = {}
@@ -28,6 +16,7 @@ function validate(form) {
 }
 
 export default function EmployeeSigninForm() {
+  const navigate = useNavigate()
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | submitting
@@ -45,8 +34,10 @@ export default function EmployeeSigninForm() {
 
     setStatus('submitting')
     try {
-      const { token } = await loginEmployee(form)
-      window.location.href = postLoginUrl(EMPLOYEE_APP_URL, token)
+      // The dashboard app isn't wired up to render anything yet — land back
+      // on this site's own home page after a successful login for now.
+      await loginEmployee(form)
+      navigate('/')
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
@@ -57,8 +48,8 @@ export default function EmployeeSigninForm() {
     setErrors({})
     setStatus('submitting')
     try {
-      const { token } = await loginEmployeeWithGoogle({ credential })
-      window.location.href = postLoginUrl(EMPLOYEE_APP_URL, token)
+      await loginEmployeeWithGoogle({ credential })
+      navigate('/')
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
