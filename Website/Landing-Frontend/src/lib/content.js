@@ -505,13 +505,13 @@ export const TRUSTED_LOGOS_DATA = {
 //
 // `trackKey` is how CategoryGrid.jsx looks its live count up from
 // GET /api/jobs/categories (fetchCategoryCounts) — it matches the
-// Backend Job.track enum exactly, or 'freshers'/'remote' for the two
-// virtual (filter-based, not track-based) tiles. `count` below is only the
-// offline fallback shown until that request resolves (or if it fails) —
-// see CategoryGrid.jsx's `usingFallback` handling, same pattern as
-// LatestJobs.jsx's own fetch fallback. Finance has no `trackKey` since no
-// Job.track value maps to it (see BROWSE_CATEGORY_TRACKS above) — its real
-// live count is genuinely 0 until jobs start carrying a finance track.
+// Backend Job.track enum exactly, or 'freshers'/'remote'/'finance' for the
+// three virtual (filter-based, not track-based) tiles. `count` below is
+// only the offline fallback shown until that request resolves (or if it
+// fails) — see CategoryGrid.jsx's `usingFallback` handling, same pattern as
+// LatestJobs.jsx's own fetch fallback. Finance has no Job.track value (see
+// BROWSE_CATEGORY_TRACKS above) — its live count instead comes from a
+// department-field match (see getPublicCategoryCounts on the Backend).
 export const CATEGORY_DATA = {
   title: "Explore jobs by category",
   subtitle: "Jump straight to openings in the field you know best.",
@@ -520,7 +520,7 @@ export const CATEGORY_DATA = {
     { title: "Sales", icon: TrendingUp, count: 96, browseCategory: "Sales & Distribution", trackKey: "sales" },
     { title: "Marketing", icon: Megaphone, count: 42, trackKey: "marketing" },
     { title: "Design", icon: PenTool, count: 35, trackKey: "design" },
-    { title: "Finance", icon: Wallet, count: 51, browseCategory: "Finance & Accounting" },
+    { title: "Finance", icon: Wallet, count: 51, browseCategory: "Finance & Accounting", trackKey: "finance" },
     { title: "HR", icon: Users2, count: 47, browseCategory: "HR & Training", trackKey: "hr" },
     { title: "Operations", icon: Settings, count: 63, browseCategory: "Operations", trackKey: "ops" },
     { title: "Customer Support", icon: Headset, count: 39, trackKey: "support" },
