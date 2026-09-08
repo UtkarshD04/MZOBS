@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Search, MapPin, Briefcase, ChevronDown } from 'lucide-react'
+import { Search, MapPin, Briefcase, ChevronDown, ShieldCheck } from 'lucide-react'
 import { JOB_SEARCH_DATA } from '../../../lib/content'
 import { fetchJobSuggestions } from '../../../lib/publicJobs'
 import Autocomplete from '../../ui/Autocomplete'
+import ExplorerButton from '../../ui/ExplorerButton'
+
+// Only the first 4–5 read as "useful shortcuts" — a longer row starts
+// reading as a second, competing search box under the real one.
+const POPULAR_SEARCH_LIMIT = 5
 
 function toTags(values) {
   return (values ?? []).map((value) => ({ value, kind: undefined }))
@@ -49,94 +54,111 @@ export default function JobSearchHero({ filters, onSearch }) {
   }
 
   return (
-    <section id="job-search" className="bg-linear-to-br from-(--jobs-blue-tint) to-(--jobs-teal-tint) pt-28 pb-10 md:pt-28 md:pb-12">
-      <div className="max-w-5xl mx-auto px-6 md:px-10">
-        {/* Visually hidden — keeps a real page heading for accessibility/SEO
-            without showing a marketing-style hero above the search bar. */}
-        <h1 className="sr-only">
-          {JOB_SEARCH_DATA.headlineLead} {JOB_SEARCH_DATA.headlineAccent} — {JOB_SEARCH_DATA.subtitle}
-        </h1>
-
-        <motion.form
-          onSubmit={handleSearch}
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="relative bg-white rounded-lg ring-1 ring-(--jobs-navy)/6 focus-within:ring-2 focus-within:ring-(--jobs-blue)/40 transition-shadow duration-150 p-1.5 flex flex-col md:flex-row items-stretch gap-1.5 shadow-lg shadow-(--jobs-navy)/10"
-        >
-          <Autocomplete
-            className="md:border-r md:border-(--jobs-border)"
-            icon={<Search size={18} aria-hidden="true" />}
-            label="Job title, skills or company"
-            placeholder={JOB_SEARCH_DATA.titlePlaceholder}
-            tags={titleTags}
-            onAddTag={(item) => setTitleTags((t) => [...t, item])}
-            onRemoveTag={(i) => setTitleTags((t) => t.filter((_, idx) => idx !== i))}
-            fetchItems={fetchTitleSuggestions}
-          />
-
-          <Autocomplete
-            className="md:border-r md:border-(--jobs-border)"
-            icon={<MapPin size={18} aria-hidden="true" />}
-            label="Location"
-            placeholder={JOB_SEARCH_DATA.locationPlaceholder}
-            tags={locationTags}
-            onAddTag={(item) => setLocationTags((t) => [...t, item])}
-            onRemoveTag={(i) => setLocationTags((t) => t.filter((_, idx) => idx !== i))}
-            fetchItems={fetchLocationSuggestions}
-            searchActionLabel={(text) => `Add “${text}”`}
-          />
-
-          <label className="relative flex items-center gap-2.5 px-4 py-3 md:w-52 shrink-0">
-            <Briefcase size={18} className="text-(--jobs-ink-soft) shrink-0" aria-hidden="true" />
-            <span className="sr-only">Experience</span>
-            <select
-              value={experience}
-              onChange={(e) => setExperience(e.target.value)}
-              className="w-full bg-transparent outline-none text-[14.5px] text-(--jobs-navy) appearance-none pr-6 cursor-pointer"
-            >
-              {JOB_SEARCH_DATA.experienceOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <ChevronDown size={15} className="absolute right-4 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) pointer-events-none" aria-hidden="true" />
-          </label>
-
-          <motion.button
-            type="submit"
-            whileHover={{ y: -1 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 18 }}
-            className="shrink-0 w-full md:w-auto h-12 md:h-auto px-7 rounded-md bg-(--jobs-blue) text-white text-[14.5px] font-bold hover:bg-(--jobs-blue-dark) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-blue) transition-colors"
+    <section id="job-search" className="bg-(--explorer-bg) pt-28 pb-14 md:pt-32 md:pb-16">
+      <div className="max-w-7xl mx-auto px-6 md:px-10">
+        {/* Eyebrow, headline, search, popular searches */}
+        <div className="max-w-2xl">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex items-center gap-1.5 text-[12.5px] font-bold uppercase tracking-wide text-(--explorer-teal)"
           >
-            {JOB_SEARCH_DATA.searchCta}
-          </motion.button>
-        </motion.form>
+            <ShieldCheck size={13} aria-hidden="true" /> {JOB_SEARCH_DATA.eyebrow}
+          </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-4 flex flex-wrap items-center gap-x-1.5 gap-y-1.5 text-[13.5px]"
-        >
-          <span className="text-(--jobs-ink-soft) font-medium">Popular searches:</span>
-          {JOB_SEARCH_DATA.popularSearches.map((term, i) => (
-            <span key={term} className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => onSearch?.({ q: term, location: '', experience: '' })}
-                className="font-semibold text-(--jobs-navy) hover:text-(--jobs-blue) underline-offset-4 hover:underline transition-colors"
-              >
-                {term}
-              </button>
-              {i < JOB_SEARCH_DATA.popularSearches.length - 1 && (
-                <span className="text-(--jobs-border)" aria-hidden="true">·</span>
-              )}
-            </span>
-          ))}
-        </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-3 text-[34px] sm:text-[42px] lg:text-[46px] font-extrabold text-(--explorer-navy) leading-[1.08] tracking-tight text-balance"
+          >
+            {JOB_SEARCH_DATA.headline}
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-3.5 text-[15.5px] text-(--explorer-muted) leading-relaxed max-w-md"
+          >
+            {JOB_SEARCH_DATA.subtitle}
+          </motion.p>
+
+          <motion.form
+            onSubmit={handleSearch}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="relative mt-7 bg-white rounded-lg border border-(--explorer-border) focus-within:border-(--explorer-teal) focus-within:ring-3 focus-within:ring-(--explorer-teal)/12 transition-[border-color,box-shadow] duration-150 p-1.5 flex flex-col gap-1.5 shadow-[0_8px_24px_-12px_rgba(16,50,79,0.18)]"
+          >
+            <Autocomplete
+              icon={<Search size={18} aria-hidden="true" />}
+              label="Job title, skills or company"
+              placeholder={JOB_SEARCH_DATA.titlePlaceholder}
+              tags={titleTags}
+              onAddTag={(item) => setTitleTags((t) => [...t, item])}
+              onRemoveTag={(i) => setTitleTags((t) => t.filter((_, idx) => idx !== i))}
+              fetchItems={fetchTitleSuggestions}
+            />
+
+            <div className="flex flex-col sm:flex-row gap-1.5 sm:border-t sm:border-(--explorer-border) sm:pt-1.5">
+              <Autocomplete
+                className="sm:border-r sm:border-(--explorer-border)"
+                icon={<MapPin size={18} aria-hidden="true" />}
+                label="Location"
+                placeholder={JOB_SEARCH_DATA.locationPlaceholder}
+                tags={locationTags}
+                onAddTag={(item) => setLocationTags((t) => [...t, item])}
+                onRemoveTag={(i) => setLocationTags((t) => t.filter((_, idx) => idx !== i))}
+                fetchItems={fetchLocationSuggestions}
+                searchActionLabel={(text) => `Add “${text}”`}
+              />
+
+              <label className="relative flex items-center gap-2 px-3.5 py-2.5 sm:w-44 shrink-0">
+                <Briefcase size={17} className="text-(--explorer-muted) shrink-0" aria-hidden="true" />
+                <span className="sr-only">Experience</span>
+                <select
+                  value={experience}
+                  onChange={(e) => setExperience(e.target.value)}
+                  className="w-full bg-transparent outline-none text-[14px] text-(--explorer-navy) appearance-none pr-5 cursor-pointer"
+                >
+                  {JOB_SEARCH_DATA.experienceOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-(--explorer-muted) pointer-events-none" aria-hidden="true" />
+              </label>
+
+              <ExplorerButton type="submit" size="lg" className="w-full sm:w-auto sm:h-auto shrink-0">
+                {JOB_SEARCH_DATA.searchCta}
+              </ExplorerButton>
+            </div>
+          </motion.form>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-4 flex flex-wrap items-center gap-x-1.5 gap-y-1.5 text-[13.5px]"
+          >
+            <span className="text-(--explorer-muted) font-medium">Popular:</span>
+            {JOB_SEARCH_DATA.popularSearches.slice(0, POPULAR_SEARCH_LIMIT).map((term, i, arr) => (
+              <span key={term} className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => onSearch?.({ q: term, location: '', experience: '' })}
+                  className="font-semibold text-(--explorer-navy) hover:text-(--explorer-teal) underline-offset-4 hover:underline transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) rounded-xs"
+                >
+                  {term}
+                </button>
+                {i < arr.length - 1 && <span className="text-(--explorer-border)" aria-hidden="true">·</span>}
+              </span>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </section>
   )

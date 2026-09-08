@@ -15,10 +15,10 @@ function Chip({ active, onClick, children }) {
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`inline-flex items-center h-8 px-3 rounded-full border text-[12.5px] font-semibold transition-colors ${
+      className={`inline-flex items-center h-8 px-3 rounded-full border text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) ${
         active
-          ? 'border-(--jobs-teal-dark) bg-(--jobs-teal-dark) text-white'
-          : 'border-(--jobs-border) bg-white text-(--jobs-navy) hover:border-(--jobs-teal-dark)'
+          ? 'border-(--explorer-teal) bg-(--explorer-teal) text-white'
+          : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-teal-border) hover:bg-(--explorer-teal-surface) hover:text-(--explorer-teal)'
       }`}
     >
       {children}
@@ -29,7 +29,7 @@ function Chip({ active, onClick, children }) {
 function FilterGroup({ label, children }) {
   return (
     <div>
-      <h4 className="font-bold text-[12.5px] uppercase tracking-wide text-(--jobs-ink-soft)">{label}</h4>
+      <h4 className="font-bold text-[12.5px] uppercase tracking-wide text-(--explorer-muted)">{label}</h4>
       <div className="mt-2.5 flex flex-wrap gap-1.5">{children}</div>
     </div>
   )
@@ -48,16 +48,16 @@ export default function JobFiltersPanel({ open, filters, onChange, onClear }) {
   }
 
   return (
-    <div className="mb-6 rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle) p-5 sm:p-6">
+    <div className="mb-6 rounded-xl border border-(--explorer-border) bg-(--explorer-bg) p-5 sm:p-6">
       <div className="flex items-center justify-between gap-3 mb-4">
-        <p className="flex items-center gap-1.5 text-[13.5px] font-bold text-(--jobs-navy)">
+        <p className="flex items-center gap-1.5 text-[13.5px] font-bold text-(--explorer-navy)">
           <SlidersHorizontal size={15} aria-hidden="true" /> Filters
         </p>
         {countActiveFilters(filters) > 0 && (
           <button
             type="button"
             onClick={onClear}
-            className="inline-flex items-center gap-1 text-[13px] font-bold text-(--jobs-blue) hover:text-(--jobs-blue-dark) transition-colors"
+            className="inline-flex items-center gap-1 text-[13px] font-bold text-(--explorer-teal) hover:text-(--explorer-teal-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) rounded-xs"
           >
             <X size={13} aria-hidden="true" /> Clear all
           </button>

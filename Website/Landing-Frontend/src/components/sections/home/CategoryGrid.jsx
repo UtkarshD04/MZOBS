@@ -1,131 +1,119 @@
 import { useEffect, useState } from 'react'
-import { ArrowUpRight, ArrowRight, Flame } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { CATEGORY_DATA } from '../../../lib/content'
 import { fetchCategoryCounts } from '../../../lib/publicJobs'
 
-// Cycled per row so the list reads as a curated palette rather than one
-// flat teal chip repeated nine times — same "array of literal class strings"
-// technique LatestJobs.jsx uses for its LOGO_TONES, kept to the page's own
-// --jobs-* palette.
-const TONES = [
-  'bg-(--jobs-teal-tint) text-(--jobs-teal-dark)',
-  'bg-(--jobs-blue-tint) text-(--jobs-blue-dark)',
-  'bg-(--jobs-gold-soft) text-(--jobs-navy)',
-]
-
 // Resolves a category's real, live count from GET /api/jobs/categories —
 // `counts` is `{ tracks: { tech: N, ... }, freshers: N, remote: N, finance: N }`.
-// Falls back to the curated content.js number (`cat.count`) until that
-// request resolves, or if it fails outright — same graceful-degrade shape
-// as LatestJobs.jsx's own fetch fallback, just for a smaller payload.
+// Returns null (not 0) until the request has actually resolved, so the
+// caller can tell "we don't know yet" apart from "genuinely zero right now".
 function liveCount(cat, counts) {
-  if (!counts) return cat.count
+  if (!counts) return null
   if (cat.trackKey === 'freshers') return counts.freshers ?? 0
   if (cat.trackKey === 'remote') return counts.remote ?? 0
   if (cat.trackKey === 'finance') return counts.finance ?? 0
   if (cat.trackKey) return counts.tracks?.[cat.trackKey] ?? 0
-  return cat.count
+  return 0
 }
 
-export default function CategoryGrid() {
+// Clicking a tile filters "Latest jobs" in place — same pattern as the hero
+// search bar and QuickDiscoveryStrip. 'finance' has no Job.track value the
+// job-list endpoint's `track` filter accepts (see content.js's comment
+// above CATEGORY_DATA), so it searches by title/skill/company text instead.
+function paramsFor(cat) {
+  if (cat.searchParams) return cat.searchParams
+  if (cat.trackKey === 'finance') return { q: cat.title }
+  return { track: cat.trackKey }
+}
+
+function CategoryTileSkeleton() {
+  return (
+    <div className="flex items-center gap-3 h-full bg-white border border-(--explorer-border) rounded-lg p-4 animate-pulse">
+      <div className="w-9 h-9 rounded-lg bg-(--explorer-bg) shrink-0" />
+      <div className="min-w-0 flex-1 flex flex-col gap-1.5">
+        <div className="h-3 w-2/3 rounded bg-(--explorer-bg)" />
+        <div className="h-2.5 w-1/3 rounded bg-(--explorer-bg)" />
+      </div>
+    </div>
+  )
+}
+
+export default function CategoryGrid({ onSelect }) {
   const [counts, setCounts] = useState(null)
+  const [countsFailed, setCountsFailed] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
     fetchCategoryCounts({ signal: controller.signal })
       .then(setCounts)
       .catch((err) => {
-        if (err?.name !== 'AbortError') setCounts(null)
+        if (err?.name !== 'AbortError') setCountsFailed(true)
       })
     return () => controller.abort()
   }, [])
 
+  const loaded = Boolean(counts) || countsFailed
   const categories = CATEGORY_DATA.categories.map((cat) => ({ ...cat, count: liveCount(cat, counts) }))
-  const totalOpenings = categories.reduce((sum, c) => sum + c.count, 0)
-  const maxCount = Math.max(...categories.map((c) => c.count))
-  // Pulls the busiest category out to headline its own spotlight tile —
-  // everything else fills the compact list beside it, rather than every
-  // category getting an identically-sized box.
-  const featuredIndex = categories.findIndex((c) => c.count === maxCount)
-  const featured = categories[featuredIndex]
-  const rest = categories.filter((_, i) => i !== featuredIndex)
-  const FeaturedIcon = featured.icon
+  const totalOpenings = categories.reduce((sum, c) => sum + (c.count ?? 0), 0)
+  const maxCount = Math.max(...categories.map((c) => c.count ?? 0))
+  // Quietly flags the single busiest category once real counts are in — a
+  // small text tag, not a differently-sized/decorated tile, so the grid
+  // stays even and the flag never causes layout shift while counts load.
+  const topTitle = loaded && !countsFailed && maxCount > 0 ? categories.find((c) => c.count === maxCount)?.title : null
+
+  function handleSelect(cat) {
+    onSelect?.({ q: '', location: '', experience: '', ...paramsFor(cat) })
+  }
 
   return (
-    <section id="categories" className="bg-(--jobs-bg-subtle) py-16 md:py-20 px-6 md:px-10">
+    <section id="categories" className="bg-white py-16 md:py-20 px-6 md:px-10">
       <div className="max-w-7xl mx-auto">
         <Reveal direction="up" duration={0.7} className="max-w-xl mb-9">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-(--jobs-navy) tracking-tight">{CATEGORY_DATA.title}</h2>
-          <p className="mt-2 text-[15px] text-(--jobs-ink-soft)">
-            {CATEGORY_DATA.subtitle} {totalOpenings.toLocaleString('en-IN')} openings across {CATEGORY_DATA.categories.length} categories.
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-(--explorer-navy) tracking-tight">{CATEGORY_DATA.title}</h2>
+          <p className="mt-2 text-[15px] text-(--explorer-muted)">
+            {CATEGORY_DATA.subtitle}
+            {loaded && !countsFailed && ` ${totalOpenings.toLocaleString('en-IN')} openings across ${CATEGORY_DATA.categories.length} categories.`}
           </p>
         </Reveal>
 
-        <Reveal direction="up" duration={0.7} delay={0.05} className="grid lg:grid-cols-5 gap-4">
-          {/* Spotlight tile — the one category with the most openings, given
-              real visual weight instead of blending into a uniform grid. */}
-          <div
-            className="group lg:col-span-2 relative overflow-hidden flex flex-col justify-between min-h-80 rounded-3xl p-7 bg-linear-to-br from-(--jobs-navy) to-(--jobs-navy-deep) text-white transition-transform duration-200 hover:-translate-y-0.5"
-          >
-            <FeaturedIcon
-              size={220}
-              strokeWidth={1}
-              className="absolute -right-10 -bottom-10 text-white/10 rotate-12 pointer-events-none"
-              aria-hidden="true"
-            />
-
-            <div className="relative">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full bg-white/15">
-                <Flame size={11} aria-hidden="true" /> Most in-demand
-              </span>
-              <div className="mt-6 w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center">
-                <FeaturedIcon size={22} strokeWidth={1.75} aria-hidden="true" />
-              </div>
-              <h3 className="mt-4 text-3xl font-extrabold tracking-tight">{featured.title}</h3>
-              <p className="mt-1.5 text-[14.5px] text-white/70">{featured.count} openings live right now</p>
-            </div>
-
-            <span className="relative inline-flex items-center gap-2 text-[14px] font-bold">
-              Browse {featured.title.toLowerCase()} jobs
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white text-(--jobs-navy) group-hover:translate-x-1 transition-transform">
-                <ArrowUpRight size={15} aria-hidden="true" />
-              </span>
-            </span>
-          </div>
-
-          {/* Everything else: a dense, scannable list rather than nine more
-              boxes — each row inverts to a solid navy fill on hover instead
-              of the border/shadow treatment used elsewhere on the page, so
-              this section reads as its own thing. */}
-          <StaggerGroup className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            {rest.map((cat, i) => {
-              const Icon = cat.icon
-              const tone = TONES[i % TONES.length]
-              return (
-                <StaggerItem key={cat.title}>
-                  <div
-                    className="group flex items-center gap-3 h-full bg-white rounded-2xl p-4 hover:bg-(--jobs-navy) transition-colors duration-200"
-                  >
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${tone}`}>
-                      <Icon size={16} strokeWidth={1.75} aria-hidden="true" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-bold text-[13.5px] text-(--jobs-navy) group-hover:text-white truncate transition-colors">{cat.title}</p>
-                      <p className="text-[12px] text-(--jobs-ink-soft) group-hover:text-white/60 transition-colors">{cat.count} openings</p>
-                    </div>
-                    <ArrowRight
-                      size={14}
-                      className="shrink-0 text-white opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
-                      aria-hidden="true"
-                    />
-                  </div>
+        <StaggerGroup className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {!loaded
+            ? Array.from({ length: CATEGORY_DATA.categories.length }).map((_, i) => (
+                <StaggerItem key={i}>
+                  <CategoryTileSkeleton />
                 </StaggerItem>
-              )
-            })}
-          </StaggerGroup>
-        </Reveal>
+              ))
+            : categories.map((cat) => {
+                const Icon = cat.icon
+                return (
+                  <StaggerItem key={cat.title}>
+                    <button
+                      type="button"
+                      onClick={() => handleSelect(cat)}
+                      className="explorer-tile-btn group flex items-center gap-3 w-full h-full text-left bg-white border border-(--explorer-border) rounded-lg p-4 motion-safe:hover:-translate-y-px hover:border-(--explorer-teal-border) hover:shadow-[0_4px_16px_-8px_rgba(11,122,109,0.25)] transition-[border-color,box-shadow,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal)"
+                    >
+                      <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-(--explorer-teal-surface) text-(--explorer-teal) shrink-0">
+                        <Icon size={16} strokeWidth={1.75} aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-bold text-[13.5px] text-(--explorer-navy) truncate">{cat.title}</span>
+                        <span className="block text-[12px] text-(--explorer-muted) truncate">
+                          {countsFailed ? 'Browse roles' : `${cat.count} opening${cat.count === 1 ? '' : 's'}`}
+                          {cat.title === topTitle && <span className="ml-1.5 font-bold uppercase tracking-wide text-(--explorer-teal)">· Most in-demand</span>}
+                        </span>
+                      </span>
+                      <ArrowRight
+                        size={14}
+                        className="shrink-0 text-(--explorer-teal) opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+                        aria-hidden="true"
+                      />
+                    </button>
+                  </StaggerItem>
+                )
+              })}
+        </StaggerGroup>
       </div>
     </section>
   )

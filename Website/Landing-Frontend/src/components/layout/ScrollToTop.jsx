@@ -1,21 +1,16 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useLenis } from 'lenis/react'
 
 // This app has multiple routed pages (unlike the single-page portals), so a
-// route change needs to reset scroll position back to the top. Routed
-// through the Lenis instance (when it's active — see SmoothScroll.jsx)
-// rather than the native scrollTo/scrollIntoView APIs, since both trying to
-// drive scroll position at once is what caused scrolling to suddenly feel
-// too fast/erratic.
+// route change needs to reset scroll position back to the top. Plain native
+// scrolling (see index.css's `scroll-behavior: smooth`) handles the actual
+// animation — this just decides where to send it.
 export default function ScrollToTop() {
   const { pathname, hash } = useLocation()
-  const lenis = useLenis()
 
   useEffect(() => {
     if (!hash) {
-      if (lenis) lenis.scrollTo(0, { immediate: true })
-      else window.scrollTo(0, 0)
+      window.scrollTo(0, 0)
       return
     }
 
@@ -33,13 +28,11 @@ export default function ScrollToTop() {
       if (cancelled) return
       const el = document.getElementById(id)
       if (el) {
-        if (lenis) lenis.scrollTo(el)
-        else el.scrollIntoView({ behavior: 'smooth' })
+        el.scrollIntoView({ behavior: 'smooth' })
         return
       }
       attempts += 1
       if (attempts < 12) setTimeout(tryScroll, 60)
-      else if (lenis) lenis.scrollTo(0, { immediate: true })
       else window.scrollTo(0, 0)
     }
     tryScroll()
@@ -47,7 +40,7 @@ export default function ScrollToTop() {
     return () => {
       cancelled = true
     }
-  }, [pathname, hash, lenis])
+  }, [pathname, hash])
 
   return null
 }

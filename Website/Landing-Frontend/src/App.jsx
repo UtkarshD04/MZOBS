@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import ScrollToTop from './components/layout/ScrollToTop'
-import SmoothScroll from './components/layout/SmoothScroll'
 import CursorDot from './components/ui/CursorDot'
 import { requestNotificationPermission } from './lib/webPush'
 import Home from './pages/Home'
@@ -32,7 +31,7 @@ export default function App() {
   }, [])
 
   return (
-    <SmoothScroll>
+    <>
       <ScrollToTop />
       <CursorDot />
       <AnimatePresence mode="wait">
@@ -65,7 +64,7 @@ export default function App() {
           </Routes>
         </motion.div>
       </AnimatePresence>
-    </SmoothScroll>
+    </>
   )
 }
 
