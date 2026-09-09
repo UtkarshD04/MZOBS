@@ -29,3 +29,11 @@ export function getJobFacets(params = {}, signal) {
 export function getJobSuggestions(params = {}, signal) {
   return apiClient.get('/jobs/suggestions', { params, signal }).then((r) => r.data)
 }
+
+export function getAppliedBasedJobs(signal) {
+  return apiClient.get('/jobs/based-on-applies', { signal }).then((r) => r.data)
+}
+
+export function getInstantHiringJobs(signal) {
+  return apiClient.get('/jobs/instant-hiring', { signal }).then((r) => r.data)
+}

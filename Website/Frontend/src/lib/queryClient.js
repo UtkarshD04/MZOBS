@@ -19,6 +19,8 @@ export const queryKeys = {
   jobFacets: (params) => ['jobFacets', params],
   jobSuggestions: (params) => ['jobSuggestions', params],
   job: (id) => ['jobs', id],
+  appliedBasedJobs: ['jobs', 'applied-based'],
+  instantHiringJobs: ['jobs', 'instant-hiring'],
   applications: ['applications'],
   mockInterview: ['mockInterview'],
   interviews: ['interviews'],

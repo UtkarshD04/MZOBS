@@ -14,6 +14,8 @@ import { PROGRAM_FEE } from '../lib/constants'
 import { categoryOf } from '../lib/category'
 import { useProfileQuery } from '../hooks/useProfile'
 import { useApplicationsQuery } from '../hooks/useApplications'
+import { useJobsQuery, useAppliedBasedJobsQuery, useInstantHiringJobsQuery } from '../hooks/useJobs'
+import CompaniesHiringSection from '../components/jobs/CompaniesHiringSection'
 import { useInterviewsQuery } from '../hooks/useInterviews'
 import { useSavedJobsQuery } from '../hooks/useSavedJobs'
 import { useRecentlyViewedQuery } from '../hooks/useRecentlyViewed'
@@ -51,14 +53,51 @@ function recentActivity(profile, applications) {
     .slice(0, 5)
 }
 
+function JobListCard({ title, jobs, isLoading, onSeeAll, emptyMessage }) {
+  if (isLoading || jobs.length === 0) return null
+  return (
+    <Card>
+      <CardHead>
+        <span className="text-[15px] font-semibold">{title}</span>
+        <span className="text-navy font-semibold text-[13px] cursor-pointer hover:underline" onClick={onSeeAll}>
+          See all
+        </span>
+      </CardHead>
+      <div className="p-[22px] pt-3.5 flex flex-col gap-3">
+        {jobs.length === 0 && <p className="text-[13px] text-ink-secondary">{emptyMessage}</p>}
+        {jobs.slice(0, 3).map((j) => {
+          const cat = categoryOf(j.track)
+          return (
+            <div key={j.id} className="flex items-center gap-3">
+              <CompanyLogo initials={j.logo} tone={cat.tone} />
+              <div className="flex-1 min-w-0">
+                <div className="text-[13.5px] font-semibold truncate">{j.title}</div>
+                <div className="text-xs text-ink-tertiary">
+                  {j.company} · {j.location} · {j.vacancies} opening{j.vacancies > 1 ? 's' : ''}
+                </div>
+              </div>
+              <Badge tone={cat.tone} dot={false}>
+                {cat.label}
+              </Badge>
+            </div>
+          )
+        })}
+      </div>
+    </Card>
+  )
+}
+
 export default function Dashboard() {
   const navigate = useNavigate()
   const { data: profile, isLoading: profileLoading, isError: profileError, refetch: refetchProfile } = useProfileQuery()
   const { data: applications = [], isLoading: applicationsLoading } = useApplicationsQuery()
   const { data: interviews = [] } = useInterviewsQuery()
+  const { data: jobs = [] } = useJobsQuery()
   const { data: savedJobs = [] } = useSavedJobsQuery()
   const { data: recentlyViewed = [] } = useRecentlyViewedQuery()
   const { data: recommendedJobs = [] } = useRecommendedJobsQuery('match')
+  const { data: appliedBasedJobs = [], isLoading: appliedBasedLoading } = useAppliedBasedJobsQuery()
+  const { data: instantHiringJobs = [], isLoading: instantHiringLoading } = useInstantHiringJobsQuery()
 
   if (profileLoading || applicationsLoading) return <PageSkeleton />
   if (profileError) return <ErrorState onRetry={refetchProfile} />
@@ -284,6 +323,27 @@ export default function Dashboard() {
         <span className="flex items-center gap-1.5">
           <History size={13} /> {recentlyViewed.length} recently viewed
         </span>
+      </StaggerItem>
+
+      <StaggerItem className="grid lg:grid-cols-2 gap-5 mb-4">
+        <JobListCard
+          title="Jobs based on your applies"
+          jobs={appliedBasedJobs}
+          isLoading={appliedBasedLoading}
+          onSeeAll={() => navigate('/app/jobs')}
+          emptyMessage="Apply to a role to see similar openings here."
+        />
+        <JobListCard
+          title="Instant hiring"
+          jobs={instantHiringJobs}
+          isLoading={instantHiringLoading}
+          onSeeAll={() => navigate('/app/jobs')}
+          emptyMessage="No urgent openings right now — check back soon."
+        />
+      </StaggerItem>
+
+      <StaggerItem className="mb-4">
+        <CompaniesHiringSection jobs={jobs} onSelectCompany={(name) => navigate(`/app/jobs?q=${encodeURIComponent(name)}`)} />
       </StaggerItem>
 
       <StaggerItem>

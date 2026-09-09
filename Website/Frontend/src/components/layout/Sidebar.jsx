@@ -5,9 +5,7 @@ import {
   LayoutDashboard,
   User,
   FileText,
-  Video,
   ClipboardList,
-  CalendarCheck,
   MessageSquare,
   Bell,
   CreditCard,
@@ -25,11 +23,7 @@ const verification = [
   { to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/app/profile', label: 'Profile', icon: User },
   { to: '/app/resume', label: 'Resume Center', icon: FileText },
-  { to: '/app/interview', label: 'Mock Interview', icon: Video },
-]
-const placement = [
   { to: '/app/applications', label: 'My Applications', icon: ClipboardList },
-  { to: '/app/interview-center', label: 'Interview Center', icon: CalendarCheck },
 ]
 
 function NavItem({ to, label, icon: Icon, badge, collapsed }) {
@@ -91,7 +85,6 @@ export default function Sidebar() {
     >
       <Group items={home} collapsed={sidebarCollapsed} />
       <Group items={verification} collapsed={sidebarCollapsed} />
-      <Group label="Placement" items={placement} collapsed={sidebarCollapsed} />
       <Group label="Account" items={account} collapsed={sidebarCollapsed} />
 
       <div className="mt-auto pt-3 border-t border-border">
