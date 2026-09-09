@@ -35,7 +35,7 @@ export default function EmployerSigninForm() {
     setStatus('submitting')
     try {
       const { token } = await loginEmployer(form)
-      window.location.href = `${EMPLOYER_APP_URL}/dashboard?token=${encodeURIComponent(token)}`
+      window.location.href = `${EMPLOYER_APP_URL}/jobs?token=${encodeURIComponent(token)}`
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
@@ -47,7 +47,7 @@ export default function EmployerSigninForm() {
     setStatus('submitting')
     try {
       const { token } = await loginEmployerWithGoogle({ credential })
-      window.location.href = `${EMPLOYER_APP_URL}/dashboard?token=${encodeURIComponent(token)}`
+      window.location.href = `${EMPLOYER_APP_URL}/jobs?token=${encodeURIComponent(token)}`
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
