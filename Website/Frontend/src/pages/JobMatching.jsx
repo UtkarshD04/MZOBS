@@ -19,17 +19,26 @@ import { openApplyModal, openJobDetailModal, fmtSalaryRange } from '../lib/modal
 import { useProfileQuery } from '../hooks/useProfile'
 import { useJobsPageQuery, useJobFacetsQuery, useJobQuery } from '../hooks/useJobs'
 import { useApplicationsQuery } from '../hooks/useApplications'
+import { useSavedJobsQuery, useSaveJobMutation, useUnsaveJobMutation } from '../hooks/useSavedJobs'
+import { useRecommendedJobsQuery } from '../hooks/useRecommendedJobs'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import FilterSidebar from '../components/jobs/FilterSidebar'
 import FilterChips from '../components/jobs/FilterChips'
 import JobFilterDrawer from '../components/jobs/JobFilterDrawer'
 import JobTitleAutocomplete from '../components/jobs/JobTitleAutocomplete'
-import { hasEmployeeToken } from '../lib/auth'
+import { hasEmployeeToken, signInUrl } from '../lib/auth'
 
-const SAVED_KEY = 'mzobs-saved-jobs'
 const PAGE_SIZE = 20
+const TABS = ['All openings', 'My track', 'Recommended', 'Saved', 'Compare']
+const TAB = { ALL: 0, MY_TRACK: 1, RECOMMENDED: 2, SAVED: 3, COMPARE: 4 }
+const RECOMMENDED_SORT_OPTIONS = [
+  { value: 'match', label: 'Best match' },
+  { value: 'newest', label: 'Newest first' },
+  { value: 'salary_desc', label: 'Salary: high to low' },
+  { value: 'salary_asc', label: 'Salary: low to high' },
+]
 
-function JobCard({ job, applied, eligible, authed, saved, employeeTrack, onToggleSave, onApplied }) {
+function JobCard({ job, applied, eligible, authed, saved, employeeTrack, onToggleSave, onApplied, matchReasons }) {
   const app = useApp()
   const cat = categoryOf(job.track)
   const onTrack = !!job.track && job.track === employeeTrack
@@ -75,6 +84,13 @@ function JobCard({ job, applied, eligible, authed, saved, employeeTrack, onToggl
             </span>
           ))}
         </div>
+
+        {matchReasons?.length > 0 && (
+          <div className="flex items-start gap-1.5 mt-2.5 text-[12px] text-navy">
+            <Sparkles size={12} className="mt-0.5 flex-shrink-0" />
+            <span>{matchReasons.join(' · ')}</span>
+          </div>
+        )}
 
         <div className="flex items-center gap-2 mt-3.5 flex-wrap">
           {applied ? (
@@ -173,8 +189,13 @@ export default function JobMatching() {
   const [searchParams, setSearchParams] = useSearchParams()
   const categoryParam = searchParams.get('category')
   const jobIdParam = searchParams.get('jobId')
-  const [tab, setTab] = useState(0)
-  const [saved, setSaved] = useState(() => new Set(JSON.parse(localStorage.getItem(SAVED_KEY) ?? '[]')))
+  // Lets an external link (e.g. Dashboard's "See all" on Recommended) land
+  // directly on a tab — read once on mount, same as categoryParam/jobIdParam.
+  const [tab, setTab] = useState(() => {
+    const tabParam = searchParams.get('tab')
+    return tabParam === 'recommended' ? TAB.RECOMMENDED : tabParam === 'saved' ? TAB.SAVED : tabParam === 'my-track' ? TAB.MY_TRACK : TAB.ALL
+  })
+  const [recommendedSort, setRecommendedSort] = useState('match')
   const [autoOpened, setAutoOpened] = useState(false)
 
   const filters = parseFiltersFromParams(searchParams)
@@ -197,24 +218,23 @@ export default function JobMatching() {
   const { data: deepLinkedJob } = useJobQuery(jobIdParam)
 
   const track = profile?.skillTrack
-  const lockedTrackForTab = tab === 1 ? track?.key : null
+  const lockedTrackForTab = tab === TAB.MY_TRACK ? track?.key : null
 
   // On "My track", the department filter is forced to the employee's track
   // (not whatever's in the URL) — apply that same override to the facet
   // query too, so sidebar counts stay consistent with what's listed.
-  const queryFilters = tab === 1 && track?.key ? { ...apiFilters, track: [track.key] } : apiFilters
+  const queryFilters = tab === TAB.MY_TRACK && track?.key ? { ...apiFilters, track: [track.key] } : apiFilters
   const listParams = { ...toParams(queryFilters), page: String(page), limit: String(PAGE_SIZE) }
-  const savedParams = { ids: [...saved].join(','), limit: String(Math.max(1, Math.min(saved.size, 200))) }
 
-  const isSavedTab = tab === 2
-  const isCompareTab = tab === 3
-  const showFilterUI = !categoryUnavailable && !isSavedTab && !isCompareTab
-  // Neither "no track assigned yet" nor "no saved jobs" should fall back to
-  // an unfiltered listing — skip the request entirely and treat it as zero
-  // results instead of letting an empty track/ids filter mean "match all".
-  const myTrackUnavailable = tab === 1 && !track?.key
-  const savedEmpty = isSavedTab && saved.size === 0
-  const listQueryEnabled = !categoryUnavailable && !isCompareTab && !myTrackUnavailable && !savedEmpty
+  const isSavedTab = tab === TAB.SAVED
+  const isCompareTab = tab === TAB.COMPARE
+  const isRecommendedTab = tab === TAB.RECOMMENDED
+  const showFilterUI = !categoryUnavailable && !isSavedTab && !isCompareTab && !isRecommendedTab
+  // "No track assigned yet" shouldn't fall back to an unfiltered listing —
+  // skip the request entirely and treat it as zero results instead of
+  // letting an empty track filter mean "match all".
+  const myTrackUnavailable = tab === TAB.MY_TRACK && !track?.key
+  const listQueryEnabled = !categoryUnavailable && !isCompareTab && !isSavedTab && !isRecommendedTab && !myTrackUnavailable
 
   const {
     data: listResult,
@@ -222,16 +242,24 @@ export default function JobMatching() {
     isFetching: listFetching,
     isError: listError,
     refetch: refetchList,
-  } = useJobsPageQuery(isSavedTab ? savedParams : listParams, { enabled: listQueryEnabled })
+  } = useJobsPageQuery(listParams, { enabled: listQueryEnabled })
   const { data: facets } = useJobFacetsQuery(toParams(queryFilters), { enabled: showFilterUI })
 
-  const jobs = listResult?.jobs ?? []
-  const total = isSavedTab ? saved.size : (listResult?.total ?? 0)
-  const limit = listResult?.limit ?? PAGE_SIZE
+  const { data: savedJobsData = [] } = useSavedJobsQuery({ enabled: authed })
+  const savedIds = new Set(savedJobsData.map((j) => j.id))
+  const saveJobMutation = useSaveJobMutation()
+  const unsaveJobMutation = useUnsaveJobMutation()
 
-  useEffect(() => {
-    localStorage.setItem(SAVED_KEY, JSON.stringify([...saved]))
-  }, [saved])
+  const {
+    data: recommendedJobs = [],
+    isLoading: recommendedLoading,
+    isError: recommendedError,
+    refetch: refetchRecommended,
+  } = useRecommendedJobsQuery(recommendedSort, { enabled: authed && isRecommendedTab })
+
+  const jobs = isSavedTab ? savedJobsData : isRecommendedTab ? recommendedJobs : (listResult?.jobs ?? [])
+  const total = isSavedTab ? savedJobsData.length : isRecommendedTab ? recommendedJobs.length : (listResult?.total ?? 0)
+  const limit = listResult?.limit ?? PAGE_SIZE
 
   // Debounced keyword search — commits to the URL (and therefore the API
   // request) ~350ms after the user stops typing, and drops stale filter
@@ -298,12 +326,8 @@ export default function JobMatching() {
   }
 
   function toggleSave(id) {
-    setSaved((s) => {
-      const next = new Set(s)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
+    if (savedIds.has(id)) unsaveJobMutation.mutate(id)
+    else saveJobMutation.mutate(id)
   }
 
   if (profileLoading) return <PageSkeleton />
@@ -321,10 +345,11 @@ export default function JobMatching() {
     applied: appliedJobIds.has(job.id),
     eligible,
     authed,
-    saved: saved.has(job.id),
+    saved: savedIds.has(job.id),
     employeeTrack: track?.key,
     onToggleSave: () => toggleSave(job.id),
     onApplied: refetchApplications,
+    matchReasons: job.matchReasons,
   })
 
   const companyNameOf = (id) => facets?.companies?.find((c) => c.id === id)?.name
@@ -388,7 +413,7 @@ export default function JobMatching() {
       ) : (
         <>
           <StaggerItem className="flex items-center justify-between flex-wrap gap-3 mb-4">
-            <PillTabs items={['All openings', 'My track', 'Saved', 'Compare']} active={tab} onChange={selectTab} />
+            <PillTabs items={TABS} active={tab} onChange={selectTab} />
             {showFilterUI && (
               <div className="flex gap-2">
                 <Button size="sm" className="lg:hidden relative" onClick={openFilterDrawer}>
@@ -407,6 +432,15 @@ export default function JobMatching() {
                   ))}
                 </Select>
               </div>
+            )}
+            {isRecommendedTab && (
+              <Select className="h-8 text-[12.5px]" value={recommendedSort} onChange={(e) => setRecommendedSort(e.target.value)}>
+                {RECOMMENDED_SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </Select>
             )}
           </StaggerItem>
 
@@ -457,33 +491,50 @@ export default function JobMatching() {
                 </div>
               )}
 
-              {tab === 3 ? (
+              {isCompareTab ? (
                 <Card>
                   <EmptyState
                     icon={BarChart3}
                     title="Select openings to compare"
                     body="Choose up to 3 roles to compare salary, location and requirements side by side."
                     action={
-                      <Button variant="primary" className="mt-2" onClick={() => selectTab(0)}>
+                      <Button variant="primary" className="mt-2" onClick={() => selectTab(TAB.ALL)}>
                         Go to all openings
                       </Button>
                     }
                   />
                 </Card>
-              ) : isSavedTab && saved.size === 0 ? (
+              ) : isSavedTab && jobs.length === 0 ? (
                 <Card>
                   <EmptyState
                     icon={Bookmark}
                     title="No saved openings yet"
                     body="Tap the bookmark icon on any opening to save it for later."
                     action={
-                      <Button variant="primary" className="mt-2" onClick={() => selectTab(0)}>
+                      <Button variant="primary" className="mt-2" onClick={() => selectTab(TAB.ALL)}>
                         Browse all openings
                       </Button>
                     }
                   />
                 </Card>
-              ) : listLoading ? (
+              ) : isRecommendedTab && !authed ? (
+                <Card>
+                  <EmptyState
+                    icon={Sparkles}
+                    title="Sign in to see jobs matched to your profile"
+                    body="We'll match openings against your skills, preferred role and locations once you're signed in."
+                    action={
+                      <Button variant="primary" className="mt-2" onClick={() => (window.location.href = signInUrl())}>
+                        Sign in
+                      </Button>
+                    }
+                  />
+                </Card>
+              ) : isRecommendedTab && recommendedError ? (
+                <Card>
+                  <ErrorState onRetry={refetchRecommended} />
+                </Card>
+              ) : (isRecommendedTab ? recommendedLoading : listLoading) ? (
                 <JobListSkeleton />
               ) : jobs.length ? (
                 <>
@@ -492,26 +543,33 @@ export default function JobMatching() {
                       <JobCard key={j.id} {...cardProps(j)} />
                     ))}
                   </div>
-                  {!isSavedTab && <PaginationBar page={page} limit={limit} total={total} onPageChange={goToPage} />}
+                  {!isSavedTab && !isRecommendedTab && <PaginationBar page={page} limit={limit} total={total} onPageChange={goToPage} />}
                 </>
               ) : (
                 <Card>
                   <EmptyState
-                    icon={tab === 1 ? Sparkles : Briefcase}
-                    title={tab === 1 && !track?.key ? 'No track assigned yet' : 'No matching openings'}
+                    icon={tab === TAB.MY_TRACK || isRecommendedTab ? Sparkles : Briefcase}
+                    title={tab === TAB.MY_TRACK && !track?.key ? 'No track assigned yet' : isRecommendedTab ? 'No recommendations yet' : 'No matching openings'}
                     body={
-                      tab === 1 && !track?.key
+                      tab === TAB.MY_TRACK && !track?.key
                         ? 'Complete your mock interview to get a skill track assigned.'
-                        : 'Try removing a few filters or searching a broader term — new requirements post here as employers pay for sourcing.'
+                        : isRecommendedTab
+                          ? 'Add skills, a preferred role and preferred locations to your profile so we can match you to openings.'
+                          : 'Try removing a few filters or searching a broader term — new requirements post here as employers pay for sourcing.'
                     }
                     action={
                       <div className="flex gap-2 mt-2 flex-wrap justify-center">
+                        {isRecommendedTab && (
+                          <Button variant="primary" onClick={() => navigate('/app/profile')}>
+                            Complete your profile
+                          </Button>
+                        )}
                         {hasAnyFilter(filters) && (
                           <Button variant="primary" onClick={clearAllFilters}>
                             Clear filters
                           </Button>
                         )}
-                        <Button onClick={() => selectTab(0)}>Browse all openings</Button>
+                        <Button onClick={() => selectTab(TAB.ALL)}>Browse all openings</Button>
                       </div>
                     }
                   />

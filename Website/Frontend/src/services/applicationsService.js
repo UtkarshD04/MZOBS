@@ -7,3 +7,7 @@ export function listApplications() {
 export function applyToJob(jobId) {
   return apiClient.post('/applications', { jobId }).then((r) => r.data)
 }
+
+export function withdrawApplication(applicationId) {
+  return apiClient.patch(`/applications/${applicationId}/withdraw`).then((r) => r.data)
+}

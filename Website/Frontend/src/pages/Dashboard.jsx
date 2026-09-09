@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Upload, Video, Briefcase, Clock, Building2, EyeOff } from 'lucide-react'
+import { Upload, Video, Briefcase, Clock, Building2, EyeOff, Bookmark, History } from 'lucide-react'
 import Card, { CardHead } from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Ring from '../components/ui/Ring'
@@ -14,25 +14,29 @@ import { PROGRAM_FEE } from '../lib/constants'
 import { categoryOf } from '../lib/category'
 import { useProfileQuery } from '../hooks/useProfile'
 import { useApplicationsQuery } from '../hooks/useApplications'
-import { useMockInterviewQuery } from '../hooks/useMockInterview'
-import { useJobsQuery } from '../hooks/useJobs'
 import { useInterviewsQuery } from '../hooks/useInterviews'
+import { useSavedJobsQuery } from '../hooks/useSavedJobs'
+import { useRecentlyViewedQuery } from '../hooks/useRecentlyViewed'
+import { useRecommendedJobsQuery } from '../hooks/useRecommendedJobs'
 
 const APPLICATION_STAGE_INDEX = { new: 1, screening: 2, shortlisted: 3, shared: 4, interview: 5, selected: 6, rejected: 6 }
 
+const COMPLETION_CHECKS = [
+  { key: 'resumeHeadline', label: 'Add a resume headline', test: (p) => !!p.resumeHeadline },
+  { key: 'skills', label: 'Add your skills', test: (p) => (p.skills ?? []).length > 0 },
+  { key: 'education', label: 'Add your education', test: (p) => (p.education ?? []).length > 0 },
+  { key: 'currentCity', label: 'Set your current city', test: (p) => !!p.currentCity },
+  { key: 'resume', label: 'Upload your resume', test: (p) => p.resume?.status !== 'none' },
+  { key: 'links', label: 'Add a portfolio or LinkedIn link', test: (p) => !!(p.portfolioLink || p.linkedin) },
+  { key: 'preferredRole', label: 'Set a preferred role', test: (p) => !!p.preferredRole },
+  { key: 'preferredLocations', label: 'Add preferred locations', test: (p) => (p.preferredLocations ?? []).length > 0 },
+]
+
 function profileCompletion(profile) {
-  if (!profile) return 0
-  const checks = [
-    !!profile.resumeHeadline,
-    (profile.skills ?? []).length > 0,
-    (profile.education ?? []).length > 0,
-    !!profile.currentCity,
-    profile.resume?.status !== 'none',
-    !!(profile.portfolioLink || profile.linkedin),
-    !!profile.preferredRole,
-    (profile.preferredLocations ?? []).length > 0,
-  ]
-  return Math.round((checks.filter(Boolean).length / checks.length) * 100)
+  if (!profile) return { percent: 0, missing: [] }
+  const missing = COMPLETION_CHECKS.filter((c) => !c.test(profile)).map((c) => c.label)
+  const percent = Math.round(((COMPLETION_CHECKS.length - missing.length) / COMPLETION_CHECKS.length) * 100)
+  return { percent, missing }
 }
 
 function recentActivity(profile, applications) {
@@ -51,18 +55,17 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const { data: profile, isLoading: profileLoading, isError: profileError, refetch: refetchProfile } = useProfileQuery()
   const { data: applications = [], isLoading: applicationsLoading } = useApplicationsQuery()
-  const { data: mockInterview } = useMockInterviewQuery()
-  const { data: jobs = [] } = useJobsQuery()
   const { data: interviews = [] } = useInterviewsQuery()
+  const { data: savedJobs = [] } = useSavedJobsQuery()
+  const { data: recentlyViewed = [] } = useRecentlyViewedQuery()
+  const { data: recommendedJobs = [] } = useRecommendedJobsQuery('match')
 
   if (profileLoading || applicationsLoading) return <PageSkeleton />
   if (profileError) return <ErrorState onRetry={refetchProfile} />
 
-  const track = profile?.skillTrack?.key
-  const trackJobs = track ? jobs.filter((j) => j.track === track) : jobs
   const activity = recentActivity(profile, applications)
-  const completion = profileCompletion(profile)
-  const activeApplications = applications.filter((a) => !['selected', 'rejected'].includes(a.status)).length
+  const { percent: completion, missing: completionMissing } = profileCompletion(profile)
+  const activeApplications = applications.filter((a) => !['selected', 'rejected', 'withdrawn'].includes(a.status)).length
 
   return (
     <StaggerGroup>
@@ -85,11 +88,13 @@ export default function Dashboard() {
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
-        <Card pad>
+        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/profile')}>
           <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Profile Completion</span>
           <div className="flex items-center gap-3 mt-3">
             <Ring value={completion} size={52} thick={6} />
-            <div className="text-[13px] text-ink-secondary">{completion < 100 ? 'Complete your profile for better matches' : 'Your profile is complete'}</div>
+            <div className="text-[13px] text-ink-secondary">
+              {completion < 100 ? `Missing: ${completionMissing.slice(0, 2).join(', ')}${completionMissing.length > 2 ? `, +${completionMissing.length - 2} more` : ''}` : 'Your profile is complete'}
+            </div>
           </div>
         </Card>
         <Card pad>
@@ -147,6 +152,8 @@ export default function Dashboard() {
                         <Badge tone="red">Not selected</Badge>
                       ) : a.status === 'selected' ? (
                         <Badge tone="green">Selected</Badge>
+                      ) : a.status === 'withdrawn' ? (
+                        <Badge tone="gray">Withdrawn</Badge>
                       ) : stage >= 4 ? (
                         <Badge tone="gold">Shared with employer</Badge>
                       ) : (
@@ -215,23 +222,23 @@ export default function Dashboard() {
       <StaggerItem className="grid lg:grid-cols-2 gap-5 mb-4">
         <Card>
           <CardHead>
-            <span className="text-[15px] font-semibold">Openings in your track</span>
-            <span className="text-navy font-semibold text-[13px] cursor-pointer hover:underline" onClick={() => navigate('/app/jobs')}>
+            <span className="text-[15px] font-semibold">Recommended for you</span>
+            <span className="text-navy font-semibold text-[13px] cursor-pointer hover:underline" onClick={() => navigate('/app/jobs?tab=recommended')}>
               See all
             </span>
           </CardHead>
           <div className="p-[22px] pt-3.5 flex flex-col gap-3">
-            {trackJobs.length === 0 && <p className="text-[13px] text-ink-secondary">No openings match your track yet — check back soon.</p>}
-            {trackJobs.slice(0, 3).map((j) => {
+            {recommendedJobs.length === 0 && (
+              <p className="text-[13px] text-ink-secondary">Add skills, a preferred role and locations to your profile so we can match you to openings.</p>
+            )}
+            {recommendedJobs.slice(0, 3).map((j) => {
               const cat = categoryOf(j.track)
               return (
                 <div key={j.id} className="flex items-center gap-3">
                   <CompanyLogo initials={j.logo} tone={cat.tone} />
                   <div className="flex-1 min-w-0">
                     <div className="text-[13.5px] font-semibold truncate">{j.title}</div>
-                    <div className="text-xs text-ink-tertiary">
-                      {j.company} · {j.location} · {j.vacancies} opening{j.vacancies > 1 ? 's' : ''}
-                    </div>
+                    <div className="text-xs text-ink-tertiary truncate">{j.matchReasons?.[0] ?? `${j.company} · ${j.location}`}</div>
                   </div>
                   <Badge tone={cat.tone} dot={false}>
                     {cat.label}
@@ -267,6 +274,16 @@ export default function Dashboard() {
             )}
           </div>
         </Card>
+      </StaggerItem>
+
+      <StaggerItem className="flex items-center gap-4 text-[13px] text-ink-secondary mb-2">
+        <button className="flex items-center gap-1.5 hover:text-navy" onClick={() => navigate('/app/jobs?tab=saved')}>
+          <Bookmark size={13} /> {savedJobs.length} saved job{savedJobs.length === 1 ? '' : 's'}
+        </button>
+        <span className="text-ink-tertiary">·</span>
+        <span className="flex items-center gap-1.5">
+          <History size={13} /> {recentlyViewed.length} recently viewed
+        </span>
       </StaggerItem>
 
       <StaggerItem>

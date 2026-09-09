@@ -6,15 +6,28 @@ import Switch from '../components/ui/Switch'
 import Bar from '../components/ui/Bar'
 import { Field, Input, Select } from '../components/ui/Field'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
-import { PageSkeleton } from '../components/ui/Skeleton'
+import { PageSkeleton, Skeleton } from '../components/ui/Skeleton'
 import ErrorState from '../components/ui/ErrorState'
 import { useApp } from '../context/AppContext'
 import { openDeleteAccountModal } from '../lib/modals'
 import { cn } from '../lib/utils'
 import { useProfileQuery, useUpdateProfileMutation } from '../hooks/useProfile'
+import { useNotificationPreferencesQuery, useUpdateNotificationPreferencesMutation } from '../hooks/useNotificationPreferences'
 import { sendTestPushNotification } from '../services/notificationsService'
 
 const TABS = ['Account', 'Password', 'Privacy', 'Notifications', 'Delete Account']
+
+// Mirrors the backend's NotificationPreference categories 1:1 (see
+// Backend/src/models/NotificationPreference.js) — no made-up categories that
+// don't actually map to a stored preference.
+const NOTIFICATION_CATEGORIES = [
+  { key: 'applications', label: 'Application updates' },
+  { key: 'resume', label: 'Resume status updates' },
+  { key: 'interviews', label: 'Interview reminders' },
+  { key: 'training', label: 'Training & mock interviews' },
+  { key: 'track', label: 'Skill track updates' },
+  { key: 'system', label: 'Account & payment updates' },
+]
 
 function PrivacyRow({ title, desc, defaultOn }) {
   const [on, setOn] = useState(defaultOn)
@@ -29,21 +42,22 @@ function PrivacyRow({ title, desc, defaultOn }) {
   )
 }
 
-function NotifSwitch({ defaultOn }) {
-  const [on, setOn] = useState(defaultOn)
-  return <Switch on={on} onChange={setOn} />
-}
-
 export default function Settings() {
   const [tab, setTab] = useState(0)
   const app = useApp()
   const { data: profile, isLoading, isError, refetch } = useProfileQuery()
   const updateProfile = useUpdateProfileMutation()
+  const { data: notifPrefs, isLoading: notifPrefsLoading } = useNotificationPreferencesQuery({ enabled: tab === 3 })
+  const updateNotifPrefs = useUpdateNotificationPreferencesMutation()
   const [name, setName] = useState(null)
   const [phone, setPhone] = useState(null)
 
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
+
+  function toggleNotifChannel(category, channel, value) {
+    updateNotifPrefs.mutate({ [category]: { [channel]: value } })
+  }
 
   function saveAccount() {
     updateProfile.mutate(
@@ -105,7 +119,7 @@ export default function Settings() {
             <Card pad className="max-w-[440px]">
               <div className="text-xl font-bold mb-4">Change password</div>
               <Field label="Current password">
-                <Input type="password" defaultValue="password123" />
+                <Input type="password" placeholder="Enter current password" />
               </Field>
               <Field label="New password">
                 <Input type="password" placeholder="Enter new password" />
@@ -130,36 +144,37 @@ export default function Settings() {
           )}
           {tab === 3 && (
             <Card pad>
-              <div className="text-xl font-bold mb-4">Notification preferences</div>
-              <div className="overflow-x-auto rounded-xl border border-border">
-                <table className="w-full">
-                  <thead>
-                    <tr>
-                      {['Category', 'Email', 'SMS', 'Push'].map((c) => (
-                        <th key={c} className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-ink-tertiary px-4 py-3 bg-surface-sunken border-b border-border">
-                          {c}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {['Interview reminders', 'Resume status updates', 'Training & live sessions', 'Company messages', 'Product announcements'].map((c) => (
-                      <tr key={c} className="border-b border-border last:border-b-0">
-                        <td className="px-4 py-3 text-[13.5px]">{c}</td>
-                        <td className="px-4 py-3">
-                          <NotifSwitch defaultOn />
-                        </td>
-                        <td className="px-4 py-3">
-                          <NotifSwitch defaultOn={c === 'Interview reminders'} />
-                        </td>
-                        <td className="px-4 py-3">
-                          <NotifSwitch defaultOn />
-                        </td>
+              <div className="text-xl font-bold mb-1">Notification preferences</div>
+              <p className="text-[13px] text-ink-secondary mb-4">Email and SMS are off by default — turn them on for the updates you actually want sent to you.</p>
+              {notifPrefsLoading ? (
+                <Skeleton className="w-full h-40" />
+              ) : (
+                <div className="overflow-x-auto rounded-xl border border-border">
+                  <table className="w-full">
+                    <thead>
+                      <tr>
+                        {['Category', 'In-app', 'Email', 'SMS'].map((c) => (
+                          <th key={c} className="text-left text-[11.5px] font-semibold uppercase tracking-wide text-ink-tertiary px-4 py-3 bg-surface-sunken border-b border-border">
+                            {c}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {NOTIFICATION_CATEGORIES.map(({ key, label }) => (
+                        <tr key={key} className="border-b border-border last:border-b-0">
+                          <td className="px-4 py-3 text-[13.5px]">{label}</td>
+                          {['inApp', 'email', 'sms'].map((channel) => (
+                            <td key={channel} className="px-4 py-3">
+                              <Switch on={notifPrefs?.[key]?.[channel] ?? channel === 'inApp'} onChange={(v) => toggleNotifChannel(key, channel, v)} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
               <div className="flex items-center justify-between mt-5 pt-5 border-t border-border">
                 <div>
                   <div className="text-[13px] font-semibold">Push notifications</div>

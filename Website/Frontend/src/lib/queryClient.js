@@ -24,4 +24,8 @@ export const queryKeys = {
   interviews: ['interviews'],
   notifications: ['notifications'],
   supportTickets: ['supportTickets'],
+  savedJobs: ['savedJobs'],
+  recentlyViewed: ['recentlyViewed'],
+  recommendedJobs: (sort) => ['recommendedJobs', sort],
+  notificationPreferences: ['notificationPreferences'],
 }

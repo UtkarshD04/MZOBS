@@ -346,6 +346,14 @@
   --explorer-teal-border: #b8d6d0;
   --explorer-bg: #f7f9fc;
   --explorer-border: #e6eaf0;
+  /* Added for "Hot Jobs by City"'s pagination-dot/trending accent — same
+     real hex values as the sitewide --color-gold* tokens (light variant;
+     this page's palette is fixed/light-only, no light-dark() elsewhere in
+     this block either), not a new brand color. Used sparingly: a small
+     accent only, never a card background — see HotJobsByCity.jsx. */
+  --explorer-gold: #c68a1f;
+  --explorer-gold-hover: #9a6b14;
+  --explorer-gold-surface: #fbf3de;
 }
 
 /* ============================================================

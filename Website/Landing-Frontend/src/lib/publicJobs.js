@@ -68,3 +68,15 @@ export async function fetchCategoryCounts({ signal } = {}) {
   if (!res.ok) throw new Error('Failed to load category counts')
   return res.json()
 }
+
+// Real, live per-city × category stats for the home page's "Hot Jobs by
+// City" section — see Backend's getPublicHotCities/hotCities.js. Returns
+// `{ cities: [{ city, slug, byFilter: { all: {...}, tech: {...}, ... } }] }`;
+// each bucket's `openings`/`salaryMin`/`salaryMax`/`topCategories`/
+// `verifiedEmployers`/`newThisWeek` are real aggregate numbers, never a
+// fixed/illustrative figure.
+export async function fetchHotCities({ signal } = {}) {
+  const res = await fetch(`${PUBLIC_JOBS_API_URL}/hot-cities`, { signal })
+  if (!res.ok) throw new Error('Failed to load hot cities')
+  return res.json()
+}
