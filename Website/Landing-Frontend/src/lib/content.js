@@ -33,7 +33,6 @@ import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 export const NAV_LINKS = [
   { label: 'Find Jobs', to: '/#job-search' },
   { label: 'Companies', to: '/#companies' },
-  { label: 'For Employers', to: '/employers' },
 ]
 
 export const HERO_DATA = {

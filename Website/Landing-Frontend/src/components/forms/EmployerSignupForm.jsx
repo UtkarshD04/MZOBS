@@ -79,7 +79,7 @@ export default function EmployerSignupForm() {
             hq: form.hq,
           })
         : await signupEmployer(form)
-      window.location.href = `${EMPLOYER_APP_URL}/dashboard?token=${encodeURIComponent(token)}`
+      window.location.href = `${EMPLOYER_APP_URL}/jobs?token=${encodeURIComponent(token)}`
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })

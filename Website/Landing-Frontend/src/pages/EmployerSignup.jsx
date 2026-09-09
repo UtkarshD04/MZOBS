@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Briefcase, CalendarCheck2, ShieldCheck } from 'lucide-react'
 import Seo from '../components/Seo'
-import Navbar from '../components/layout/Navbar'
+import EmployerNavbar from '../components/layout/EmployerNavbar'
 import Footer from '../components/layout/Footer'
 import SectionLabel from '../components/ui/SectionLabel'
 import FloatingElement from '../components/ui/FloatingElement'
@@ -17,7 +17,7 @@ export default function EmployerSignup() {
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
       <Seo path="/employers/signup" title="Create Your Employer Account — Mzobs" noindex />
-      <Navbar />
+      <EmployerNavbar />
 
       <section id="home" className="relative bg-white pt-[76px] overflow-hidden">
         <FloatingElement duration={9} distance={16} className="absolute top-24 right-[8%] w-64 h-64 rounded-full bg-[#F5F5F5] blur-3xl pointer-events-none" />

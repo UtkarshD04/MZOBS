@@ -87,6 +87,12 @@ export default function Navbar() {
                 Sign in
               </Link>
             )}
+            <Link
+              to="/employers"
+              className="text-[13.5px] font-bold text-white bg-(--jobs-navy) hover:bg-(--jobs-teal-dark) transition-colors px-4 py-2.5 rounded-lg"
+            >
+              Employer
+            </Link>
           </div>
 
           <button
@@ -149,6 +155,13 @@ export default function Navbar() {
                       Sign in
                     </Link>
                   )}
+                  <Link
+                    to="/employers"
+                    onClick={() => setOpen(false)}
+                    className="h-10 flex items-center justify-center rounded-lg bg-(--jobs-navy) text-white text-[13.5px] font-bold"
+                  >
+                    Employer
+                  </Link>
                 </div>
               </div>
             </motion.div>

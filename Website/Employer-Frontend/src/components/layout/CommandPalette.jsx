@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions, Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
-import { Briefcase, CalendarCheck, FileCheck, LayoutDashboard, Search, Users } from 'lucide-react'
+import { Briefcase, CalendarCheck, FileCheck, Search, Users } from 'lucide-react'
 import { useJobsQuery } from '../../hooks/useJobs'
 import { useCandidatesQuery } from '../../hooks/useCandidates'
 import { cn } from '../../lib/utils'
 
 const staticPages = [
-  { id: 'p-dash', label: 'Dashboard', sub: 'Hiring overview', to: '/dashboard', icon: LayoutDashboard },
   { id: 'p-jobs', label: 'Jobs', sub: 'Manage job openings', to: '/jobs', icon: Briefcase },
   { id: 'p-candidates', label: 'Candidates', sub: 'Shared by Mzobs', to: '/candidates', icon: Users },
   { id: 'p-interviews', label: 'Interviews', sub: 'Schedule & calendar', to: '/interviews', icon: CalendarCheck },
