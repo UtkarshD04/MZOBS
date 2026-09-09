@@ -1,6 +1,7 @@
 import { EyeOff } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
+import Button from '../components/ui/Button'
 import Stepper from '../components/ui/Stepper'
 import { CompanyLogo } from '../components/ui/Avatar'
 import CountUp from '../components/ui/CountUp'
@@ -10,10 +11,14 @@ import ErrorState from '../components/ui/ErrorState'
 import EmptyState from '../components/ui/EmptyState'
 import { APPLICATION_STAGES } from '../lib/constants'
 import { useApplicationsQuery } from '../hooks/useApplications'
+import { useApp } from '../context/AppContext'
+import { openWithdrawApplicationModal } from '../lib/modals'
 
 const STAGE_INDEX = { new: 1, screening: 2, shortlisted: 3, shared: 4, interview: 5, selected: 6, rejected: 6 }
+const WITHDRAWABLE_STATUSES = ['new', 'screening', 'shortlisted']
 
 export default function Applications() {
+  const app = useApp()
   const { data: applications = [], isLoading, isError, refetch } = useApplicationsQuery()
 
   if (isLoading) return <PageSkeleton />
@@ -84,6 +89,8 @@ export default function Applications() {
                       <Badge tone="green">Selected</Badge>
                     ) : a.status === 'rejected' ? (
                       <Badge tone="red">Not selected</Badge>
+                    ) : a.status === 'withdrawn' ? (
+                      <Badge tone="gray">Withdrawn</Badge>
                     ) : stage >= 4 ? (
                       <Badge tone="gold">With employer</Badge>
                     ) : (
@@ -91,16 +98,26 @@ export default function Applications() {
                     )}
                   </div>
 
-                  <div className="mt-6">
-                    <Stepper
-                      steps={APPLICATION_STAGES.map((label, i) => ({
-                        label,
-                        state: a.status === 'rejected' && i === stage - 1 ? 'rejected' : i < stage - 1 ? 'done' : i === stage - 1 ? 'current' : '',
-                      }))}
-                    />
-                  </div>
+                  {a.status !== 'withdrawn' && (
+                    <div className="mt-6">
+                      <Stepper
+                        steps={APPLICATION_STAGES.map((label, i) => ({
+                          label,
+                          state: a.status === 'rejected' && i === stage - 1 ? 'rejected' : i < stage - 1 ? 'done' : i === stage - 1 ? 'current' : '',
+                        }))}
+                      />
+                    </div>
+                  )}
 
                   {a.note && <p className="text-[12.5px] text-ink-secondary mt-5 pt-4 border-t border-border">{a.note}</p>}
+
+                  {WITHDRAWABLE_STATUSES.includes(a.status) && (
+                    <div className="mt-5 pt-4 border-t border-border flex justify-end">
+                      <Button size="sm" onClick={() => openWithdrawApplicationModal(app, a, refetch)}>
+                        Withdraw application
+                      </Button>
+                    </div>
+                  )}
                 </Card>
               </StaggerItem>
             )

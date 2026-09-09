@@ -5,7 +5,8 @@ import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
 import { CompanyLogo } from '../components/ui/Avatar'
-import { applyToJob } from '../services/applicationsService'
+import { applyToJob, withdrawApplication } from '../services/applicationsService'
+import { recordView } from '../services/recentlyViewedService'
 import { hasEmployeeToken, signInUrl } from './auth'
 
 export function fmtSalaryRange(job) {
@@ -93,6 +94,10 @@ export function openApplyModal(app, job, onApplied) {
 }
 
 export function openJobDetailModal(app, job, onApplied) {
+  // Fire-and-forget — the single call site for "viewed a job's detail";
+  // never blocks/interrupts opening the modal on failure.
+  if (hasEmployeeToken()) recordView(job.id).catch(() => {})
+
   app.openModal(
     <>
       <ModalHead title={job.title} onClose={app.closeModal} />
@@ -251,6 +256,78 @@ export function openVersionCompareModal(app) {
     </>,
     true
   )
+}
+
+export function openConfirmResumeReplaceModal(app, onConfirm) {
+  app.openModal(
+    <>
+      <ModalHead title="Replace your resume?" onClose={app.closeModal} />
+      <ModalBody>
+        <div className="flex items-start gap-2.5 rounded-xl border border-gold-dot/40 bg-gold-tint px-3.5 py-3">
+          <AlertTriangle size={15} className="text-gold-strong mt-0.5 flex-shrink-0" />
+          <p className="text-[13px] text-ink-secondary">
+            Uploading a new resume resets its verification status and starts a new review. Your previous version stays in your upload history.
+          </p>
+        </div>
+      </ModalBody>
+      <ModalFoot>
+        <Button onClick={app.closeModal}>Cancel</Button>
+        <Button
+          variant="primary"
+          onClick={() => {
+            app.closeModal()
+            onConfirm()
+          }}
+        >
+          Replace resume
+        </Button>
+      </ModalFoot>
+    </>
+  )
+}
+
+function WithdrawApplicationModalContent({ app, application, onWithdrawn }) {
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleWithdraw() {
+    setSubmitting(true)
+    setError('')
+    try {
+      await withdrawApplication(application.id)
+      app.closeModal()
+      app.addToast('success', 'Application withdrawn')
+      onWithdrawn?.()
+    } catch (err) {
+      setError(err.response?.data?.message ?? err.message ?? 'Could not withdraw right now. Please try again.')
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <>
+      <ModalHead title="Withdraw application?" onClose={app.closeModal} />
+      <ModalBody>
+        <p className="text-[13px] text-ink-secondary">
+          You're withdrawing your application for <b className="text-ink">{application.job?.title ?? 'this role'}</b>. This can't be undone, and
+          you'll need to apply again if you change your mind.
+        </p>
+        {error && <p className="text-[13px] text-red mt-3">{error}</p>}
+      </ModalBody>
+      <ModalFoot>
+        <Button onClick={app.closeModal} disabled={submitting}>
+          Cancel
+        </Button>
+        <Button variant="danger" onClick={handleWithdraw} disabled={submitting}>
+          {submitting ? 'Withdrawing...' : 'Withdraw application'}
+        </Button>
+      </ModalFoot>
+    </>
+  )
+}
+
+export function openWithdrawApplicationModal(app, application, onWithdrawn) {
+  app.openModal(<WithdrawApplicationModalContent app={app} application={application} onWithdrawn={onWithdrawn} />)
 }
 
 export function openDeleteAccountModal(app) {

@@ -12,6 +12,7 @@ import ErrorState from '../components/ui/ErrorState'
 import { useApp } from '../context/AppContext'
 import { useResumeQuery, useUploadResumeMutation } from '../hooks/useResume'
 import { FILE_BASE_URL } from '../lib/config'
+import { openConfirmResumeReplaceModal } from '../lib/modals'
 
 const VERIFICATION_STEPS = ['Uploaded', 'Received by Mzobs', 'Expert review', 'Verified', 'Eligible for dispatch']
 
@@ -29,14 +30,24 @@ export default function ResumeCenter() {
   const verified = resume.status === 'verified'
   const stepIndex = resume.status === 'none' ? -1 : verified ? 4 : resume.status === 'pending' ? 2 : 2
 
-  function handleFilePicked(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
+  function doUpload(file) {
     uploadResume.mutate(file, {
       onSuccess: () => app.addToast('success', 'Resume uploaded — sent to the Mzobs team for verification'),
       onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Upload failed. Please try again.'),
     })
+  }
+
+  function handleFilePicked(e) {
+    const file = e.target.files?.[0]
     e.target.value = ''
+    if (!file) return
+    // Replacing an existing resume resets verification — confirm first
+    // rather than silently overwriting it.
+    if (resume.status && resume.status !== 'none') {
+      openConfirmResumeReplaceModal(app, () => doUpload(file))
+    } else {
+      doUpload(file)
+    }
   }
 
   return (

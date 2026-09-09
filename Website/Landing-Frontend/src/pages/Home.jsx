@@ -8,7 +8,9 @@ import JobSearchHero from '../components/sections/home/JobSearchHero'
 import TrustStrip from '../components/sections/home/TrustStrip'
 import QuickDiscoveryStrip from '../components/sections/home/QuickDiscoveryStrip'
 import LatestJobs from '../components/sections/home/LatestJobs'
+import HotJobsByCity from '../components/sections/home/HotJobsByCity'
 import CategoryGrid from '../components/sections/home/CategoryGrid'
+import RecommendedForYou from '../components/sections/home/RecommendedForYou'
 import CompaniesHiring from '../components/sections/home/CompaniesHiring'
 import HomeEmployerCTA from '../components/sections/home/HomeEmployerCTA'
 import { fetchLatestJobs } from '../lib/publicJobs'
@@ -106,14 +108,20 @@ export default function Home() {
       {/* 5. Latest opportunities — the visual heart of the home page */}
       <LatestJobs filters={jobFilters} onFiltersChange={updateJobFilters} onClearFilters={() => setJobFilters(EMPTY_FILTERS)} />
 
-      {/* 6. Explore jobs by category — tiles filter Latest jobs in place,
+      {/* 6. Hot jobs by city — where hiring is happening right now */}
+      <HotJobsByCity />
+
+      {/* 7. Explore jobs by category — tiles filter Latest jobs in place,
           same pattern as the hero search / quick-discovery pills above. */}
       <CategoryGrid onSelect={applyJobFilters} />
 
-      {/* 7. Companies hiring through MZOBS (single, consolidated company section) */}
+      {/* 8. Jobs matching your profile — signed-in visitors only (see RecommendedForYou.jsx) */}
+      <RecommendedForYou />
+
+      {/* 9. Companies hiring through MZOBS (single, consolidated company section) */}
       <CompaniesHiring onSelect={applyJobFilters} />
 
-      {/* 8. Employer CTA band */}
+      {/* 10. Employer CTA band */}
       <HomeEmployerCTA />
 
       <Footer />

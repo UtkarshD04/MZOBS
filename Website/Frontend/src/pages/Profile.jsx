@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { Edit, Plus, ShieldCheck, Mail, Phone, Briefcase, BadgeCheck, FileText, Download, Link as LinkIcon, X } from 'lucide-react'
+import { Edit, Plus, ShieldCheck, Mail, Phone, Briefcase, BadgeCheck, FileText, Download, Link as LinkIcon, X, EyeOff } from 'lucide-react'
 import { FaLinkedin, FaGithub } from 'react-icons/fa6'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Ring from '../components/ui/Ring'
 import Button from '../components/ui/Button'
 import Avatar from '../components/ui/Avatar'
+import Switch from '../components/ui/Switch'
+import Chip from '../components/ui/Chip'
 import { Tabs } from '../components/ui/Tabs'
 import { Field, Input } from '../components/ui/Field'
 import EmptyState from '../components/ui/EmptyState'
@@ -15,8 +17,9 @@ import ErrorState from '../components/ui/ErrorState'
 import { useApp } from '../context/AppContext'
 import { useProfileQuery, useUpdateProfileMutation } from '../hooks/useProfile'
 import { FILE_BASE_URL } from '../lib/config'
+import { WORK_MODES, EMPLOYMENT_TYPES } from '../lib/jobFilters'
 
-const TAB_LABELS = ['Personal', 'Education', 'Experience', 'Projects', 'Skills', 'Resume', 'Certificates', 'Portfolio', 'Social Links']
+const TAB_LABELS = ['Personal', 'Education', 'Experience', 'Projects', 'Skills', 'Career preferences', 'Resume', 'Certificates', 'Portfolio', 'Social Links', 'Visibility']
 
 function initialsOf(name = '') {
   const parts = name.trim().split(/\s+/).filter(Boolean)
@@ -38,11 +41,14 @@ export default function Profile() {
   const [newSkill, setNewSkill] = useState('')
   const [social, setSocial] = useState(null)
   const [portfolio, setPortfolio] = useState(null)
+  const [career, setCareer] = useState(null)
+  const [newLocation, setNewLocation] = useState('')
 
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
 
   const p = personal ?? { name: profile.name, dob: profile.dob, phone: profile.phone, currentCity: profile.currentCity, gender: profile.gender }
+  const c = career ?? { preferredRole: profile.preferredRole, expectedSalaryMin: profile.expectedSalaryMin, expectedSalaryMax: profile.expectedSalaryMax }
 
   function save(patch, message = 'Saved') {
     updateProfile.mutate(patch, {
@@ -275,7 +281,90 @@ export default function Profile() {
               </>
             )}
 
-            {tab === 5 &&
+            {tab === 5 && (
+              <>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <Field label="Preferred role">
+                    <Input placeholder="e.g. Business Analyst" value={c.preferredRole ?? ''} onChange={(e) => setCareer({ ...c, preferredRole: e.target.value })} />
+                  </Field>
+                  <Field label="Expected salary (min, ₹)">
+                    <Input type="number" value={c.expectedSalaryMin ?? ''} onChange={(e) => setCareer({ ...c, expectedSalaryMin: e.target.value ? Number(e.target.value) : null })} />
+                  </Field>
+                  <Field label="Expected salary (max, ₹)">
+                    <Input type="number" value={c.expectedSalaryMax ?? ''} onChange={(e) => setCareer({ ...c, expectedSalaryMax: e.target.value ? Number(e.target.value) : null })} />
+                  </Field>
+                </div>
+                <Button
+                  variant="primary"
+                  className="mb-5"
+                  onClick={() => save({ preferredRole: c.preferredRole, expectedSalaryMin: c.expectedSalaryMin, expectedSalaryMax: c.expectedSalaryMax }, 'Career preferences saved')}
+                >
+                  <Edit size={15} /> Save changes
+                </Button>
+
+                <div className="mb-5">
+                  <label className="text-[13px] font-semibold">Preferred locations</label>
+                  <div className="flex flex-wrap gap-2 mt-2.5">
+                    {(profile.preferredLocations ?? []).map((loc) => (
+                      <span key={loc} className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink-secondary bg-surface-sunken px-3 py-1.5 rounded-md">
+                        {loc}
+                        <X size={12} className="cursor-pointer" onClick={() => save({ preferredLocations: profile.preferredLocations.filter((x) => x !== loc) })} />
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 mt-3 max-w-sm">
+                    <Input placeholder="Add a city" value={newLocation} onChange={(e) => setNewLocation(e.target.value)} />
+                    <Button
+                      disabled={!newLocation.trim()}
+                      onClick={() => {
+                        save({ preferredLocations: [...(profile.preferredLocations ?? []), newLocation.trim()] })
+                        setNewLocation('')
+                      }}
+                    >
+                      <Plus size={15} /> Add
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="mb-5">
+                  <label className="text-[13px] font-semibold">Work mode preference</label>
+                  <div className="flex flex-wrap gap-[9px] mt-2.5">
+                    {WORK_MODES.map((mode) => (
+                      <Chip
+                        key={mode}
+                        selected={(profile.workModePreference ?? []).includes(mode)}
+                        onClick={() => {
+                          const current = profile.workModePreference ?? []
+                          save({ workModePreference: current.includes(mode) ? current.filter((x) => x !== mode) : [...current, mode] })
+                        }}
+                      >
+                        {mode}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[13px] font-semibold">Job type preference</label>
+                  <div className="flex flex-wrap gap-[9px] mt-2.5">
+                    {EMPLOYMENT_TYPES.map((type) => (
+                      <Chip
+                        key={type}
+                        selected={(profile.jobTypePreference ?? []).includes(type)}
+                        onClick={() => {
+                          const current = profile.jobTypePreference ?? []
+                          save({ jobTypePreference: current.includes(type) ? current.filter((x) => x !== type) : [...current, type] })
+                        }}
+                      >
+                        {type}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {tab === 6 &&
               (profile.resume?.status && profile.resume.status !== 'none' ? (
                 <div className="flex items-center justify-between p-3.5 border border-border rounded-xl">
                   <div className="flex items-center gap-3">
@@ -300,11 +389,11 @@ export default function Profile() {
                 <EmptyState icon={FileText} title="No resume uploaded" body="Upload your resume from the Resume Center." />
               ))}
 
-            {tab === 6 && (
+            {tab === 7 && (
               <EmptyState icon={BadgeCheck} title="No certificates added" body="Certificate uploads are coming soon." />
             )}
 
-            {tab === 7 && (
+            {tab === 8 && (
               <>
                 <Field label="Portfolio URL">
                   <div className="relative">
@@ -323,7 +412,7 @@ export default function Profile() {
               </>
             )}
 
-            {tab === 8 && (
+            {tab === 9 && (
               <>
                 <Field label="LinkedIn">
                   <div className="relative">
@@ -352,6 +441,34 @@ export default function Profile() {
                 >
                   Save
                 </Button>
+              </>
+            )}
+
+            {tab === 10 && (
+              <>
+                <div className="flex items-center justify-between py-3.5 border-t border-border first:border-t-0">
+                  <div>
+                    <div className="text-[13px] font-semibold">Open to opportunities</div>
+                    <div className="text-xs text-ink-tertiary mt-1 max-w-[420px]">
+                      When off, your profile is marked "not actively looking" — Mzobs won't consider you for new requirement shortlists.
+                    </div>
+                  </div>
+                  <Switch on={profile.openToOpportunities !== false} onChange={(on) => save({ openToOpportunities: on }, on ? "You're marked open to opportunities" : 'Marked as not actively looking')} />
+                </div>
+                <div className="flex items-center justify-between py-3.5 border-t border-border">
+                  <div>
+                    <div className="text-[13px] font-semibold">Job alerts</div>
+                    <div className="text-xs text-ink-tertiary mt-1 max-w-[420px]">Get notified when a new opening matches your profile.</div>
+                  </div>
+                  <Switch on={profile.jobAlertsEnabled !== false} onChange={(on) => save({ jobAlertsEnabled: on }, 'Job alert preference saved')} />
+                </div>
+                <div className="flex items-start gap-2.5 mt-4 pt-4 border-t border-border">
+                  <EyeOff size={14} className="text-ink-tertiary mt-0.5 flex-shrink-0" />
+                  <p className="text-[12.5px] text-ink-secondary">
+                    Your contact details and resume are never shown in job search — only Mzobs staff see them, and only the employer you're shortlisted to
+                    ever receives your resume.
+                  </p>
+                </div>
               </>
             )}
           </div>

@@ -6,6 +6,7 @@ import CursorDot from './components/ui/CursorDot'
 import { requestNotificationPermission } from './lib/webPush'
 import Home from './pages/Home'
 import JobDetail from './pages/JobDetail'
+import CityJobs from './pages/CityJobs'
 import About from './pages/About'
 import OurStory from './pages/OurStory'
 import Contact from './pages/Contact'
@@ -44,6 +45,7 @@ export default function App() {
         >
           <Routes location={location}>
             <Route path="/" element={<Home />} />
+            <Route path="/jobs/city/:citySlug" element={<CityJobs />} />
             <Route path="/jobs/:id" element={<JobDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/our-story" element={<OurStory />} />

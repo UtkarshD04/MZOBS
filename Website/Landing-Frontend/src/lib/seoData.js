@@ -42,6 +42,50 @@ export const STATIC_PAGE_SEO = {
     title: 'Terms of Service — Mzobs',
     description: 'Read the terms of service that govern the use of the Mzobs platform.',
   },
+  // One entry per HOT_CITIES_DATA.cities slug (see components/sections/home/
+  // HotJobsByCity.jsx and pages/CityJobs.jsx) — adding a city there means
+  // adding its slug here too, so it gets prerendered and shows up in
+  // sitemap.xml like every other static route.
+  '/jobs/city/bengaluru': {
+    title: 'Bengaluru Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Bengaluru. Real employers, screened listings, updated as new requirements come in.',
+  },
+  '/jobs/city/mumbai': {
+    title: 'Mumbai Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Mumbai. Real employers, screened listings, updated as new requirements come in.',
+  },
+  '/jobs/city/delhi-ncr': {
+    title: 'Delhi NCR Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Delhi NCR. Real employers, screened listings, updated as new requirements come in.',
+  },
+  '/jobs/city/hyderabad': {
+    title: 'Hyderabad Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Hyderabad. Real employers, screened listings, updated as new requirements come in.',
+  },
+  '/jobs/city/pune': {
+    title: 'Pune Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Pune. Real employers, screened listings, updated as new requirements come in.',
+  },
+  '/jobs/city/chennai': {
+    title: 'Chennai Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Chennai. Real employers, screened listings, updated as new requirements come in.',
+  },
+  '/jobs/city/noida': {
+    title: 'Noida Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Noida. Real employers, screened listings, updated as new requirements come in.',
+  },
+  '/jobs/city/gurugram': {
+    title: 'Gurugram Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Gurugram. Real employers, screened listings, updated as new requirements come in.',
+  },
+  '/jobs/city/kolkata': {
+    title: 'Kolkata Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Kolkata. Real employers, screened listings, updated as new requirements come in.',
+  },
+  '/jobs/city/lucknow': {
+    title: 'Lucknow Jobs — Verified Openings Hiring Now | Mzobs',
+    description: 'Browse verified job openings in Lucknow. Real employers, screened listings, updated as new requirements come in.',
+  },
 }
 
 // Auth/dashboard-handoff routes — never worth indexing, and never
