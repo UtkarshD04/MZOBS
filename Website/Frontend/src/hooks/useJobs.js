@@ -32,6 +32,14 @@ export function useJobQuery(id) {
   return useQuery({ queryKey: queryKeys.job(id), queryFn: ({ signal }) => jobsService.getJob(id, signal), enabled: !!id })
 }
 
+export function useAppliedBasedJobsQuery() {
+  return useQuery({ queryKey: queryKeys.appliedBasedJobs, queryFn: ({ signal }) => jobsService.getAppliedBasedJobs(signal) })
+}
+
+export function useInstantHiringJobsQuery() {
+  return useQuery({ queryKey: queryKeys.instantHiringJobs, queryFn: ({ signal }) => jobsService.getInstantHiringJobs(signal) })
+}
+
 // Job-title / location autocomplete. Only fetches while `enabled` (the
 // dropdown is actually open) — no point pre-fetching suggestions for a
 // closed panel.

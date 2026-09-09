@@ -34,13 +34,18 @@ const app = (
 )
 
 const container = document.getElementById('root')
+const initialLoader = document.getElementById('initial-loader')
 
 // Prerendered/SSR'd routes ship real markup inside #root — hydrate it.
 // Everything else (plain `npm run dev`, or the client-only SPA shell
 // server.js serves for auth/dashboard routes) starts from an empty root,
 // so hydrating there would just log a mismatch warning for no benefit.
 if (container.hasChildNodes()) {
+  // Real content is already on screen — the static loader in index.html
+  // would only ever cover it for a single paint, so drop it now.
+  initialLoader?.remove()
   hydrateRoot(container, app)
 } else {
   createRoot(container).render(app)
+  initialLoader?.remove()
 }

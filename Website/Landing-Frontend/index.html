@@ -21,6 +21,20 @@
   <body>
     <div id="root"><!--app-html--></div>
     <!--app-tail-->
+    <!--
+      Shown only while a client-only route (auth/dashboard) is still
+      rendering into an empty #root — entry-client.jsx removes it right
+      after mount. Prerendered/SSR'd routes already have real markup in
+      #root by the time this paints, so entry-client.jsx removes it
+      immediately for those instead of waiting.
+    -->
+    <div id="initial-loader" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#F7F9FC;z-index:9999;">
+      <div style="width:32px;height:32px;border-radius:50%;border:3px solid #D7EEE7;border-top-color:#0B7A6D;animation:mzobs-spin 0.7s linear infinite;"></div>
+      <span style="font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:14px;color:#16324F;letter-spacing:0.02em;">MZOBS</span>
+    </div>
+    <style>
+      @keyframes mzobs-spin { to { transform: rotate(360deg); } }
+    </style>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script type="module" src="/src/entry-client.jsx"></script>
   </body>
