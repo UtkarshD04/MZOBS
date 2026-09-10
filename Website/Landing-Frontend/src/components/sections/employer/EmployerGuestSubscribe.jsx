@@ -1,15 +1,14 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { X, Phone, Hash, CheckCircle2, Loader2, Copy, Check, ArrowRight } from 'lucide-react'
-import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../../lib/msg91Widget'
-import { verifyEmployerPhoneWidget, createGuestSubscriptionOrder, guestSubscribeSignup } from '../../../lib/employerAuth'
+import { X, Phone, CheckCircle2, Loader2, Copy, Check, ArrowRight } from 'lucide-react'
+import { createGuestSubscriptionOrder, guestSubscribeSignup } from '../../../lib/employerAuth'
 import { openRazorpayCheckout } from '../../../lib/razorpay'
 import { EMPLOYER_APP_URL } from '../../../lib/config'
 
 const inputClass =
   'w-full h-11 px-3.5 rounded-xl border border-[#20251F]/15 bg-white text-[13.5px] text-[#20251F] outline-none transition-colors placeholder:text-[#20251F]/35 focus:border-[#246B5A] focus:ring-[3px] focus:ring-[#246B5A]/15'
 
-// The pricing page's "no signup form" path: verify phone by OTP, pay the
+// The pricing page's "no signup form" path: take the phone number, pay the
 // plan price, and the account (Company + Admin user + an already-active
 // subscription) is created server-side in that same payment-verify call —
 // see guestSubscribeSignup in Backend/src/controllers/authController.js.
@@ -18,12 +17,6 @@ const inputClass =
 export default function EmployerGuestSubscribe({ open, onClose }) {
   const [step, setStep] = useState('phone') // phone | paying | success
   const [phone, setPhone] = useState('')
-  const [otp, setOtp] = useState('')
-  const [otpSent, setOtpSent] = useState(false)
-  const [sendingOtp, setSendingOtp] = useState(false)
-  const [verifyingOtp, setVerifyingOtp] = useState(false)
-  const [otpError, setOtpError] = useState('')
-  const [phoneToken, setPhoneToken] = useState(null)
 
   const [payError, setPayError] = useState('')
   const [result, setResult] = useState(null)
@@ -32,10 +25,6 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
   function reset() {
     setStep('phone')
     setPhone('')
-    setOtp('')
-    setOtpSent(false)
-    setOtpError('')
-    setPhoneToken(null)
     setPayError('')
     setResult(null)
     setCopied(false)
@@ -47,48 +36,21 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
     onClose()
   }
 
-  async function handleSendOtp() {
-    setOtpError('')
-    setSendingOtp(true)
-    try {
-      if (otpSent) await retryWidgetOtp('SMS')
-      else await sendWidgetOtp(phone)
-      setOtpSent(true)
-      setOtp('')
-    } catch (err) {
-      setOtpError(err.message)
-    } finally {
-      setSendingOtp(false)
-    }
+  function handleContinue() {
+    setStep('paying')
+    startPayment()
   }
 
-  async function handleVerifyOtp() {
-    setOtpError('')
-    setVerifyingOtp(true)
-    try {
-      const widgetResult = await verifyWidgetOtp(otp)
-      const { phoneToken: token } = await verifyEmployerPhoneWidget({ phone, accessToken: widgetResult.message })
-      setPhoneToken(token)
-      setStep('paying')
-      startPayment(token)
-    } catch (err) {
-      setOtpError(err.message)
-    } finally {
-      setVerifyingOtp(false)
-    }
-  }
-
-  async function startPayment(token) {
+  async function startPayment() {
     setPayError('')
     try {
       const order = await createGuestSubscriptionOrder()
       const signupResult = order.mock
-        ? await guestSubscribeSignup({ phone, phoneToken: token, mockOrderId: order.orderId })
+        ? await guestSubscribeSignup({ phone, mockOrderId: order.orderId })
         : await (async () => {
             const paid = await openRazorpayCheckout(order)
             return guestSubscribeSignup({
               phone,
-              phoneToken: token,
               razorpay_order_id: paid.razorpay_order_id,
               razorpay_payment_id: paid.razorpay_payment_id,
               razorpay_signature: paid.razorpay_signature,
@@ -147,9 +109,9 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
 
             {step === 'phone' && (
               <>
-                <h3 className="font-serif text-2xl font-bold text-[#20251F]">Verify your mobile number</h3>
+                <h3 className="font-serif text-2xl font-bold text-[#20251F]">Add your mobile number</h3>
                 <p className="text-[13px] text-[#526051] mt-1.5 mb-6">
-                  We'll text you a one-time code, then take you straight to payment — no signup form to fill in.
+                  We'll use this to reach you about your account — then take you straight to payment, no signup form to fill in.
                 </p>
 
                 {payError && <p className="text-[12.5px] text-red-600 mb-4 -mt-2">{payError}</p>}
@@ -165,62 +127,21 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                       type="tel"
                       inputMode="numeric"
                       value={phone}
-                      onChange={(e) => {
-                        setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))
-                        setOtpSent(false)
-                        setOtp('')
-                        setPhoneToken(null)
-                      }}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                       placeholder="98765 43210"
-                      disabled={Boolean(phoneToken)}
                       className={`${inputClass} pl-9`}
                     />
                   </div>
                 </div>
 
-                {!otpSent ? (
-                  <button
-                    type="button"
-                    onClick={handleSendOtp}
-                    disabled={sendingOtp || phone.length !== 10}
-                    className="mt-3 w-full h-11 rounded-xl border border-[#20251F]/15 text-[13.5px] font-bold text-[#20251F] hover:border-[#246B5A] hover:text-[#246B5A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {sendingOtp ? 'Sending…' : 'Send OTP'}
-                  </button>
-                ) : (
-                  <div className="mt-3">
-                    <label className="block text-[12.5px] font-bold text-[#20251F] mb-1.5">Enter the 6-digit code</label>
-                    <div className="relative">
-                      <Hash size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#20251F]/40" />
-                      <input
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                        placeholder="6-digit code"
-                        inputMode="numeric"
-                        className={`${inputClass} pl-9`}
-                      />
-                    </div>
-                    <div className="flex items-center gap-3 mt-3">
-                      <button
-                        type="button"
-                        onClick={handleVerifyOtp}
-                        disabled={verifyingOtp || otp.length !== 6}
-                        className="h-10 px-4 rounded-xl bg-[#20251F] text-[#FAF7F1] text-[13px] font-bold hover:bg-[#246B5A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {verifyingOtp ? 'Verifying…' : 'Verify & continue'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleSendOtp}
-                        disabled={sendingOtp}
-                        className="text-[12.5px] font-bold text-[#246B5A] hover:underline disabled:opacity-50"
-                      >
-                        Resend OTP
-                      </button>
-                    </div>
-                  </div>
-                )}
-                {otpError && <p className="text-[12.5px] text-red-600 mt-3">{otpError}</p>}
+                <button
+                  type="button"
+                  onClick={handleContinue}
+                  disabled={phone.length !== 10}
+                  className="mt-3 w-full h-11 rounded-xl bg-[#20251F] text-[#FAF7F1] text-[13.5px] font-bold hover:bg-[#246B5A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Continue to payment
+                </button>
               </>
             )}
 
