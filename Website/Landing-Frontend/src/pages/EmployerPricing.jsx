@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { CheckCircle2, ShieldCheck, IndianRupee, RefreshCcw, FileCheck2, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import Seo from '../components/Seo'
@@ -6,6 +5,7 @@ import { STATIC_PAGE_SEO } from '../lib/seoData'
 import EmployerNavbar from '../components/layout/EmployerNavbar'
 import EmployerFooter from '../components/layout/EmployerFooter'
 import EmployerCTABand from '../components/sections/employer/EmployerCTABand'
+import EmployerGuestSubscribe from '../components/sections/employer/EmployerGuestSubscribe'
 import { FadeInLoad, FadeInView } from '../components/sections/employer/employerMotion'
 
 // Mirrors Backend/src/config/env.js (EMPLOYER_ANNUAL_PLAN_AMOUNT_PAISE,
@@ -48,8 +48,8 @@ const FAQS = [
     a: 'No. This is a one-time annual payment. MZOBS never auto-charges you — you renew manually from your dashboard whenever you choose.',
   },
   {
-    q: 'When do I actually pay?',
-    a: 'Create your free employer account first, then subscribe from your dashboard whenever you’re ready to post jobs or view applicant resumes.',
+    q: 'How do I subscribe?',
+    a: 'Verify your mobile number and pay right from this page — no signup form. Your account, already on the active plan, is ready the moment payment goes through.',
   },
 ]
 
@@ -80,6 +80,7 @@ function FaqItem({ item, isOpen, onToggle }) {
 
 export default function EmployerPricing() {
   const [openFaq, setOpenFaq] = useState(0)
+  const [subscribeOpen, setSubscribeOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-[#F5F6F4] text-[#20251F] font-sans antialiased selection:bg-[#DDE6DF]">
@@ -126,14 +127,15 @@ export default function EmployerPricing() {
               ))}
             </ul>
 
-            <Link
-              to="/employers/signup"
+            <button
+              type="button"
+              onClick={() => setSubscribeOpen(true)}
               className="mt-8 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[46px] rounded-full bg-[#20251F] text-[#FAF7F1] text-sm font-bold transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#246B5A]"
             >
               <IndianRupee size={15} /> Create account to subscribe
-            </Link>
+            </button>
             <p className="mt-3 text-center text-[12px] text-[#526051]">
-              Free to sign up — pay only when you're ready to post jobs.
+              Just verify your mobile number and pay — your account is created for you.
             </p>
           </div>
         </FadeInView>
@@ -170,6 +172,8 @@ export default function EmployerPricing() {
 
       <EmployerCTABand />
       <EmployerFooter />
+
+      <EmployerGuestSubscribe open={subscribeOpen} onClose={() => setSubscribeOpen(false)} />
     </div>
   )
 }
