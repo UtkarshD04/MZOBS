@@ -1,34 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  ArrowRight,
-  ArrowLeft,
-  Eye,
-  EyeOff,
-  CheckCircle2,
-  User,
-  Mail,
-  Phone,
-  Lock,
-  GraduationCap,
-  ShieldCheck,
-  GraduationCap as GraduationCapIcon,
-  Briefcase,
-  Check,
-  UploadCloud,
-  FileText,
-  Trash2,
-} from 'lucide-react'
-import { Field, Input, Select, PrimaryButton, SecondaryButton } from '../ui/JobsAuthField'
+import { ArrowRight, ArrowLeft, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, ShieldCheck } from 'lucide-react'
+import { Field, Input, PrimaryButton, SecondaryButton } from '../ui/JobsAuthField'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
 import StepProgress from '../ui/StepProgress'
 import OtpInput from '../ui/OtpInput'
 import { loginEmployeeWithGoogle, signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../lib/employeeAuth'
 import { saveEmployeeSession } from '../../lib/employeeSession'
-import { uploadEmployeeResume, validateResumeFileClientSide } from '../../lib/employeeResume'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
-import { GRADUATION_OPTIONS } from '../../lib/graduationOptions'
 import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../lib/config'
 
 // OTP verification is optional, but there's no point offering a "Send OTP"
@@ -36,27 +16,10 @@ import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../lib/config'
 // credentials — just skip straight to the phone-number-only step.
 const OTP_CONFIGURED = Boolean(MSG91_WIDGET_ID && MSG91_TOKEN_AUTH)
 
-const STEP_LABELS = ['Account', 'Verify mobile', 'Career profile']
+const STEP_LABELS = ['Account', 'Mobile number']
 const RESEND_COOLDOWN = 30
 
-const CAREER_STAGES = [
-  {
-    value: 'fresher',
-    icon: GraduationCapIcon,
-    title: 'Fresher',
-    subtitle: 'I am starting my career or have less than 1 year of experience.',
-    tag: 'Entry-level roles',
-  },
-  {
-    value: 'experienced',
-    icon: Briefcase,
-    title: 'Experienced',
-    subtitle: 'I have professional work experience and want my next opportunity.',
-    tag: 'Professional roles',
-  },
-]
-
-const initialForm = { name: '', email: '', phone: '', password: '', experience: 'fresher', graduation: '' }
+const initialForm = { name: '', email: '', phone: '', password: '' }
 
 const stepTransition = {
   initial: { opacity: 0, x: 12 },
@@ -84,13 +47,6 @@ function validateStep2(form) {
   return errors
 }
 
-function validateStep3(form) {
-  const errors = {}
-  if (!form.experience) errors.experience = 'Please select your career stage.'
-  if (!form.graduation) errors.graduation = 'Please select your graduation.'
-  return errors
-}
-
 export default function EmployeeSignupForm() {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
@@ -99,13 +55,6 @@ export default function EmployeeSignupForm() {
   const [status, setStatus] = useState('idle') // idle | submitting | success
   const [showPassword, setShowPassword] = useState(false)
   const [googleCredential, setGoogleCredential] = useState(null)
-
-  // Uploaded only after the account (and its auth token) actually exists —
-  // held here as a plain File in the meantime. Entirely optional: signup
-  // never fails because of this, it's just skipped/warned about on failure.
-  const [resumeFile, setResumeFile] = useState(null)
-  const [resumeError, setResumeError] = useState('')
-  const [resumeWarning, setResumeWarning] = useState('')
 
   const [otp, setOtp] = useState('')
   const [otpSent, setOtpSent] = useState(false)
@@ -178,24 +127,6 @@ export default function EmployeeSignupForm() {
     }
   }
 
-  function handleResumeChange(e) {
-    const file = e.target.files?.[0] ?? null
-    e.target.value = '' // lets picking the same file again after removing it still fire onChange
-    if (!file) return
-    const error = validateResumeFileClientSide(file)
-    if (error) {
-      setResumeError(error)
-      return
-    }
-    setResumeError('')
-    setResumeFile(file)
-  }
-
-  function handleRemoveResume() {
-    setResumeFile(null)
-    setResumeError('')
-  }
-
   async function handleGoogleCredential(credential) {
     setErrors({})
     // If an account already exists for this Google email, log straight in
@@ -225,50 +156,21 @@ export default function EmployeeSignupForm() {
     setStep(2)
   }
 
-  function handleContinueFromStep2(e) {
-    e.preventDefault()
-    const nextErrors = validateStep2(form)
-    setErrors(nextErrors)
-    if (Object.keys(nextErrors).length > 0) return
-    setStep(3)
-  }
-
   async function handleSubmit(e) {
     e.preventDefault()
-    const nextErrors = validateStep3(form)
+    const nextErrors = validateStep2(form)
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
     setStatus('submitting')
     try {
       const { token, employee } = googleCredential
-        ? await signupEmployeeWithGoogle({
-            credential: googleCredential,
-            phone: form.phone,
-            experience: form.experience,
-            graduation: form.graduation,
-            phoneToken,
-          })
+        ? await signupEmployeeWithGoogle({ credential: googleCredential, phone: form.phone, phoneToken })
         : await signupEmployee({ ...form, phoneToken })
       saveEmployeeSession({ token, employee })
 
-      let uploadFailed = false
-      if (resumeFile) {
-        try {
-          await uploadEmployeeResume(token, resumeFile)
-        } catch (err) {
-          uploadFailed = true
-          setResumeWarning(err.message || 'Could not upload your resume. You can add it later.')
-        }
-      }
-
       setStatus('success')
-      setTimeout(
-        () => {
-          navigate('/')
-        },
-        uploadFailed ? 2200 : 900
-      )
+      setTimeout(() => navigate('/'), 900)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
@@ -282,7 +184,6 @@ export default function EmployeeSignupForm() {
           <CheckCircle2 size={28} className="text-(--jobs-teal-dark)" />
         </div>
         <p className="text-base font-black text-(--jobs-navy)">Your MZOBS account is ready.</p>
-        {resumeWarning && <p className="text-[13px] text-amber-600 font-semibold max-w-72">{resumeWarning}</p>}
         <p className="text-[13px] text-(--jobs-ink-soft)">Taking you back home...</p>
       </div>
     )
@@ -362,14 +263,14 @@ export default function EmployeeSignupForm() {
         )}
 
         {step === 2 && (
-          <motion.form key="step-2" {...stepTransition} onSubmit={handleContinueFromStep2} noValidate>
+          <motion.form key="step-2" {...stepTransition} onSubmit={handleSubmit} noValidate>
             <div className="flex items-center gap-2 mb-1">
               <button type="button" onClick={() => setStep(1)} className="text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors" aria-label="Back">
                 <ArrowLeft size={16} />
               </button>
-              <h2 className="text-base font-black text-(--jobs-navy)">Verify your mobile number</h2>
+              <h2 className="text-base font-black text-(--jobs-navy)">Mobile number</h2>
             </div>
-            <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5 ml-6">We'll send a one-time code to confirm it's really you.</p>
+            <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5 ml-6">So employers can reach you about your applications.</p>
 
             <Field label="Mobile number" error={errors.phone}>
               <div className="flex flex-wrap sm:flex-nowrap gap-2">
@@ -439,113 +340,10 @@ export default function EmployeeSignupForm() {
               </div>
             ) : null}
 
-            <PrimaryButton className="mt-1" disabled={status === 'submitting'}>
-              Verify and continue <ArrowRight size={16} />
-            </PrimaryButton>
-          </motion.form>
-        )}
-
-        {step === 3 && (
-          <motion.form key="step-3" {...stepTransition} onSubmit={handleSubmit} noValidate>
-            <div className="flex items-center gap-2 mb-1">
-              <button type="button" onClick={() => setStep(2)} className="text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors" aria-label="Back">
-                <ArrowLeft size={16} />
-              </button>
-              <h2 className="text-base font-black text-(--jobs-navy)">Career profile</h2>
-            </div>
-            <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5 ml-6">Helps us match you to the right roles.</p>
-
-            <fieldset className="mb-5">
-              <legend className="text-[13.5px] font-bold text-(--jobs-navy) mb-2.5">Where are you in your career?</legend>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Career stage">
-                {CAREER_STAGES.map(({ value, icon: Icon, title, subtitle, tag }) => {
-                  const selected = form.experience === value
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      role="radio"
-                      aria-checked={selected}
-                      onClick={() => update('experience', value)}
-                      className={`relative text-left rounded-2xl border p-4 transition-all duration-150 ${
-                        selected
-                          ? 'border-(--jobs-blue) bg-(--jobs-blue-tint) shadow-[0_10px_24px_-14px_var(--jobs-blue)] -translate-y-0.5'
-                          : 'border-(--jobs-border) bg-white hover:border-(--jobs-navy)/25'
-                      }`}
-                    >
-                      <div
-                        className={`absolute top-3.5 right-3.5 w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
-                          selected ? 'bg-(--jobs-blue) border-(--jobs-blue)' : 'border-(--jobs-border) bg-white'
-                        }`}
-                      >
-                        {selected && <Check size={12} strokeWidth={3} className="text-white" />}
-                      </div>
-
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${
-                          selected ? 'bg-white text-(--jobs-blue-dark)' : 'bg-(--jobs-bg-subtle) text-(--jobs-ink-soft)'
-                        }`}
-                      >
-                        <Icon size={17} strokeWidth={1.8} />
-                      </div>
-
-                      <p className="text-[14px] font-black text-(--jobs-navy) pr-6">{title}</p>
-                      <p className="text-[12px] text-(--jobs-ink-soft) mt-1 leading-relaxed pr-2">{subtitle}</p>
-
-                      <span
-                        className={`inline-flex items-center h-5 px-2 mt-2.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
-                          selected ? 'bg-white text-(--jobs-blue-dark)' : 'bg-(--jobs-bg-subtle) text-(--jobs-ink-soft)'
-                        }`}
-                      >
-                        {tag}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-              {errors.experience && <span className="text-xs text-red-600 mt-2 block">{errors.experience}</span>}
-            </fieldset>
-
-            <Field label="Graduation" error={errors.graduation}>
-              <Select icon={GraduationCap} value={form.graduation} onChange={(e) => update('graduation', e.target.value)} error={errors.graduation}>
-                <option value="" disabled>
-                  Select your graduation
-                </option>
-                {GRADUATION_OPTIONS.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-
-            <Field label="Resume" optional error={resumeError} hint={!resumeFile ? 'PDF, DOC or DOCX — up to 5MB.' : undefined}>
-              {resumeFile ? (
-                <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle)">
-                  <FileText size={18} className="text-(--jobs-blue-dark) shrink-0" />
-                  <span className="flex-1 min-w-0 text-[13px] font-semibold text-(--jobs-navy) truncate">{resumeFile.name}</span>
-                  <button
-                    type="button"
-                    onClick={handleRemoveResume}
-                    className="text-(--jobs-ink-soft) hover:text-red-600 transition-colors shrink-0"
-                    aria-label="Remove resume"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ) : (
-                <label className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-(--jobs-border) bg-(--jobs-bg-subtle) cursor-pointer hover:border-(--jobs-blue)/50 transition-colors">
-                  <UploadCloud size={18} className="text-(--jobs-ink-soft) shrink-0" />
-                  <span className="text-[13px] font-semibold text-(--jobs-ink-soft)">Click to upload your resume</span>
-                  <input type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={handleResumeChange} />
-                </label>
-              )}
-            </Field>
-
             {errors.form && <p className="text-xs text-red-600 mb-4 -mt-2">{errors.form}</p>}
 
-            <PrimaryButton disabled={status === 'submitting'} className="mt-2">
-              {status === 'submitting' ? (resumeFile ? 'Creating your account and uploading resume...' : 'Creating your account...') : <>Create account <ArrowRight size={16} /></>}
+            <PrimaryButton className="mt-1" disabled={status === 'submitting'}>
+              {status === 'submitting' ? 'Creating your account...' : <>Create account <ArrowRight size={16} /></>}
             </PrimaryButton>
 
             <p className="flex items-start gap-2 mt-4 text-[11.5px] text-(--jobs-ink-soft) leading-relaxed">
