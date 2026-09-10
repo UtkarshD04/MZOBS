@@ -10,6 +10,16 @@ let loadPromise = null
 function loadWidget() {
   if (loadPromise) return loadPromise
 
+  // Without these, MSG91's widget either rejects silently or never calls
+  // either callback — sendWidgetOtp would then hang forever with no error,
+  // leaving the caller's "Sending..." state (and any button gated on OTP
+  // verification, like Create account) stuck with no visible explanation.
+  // Failing fast here turns that into a diagnosable error instead.
+  if (!MSG91_WIDGET_ID || !MSG91_TOKEN_AUTH) {
+    loadPromise = Promise.reject(new Error('OTP sign-in is not configured on this deployment. Please try again later or contact support.'))
+    return loadPromise
+  }
+
   loadPromise = new Promise((resolve, reject) => {
     if (typeof window.sendOtp === 'function') return resolve()
 
