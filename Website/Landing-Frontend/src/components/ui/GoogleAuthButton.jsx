@@ -34,20 +34,24 @@ export function GoogleAuthButton({ onCredential, onError, label = 'Continue with
   const wrapRef = useRef(null)
   const [width, setWidth] = useState(0)
   const [hovered, setHovered] = useState(false)
+  // Track the width that was passed to GoogleLogin on first mount — we never
+  // update it after that so the component stays mounted and initialize() is
+  // only called once, avoiding the "called multiple times" GSI warning.
+  const mountedWidthRef = useRef(0)
 
   useEffect(() => {
     const el = wrapRef.current
     if (!el) return
-    const observer = new ResizeObserver(([entry]) => setWidth(Math.round(entry.contentRect.width)))
+    const observer = new ResizeObserver(([entry]) => {
+      const w = Math.round(entry.contentRect.width)
+      setWidth(w)
+      // Capture the first non-zero measurement as the stable mount width.
+      if (!mountedWidthRef.current && w > 0) mountedWidthRef.current = w
+    })
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
-  // Without a client ID, @react-oauth/google can't render the real
-  // (invisible, overlaid) button below at all — clicking the fake button
-  // would then silently do nothing with no error anywhere. Surfacing that
-  // as a disabled state + a loud onError instead turns a "button doesn't
-  // work, no idea why" report into a diagnosable one.
   if (!GOOGLE_CLIENT_ID) {
     return (
       <button
@@ -77,7 +81,10 @@ export function GoogleAuthButton({ onCredential, onError, label = 'Continue with
         {label}
       </div>
 
-      {width > 0 && (
+      {/* Render once width is known and never unmount — passing a stable
+          mountedWidthRef value means GoogleLogin's key never changes, so
+          initialize() is called exactly once per page load. */}
+      {mountedWidthRef.current > 0 && (
         <div className="absolute inset-0 overflow-hidden rounded-xl opacity-0">
           <GoogleLogin
             onSuccess={(res) => {
@@ -85,7 +92,7 @@ export function GoogleAuthButton({ onCredential, onError, label = 'Continue with
               else onError?.('Google sign-in did not return a credential. Please try again.')
             }}
             onError={() => onError?.('Google sign-in failed. Please try again.')}
-            width={width}
+            width={mountedWidthRef.current}
             size="large"
           />
         </div>
