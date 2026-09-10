@@ -24,6 +24,7 @@ export default function TopNavbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 z-[60] flex items-center gap-4 px-5 bg-surface/90 backdrop-blur-xl border-b border-border">
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-[#246B5A]" />
       <button onClick={() => setMobileSidebarOpen((v) => !v)} className="lg:hidden w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover">
         <MenuIcon size={18} />
       </button>

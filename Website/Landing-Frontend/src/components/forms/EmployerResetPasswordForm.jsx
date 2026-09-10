@@ -43,10 +43,10 @@ export default function EmployerResetPasswordForm() {
   if (!token) {
     return (
       <div className="text-center py-6">
-        <p className="text-sm text-[#595959]">
+        <p className="text-sm text-[#526051]">
           This reset link is missing or invalid. Please request a new one.
         </p>
-        <Link to="/employers/forgot-password" className="inline-block mt-4 text-xs font-bold text-[#595959] hover:text-black transition-colors">
+        <Link to="/employers/forgot-password" className="inline-block mt-4 text-xs font-bold text-[#526051] hover:text-[#246B5A] transition-colors">
           Request a new link
         </Link>
       </div>
@@ -56,11 +56,11 @@ export default function EmployerResetPasswordForm() {
   if (status === 'success') {
     return (
       <div className="flex flex-col items-center justify-center text-center py-6">
-        <div className="w-14 h-14 rounded-full bg-green-tint text-green flex items-center justify-center mb-4">
+        <div className="w-14 h-14 rounded-full bg-[#DDE6DF] text-[#246B5A] flex items-center justify-center mb-4">
           <CheckCircle2 size={26} />
         </div>
-        <h3 className="text-lg font-black text-black">Password reset</h3>
-        <p className="text-[13.5px] text-[#595959] mt-1.5 max-w-xs">
+        <h3 className="font-serif text-lg font-bold text-[#20251F]">Password reset</h3>
+        <p className="text-[13.5px] text-[#526051] mt-1.5 max-w-xs">
           Your password has been updated. You can now sign in with your new password.
         </p>
         <LinkButton to="/employers/signin" className="mt-6">

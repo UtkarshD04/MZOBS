@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { GoogleLogin } from '@react-oauth/google'
+import { GOOGLE_CLIENT_ID } from '../../lib/config'
 
 export function OrDivider({ label = 'or' }) {
   return (
@@ -41,6 +42,24 @@ export function GoogleAuthButton({ onCredential, onError, label = 'Continue with
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
+
+  // Without a client ID, @react-oauth/google can't render the real
+  // (invisible, overlaid) button below at all — clicking the fake button
+  // would then silently do nothing with no error anywhere. Surfacing that
+  // as a disabled state + a loud onError instead turns a "button doesn't
+  // work, no idea why" report into a diagnosable one.
+  if (!GOOGLE_CLIENT_ID) {
+    return (
+      <button
+        type="button"
+        onClick={() => onError?.('Google sign-in is not configured on this deployment (missing client ID).')}
+        className="relative w-full h-11 mb-2 flex items-center justify-center gap-2.5 rounded-xl border border-[#C9C9C9] bg-[#F5F5F5] text-[13.5px] font-bold text-black/40 cursor-not-allowed"
+      >
+        <GoogleGLogo />
+        {label}
+      </button>
+    )
+  }
 
   return (
     <div

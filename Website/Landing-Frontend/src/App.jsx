@@ -18,6 +18,7 @@ import EmployeeSignin from './pages/EmployeeSignin'
 import EmployeeForgotPassword from './pages/EmployeeForgotPassword'
 import EmployeeResetPassword from './pages/EmployeeResetPassword'
 import Employer from './pages/Employer'
+import EmployerPricing from './pages/EmployerPricing'
 import EmployerSignup from './pages/EmployerSignup'
 import EmployerSignin from './pages/EmployerSignin'
 import EmployerForgotPassword from './pages/EmployerForgotPassword'
@@ -56,6 +57,7 @@ export default function App() {
             <Route path="/employees/forgot-password" element={<EmployeeForgotPassword />} />
             <Route path="/employees/reset-password" element={<EmployeeResetPassword />} />
             <Route path="/employers" element={<Employer />} />
+            <Route path="/employers/pricing" element={<EmployerPricing />} />
             <Route path="/employers/signup" element={<EmployerSignup />} />
             <Route path="/employers/signin" element={<EmployerSignin />} />
             <Route path="/employers/forgot-password" element={<EmployerForgotPassword />} />

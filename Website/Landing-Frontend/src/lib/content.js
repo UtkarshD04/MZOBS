@@ -703,22 +703,22 @@ export const EMPLOYER_QUALITY_POINTS = [
   {
     icon: ShieldCheck,
     title: "Manually Verified Resumes",
-    desc: "Every resume is personally checked by our operations team — not just auto-filtered by keywords."
+    desc: "Every resume is personally checked by our operations team before a candidate is even allowed to apply — not just auto-filtered by keywords."
   },
   {
     icon: Target,
-    title: "Real Skills, Not Just Claims",
-    desc: "Technical skills, certificates and past experience are validated before a profile is shortlisted."
+    title: "Matched To Your Requirement",
+    desc: "Applicants are scored against the exact role, skills and experience you listed — not a generic resume dump."
   },
   {
     icon: MessageCircle,
-    title: "Mock Interviews Conducted",
-    desc: "Candidates go through a mock interview round so you meet people who can actually communicate and perform."
+    title: "No Middleman Delay",
+    desc: "There's no staff queue sitting between a candidate and your dashboard — once they apply, you see them."
   },
   {
     icon: CheckCircle2,
-    title: "Curated Shortlists, No Resume Dumps",
-    desc: "You receive only genuine, job-ready profiles matched to your requirement — never a mass forward of unread resumes."
+    title: "You're In Control",
+    desc: "Shortlist, message or reject directly from your dashboard the moment an application comes in."
   }
 ]
 export const HOME_STATS = WHO_WE_ARE_DATA.stats.map(s => ({ display: s.number, label: s.label }))

@@ -31,3 +31,22 @@ export function useSetCandidateStage() {
     onError: () => toast.error('Could not update candidate stage.'),
   })
 }
+
+// Fetched on demand (not embedded in the list/profile response) so a plain
+// `GET /candidates` never leaks contact info — each call is what the
+// backend actually logs as an access event. Callers should pass
+// `enabled: false` whenever the plan is known to be inactive, so the
+// request (and the resulting 403) never fires in the first place — private
+// data should never render briefly before being masked.
+export function useCandidatePrivateDetailsQuery(id, { enabled = true } = {}) {
+  return useQuery({
+    queryKey: ['candidates', id, 'private-details'],
+    queryFn: () => candidatesService.getCandidatePrivateDetails(id),
+    enabled: !!id && enabled,
+    retry: false,
+  })
+}
+
+export function useCandidateResumeUrl() {
+  return useMutation({ mutationFn: (id) => candidatesService.getCandidateResumeUrl(id) })
+}

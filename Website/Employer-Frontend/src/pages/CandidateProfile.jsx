@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
-  ArrowLeft, Briefcase, CalendarPlus, Download, ExternalLink, GraduationCap, Mail, MapPin, Phone,
+  ArrowLeft, Briefcase, CalendarPlus, Download, ExternalLink, GraduationCap, Lock, Mail, MapPin, Phone,
   ThumbsDown, ThumbsUp, Wallet, FileText, Award, FolderGit2,
 } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
@@ -15,7 +15,8 @@ import ErrorState from '../components/ui/ErrorState'
 import EmptyState from '../components/ui/EmptyState'
 import Modal from '../components/ui/Modal'
 import { Field, Textarea } from '../components/ui/Field'
-import { useCandidateQuery, useSetCandidateStage } from '../hooks/useCandidates'
+import { useCandidateQuery, useSetCandidateStage, useCandidatePrivateDetailsQuery, useCandidateResumeUrl } from '../hooks/useCandidates'
+import { useAccessStatusQuery } from '../hooks/useSubscription'
 import { useInterviewsQuery } from '../hooks/useInterviews'
 import { fmtDateTime } from '../lib/utils'
 import { FILE_BASE_URL } from '../lib/config'
@@ -25,10 +26,24 @@ export default function CandidateProfile() {
   const navigate = useNavigate()
   const { data: candidate, isLoading, isError, refetch } = useCandidateQuery(id)
   const { data: interviews = [] } = useInterviewsQuery()
+  const { data: access } = useAccessStatusQuery()
   const setStage = useSetCandidateStage()
   const [rejectOpen, setRejectOpen] = useState(false)
   const [reason, setReason] = useState('')
   const [resumeOpen, setResumeOpen] = useState(false)
+  const getResumeUrl = useCandidateResumeUrl()
+  const [resumeUrl, setResumeUrl] = useState(null)
+
+  // Only fired at all when the plan is active — private data never renders
+  // briefly before being masked, it's just never requested in the inactive case.
+  const { data: privateDetails, isFetching: privateDetailsLoading } = useCandidatePrivateDetailsQuery(id, { enabled: !!access?.active })
+
+  function openResume() {
+    setResumeOpen(true)
+    setResumeUrl(null)
+    if (!access?.active) return
+    getResumeUrl.mutate(id, { onSuccess: (res) => setResumeUrl(res.url) })
+  }
 
   if (isLoading) return <PageSkeleton />
   if (isError || !candidate) return <ErrorState title="Candidate not found" body="This candidate may have been removed from your shared pool." onRetry={() => refetch()} />
@@ -47,7 +62,7 @@ export default function CandidateProfile() {
         actions={
           candidate.stage !== 'rejected' && candidate.stage !== 'hired' ? (
             <>
-              <Button variant="secondary" size="md" onClick={() => setResumeOpen(true)}>
+              <Button variant="secondary" size="md" onClick={openResume}>
                 <FileText size={16} /> View Resume
               </Button>
               <Button variant="gold" size="md" onClick={() => setStage.mutate({ id: candidate.id, stage: 'shortlisted' })}>
@@ -61,7 +76,7 @@ export default function CandidateProfile() {
               </Button>
             </>
           ) : (
-            <Button variant="secondary" size="md" onClick={() => setResumeOpen(true)}>
+            <Button variant="secondary" size="md" onClick={openResume}>
               <FileText size={16} /> View Resume
             </Button>
           )
@@ -173,10 +188,24 @@ export default function CandidateProfile() {
         <div className="flex flex-col gap-5">
           <Card>
             <CardHead><CardTitle>Contact Details</CardTitle></CardHead>
-            <CardBody className="flex flex-col gap-3">
-              <InfoRow icon={Mail} label="Email" value={candidate.email} />
-              <InfoRow icon={Phone} label="Phone" value={candidate.phone} />
-            </CardBody>
+            {!access?.active ? (
+              <CardBody>
+                <div className="flex items-start gap-2.5 text-[12.5px] text-ink-secondary leading-relaxed">
+                  <Lock size={15} className="text-amber mt-0.5 flex-shrink-0" />
+                  <span>Activate your employer plan to view this applicant's contact details.</span>
+                </div>
+                <Button variant="secondary" size="sm" className="w-full mt-3" onClick={() => navigate('/subscription')}>
+                  Activate Plan
+                </Button>
+              </CardBody>
+            ) : privateDetailsLoading ? (
+              <CardBody className="text-[12.5px] text-ink-tertiary">Loading…</CardBody>
+            ) : (
+              <CardBody className="flex flex-col gap-3">
+                <InfoRow icon={Mail} label="Email" value={privateDetails?.email || '—'} />
+                <InfoRow icon={Phone} label="Phone" value={privateDetails?.phone || '—'} />
+              </CardBody>
+            )}
           </Card>
 
           <Card>
@@ -207,16 +236,28 @@ export default function CandidateProfile() {
 
       <Modal open={resumeOpen} onClose={() => setResumeOpen(false)} title={`${candidate.name} — Resume`} size="lg">
         <div className="rounded-xl border border-dashed border-border-strong bg-surface-sunken flex flex-col items-center justify-center gap-3 py-16">
-          <FileText size={30} className="text-ink-tertiary" />
-          {candidate.resumeUrl ? (
+          {!access?.active ? (
             <>
-              <p className="text-[13px] text-ink-secondary text-center max-w-xs">Opens in a new tab. The link expires shortly after it's generated.</p>
-              <Button variant="secondary" size="sm" onClick={() => window.open(`${FILE_BASE_URL}${candidate.resumeUrl}`, '_blank')}>
-                <Download size={14} /> Download Resume
-              </Button>
+              <Lock size={30} className="text-ink-tertiary" />
+              <p className="text-[13px] text-ink-secondary text-center max-w-xs">Activate your employer plan to view and download this applicant's resume.</p>
+              <Button variant="primary" size="sm" onClick={() => navigate('/subscription')}>Activate Plan</Button>
             </>
           ) : (
-            <p className="text-[13px] text-ink-secondary text-center max-w-xs">This candidate's resume isn't available yet.</p>
+            <>
+              <FileText size={30} className="text-ink-tertiary" />
+              {getResumeUrl.isPending ? (
+                <p className="text-[13px] text-ink-secondary text-center max-w-xs">Preparing a secure link…</p>
+              ) : resumeUrl ? (
+                <>
+                  <p className="text-[13px] text-ink-secondary text-center max-w-xs">Opens in a new tab. The link expires shortly after it's generated.</p>
+                  <Button variant="secondary" size="sm" onClick={() => window.open(`${FILE_BASE_URL}${resumeUrl}`, '_blank')}>
+                    <Download size={14} /> Download Resume
+                  </Button>
+                </>
+              ) : (
+                <p className="text-[13px] text-ink-secondary text-center max-w-xs">This candidate's resume isn't available yet.</p>
+              )}
+            </>
           )}
         </div>
       </Modal>

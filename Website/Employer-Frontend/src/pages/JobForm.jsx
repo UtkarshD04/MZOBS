@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Save, Send, Info } from 'lucide-react'
+import { ArrowLeft, Save, Send, Info, Lock } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
 import Card, { CardBody, CardHead, CardTitle } from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -11,6 +12,7 @@ import TagInput from '../components/ui/TagInput'
 import { PageSkeleton } from '../components/ui/Skeleton'
 import { jobDefaultValues, jobSchema } from '../schemas/jobSchema'
 import { useCreateJob, useJobQuery, useUpdateJob } from '../hooks/useJobs'
+import { useAccessStatusQuery } from '../hooks/useSubscription'
 
 const DEPARTMENTS = ['Engineering', 'Design', 'Product', 'Sales', 'Marketing', 'Operations', 'People', 'Finance']
 
@@ -35,6 +37,12 @@ export default function JobForm() {
   const { data: existingJob, isLoading } = useJobQuery(id)
   const createJob = useCreateJob()
   const updateJob = useUpdateJob()
+  const { data: access } = useAccessStatusQuery()
+  // Editing an existing job (isEdit) is still allowed while inactive; only
+  // creating a brand-new one or publishing is blocked. The backend enforces
+  // this independently (403 EMPLOYER_SUBSCRIPTION_REQUIRED) — this just
+  // avoids firing a request that's going to fail.
+  const blockedBySubscription = !isEdit && access && !access.active
 
   const {
     register,
@@ -68,13 +76,29 @@ export default function JobForm() {
 
   const isPending = createJob.isPending || updateJob.isPending
 
+  function onSubscriptionRequired(err) {
+    if (err.response?.data?.code === 'EMPLOYER_SUBSCRIPTION_REQUIRED') {
+      toast.error('Your employer plan is inactive. Subscribe to post jobs.')
+      navigate('/subscription')
+      return true
+    }
+    return false
+  }
+
   function submitAs(status) {
     return handleSubmit((values) => {
+      if (blockedBySubscription) {
+        navigate('/subscription')
+        return
+      }
       const payload = { ...values, status, hiringTeam: existingJob?.hiringTeam ?? ['RK'] }
       if (isEdit && id) {
         updateJob.mutate({ id, input: payload }, { onSuccess: () => navigate('/jobs') })
       } else {
-        createJob.mutate(payload, { onSuccess: () => navigate('/jobs') })
+        createJob.mutate(payload, {
+          onSuccess: () => navigate('/jobs'),
+          onError: (err) => onSubscriptionRequired(err),
+        })
       }
     })
   }
@@ -187,17 +211,32 @@ export default function JobForm() {
             <Card>
               <CardHead><CardTitle>Submit</CardTitle></CardHead>
               <CardBody className="flex flex-col gap-2.5">
-                <div className="flex items-start gap-2 mb-1">
-                  <Info size={14} className="text-navy mt-0.5 flex-shrink-0" />
-                  <p className="text-[12.5px] text-ink-secondary leading-relaxed">
-                    Your requirement goes live on the candidate job board immediately after you submit it. Applicants with a Mzobs-verified resume show up
-                    under Applicants as soon as they apply.
-                  </p>
-                </div>
-                <Button type="button" variant="primary" size="md" loading={isPending} onClick={submitAs('pending_review')}>
-                  <Send size={15} /> Publish Requirement
-                </Button>
-                <Button type="button" variant="secondary" size="md" loading={isPending} onClick={submitAs('draft')}>
+                {blockedBySubscription ? (
+                  <div className="flex items-start gap-2 mb-1">
+                    <Lock size={14} className="text-amber mt-0.5 flex-shrink-0" />
+                    <p className="text-[12.5px] text-ink-secondary leading-relaxed">
+                      Your employer plan is inactive. Subscribe to post new requirements.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-2 mb-1">
+                    <Info size={14} className="text-navy mt-0.5 flex-shrink-0" />
+                    <p className="text-[12.5px] text-ink-secondary leading-relaxed">
+                      Your requirement goes live on the candidate job board immediately after you submit it. Applicants with a Mzobs-verified resume show up
+                      under Applicants as soon as they apply.
+                    </p>
+                  </div>
+                )}
+                {blockedBySubscription ? (
+                  <Button type="button" variant="primary" size="md" onClick={() => navigate('/subscription')}>
+                    <Lock size={15} /> Subscribe to post jobs
+                  </Button>
+                ) : (
+                  <Button type="button" variant="primary" size="md" loading={isPending} onClick={submitAs('pending_review')}>
+                    <Send size={15} /> Publish Requirement
+                  </Button>
+                )}
+                <Button type="button" variant="secondary" size="md" loading={isPending} disabled={blockedBySubscription} onClick={submitAs('draft')}>
                   <Save size={15} /> Save as Draft
                 </Button>
               </CardBody>

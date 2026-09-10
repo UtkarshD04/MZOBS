@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Building2, ShieldCheck, Search, Globe, Phone, AlertTriangle, Ban, Trash2, Plus } from 'lucide-react'
+import { Building2, ShieldCheck, Search, Globe, Mail, Phone, AlertTriangle, Ban, Trash2, Plus } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -331,6 +331,11 @@ export default function Companies() {
                     <div className="text-xs text-ink-tertiary mt-1 flex items-center gap-1">
                       <Globe size={11} /> {co.website || 'No website'} · {co.hq || 'No HQ'}
                     </div>
+                    {co.adminEmail && (
+                      <div className="text-xs text-ink-tertiary mt-1 flex items-center gap-1 truncate">
+                        <Mail size={11} className="flex-shrink-0" /> {co.adminEmail}
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col items-end gap-1">
                     <Badge tone={STATUS_TONE[co.verificationStatus] ?? 'navy'}>{co.verificationStatus}</Badge>
