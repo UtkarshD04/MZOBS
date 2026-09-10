@@ -8,6 +8,7 @@ import {
   CalendarCheck,
   FileCheck,
   CreditCard,
+  Sparkles,
   Building2,
   Users2,
   Bell,
@@ -18,6 +19,7 @@ import {
 import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
 import { useNotificationsQuery } from '../../hooks/useNotifications'
+import { useAccessStatusQuery } from '../../hooks/useSubscription'
 
 const main = [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
 
@@ -66,10 +68,12 @@ function Group({ label, items, collapsed }) {
 export default function Sidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen } = useApp()
   const { data: notifications } = useNotificationsQuery()
+  const { data: access } = useAccessStatusQuery()
   const unreadCount = (notifications ?? []).filter((n) => n.unread).length
 
   const workspace = [
-    { to: '/billing', label: 'Billing', icon: CreditCard },
+    { to: '/subscription', label: 'Plans & Billing', icon: Sparkles, badge: access && !access.active ? '!' : 0 },
+    { to: '/billing', label: 'Job Billing', icon: CreditCard },
     { to: '/company', label: 'Company Profile', icon: Building2 },
     { to: '/team', label: 'Team Members', icon: Users2 },
     { to: '/notifications', label: 'Notifications', icon: Bell, badge: unreadCount },

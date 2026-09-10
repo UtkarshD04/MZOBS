@@ -15,6 +15,7 @@ import Pagination from '../components/ui/Pagination'
 import Dropdown from '../components/ui/Dropdown'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import { useJobsQuery, useSetJobStatus, useDuplicateJob, useDeleteJob, usePayJobInvoice } from '../hooks/useJobs'
+import { useAccessStatusQuery } from '../hooks/useSubscription'
 import { PRICING } from '../lib/pricing'
 import { fmtCompactINR, fmtINR } from '../lib/utils'
 
@@ -44,6 +45,11 @@ export default function Jobs() {
   const duplicateJob = useDuplicateJob()
   const deleteJob = useDeleteJob()
   const payInvoice = usePayJobInvoice()
+  const { data: access } = useAccessStatusQuery()
+
+  function goToNewJob() {
+    navigate(access && !access.active ? '/subscription' : '/jobs/new')
+  }
 
   const departments = useMemo(() => Array.from(new Set(['Engineering', 'Design', 'Sales', 'Product', 'Operations', 'People'])), [])
 
@@ -63,7 +69,7 @@ export default function Jobs() {
         title="Requirements"
         subtitle={`Raise a requirement and it goes live for candidates right away. You pay ${fmtINR(PRICING.perOpeningFee)} per opening, and Mzobs ships ${PRICING.resumesPerOpening} screened resumes for each one.`}
         actions={
-          <Button variant="primary" onClick={() => navigate('/jobs/new')}>
+          <Button variant="primary" onClick={goToNewJob}>
             <Plus size={16} /> New Requirement
           </Button>
         }
@@ -113,7 +119,7 @@ export default function Jobs() {
             title="No requirements found"
             body="Try adjusting your filters, or raise a new requirement to start receiving screened resumes from Mzobs."
             action={
-              <Button variant="primary" size="sm" onClick={() => navigate('/jobs/new')}>
+              <Button variant="primary" size="sm" onClick={goToNewJob}>
                 <Plus size={15} /> New Requirement
               </Button>
             }

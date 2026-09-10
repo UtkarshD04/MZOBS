@@ -14,6 +14,7 @@ const CandidateProfile = lazy(() => import('./pages/CandidateProfile'))
 const Interviews = lazy(() => import('./pages/Interviews'))
 const Offers = lazy(() => import('./pages/Offers'))
 const Billing = lazy(() => import('./pages/Billing'))
+const Subscription = lazy(() => import('./pages/Subscription'))
 const CompanyProfile = lazy(() => import('./pages/CompanyProfile'))
 const TeamMembers = lazy(() => import('./pages/TeamMembers'))
 const Notifications = lazy(() => import('./pages/Notifications'))
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="/interviews" element={<Interviews />} />
             <Route path="/offers" element={<Offers />} />
             <Route path="/billing" element={<Billing />} />
+            <Route path="/subscription" element={<Subscription />} />
             <Route path="/company" element={<CompanyProfile />} />
             <Route path="/team" element={<TeamMembers />} />
             <Route path="/notifications" element={<Notifications />} />

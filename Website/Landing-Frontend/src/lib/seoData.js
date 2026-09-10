@@ -30,6 +30,10 @@ export const STATIC_PAGE_SEO = {
     title: 'For Employers — Mzobs',
     description: 'Post jobs and hire pre-verified, job-ready candidates fast with Mzobs.',
   },
+  '/employers/pricing': {
+    title: 'Pricing — Mzobs for Employers',
+    description: 'One simple annual plan for unlimited job postings and applicant resume access on Mzobs.',
+  },
   '/contact': {
     title: 'Contact Us — Mzobs',
     description: 'Get in touch with the Mzobs team for support, partnerships, or general enquiries.',

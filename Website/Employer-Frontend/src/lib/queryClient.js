@@ -25,4 +25,7 @@ export const queryKeys = {
   me: ['me'],
   billingSummary: ['billing', 'summary'],
   invoices: ['billing', 'invoices'],
+  subscription: ['subscription'],
+  accessStatus: ['subscription', 'access-status'],
+  subscriptionPayments: ['subscription', 'payments'],
 }

@@ -4,75 +4,78 @@
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 @import "@fontsource/inter/800.css";
+@import "@fontsource/playfair-display/700.css";
 
 /* ============================================================
    MZOBS EMPLOYER PORTAL — design tokens
-   Colors resolve via light-dark(): OS preference by default,
-   explicit [data-theme] override wins in both directions.
+   Matched to the employer landing page palette:
+   warm sage backgrounds, dark forest green primary, deep teal accent.
 ============================================================ */
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
 
-  --color-bg: light-dark(#ffffff, #0a0e17);
-  --color-bg-secondary: light-dark(#fafafa, #0d111c);
-  --color-surface: light-dark(#ffffff, #121826);
-  --color-surface-hover: light-dark(#f5f6f8, #19212f);
-  --color-surface-sunken: light-dark(#f3f4f6, #161d2b);
+  /* light value → dark value */
+  --color-bg:             light-dark(#F5F6F4, #141a13);
+  --color-bg-secondary:   light-dark(#EEE9DF, #111710);
+  --color-surface:        light-dark(#FAF7F1, #1c2419);
+  --color-surface-hover:  light-dark(#F0EBE2, #243020);
+  --color-surface-sunken: light-dark(#E8E2D8, #1a2117);
 
-  --color-ink: light-dark(#111827, #f2f3f5);
-  --color-ink-secondary: light-dark(#6b7280, #9aa2b1);
-  --color-ink-tertiary: light-dark(#9ca3af, #6b7383);
+  --color-ink:            light-dark(#20251F, #e8f0e5);
+  --color-ink-secondary:  light-dark(#526051, #9ab89a);
+  --color-ink-tertiary:   light-dark(#7a8f79, #6b8a6b);
 
-  --color-border: light-dark(#e5e7eb, #232b3d);
-  --color-border-strong: light-dark(#d9dce3, #2e374c);
+  --color-border:         light-dark(#D8D2C8, #2e3d2a);
+  --color-border-strong:  light-dark(#C4BDB1, #3d5238);
 
   --color-navy-950: #0f1a0c;
   --color-navy-900: #16260f;
-  --color-navy-700: light-dark(#3d5c34, #8fbf7f);
-  --color-navy: light-dark(#3d5c34, #7cb56a);
-  --color-navy-hover: light-dark(#314a2a, #8fc27e);
-  --color-navy-tint: light-dark(#e5efe0, rgba(124, 181, 106, 0.14));
-  --color-navy-tint-strong: light-dark(#d7e6cf, rgba(124, 181, 106, 0.22));
-  --color-navy-ring: light-dark(rgba(61, 92, 52, 0.16), rgba(124, 181, 106, 0.28));
+  --color-navy-700:       light-dark(#1F5A43, #6abf96);
+  --color-navy:           light-dark(#246B5A, #5db896);
+  --color-navy-hover:     light-dark(#1a5247, #6dcba6);
+  --color-navy-tint:      light-dark(#DDE6DF, rgba(93, 184, 150, 0.15));
+  --color-navy-tint-strong: light-dark(#C8D9CB, rgba(93, 184, 150, 0.25));
+  --color-navy-ring:      light-dark(rgba(36, 107, 90, 0.18), rgba(93, 184, 150, 0.3));
 
-  --color-gold: light-dark(#c68a1f, #e3ac3d);
-  --color-gold-strong: light-dark(#9a6b14, #f0c267);
-  --color-gold-dot: light-dark(#e3a62f, #e3ac3d);
-  --color-gold-tint: light-dark(#fbf3de, rgba(227, 172, 61, 0.14));
+  --color-gold:           light-dark(#c68a1f, #e3ac3d);
+  --color-gold-strong:    light-dark(#9a6b14, #f0c267);
+  --color-gold-dot:       light-dark(#e3a62f, #e3ac3d);
+  --color-gold-tint:      light-dark(#fbf3de, rgba(227, 172, 61, 0.15));
 
-  --color-green: light-dark(#15803d, #3fbe77);
-  --color-green-dot: light-dark(#22a55a, #3fbe77);
-  --color-green-tint: light-dark(#eaf7ef, rgba(63, 190, 119, 0.14));
+  --color-green:          light-dark(#15803d, #4cd47f);
+  --color-green-dot:      light-dark(#22a55a, #4cd47f);
+  --color-green-tint:     light-dark(#eaf7ef, rgba(76, 212, 127, 0.13));
 
-  --color-red: light-dark(#b42318, #f0645f);
-  --color-red-dot: light-dark(#e5484d, #f0645f);
-  --color-red-tint: light-dark(#fdf0ee, rgba(240, 100, 95, 0.14));
+  --color-red:            light-dark(#b42318, #f0645f);
+  --color-red-dot:        light-dark(#e5484d, #f0645f);
+  --color-red-tint:       light-dark(#fdf0ee, rgba(240, 100, 95, 0.14));
 
-  --color-gray-tint: light-dark(#f3f4f6, rgba(154, 162, 177, 0.12));
-  --color-gray-dot: light-dark(#9ca3af, #7a8194);
+  --color-gray-tint:      light-dark(#ede8e0, rgba(180, 195, 178, 0.1));
+  --color-gray-dot:       light-dark(#9ca3af, #7a9478);
 
-  --color-violet: light-dark(#6d4fc7, #a594ff);
-  --color-violet-dot: light-dark(#7c5fd6, #a594ff);
-  --color-violet-tint: light-dark(#f1eefc, rgba(165, 148, 255, 0.16));
+  --color-violet:         light-dark(#6d4fc7, #b8a8ff);
+  --color-violet-dot:     light-dark(#7c5fd6, #b8a8ff);
+  --color-violet-tint:    light-dark(#f1eefc, rgba(184, 168, 255, 0.14));
 
-  --color-teal: light-dark(#0e8a78, #3fd9c4);
-  --color-teal-dot: light-dark(#149684, #3fd9c4);
-  --color-teal-tint: light-dark(#e3f7f3, rgba(63, 217, 196, 0.16));
+  --color-teal:           light-dark(#0e8a78, #3fd9c4);
+  --color-teal-dot:       light-dark(#149684, #3fd9c4);
+  --color-teal-tint:      light-dark(#e3f7f3, rgba(63, 217, 196, 0.14));
 
-  --color-amber: light-dark(#c2540c, #f0894a);
-  --color-amber-dot: light-dark(#d5610f, #f0894a);
-  --color-amber-tint: light-dark(#fbeee3, rgba(240, 137, 74, 0.16));
+  --color-amber:          light-dark(#c2540c, #f0894a);
+  --color-amber-dot:      light-dark(#d5610f, #f0894a);
+  --color-amber-tint:     light-dark(#fbeee3, rgba(240, 137, 74, 0.14));
 
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
 
-  --shadow-xs: 0 1px 2px light-dark(rgba(17, 24, 39, 0.04), rgba(0, 0, 0, 0.3));
-  --shadow-sm: 0 1px 3px light-dark(rgba(17, 24, 39, 0.06), rgba(0, 0, 0, 0.4)), 0 1px 2px light-dark(rgba(17, 24, 39, 0.04), rgba(0, 0, 0, 0.3));
-  --shadow-md: 0 8px 24px -4px light-dark(rgba(17, 24, 39, 0.08), rgba(0, 0, 0, 0.45)), 0 2px 6px light-dark(rgba(17, 24, 39, 0.05), rgba(0, 0, 0, 0.3));
-  --shadow-lg: 0 24px 56px -12px light-dark(rgba(17, 24, 39, 0.16), rgba(0, 0, 0, 0.55)), 0 4px 12px light-dark(rgba(17, 24, 39, 0.06), rgba(0, 0, 0, 0.3));
-  --shadow-navy: 0 6px 16px -4px light-dark(rgba(61, 92, 52, 0.32), rgba(124, 181, 106, 0.35));
+  --shadow-xs:   0 1px 2px  light-dark(rgba(32,37,31,0.05), rgba(0,0,0,0.35));
+  --shadow-sm:   0 1px 3px  light-dark(rgba(32,37,31,0.07), rgba(0,0,0,0.45)), 0 1px 2px light-dark(rgba(32,37,31,0.04), rgba(0,0,0,0.3));
+  --shadow-md:   0 8px 24px -4px light-dark(rgba(32,37,31,0.09), rgba(0,0,0,0.5)),  0 2px 6px light-dark(rgba(32,37,31,0.05), rgba(0,0,0,0.3));
+  --shadow-lg:   0 24px 56px -12px light-dark(rgba(32,37,31,0.16), rgba(0,0,0,0.6)), 0 4px 12px light-dark(rgba(32,37,31,0.06), rgba(0,0,0,0.3));
+  --shadow-navy: 0 6px 16px -4px light-dark(rgba(36,107,90,0.28), rgba(93,184,150,0.3));
 
   --ease-out-premium: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -98,6 +101,7 @@
     background: var(--color-bg);
     color: var(--color-ink);
     font-variant-numeric: tabular-nums;
+    transition: background-color 0.2s var(--ease-out-premium), color 0.15s var(--ease-out-premium);
   }
   ::selection {
     background: var(--color-navy-tint-strong);
@@ -130,6 +134,28 @@
   100% {
     background-position: -20% 0;
   }
+}
+
+@keyframes empBtnSheen {
+  from { transform: translateX(-140%) skewX(-12deg); }
+  to   { transform: translateX(240%)  skewX(-12deg); }
+}
+.emp-btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transform: translateX(-140%) skewX(-12deg);
+  opacity: 0;
+  pointer-events: none;
+}
+.emp-btn-primary:not(:disabled):hover::after {
+  opacity: 1;
+  animation: empBtnSheen 520ms var(--ease-out-premium);
+}
+@media (prefers-reduced-motion: reduce) {
+  .emp-btn-primary::after { display: none; }
 }
 @keyframes dotPulse {
   0%,

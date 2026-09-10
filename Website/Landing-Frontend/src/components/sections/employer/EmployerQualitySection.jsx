@@ -1,77 +1,55 @@
-import { Check, CheckCircle2, FileText } from 'lucide-react'
-import Reveal from '../../ui/Reveal'
-import SplitText from '../../ui/SplitText'
-import TiltCard from '../../ui/TiltCard'
-import FloatingElement from '../../ui/FloatingElement'
-import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
-import { EMPLOYER_QUALITY_POINTS } from '../../../lib/content'
+import { ShieldCheck, FileCheck2, Inbox, ListChecks } from 'lucide-react'
+import { FadeInView } from './employerMotion'
 
-const PIPELINE_STEPS = ['Resume screened', 'Skills tested', 'Mock interview done', 'Ready to hire']
+const POINTS = [
+  {
+    icon: ShieldCheck,
+    title: 'Genuine hiring requirements',
+    desc: 'Every requirement posted on MZOBS comes from a real employer with a real opening, so applicants are responding to genuine work.',
+  },
+  {
+    icon: FileCheck2,
+    title: 'Real candidate profiles and resumes',
+    desc: 'Every candidate on MZOBS fills a complete profile and resume, giving you real details to go on — not just keyword matches.',
+  },
+  {
+    icon: Inbox,
+    title: 'Direct access to applications',
+    desc: "There's no staff queue sitting between a candidate and your dashboard — once they apply, you see them directly.",
+  },
+  {
+    icon: ListChecks,
+    title: 'Clear hiring workflow',
+    desc: 'Shortlist, message or reject from one place, and follow every application from applied through to offer.',
+  },
+]
 
 export default function EmployerQualitySection() {
   return (
-    <section id="quality" className="relative bg-(--jobs-blue-tint) py-16 md:py-24 px-6 md:px-12 overflow-hidden">
-      <FloatingElement duration={10} distance={14} className="absolute -top-10 right-[6%] w-56 h-56 rounded-full bg-white/50 blur-3xl pointer-events-none" />
+    <section className="relative overflow-hidden bg-[#FAF7F1] py-20 md:py-28 px-6 md:px-12">
+      <div aria-hidden="true" className="absolute -left-28 bottom-10 h-72 w-72 rounded-full bg-[#DDE6DF]/60 blur-[90px]" />
+      <div className="relative max-w-7xl mx-auto">
+        <FadeInView className="max-w-2xl">
+          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#246B5A]">A more trustworthy hiring room</span>
+          <h2 className="mt-3 font-serif text-3xl sm:text-4xl md:text-[48px] font-bold text-[#20251F] tracking-tight leading-[1.04]">
+            Built to make every step feel more certain.
+          </h2>
+          <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-[#526051]">The details that usually create delay and doubt are handled before they ever reach your desk.</p>
+        </FadeInView>
 
-      <div className="relative max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-        {/* Left: promise + checklist */}
-        <div className="lg:col-span-7">
-          <Reveal direction="up" duration={0.8} scale={0.95} blur>
-            <h2 className="text-3xl sm:text-4xl md:text-[42px] font-black text-(--jobs-navy) tracking-tight leading-tight">
-              <SplitText text="No Fake Resumes." />
-              <br />
-              <SplitText text="Only Verified, Job-Ready Talent." delay={0.15} wordClassName="text-(--jobs-teal-dark)" />
-            </h2>
-            <p className="mt-4 text-[15px] sm:text-base text-(--jobs-ink-soft) max-w-xl leading-relaxed font-medium">
-              We don't forward resume dumps. Every candidate on Mzobs is personally screened, skill-tested and interviewed by our team before they ever reach your dashboard.
-            </p>
-          </Reveal>
-
-          <StaggerGroup className="mt-10 grid sm:grid-cols-2 gap-x-8 gap-y-7">
-            {EMPLOYER_QUALITY_POINTS.map((point) => {
-              const Icon = point.icon
-              return (
-                <StaggerItem key={point.title} className="flex gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0 border border-(--jobs-border)">
-                    <Icon size={18} strokeWidth={1.8} className="text-(--jobs-teal-dark)" />
-                  </div>
-                  <div>
-                    <h3 className="text-[15px] font-black text-(--jobs-navy) leading-snug mb-1">{point.title}</h3>
-                    <p className="text-[13px] text-(--jobs-ink-soft) leading-relaxed">{point.desc}</p>
-                  </div>
-                </StaggerItem>
-              )
-            })}
-          </StaggerGroup>
-        </div>
-
-        {/* Right: verification pipeline card */}
-        <div className="lg:col-span-5">
-          <Reveal direction="right" duration={0.9} delay={0.15} scale={0.94} blur>
-            <TiltCard maxTilt={3} y={-6}>
-              <div className="rounded-3xl border border-(--jobs-border) bg-white p-8 shadow-xl">
-                <div className="relative w-14 h-14 mb-4">
-                  <div className="w-14 h-14 rounded-2xl bg-(--jobs-teal-tint) flex items-center justify-center">
-                    <FileText size={24} strokeWidth={1.8} className="text-(--jobs-teal-dark)" />
-                  </div>
-                  <div className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-(--jobs-teal-dark) border-2 border-white flex items-center justify-center">
-                    <Check size={12} strokeWidth={3.5} className="text-white" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-black text-(--jobs-navy) tracking-tight leading-snug">Every Candidate, Verified</h3>
-                <p className="mt-1.5 text-sm font-bold text-(--jobs-ink-soft)">Resumes manually checked before you ever see them</p>
-
-                <div className="mt-7 space-y-3.5 border-t border-(--jobs-border) pt-6">
-                  {PIPELINE_STEPS.map((step) => (
-                    <div key={step} className="flex items-center gap-2.5">
-                      <CheckCircle2 size={16} className="text-(--jobs-teal-dark) flex-shrink-0" />
-                      <span className="text-[13.5px] font-semibold text-(--jobs-navy)">{step}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </TiltCard>
-          </Reveal>
+        <div className="mt-12 grid sm:grid-cols-2 gap-4 lg:grid-cols-4">
+          {POINTS.map((point, i) => (
+            <FadeInView key={point.title} delay={i * 0.06} className="h-full">
+              <article className="group relative h-full overflow-hidden rounded-[24px] border border-[#20251F]/15 bg-[#F5F6F4] p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_18px_35px_-24px_rgba(32,37,31,0.38)]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#DDE6DF] text-[#246B5A] transition-transform duration-300 group-hover:scale-105">
+                  <point.icon size={20} strokeWidth={1.8} />
+                </span>
+                <span className="absolute right-5 top-5 font-serif text-4xl italic text-[#20251F]/12 transition-colors group-hover:text-white/10">0{i + 1}</span>
+                <h3 className="mt-12 text-lg font-bold text-[#20251F] leading-snug">{point.title}</h3>
+                <p className="mt-3 text-[14px] text-[#526051] leading-relaxed">{point.desc}</p>
+              </article>
+            </FadeInView>
+          ))}
         </div>
       </div>
     </section>

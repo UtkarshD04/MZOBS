@@ -77,7 +77,7 @@ export default function EmployerSigninForm() {
           <button
             type="button"
             onClick={() => setShowPassword((s) => !s)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9E9E9E] hover:text-black transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9E9E9E] hover:text-[#20251F] transition-colors"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -87,7 +87,7 @@ export default function EmployerSigninForm() {
       </Field>
 
       <div className="flex justify-end -mt-2 mb-4">
-        <Link to="/employers/forgot-password" className="text-xs font-bold text-[#595959] hover:text-black transition-colors">
+        <Link to="/employers/forgot-password" className="text-xs font-bold text-[#526051] hover:text-[#246B5A] transition-colors">
           Forgot password?
         </Link>
       </div>

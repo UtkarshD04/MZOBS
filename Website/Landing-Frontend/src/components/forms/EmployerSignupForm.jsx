@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users, Globe, MapPin } from 'lucide-react'
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
@@ -43,7 +44,8 @@ function SectionLabel({ children }) {
 }
 
 export default function EmployerSignupForm() {
-  const [form, setForm] = useState(initialForm)
+  const { state } = useLocation()
+  const [form, setForm] = useState({ ...initialForm, ...(state?.prefill ?? {}) })
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | submitting
   const [showPassword, setShowPassword] = useState(false)

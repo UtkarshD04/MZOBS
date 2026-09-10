@@ -20,7 +20,12 @@ export function useCreateJob() {
       qc.invalidateQueries({ queryKey: ['jobs'] })
       toast.success(job?.status === 'pending_review' ? 'Requirement submitted to Mzobs for review' : 'Requirement saved as draft')
     },
-    onError: () => toast.error('Could not save the requirement. Please try again.'),
+    onError: (err) => {
+      // Subscription-gated failure — the caller (JobForm) handles the
+      // redirect + its own message, so skip the generic toast here.
+      if (err.response?.data?.code === 'EMPLOYER_SUBSCRIPTION_REQUIRED') return
+      toast.error('Could not save the requirement. Please try again.')
+    },
   })
 }
 
@@ -53,7 +58,13 @@ export function useSetJobStatus() {
       }
       toast.success(`Requirement ${labels[vars.status]}`)
     },
-    onError: () => toast.error('Could not update the requirement.'),
+    onError: (err) => {
+      if (err.response?.data?.code === 'EMPLOYER_SUBSCRIPTION_REQUIRED') {
+        toast.error('Your employer plan is inactive. Subscribe to publish this requirement.')
+        return
+      }
+      toast.error('Could not update the requirement.')
+    },
   })
 }
 

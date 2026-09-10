@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { Bell, CalendarPlus, Download, GraduationCap, MapPin, Search, ThumbsDown, ThumbsUp, Users, Wallet } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
 import Card, { CardBody } from '../components/ui/Card'
@@ -14,7 +15,7 @@ import ErrorState from '../components/ui/ErrorState'
 import { CardListSkeleton } from '../components/ui/Skeleton'
 import Pagination from '../components/ui/Pagination'
 import Modal from '../components/ui/Modal'
-import { useCandidatesQuery, useSetCandidateStage } from '../hooks/useCandidates'
+import { useCandidatesQuery, useSetCandidateStage, useCandidateResumeUrl } from '../hooks/useCandidates'
 import { useJobsQuery } from '../hooks/useJobs'
 import { useSendCandidateNotification } from '../hooks/useNotifications'
 import { FILE_BASE_URL } from '../lib/config'
@@ -49,6 +50,21 @@ export default function Candidates() {
   const { data: jobs = [] } = useJobsQuery()
   const setStage = useSetCandidateStage()
   const sendNotification = useSendCandidateNotification()
+  const getResumeUrl = useCandidateResumeUrl()
+
+  function downloadResume(id) {
+    getResumeUrl.mutate(id, {
+      onSuccess: ({ url }) => window.open(`${FILE_BASE_URL}${url}`, '_blank'),
+      onError: (err) => {
+        if (err.response?.data?.code === 'EMPLOYER_SUBSCRIPTION_REQUIRED') {
+          toast.error('Activate your employer plan to view applicant resumes.')
+          navigate('/subscription')
+          return
+        }
+        toast.error(err.response?.data?.message ?? 'Could not open this resume.')
+      },
+    })
+  }
 
   function toggleSelected(id) {
     setSelectedIds((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]))
@@ -157,14 +173,7 @@ export default function Candidates() {
 
                 <div className="flex items-center gap-2 mt-4 pt-3.5 border-t border-border flex-wrap">
                   <Button variant="secondary" size="sm" onClick={() => navigate(`/candidates/${c.id}`)}>View Profile</Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    iconOnly
-                    title={c.resumeUrl ? 'Download resume' : 'Resume not available yet'}
-                    disabled={!c.resumeUrl}
-                    onClick={() => c.resumeUrl && window.open(`${FILE_BASE_URL}${c.resumeUrl}`, '_blank')}
-                  >
+                  <Button variant="ghost" size="sm" iconOnly title="Download resume" loading={getResumeUrl.isPending && getResumeUrl.variables === c.id} onClick={() => downloadResume(c.id)}>
                     <Download size={15} />
                   </Button>
                   <Button variant="ghost" size="sm" iconOnly title="Send notification" onClick={() => setNotifyTargetIds([c.id])}>
