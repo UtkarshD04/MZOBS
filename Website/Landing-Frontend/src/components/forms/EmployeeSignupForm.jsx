@@ -215,7 +215,7 @@ export default function EmployeeSignupForm() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const nextErrors = { ...validateStep2(form), ...validateStep3(form) }
+    const nextErrors = validateStep3(form)
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
@@ -232,9 +232,6 @@ export default function EmployeeSignupForm() {
         : await signupEmployee({ ...form, phoneToken })
       saveEmployeeSession({ token, employee })
 
-      // Best-effort: the account already exists at this point, so a resume
-      // upload failure here shouldn't undo the signup or block navigation —
-      // just surface it, the candidate can still add a resume later.
       let uploadFailed = false
       if (resumeFile) {
         try {
@@ -246,9 +243,6 @@ export default function EmployeeSignupForm() {
       }
 
       setStatus('success')
-      // The dashboard app isn't wired up to render anything yet — land back
-      // on this site's own home page after a successful signup for now.
-      // Longer pause when there's a warning to read first.
       setTimeout(
         () => {
           navigate('/')
