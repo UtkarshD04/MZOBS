@@ -262,8 +262,11 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    // OTP verification is temporarily optional — not required to continue
+    // (same relaxation as EmployeeSignupForm's step 2), since the MSG91
+    // widget config that phone verification depends on isn't reliably
+    // available on every deployment yet.
     const nextErrors = validateSignup(form, Boolean(googleCredential))
-    if (!phoneToken) nextErrors.phone = nextErrors.phone ?? 'Please verify your mobile number.'
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
@@ -437,7 +440,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
 
       {errors.form && <p className="text-[12.5px] text-red-600 mb-3">{errors.form}</p>}
 
-      <button type="submit" disabled={status === 'submitting' || !phoneToken} className={`${primaryButtonClass} w-full mt-2`}>
+      <button type="submit" disabled={status === 'submitting'} className={`${primaryButtonClass} w-full mt-2`}>
         {status === 'submitting' && <Loader2 size={15} className="animate-spin" aria-hidden="true" />}
         {status === 'submitting' ? 'Creating your account…' : 'Create account'}
       </button>
