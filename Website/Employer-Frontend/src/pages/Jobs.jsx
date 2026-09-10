@@ -61,7 +61,7 @@ export default function Jobs() {
     <div>
       <PageHeader
         title="Requirements"
-        subtitle={`Raise a requirement, Mzobs reviews it, you pay ${fmtINR(PRICING.perOpeningFee)} per opening, and Mzobs ships ${PRICING.resumesPerOpening} screened resumes for each one.`}
+        subtitle={`Raise a requirement and it goes live for candidates right away. You pay ${fmtINR(PRICING.perOpeningFee)} per opening, and Mzobs ships ${PRICING.resumesPerOpening} screened resumes for each one.`}
         actions={
           <Button variant="primary" onClick={() => navigate('/jobs/new')}>
             <Plus size={16} /> New Requirement
@@ -156,7 +156,7 @@ export default function Jobs() {
                         { label: 'Duplicate', icon: <Copy size={14} />, onClick: () => duplicateJob.mutate(job.id) },
                         'divider',
                         ...(job.status === 'draft'
-                          ? [{ label: 'Submit to Mzobs', icon: <Send size={14} />, onClick: () => setJobStatus.mutate({ id: job.id, status: 'pending_review' }) }]
+                          ? [{ label: 'Publish Requirement', icon: <Send size={14} />, onClick: () => setJobStatus.mutate({ id: job.id, status: 'pending_review' }) }]
                           : job.status === 'awaiting_payment'
                           ? [
                               { label: `Pay ${fmtINR(job.feeTotal)}`, icon: <CreditCard size={14} />, onClick: () => payInvoice.mutate(job.id) },
@@ -189,7 +189,7 @@ export default function Jobs() {
           setDeleteId(null)
         }}
         title="Delete this requirement?"
-        body="This permanently removes the requirement. Resumes Mzobs has already delivered for it stay in Shared Profiles, and paid fees are not refunded automatically."
+        body="This permanently removes the requirement. Applicants already received for it stay in Applicants, and paid fees are not refunded automatically."
         confirmLabel="Delete Requirement"
         loading={deleteJob.isPending}
       />

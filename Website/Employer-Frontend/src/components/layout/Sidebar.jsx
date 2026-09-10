@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
+  LayoutDashboard,
   Briefcase,
   Package,
   Users,
@@ -18,10 +19,12 @@ import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
 import { useNotificationsQuery } from '../../hooks/useNotifications'
 
+const main = [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
+
 const recruitment = [
   { to: '/jobs', label: 'Requirements', icon: Briefcase },
   { to: '/batches', label: 'Resume Batches', icon: Package },
-  { to: '/candidates', label: 'Shared Profiles', icon: Users },
+  { to: '/candidates', label: 'Applicants', icon: Users },
   { to: '/interviews', label: 'Interviews', icon: CalendarCheck },
   { to: '/offers', label: 'Offers', icon: FileCheck },
 ]
@@ -82,6 +85,7 @@ export default function Sidebar() {
         mobileSidebarOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'
       )}
     >
+      <Group items={main} collapsed={sidebarCollapsed} />
       <Group label="Recruitment" items={recruitment} collapsed={sidebarCollapsed} />
       <Group label="Workspace" items={workspace} collapsed={sidebarCollapsed} />
 
