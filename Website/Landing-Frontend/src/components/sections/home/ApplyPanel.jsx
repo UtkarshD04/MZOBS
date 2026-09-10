@@ -22,6 +22,11 @@ import { loginEmployee, loginEmployeeWithGoogle, signupEmployee, signupEmployeeW
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../../lib/msg91Widget'
 import { GRADUATION_OPTIONS } from '../../../lib/graduationOptions'
 import { fetchEmployeeProfile, uploadEmployeeResume, applyToJob } from '../../../lib/employeeApi'
+import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../../lib/config'
+
+// Same reasoning as EmployeeSignupForm: don't offer a "Send OTP" button
+// that's guaranteed to fail when this deployment has no widget credentials.
+const OTP_CONFIGURED = Boolean(MSG91_WIDGET_ID && MSG91_TOKEN_AUTH)
 
 const TOKEN_KEY = 'mzobs-employee-token'
 const inputClass =
@@ -339,7 +344,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
       />
       {errors.phone && <p className={errorClass}>{errors.phone}</p>}
 
-      {phoneToken ? (
+      {!OTP_CONFIGURED ? null : phoneToken ? (
         <p className="flex items-center gap-1.5 mb-3 text-[12.5px] font-semibold text-(--jobs-teal-dark)">
           <CheckCircle2 size={14} className="shrink-0" aria-hidden="true" /> Mobile number verified
         </p>

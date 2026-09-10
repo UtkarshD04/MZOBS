@@ -29,6 +29,12 @@ import { saveEmployeeSession } from '../../lib/employeeSession'
 import { uploadEmployeeResume, validateResumeFileClientSide } from '../../lib/employeeResume'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 import { GRADUATION_OPTIONS } from '../../lib/graduationOptions'
+import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../lib/config'
+
+// OTP verification is optional, but there's no point offering a "Send OTP"
+// button that's guaranteed to fail when this deployment has no widget
+// credentials — just skip straight to the phone-number-only step.
+const OTP_CONFIGURED = Boolean(MSG91_WIDGET_ID && MSG91_TOKEN_AUTH)
 
 const STEP_LABELS = ['Account', 'Verify mobile', 'Career profile']
 const RESEND_COOLDOWN = 30
@@ -383,7 +389,7 @@ export default function EmployeeSignupForm() {
                     error={errors.phone}
                   />
                 </div>
-                {!otpSent && !phoneToken && (
+                {OTP_CONFIGURED && !otpSent && !phoneToken && (
                   <SecondaryButton
                     onClick={handleSendOtp}
                     disabled={sendingOtp || form.phone.replace(/\D/g, '').length !== 10}
@@ -393,10 +399,10 @@ export default function EmployeeSignupForm() {
                   </SecondaryButton>
                 )}
               </div>
-              {!otpSent && !phoneToken && otpError && <span className="text-xs text-red-600 mt-2 block">{otpError}</span>}
+              {OTP_CONFIGURED && !otpSent && !phoneToken && otpError && <span className="text-xs text-red-600 mt-2 block">{otpError}</span>}
             </Field>
 
-            {phoneToken ? (
+            {!OTP_CONFIGURED ? null : phoneToken ? (
               <div className="flex items-center gap-2 -mt-2 mb-4 px-3.5 py-2.5 rounded-xl bg-(--jobs-teal-tint) text-[13px] font-bold text-(--jobs-teal-dark)">
                 <CheckCircle2 size={16} className="shrink-0" />
                 Mobile number verified
