@@ -253,11 +253,24 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
     }
   }
 
-  function handleGoogleCredential(credential) {
+  async function handleGoogleCredential(credential) {
+    setErrors({})
+    // If an account already exists for this Google email, log straight in
+    // instead of walking them through the signup wizard again.
+    try {
+      const { token } = await loginEmployeeWithGoogle({ credential })
+      onSuccess(token)
+      return
+    } catch (err) {
+      if (err.status !== 404) {
+        setErrors({ form: err.message })
+        return
+      }
+    }
+
     const { name, email } = decodeGoogleCredential(credential)
     setGoogleCredential(credential)
     setForm((f) => ({ ...f, name: name || f.name, email: email || f.email, password: '' }))
-    setErrors({})
   }
 
   async function handleSubmit(e) {

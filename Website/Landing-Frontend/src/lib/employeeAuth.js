@@ -7,7 +7,11 @@ async function postJSON(path, body) {
     body: JSON.stringify(body),
   })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.message ?? 'Something went wrong. Please try again.')
+  if (!res.ok) {
+    const error = new Error(data.message ?? 'Something went wrong. Please try again.')
+    error.status = res.status
+    throw error
+  }
   return data
 }
 
