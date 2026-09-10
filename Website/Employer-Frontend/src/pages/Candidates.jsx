@@ -78,8 +78,8 @@ export default function Candidates() {
   return (
     <div>
       <PageHeader
-        title="Shared Profiles"
-        subtitle="Profiles Mzobs has delivered against your paid requirements. Raw applications stay with Mzobs — what reaches you is already verified, mock-interviewed and shortlisted."
+        title="Applicants"
+        subtitle="Candidates who applied to your job postings, in real time. Every profile here has a Mzobs-verified resume."
       />
 
       <Card className="mb-5">
@@ -111,7 +111,7 @@ export default function Candidates() {
         <ErrorState onRetry={() => refetch()} />
       ) : candidates.length === 0 ? (
         <Card>
-          <EmptyState icon={Users} title="No profiles yet" body="Once you pay for a requirement, Mzobs delivers five screened profiles per opening and they land right here." />
+          <EmptyState icon={Users} title="No applicants yet" body="Once candidates start applying to your live requirements, their profiles will land right here." />
         </Card>
       ) : (
         <>

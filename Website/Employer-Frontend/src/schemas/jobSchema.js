@@ -12,6 +12,9 @@ export const jobSchema = z
     vacancies: z.number().int('Must be a whole number').min(1, 'At least 1 vacancy is required'),
     location: z.string().min(2, 'Location is required'),
     workMode: z.enum(['On-site', 'Hybrid', 'Remote']),
+    track: z.enum(['analytics', 'design', 'sales', 'marketing', 'hr', 'support', 'tech', 'ops'], {
+      errorMap: () => ({ message: 'Select a job category' }),
+    }),
     skills: z.array(z.string()).min(1, 'Add at least one required skill'),
     description: z.string().min(40, 'Description should be at least 40 characters'),
     benefits: z.array(z.string()),
@@ -31,6 +34,7 @@ export const jobDefaultValues = {
   vacancies: 1,
   location: '',
   workMode: 'Hybrid',
+  track: '',
   skills: [],
   description: '',
   benefits: [],

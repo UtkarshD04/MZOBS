@@ -14,6 +14,20 @@ import { useCreateJob, useJobQuery, useUpdateJob } from '../hooks/useJobs'
 
 const DEPARTMENTS = ['Engineering', 'Design', 'Product', 'Sales', 'Marketing', 'Operations', 'People', 'Finance']
 
+// Values must match Backend/src/utils/jobQueryFilters.js TRACKS — this is
+// what places the job under the right category on the candidate-facing
+// home page (CategoryGrid tiles, HotJobsByCity buckets).
+const TRACKS = [
+  { value: 'tech', label: 'Technology / Engineering' },
+  { value: 'design', label: 'Design' },
+  { value: 'sales', label: 'Sales' },
+  { value: 'marketing', label: 'Marketing' },
+  { value: 'hr', label: 'HR' },
+  { value: 'support', label: 'Customer Support' },
+  { value: 'ops', label: 'Operations' },
+  { value: 'analytics', label: 'Analytics' },
+]
+
 export default function JobForm() {
   const navigate = useNavigate()
   const { id } = useParams()
@@ -43,6 +57,7 @@ export default function JobForm() {
         vacancies: existingJob.vacancies,
         location: existingJob.location,
         workMode: existingJob.workMode,
+        track: existingJob.track,
         skills: existingJob.skills,
         description: existingJob.description,
         benefits: existingJob.benefits,
@@ -75,7 +90,7 @@ export default function JobForm() {
         title={isEdit ? 'Edit Requirement' : 'New Requirement'}
         subtitle={
           isEdit
-            ? 'Update this requirement. Changes go back to Mzobs for review.'
+            ? 'Update this requirement. Changes are reflected live on the candidate job board.'
             : 'Tell Mzobs how many people you need for this role.'
         }
       />
@@ -131,6 +146,14 @@ export default function JobForm() {
                     </Select>
                   </Field>
                 </div>
+                <Field label="Job Category" hint="Determines which category candidates find this under" error={errors.track?.message}>
+                  <Select error={!!errors.track} {...register('track')}>
+                    <option value="">Select a category</option>
+                    {TRACKS.map((t) => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </Select>
+                </Field>
                 <Field label="Salary Range (annual, ₹)" error={errors.salaryMin?.message || errors.salaryMax?.message}>
                   <div className="flex items-center gap-2">
                     <Input type="number" min={0} placeholder="Min" error={!!errors.salaryMin} {...register('salaryMin', { valueAsNumber: true })} />
@@ -167,12 +190,12 @@ export default function JobForm() {
                 <div className="flex items-start gap-2 mb-1">
                   <Info size={14} className="text-navy mt-0.5 flex-shrink-0" />
                   <p className="text-[12.5px] text-ink-secondary leading-relaxed">
-                    Mzobs reviews the requirement first, then raises an invoice. Sourcing begins once payment clears. Candidate applications stay with
-                    Mzobs — you receive a screened batch, not a queue of applicants.
+                    Your requirement goes live on the candidate job board immediately after you submit it. Applicants with a Mzobs-verified resume show up
+                    under Applicants as soon as they apply.
                   </p>
                 </div>
                 <Button type="button" variant="primary" size="md" loading={isPending} onClick={submitAs('pending_review')}>
-                  <Send size={15} /> Submit to Mzobs
+                  <Send size={15} /> Publish Requirement
                 </Button>
                 <Button type="button" variant="secondary" size="md" loading={isPending} onClick={submitAs('draft')}>
                   <Save size={15} /> Save as Draft

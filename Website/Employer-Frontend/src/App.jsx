@@ -5,6 +5,7 @@ import RequireAuth from './components/auth/RequireAuth'
 import { PageSkeleton } from './components/ui/Skeleton'
 import { EMPLOYER_SIGNIN_URL } from './lib/config'
 
+const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Jobs = lazy(() => import('./pages/Jobs'))
 const JobForm = lazy(() => import('./pages/JobForm'))
 const Candidates = lazy(() => import('./pages/Candidates'))
@@ -37,6 +38,7 @@ export default function App() {
 
         <Route element={<RequireAuth />}>
           <Route element={<Shell />}>
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/jobs/new" element={<JobForm />} />
             <Route path="/jobs/:id/edit" element={<JobForm />} />
