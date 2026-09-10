@@ -1,26 +1,8 @@
 import { useEffect, useState } from 'react'
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Clock3,
-  FileUp,
-  Loader2,
-  ChevronDown,
-  User,
-  Mail,
-  Phone,
-  Lock,
-  MapPin,
-  Landmark,
-  Hash,
-  GraduationCap,
-  Eye,
-  EyeOff,
-} from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Clock3, FileUp, Loader2, User, Mail, Phone, Lock, Hash, Eye, EyeOff } from 'lucide-react'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../../ui/GoogleAuthButton'
 import { loginEmployee, loginEmployeeWithGoogle, signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../../lib/employeeAuth'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../../lib/msg91Widget'
-import { GRADUATION_OPTIONS } from '../../../lib/graduationOptions'
 import { fetchEmployeeProfile, uploadEmployeeResume, applyToJob } from '../../../lib/employeeApi'
 import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../../lib/config'
 
@@ -54,18 +36,6 @@ function IconInput({ icon: Icon, className = '', ...props }) {
     <div className="relative">
       <Icon size={16} strokeWidth={1.8} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) pointer-events-none" aria-hidden="true" />
       <input className={`${inputClass} pl-10 ${className}`} {...props} />
-    </div>
-  )
-}
-
-function IconSelect({ icon: Icon, className = '', children, ...props }) {
-  return (
-    <div className="relative">
-      <Icon size={16} strokeWidth={1.8} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) pointer-events-none" aria-hidden="true" />
-      <select className={`${inputClass} pl-10 pr-9 appearance-none ${className}`} {...props}>
-        {children}
-      </select>
-      <ChevronDown size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-(--jobs-ink-soft) pointer-events-none" aria-hidden="true" />
     </div>
   )
 }
@@ -179,7 +149,7 @@ function SignupPrompt({ job, onCreateAccount }) {
   )
 }
 
-const initialSignupForm = { name: '', email: '', phone: '', password: '', city: '', state: '', pincode: '', experience: 'fresher', graduation: '' }
+const initialSignupForm = { name: '', email: '', phone: '', password: '' }
 
 function validateSignup(form, hasGoogle) {
   const errors = {}
@@ -192,19 +162,15 @@ function validateSignup(form, hasGoogle) {
   }
   if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
   else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
-  if (!form.city.trim()) errors.city = 'Please enter your city.'
-  if (!form.state.trim()) errors.state = 'Please enter your state.'
-  if (!form.pincode.trim()) errors.pincode = 'Please enter your pincode.'
-  else if (!/^\d{6}$/.test(form.pincode.trim())) errors.pincode = 'Enter a valid 6-digit pincode.'
-  if (!form.graduation) errors.graduation = 'Please select your graduation.'
   return errors
 }
 
-// Same signup as the dedicated /employees/signup page (Google + phone OTP +
-// graduation + city/state/pincode), just re-themed to this panel's --jobs-*
-// palette and, on success, handed straight to `onSuccess` instead of
-// redirecting to the dashboard app's onboarding — the resume-upload/apply
-// steps right below already cover what onboarding would otherwise do.
+// Same signup as the dedicated /employees/signup page (name, email,
+// password, phone — Google as an alternative to email+password), just
+// re-themed to this panel's --jobs-* palette and, on success, handed
+// straight to `onSuccess` instead of redirecting to the dashboard app's
+// onboarding — the resume-upload/apply steps right below already cover
+// what onboarding would otherwise do.
 function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
   const [form, setForm] = useState(initialSignupForm)
   const [errors, setErrors] = useState({})
@@ -290,7 +256,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
 
     setStatus('submitting')
     try {
-      const shared = { phone: form.phone, experience: form.experience, graduation: form.graduation, city: form.city, state: form.state, pincode: form.pincode, phoneToken }
+      const shared = { phone: form.phone, phoneToken }
       const { token } = googleCredential
         ? await signupEmployeeWithGoogle({ credential: googleCredential, ...shared })
         : await signupEmployee({ ...form, ...shared })
@@ -396,65 +362,6 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
           {errors.password && <p className={errorClass}>{errors.password}</p>}
         </>
       )}
-
-      <div className="grid grid-cols-2 gap-3 mb-1">
-        <div>
-          <label className={labelClass}>City</label>
-          <IconInput icon={MapPin} value={form.city} onChange={(e) => update('city', e.target.value)} placeholder="Bengaluru" autoComplete="address-level2" />
-          {errors.city && <p className={errorClass}>{errors.city}</p>}
-        </div>
-        <div>
-          <label className={labelClass}>State</label>
-          <IconInput icon={Landmark} value={form.state} onChange={(e) => update('state', e.target.value)} placeholder="Karnataka" autoComplete="address-level1" />
-          {errors.state && <p className={errorClass}>{errors.state}</p>}
-        </div>
-      </div>
-
-      <label className={labelClass}>Pincode</label>
-      <IconInput
-        icon={Hash}
-        value={form.pincode}
-        onChange={(e) => update('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
-        placeholder="560001"
-        inputMode="numeric"
-        autoComplete="postal-code"
-        className="mb-1"
-      />
-      {errors.pincode && <p className={errorClass}>{errors.pincode}</p>}
-
-      <label className={labelClass}>You are a...</label>
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        {[
-          { value: 'fresher', label: 'Fresher' },
-          { value: 'experienced', label: 'Experienced' },
-        ].map((opt) => (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => update('experience', opt.value)}
-            className={`h-11 rounded-xl text-[13px] font-bold border transition-colors ${
-              form.experience === opt.value
-                ? 'bg-(--jobs-blue) border-(--jobs-blue) text-white'
-                : 'bg-white border-(--jobs-border) text-(--jobs-ink-soft) hover:border-(--jobs-blue)'
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-
-      <label className={labelClass}>Graduation</label>
-      <IconSelect icon={GraduationCap} value={form.graduation} onChange={(e) => update('graduation', e.target.value)} className="mb-1">
-        <option value="" disabled>
-          Select your graduation
-        </option>
-        {GRADUATION_OPTIONS.map((g) => (
-          <option key={g} value={g}>
-            {g}
-          </option>
-        ))}
-      </IconSelect>
-      {errors.graduation && <p className={errorClass}>{errors.graduation}</p>}
 
       {errors.form && <p className="text-[12.5px] text-red-600 mb-3">{errors.form}</p>}
 
