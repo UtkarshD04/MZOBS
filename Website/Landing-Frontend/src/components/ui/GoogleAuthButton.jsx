@@ -23,30 +23,32 @@ function GoogleGLogo() {
   )
 }
 
-// Google's branding guidelines require the actual click target to be their
-// own rendered button — but they don't require it to be *visible*. This
-// draws a button in the site's own style (matches Input's h-11/rounded-xl)
-// and stacks Google's real button on top at full size, invisible, so a
-// click on "our" button is really a click on theirs. Same OAuth flow and
-// ID-token result as their default widget, just styled to match the rest
-// of the form instead of looking like an embedded foreign element.
+// Previously this hid Google's real button (invisible, overlaid) beneath a
+// hand-styled clone matching the site's own button look — Google's branding
+// guidelines only require the click target to be their own rendered button,
+// not that it be visible. In production that overlay's hit area didn't
+// reliably line up with Google's actual iframe (button clicks landed on
+// nothing, no error, no network request — see the "Continue with Google
+// does nothing" report), so this now renders Google's real button directly.
+// Less pixel-perfect control over styling, but clicks always land on a real
+// interactive element regardless of iframe sizing quirks.
 export function GoogleAuthButton({ onCredential, onError, label = 'Continue with Google' }) {
   const wrapRef = useRef(null)
-  const [width, setWidth] = useState(0)
-  const [hovered, setHovered] = useState(false)
   // Track the width that was passed to GoogleLogin on first mount — we never
   // update it after that so the component stays mounted and initialize() is
   // only called once, avoiding the "called multiple times" GSI warning.
   const mountedWidthRef = useRef(0)
+  const [, forceRender] = useState(0)
 
   useEffect(() => {
     const el = wrapRef.current
     if (!el) return
     const observer = new ResizeObserver(([entry]) => {
       const w = Math.round(entry.contentRect.width)
-      setWidth(w)
-      // Capture the first non-zero measurement as the stable mount width.
-      if (!mountedWidthRef.current && w > 0) mountedWidthRef.current = w
+      if (!mountedWidthRef.current && w > 0) {
+        mountedWidthRef.current = w
+        forceRender((n) => n + 1)
+      }
     })
     observer.observe(el)
     return () => observer.disconnect()
@@ -66,36 +68,20 @@ export function GoogleAuthButton({ onCredential, onError, label = 'Continue with
   }
 
   return (
-    <div
-      ref={wrapRef}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="relative w-full h-11 mb-2"
-    >
-      <div
-        className={`absolute inset-0 flex items-center justify-center gap-2.5 rounded-xl border text-[13.5px] font-bold text-black transition-all duration-150 ${
-          hovered ? 'border-[#a8a8a8] bg-[#fafafa] shadow-sm' : 'border-[#C9C9C9] bg-white'
-        }`}
-      >
-        <GoogleGLogo />
-        {label}
-      </div>
-
-      {/* Render once width is known and never unmount — passing a stable
-          mountedWidthRef value means GoogleLogin's key never changes, so
-          initialize() is called exactly once per page load. */}
+    <div ref={wrapRef} className="w-full mb-2 flex justify-center [&>div]:w-full!">
       {mountedWidthRef.current > 0 && (
-        <div className="absolute inset-0 overflow-hidden rounded-xl opacity-0">
-          <GoogleLogin
-            onSuccess={(res) => {
-              if (res.credential) onCredential(res.credential)
-              else onError?.('Google sign-in did not return a credential. Please try again.')
-            }}
-            onError={() => onError?.('Google sign-in failed. Please try again.')}
-            width={mountedWidthRef.current}
-            size="large"
-          />
-        </div>
+        <GoogleLogin
+          onSuccess={(res) => {
+            if (res.credential) onCredential(res.credential)
+            else onError?.('Google sign-in did not return a credential. Please try again.')
+          }}
+          onError={() => onError?.('Google sign-in failed. Please try again.')}
+          width={mountedWidthRef.current}
+          size="large"
+          theme="outline"
+          shape="rectangular"
+          text="continue_with"
+        />
       )}
     </div>
   )
