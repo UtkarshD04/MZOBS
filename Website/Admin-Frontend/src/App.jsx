@@ -20,6 +20,7 @@ import Shortlisted from './pages/admin/Shortlisted'
 import Queries from './pages/admin/Queries'
 import Payments from './pages/admin/Payments'
 import Coupons from './pages/admin/Coupons'
+import CvCredits from './pages/admin/CvCredits'
 import SubscriptionTrend from './pages/admin/SubscriptionTrend'
 import EmployerRevenueTrend from './pages/admin/EmployerRevenueTrend'
 import Team from './pages/admin/Team'
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="queries" element={<Queries />} />
             <Route path="payments" element={<Payments />} />
             <Route path="coupons" element={<Coupons />} />
+            <Route path="cv-credits" element={<CvCredits />} />
             <Route path="subscriptions" element={<SubscriptionTrend />} />
             <Route path="employer-revenue" element={<EmployerRevenueTrend />} />
             <Route path="team" element={<Team />} />

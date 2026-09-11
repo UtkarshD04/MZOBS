@@ -28,4 +28,8 @@ export const queryKeys = {
   subscription: ['subscription'],
   accessStatus: ['subscription', 'access-status'],
   subscriptionPayments: ['subscription', 'payments'],
+  cvCredits: ['cv-credits'],
+  cvCreditPlans: ['cv-credits', 'plans'],
+  cvCreditPurchases: ['cv-credits', 'purchases'],
+  cvUnlocks: ['cv-credits', 'unlocks'],
 }

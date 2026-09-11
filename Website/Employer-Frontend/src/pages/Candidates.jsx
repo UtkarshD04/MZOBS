@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { Bell, CalendarPlus, Download, GraduationCap, MapPin, Search, ThumbsDown, ThumbsUp, Users, Wallet } from 'lucide-react'
+import { Bell, CalendarPlus, Download, GraduationCap, Lock, Mail, MapPin, Phone, Search, ThumbsDown, ThumbsUp, Unlock, Users, Wallet } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
 import Card, { CardBody } from '../components/ui/Card'
 import Button from '../components/ui/Button'
+import Badge from '../components/ui/Badge'
 import { Input, Select, Field, Textarea } from '../components/ui/Field'
 import { PillTabs } from '../components/ui/Tabs'
 import Avatar from '../components/ui/Avatar'
@@ -18,6 +19,7 @@ import Modal from '../components/ui/Modal'
 import { useCandidatesQuery, useSetCandidateStage, useCandidateResumeUrl } from '../hooks/useCandidates'
 import { useJobsQuery } from '../hooks/useJobs'
 import { useSendCandidateNotification } from '../hooks/useNotifications'
+import { useCreditBalanceQuery, useUnlockCandidate } from '../hooks/useCvCredits'
 import { FILE_BASE_URL } from '../lib/config'
 
 const STAGE_TABS = [
@@ -44,6 +46,7 @@ export default function Candidates() {
   const [notifyTargetIds, setNotifyTargetIds] = useState(null)
   const [notifyTitle, setNotifyTitle] = useState('')
   const [notifyBody, setNotifyBody] = useState('')
+  const [unlockTarget, setUnlockTarget] = useState(null)
 
   const stage = STAGE_TABS[tab].value
   const { data: candidates = [], isLoading, isError, refetch } = useCandidatesQuery({ search, stage, jobId })
@@ -51,6 +54,32 @@ export default function Candidates() {
   const setStage = useSetCandidateStage()
   const sendNotification = useSendCandidateNotification()
   const getResumeUrl = useCandidateResumeUrl()
+  const { data: creditBalance } = useCreditBalanceQuery()
+  const unlockCandidate = useUnlockCandidate()
+  const remainingCredits = creditBalance?.wallet?.remainingCredits ?? 0
+
+  function confirmUnlock() {
+    if (!unlockTarget) return
+    const id = unlockTarget
+    setUnlockTarget(null)
+    unlockCandidate.mutate(id, {
+      onError: (err) => {
+        if (err.response?.data?.code === 'INSUFFICIENT_CREDITS') {
+          toast.error('No CV credits remaining. Buy more to unlock this candidate.')
+          navigate('/cv-credits')
+        }
+      },
+    })
+  }
+
+  function downloadUnlockedResume(id) {
+    unlockCandidate.mutate(id, {
+      onSuccess: ({ candidate }) => {
+        if (candidate.resumeUrl) window.open(`${FILE_BASE_URL}${candidate.resumeUrl}`, '_blank')
+        else toast.error("This candidate's resume isn't available yet.")
+      },
+    })
+  }
 
   function downloadResume(id) {
     getResumeUrl.mutate(id, {
@@ -171,6 +200,37 @@ export default function Candidates() {
                   {c.skills.length > 4 && <span className="text-[11px] font-medium px-2 py-[3px] text-ink-tertiary">+{c.skills.length - 4} more</span>}
                 </div>
 
+                <div className="mt-3.5 pt-3.5 border-t border-border">
+                  {c.unlocked ? (
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex flex-col gap-1 text-[12px] text-ink-secondary min-w-0">
+                        <span className="flex items-center gap-1.5 truncate"><Mail size={12} className="text-ink-tertiary flex-shrink-0" /> {c.email}</span>
+                        <span className="flex items-center gap-1.5"><Phone size={12} className="text-ink-tertiary flex-shrink-0" /> {c.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Badge tone="green" icon={<Unlock size={11} />}>Unlocked</Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          iconOnly
+                          title="Download resume"
+                          loading={unlockCandidate.isPending && unlockCandidate.variables === c.id}
+                          onClick={() => downloadUnlockedResume(c.id)}
+                        >
+                          <Download size={14} />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className="text-[11.5px] text-ink-tertiary truncate">{c.contactPreview?.email} · {c.contactPreview?.phone}</span>
+                      <Button variant="gold" size="sm" loading={unlockCandidate.isPending && unlockCandidate.variables === c.id} onClick={() => setUnlockTarget(c.id)}>
+                        <Lock size={13} /> Unlock — 1 credit
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
                 <div className="flex items-center gap-2 mt-4 pt-3.5 border-t border-border flex-wrap">
                   <Button variant="secondary" size="sm" onClick={() => navigate(`/candidates/${c.id}`)}>View Profile</Button>
                   <Button variant="ghost" size="sm" iconOnly title="Download resume" loading={getResumeUrl.isPending && getResumeUrl.variables === c.id} onClick={() => downloadResume(c.id)}>
@@ -201,6 +261,26 @@ export default function Candidates() {
           <Pagination page={page} pageCount={pageCount} onChange={setPage} total={candidates.length} pageSize={PAGE_SIZE} />
         </>
       )}
+
+      <Modal
+        open={!!unlockTarget}
+        onClose={() => setUnlockTarget(null)}
+        title="Unlock this candidate?"
+        subtitle="This spends 1 CV credit (₹25) and gives you unlimited access to this candidate's contact details and resume going forward."
+        size="sm"
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => setUnlockTarget(null)}>Cancel</Button>
+            <Button variant="gold" size="sm" onClick={confirmUnlock}>
+              <Lock size={14} /> Confirm — use 1 credit
+            </Button>
+          </>
+        }
+      >
+        <div className="text-[13px] text-ink-secondary">
+          You have <span className="font-semibold text-ink">{remainingCredits}</span> credit{remainingCredits === 1 ? '' : 's'} remaining.
+        </div>
+      </Modal>
 
       <Modal
         open={!!rejectTarget}

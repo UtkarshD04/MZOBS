@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { LayoutDashboard, FileCheck, Video, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, IndianRupee, UserCog, Trophy, TrendingUp, Ticket, Send, Users, ClipboardList, Landmark } from 'lucide-react'
+import { LayoutDashboard, FileCheck, Video, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, IndianRupee, UserCog, Trophy, TrendingUp, Ticket, Send, Users, ClipboardList, Landmark, Wallet } from 'lucide-react'
 import { useApp } from '../../../context/AppContext'
 import { cn } from '../../../lib/utils'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
@@ -66,6 +66,7 @@ export default function AdminSidebar() {
 
   const controlItems = [
     { to: '/app/payments', label: 'Payments', icon: IndianRupee },
+    { to: '/app/cv-credits', label: 'CV Credits', icon: Wallet },
     { to: '/app/coupons', label: 'Coupons', icon: Ticket },
     { to: '/app/subscriptions', label: 'Subscriptions', icon: TrendingUp },
     { to: '/app/employer-revenue', label: 'Employer Revenue', icon: Landmark },

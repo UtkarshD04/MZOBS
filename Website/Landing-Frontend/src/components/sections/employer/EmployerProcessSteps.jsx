@@ -74,8 +74,7 @@ export default function EmployerProcessSteps() {
       <div aria-hidden="true" className="absolute -right-28 top-10 h-72 w-72 rounded-full bg-[#1F5A43] blur-[90px] opacity-70" />
       <div className="max-w-7xl mx-auto">
         <FadeInView className="max-w-xl">
-          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#B9D6CC]">The Mzobs method</span>
-          <h2 className="mt-3 font-serif text-3xl sm:text-4xl md:text-[48px] font-bold text-[#FAF7F1] tracking-tight leading-tight">A clearer path from role to right person.</h2>
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-[48px] font-bold text-[#FAF7F1] tracking-tight leading-tight">A clearer path from role to right person.</h2>
         </FadeInView>
 
         <div className="mt-14 relative grid sm:grid-cols-3 gap-10 sm:gap-8">

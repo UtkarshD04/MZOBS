@@ -51,10 +51,6 @@ export default function AboutStorySection() {
             blur
             className="relative z-10 h-full flex flex-col justify-center p-8 sm:p-14 max-w-2xl space-y-7"
           >
-            <span className="inline-flex w-fit items-center px-3.5 py-1.5 rounded-full bg-white border border-[#e0e0e0] text-[11px] font-bold uppercase tracking-wider text-black">
-              {OUR_VISION_DATA.badge}
-            </span>
-
             <h2 className="text-3xl sm:text-4xl md:text-[46px] font-black text-black tracking-tight leading-tight">
               <SplitText text={OUR_VISION_DATA.titlePrefix} />
               <SplitText

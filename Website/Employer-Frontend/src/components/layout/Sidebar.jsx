@@ -9,6 +9,7 @@ import {
   FileCheck,
   CreditCard,
   Sparkles,
+  Wallet,
   Building2,
   Users2,
   Bell,
@@ -20,6 +21,7 @@ import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
 import { useNotificationsQuery } from '../../hooks/useNotifications'
 import { useAccessStatusQuery } from '../../hooks/useSubscription'
+import { useCreditBalanceQuery } from '../../hooks/useCvCredits'
 
 const main = [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
 
@@ -69,10 +71,13 @@ export default function Sidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen } = useApp()
   const { data: notifications } = useNotificationsQuery()
   const { data: access } = useAccessStatusQuery()
+  const { data: creditBalance } = useCreditBalanceQuery()
   const unreadCount = (notifications ?? []).filter((n) => n.unread).length
+  const remainingCredits = creditBalance?.wallet?.remainingCredits
 
   const workspace = [
     { to: '/subscription', label: 'Plans & Billing', icon: Sparkles, badge: access && !access.active ? '!' : 0 },
+    { to: '/cv-credits', label: 'CV Credits', icon: Wallet, badge: remainingCredits !== undefined ? remainingCredits : 0 },
     { to: '/billing', label: 'Job Billing', icon: CreditCard },
     { to: '/company', label: 'Company Profile', icon: Building2 },
     { to: '/team', label: 'Team Members', icon: Users2 },

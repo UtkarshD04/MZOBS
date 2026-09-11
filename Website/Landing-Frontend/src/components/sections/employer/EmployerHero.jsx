@@ -13,7 +13,7 @@ function CandidateBoard() {
     <div data-hero-glow className="absolute -top-8 -right-6 h-36 w-36 rounded-full bg-[#246B5A]/25 opacity-90 blur-[1px]" />
     <div className="absolute -bottom-8 -left-6 h-28 w-28 rounded-full bg-[#DDE6DF]" />
     <div data-hero-board className="relative rotate-[2deg] rounded-[30px] border border-[#20251F] bg-[#FAF7F1] p-4 shadow-[10px_12px_0_#20251F] sm:p-6">
-      <div className="flex items-center justify-between border-b border-[#20251F]/12 pb-5"><div><p className="text-[10px] font-bold uppercase tracking-[0.17em] text-[#526051]">MZOBS matching desk</p><h2 className="mt-1 text-xl font-bold text-[#20251F]">Your shortlist, ready.</h2></div><span className="grid h-10 w-10 place-items-center rounded-full bg-[#20251F] text-[#FAF7F1]"><Sparkles size={17} /></span></div>
+      <div className="flex items-center justify-between border-b border-[#20251F]/12 pb-5"><h2 className="text-xl font-bold text-[#20251F]">Your shortlist, ready.</h2><span className="grid h-10 w-10 place-items-center rounded-full bg-[#20251F] text-[#FAF7F1]"><Sparkles size={17} /></span></div>
       <div className="mt-4 space-y-3">{candidates.map((candidate, index) => <div key={candidate.name} className="flex items-center gap-3 rounded-2xl border border-[#20251F]/10 bg-white px-3 py-3 transition-transform duration-300 hover:-translate-x-1" style={{ transform: `translateX(${index * 8}px)` }}><span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${candidate.tone} text-xs font-extrabold text-[#20251F]`}>{candidate.initials}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-[#20251F]">{candidate.name}</p><p className="text-xs text-[#526051]">{candidate.role}</p></div><span className="rounded-full bg-[#DCECE3] px-2.5 py-1 text-[10px] font-extrabold text-[#1F5A43]">{candidate.score}</span></div>)}</div>
       <div className="mt-5 flex items-center justify-between rounded-2xl bg-[#20251F] px-4 py-3 text-[#FAF7F1]"><span className="text-xs font-semibold">Verified profiles only</span><Check size={16} className="text-[#DDE6DF]" /></div>
     </div>
@@ -29,10 +29,6 @@ export default function EmployerHero() {
       <div data-hero-orbit aria-hidden="true" className="absolute left-[45%] top-20 h-[550px] w-[550px] rounded-full border border-[#20251F]/10" />
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.04fr_.96fr] lg:gap-20">
         <div>
-          <FadeInLoad delay={0}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#20251F]/15 bg-white px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#1F5A43]"><span className="h-1.5 w-1.5 rounded-full bg-[#246B5A]" /> Built for thoughtful hiring</span>
-          </FadeInLoad>
-
           <FadeInLoad delay={0.08}>
             <h1 className="mt-6 max-w-3xl font-serif text-[48px] font-bold leading-[0.96] tracking-[-0.045em] text-[#20251F] sm:text-6xl md:text-[76px]">Great teams start with a better first <em className="font-serif font-normal text-[#246B5A]">conversation.</em></h1>
           </FadeInLoad>
@@ -52,7 +48,6 @@ export default function EmployerHero() {
                 href="#how-it-works" className="inline-flex min-h-12 items-center text-sm font-bold text-[#20251F] underline decoration-[#246B5A] decoration-2 underline-offset-6 hover:text-[#246B5A]">See the process</a>
             </div>
           </FadeInLoad>
-          <FadeInLoad delay={0.4}><p className="mt-10 text-xs font-semibold uppercase tracking-[0.13em] text-[#526051]">No resume dumps · Human-reviewed profiles · Direct hiring workflow</p></FadeInLoad>
         </div>
         <FadeInLoad delay={0.25}><CandidateBoard /></FadeInLoad>
       </div>

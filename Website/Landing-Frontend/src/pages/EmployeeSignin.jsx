@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Seo from '../components/Seo'
 import AuthHeader from '../components/ui/AuthHeader'
+import Footer from '../components/layout/Footer'
 import CareerOnboardingPanel from '../components/ui/CareerOnboardingPanel'
 import EmployeeSigninForm from '../components/forms/EmployeeSigninForm'
 
@@ -45,6 +46,8 @@ export default function EmployeeSignin() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   )
 }

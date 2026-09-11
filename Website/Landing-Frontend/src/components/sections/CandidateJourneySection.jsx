@@ -75,11 +75,6 @@ export default function CandidateJourneySection() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="text-center max-w-3xl mx-auto space-y-2"
         >
-          <div className="inline-flex items-center gap-2 text-xs font-mono font-semibold text-[#1C2B4E]/70 tracking-widest uppercase mb-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1C2B4E]" />
-            {CANDIDATE_JOURNEY_DATA.badge}
-          </div>
-
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-bold text-[#0A1128] tracking-tight uppercase leading-tight">
             FROM PROFILE TO{' '}
             <span className="font-serif italic font-normal text-blue-900 capitalize px-1">

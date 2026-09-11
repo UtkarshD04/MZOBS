@@ -1,10 +1,9 @@
 import { Play } from 'lucide-react'
-import SectionBadge from '../ui/SectionBadge'
 import Reveal from '../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { TESTIMONIALS_DATA } from '../../lib/content'
 
-export default function TestimonialsSection({ eyebrow, title, items }) {
+export default function TestimonialsSection({ title, items }) {
   const testimonialItems = items || TESTIMONIALS_DATA.items
   const gridCols =
     testimonialItems.length >= 5 ? 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5' : 'sm:grid-cols-2 md:grid-cols-3'
@@ -14,7 +13,6 @@ export default function TestimonialsSection({ eyebrow, title, items }) {
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <Reveal direction="up" className="text-center max-w-2xl mx-auto">
-          <SectionBadge label={eyebrow || TESTIMONIALS_DATA.badge} />
           {title ? (
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
               {title}

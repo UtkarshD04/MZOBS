@@ -1,7 +1,7 @@
 import { apiClient } from '../lib/api'
 
-export function listCoupons() {
-  return apiClient.get('/coupons').then((r) => r.data)
+export function listCoupons(params = {}) {
+  return apiClient.get('/coupons', { params }).then((r) => r.data)
 }
 
 export function createCoupon(input) {

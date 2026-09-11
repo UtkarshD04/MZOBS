@@ -30,8 +30,7 @@ export default function EmployerQualitySection() {
       <div aria-hidden="true" className="absolute -left-28 bottom-10 h-72 w-72 rounded-full bg-[#DDE6DF]/60 blur-[90px]" />
       <div className="relative max-w-7xl mx-auto">
         <FadeInView className="max-w-2xl">
-          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#246B5A]">A more trustworthy hiring room</span>
-          <h2 className="mt-3 font-serif text-3xl sm:text-4xl md:text-[48px] font-bold text-[#20251F] tracking-tight leading-[1.04]">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-[48px] font-bold text-[#20251F] tracking-tight leading-[1.04]">
             Built to make every step feel more certain.
           </h2>
           <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-[#526051]">The details that usually create delay and doubt are handled before they ever reach your desk.</p>
