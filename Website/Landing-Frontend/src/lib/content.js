@@ -758,7 +758,6 @@ export const GALLERY_IMAGES = [
 // ============================================================
 
 export const JOB_SEARCH_DATA = {
-  eyebrow: "Verified opportunities. Real employers.",
   headlineLine1: "Where Verified Talent",
   headlineLine2: "Meets Real Work.",
   subtitleLine1: "Get discovered, build your skills, and grow through real opportunities.",
@@ -776,9 +775,6 @@ export const JOB_SEARCH_DATA = {
     { value: "10+", label: "10+ years" }
   ],
   searchCta: "Search Jobs",
-  employerTitlePlaceholder: "Find talent, skills or role",
-  employerLocationPlaceholder: "Location",
-  employerCta: "Find Talent",
   // Trimmed to 4–5 on the hero itself (see JobSearchHero.jsx) so this stays
   // a short, useful shortcut row rather than a wall of links.
   popularSearches: ["Software Developer", "Sales Executive", "HR Executive", "Data Analyst", "Fresher Jobs"]
