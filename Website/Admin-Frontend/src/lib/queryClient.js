@@ -30,4 +30,9 @@ export const queryKeys = {
   coupons: ['coupons'],
   employees: (filters) => ['employees', filters],
   notifications: ['notifications'],
+  cvCreditSummary: ['cvCreditSummary'],
+  cvCreditPurchases: (filters) => ['cvCreditPurchases', filters],
+  cvUnlocks: (filters) => ['cvUnlocks', filters],
+  cvCreditLedger: (filters) => ['cvCreditLedger', filters],
+  cvCreditPlans: ['cvCreditPlans'],
 }

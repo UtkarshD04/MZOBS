@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft, Briefcase, CalendarPlus, Download, ExternalLink, GraduationCap, Lock, Mail, MapPin, Phone,
-  ThumbsDown, ThumbsUp, Wallet, FileText, Award, FolderGit2,
+  ThumbsDown, ThumbsUp, Unlock, Wallet, FileText, Award, FolderGit2,
 } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
 import Card, { CardBody, CardHead, CardTitle } from '../components/ui/Card'
 import Button from '../components/ui/Button'
+import Badge from '../components/ui/Badge'
 import Avatar from '../components/ui/Avatar'
 import { CandidateStageBadge, InterviewStatusBadge } from '../components/ui/StatusBadge'
 import { ResumeVerifiedBadge, IdentityVerifiedBadge } from '../components/ui/VerifiedBadge'
@@ -17,6 +18,7 @@ import Modal from '../components/ui/Modal'
 import { Field, Textarea } from '../components/ui/Field'
 import { useCandidateQuery, useSetCandidateStage, useCandidatePrivateDetailsQuery, useCandidateResumeUrl } from '../hooks/useCandidates'
 import { useAccessStatusQuery } from '../hooks/useSubscription'
+import { useCreditBalanceQuery, useUnlockCandidate } from '../hooks/useCvCredits'
 import { useInterviewsQuery } from '../hooks/useInterviews'
 import { fmtDateTime } from '../lib/utils'
 import { FILE_BASE_URL } from '../lib/config'
@@ -33,6 +35,10 @@ export default function CandidateProfile() {
   const [resumeOpen, setResumeOpen] = useState(false)
   const getResumeUrl = useCandidateResumeUrl()
   const [resumeUrl, setResumeUrl] = useState(null)
+  const [unlockConfirmOpen, setUnlockConfirmOpen] = useState(false)
+  const { data: creditBalance } = useCreditBalanceQuery()
+  const unlockCandidate = useUnlockCandidate()
+  const remainingCredits = creditBalance?.wallet?.remainingCredits ?? 0
 
   // Only fired at all when the plan is active — private data never renders
   // briefly before being masked, it's just never requested in the inactive case.
@@ -43,6 +49,23 @@ export default function CandidateProfile() {
     setResumeUrl(null)
     if (!access?.active) return
     getResumeUrl.mutate(id, { onSuccess: (res) => setResumeUrl(res.url) })
+  }
+
+  function confirmCreditUnlock() {
+    setUnlockConfirmOpen(false)
+    unlockCandidate.mutate(id, {
+      onError: (err) => {
+        if (err.response?.data?.code === 'INSUFFICIENT_CREDITS') navigate('/cv-credits')
+      },
+    })
+  }
+
+  function downloadCreditResume() {
+    unlockCandidate.mutate(id, {
+      onSuccess: ({ candidate: unlocked }) => {
+        if (unlocked.resumeUrl) window.open(`${FILE_BASE_URL}${unlocked.resumeUrl}`, '_blank')
+      },
+    })
   }
 
   if (isLoading) return <PageSkeleton />
@@ -209,6 +232,36 @@ export default function CandidateProfile() {
           </Card>
 
           <Card>
+            <CardHead>
+              <CardTitle>CV Credit Unlock</CardTitle>
+              {candidate.unlocked && <Badge tone="green" icon={<Unlock size={11} />}>Unlocked</Badge>}
+            </CardHead>
+            {candidate.unlocked ? (
+              <CardBody className="flex flex-col gap-3">
+                <InfoRow icon={Mail} label="Email" value={candidate.email || '—'} />
+                <InfoRow icon={Phone} label="Phone" value={candidate.phone || '—'} />
+                <Button variant="secondary" size="sm" className="w-full mt-1" loading={unlockCandidate.isPending} onClick={downloadCreditResume}>
+                  <Download size={14} /> Download Resume
+                </Button>
+              </CardBody>
+            ) : (
+              <CardBody>
+                <div className="flex items-start gap-2.5 text-[12.5px] text-ink-secondary leading-relaxed">
+                  <Lock size={15} className="text-amber mt-0.5 flex-shrink-0" />
+                  <span>{candidate.contactPreview?.email} · {candidate.contactPreview?.phone}</span>
+                </div>
+                <Button variant="gold" size="sm" className="w-full mt-3" loading={unlockCandidate.isPending} onClick={() => setUnlockConfirmOpen(true)}>
+                  <Lock size={14} /> Unlock contact & CV — 1 credit
+                </Button>
+                <div className="text-[11.5px] text-ink-tertiary text-center mt-2">
+                  {remainingCredits} credit{remainingCredits === 1 ? '' : 's'} remaining — {' '}
+                  <button onClick={() => navigate('/cv-credits')} className="underline hover:text-ink-secondary">buy more</button>
+                </div>
+              </CardBody>
+            )}
+          </Card>
+
+          <Card>
             <CardHead><CardTitle>Skills</CardTitle></CardHead>
             <CardBody className="flex flex-wrap gap-1.5">
               {candidate.skills.map((s) => (
@@ -233,6 +286,26 @@ export default function CandidateProfile() {
           </Card>
         </div>
       </div>
+
+      <Modal
+        open={unlockConfirmOpen}
+        onClose={() => setUnlockConfirmOpen(false)}
+        title="Unlock this candidate?"
+        subtitle="This spends 1 CV credit (₹25) and gives you unlimited access to this candidate's contact details and resume going forward."
+        size="sm"
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => setUnlockConfirmOpen(false)}>Cancel</Button>
+            <Button variant="gold" size="sm" onClick={confirmCreditUnlock}>
+              <Lock size={14} /> Confirm — use 1 credit
+            </Button>
+          </>
+        }
+      >
+        <div className="text-[13px] text-ink-secondary">
+          You have <span className="font-semibold text-ink">{remainingCredits}</span> credit{remainingCredits === 1 ? '' : 's'} remaining.
+        </div>
+      </Modal>
 
       <Modal open={resumeOpen} onClose={() => setResumeOpen(false)} title={`${candidate.name} — Resume`} size="lg">
         <div className="rounded-xl border border-dashed border-border-strong bg-surface-sunken flex flex-col items-center justify-center gap-3 py-16">

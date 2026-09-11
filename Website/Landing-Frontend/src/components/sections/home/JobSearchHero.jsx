@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+<<<<<<< Updated upstream
 import { Search, MapPin, Briefcase, ChevronDown, ArrowRight } from 'lucide-react'
+=======
+import { Search, MapPin, Briefcase, ChevronDown } from 'lucide-react'
+>>>>>>> Stashed changes
 import { JOB_SEARCH_DATA } from '../../../lib/content'
 import { fetchJobSuggestions } from '../../../lib/publicJobs'
 import Autocomplete from '../../ui/Autocomplete'
@@ -75,6 +79,7 @@ export default function JobSearchHero({ filters, onSearch }) {
   }
 
   return (
+<<<<<<< Updated upstream
     <section id="job-search" className="hero-atmosphere relative pt-28 pb-24 md:pt-32 md:pb-28">
       <HeroBubbleField />
 
@@ -88,11 +93,21 @@ export default function JobSearchHero({ filters, onSearch }) {
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10">
         {/* Headline, toggle */}
         <div className="max-w-2xl mx-auto text-center">
+=======
+    <section id="job-search" className="bg-(--explorer-bg) pt-28 pb-14 md:pt-32 md:pb-16">
+      <div className="max-w-7xl mx-auto px-6 md:px-10">
+        {/* Headline, search, popular searches */}
+        <div className="max-w-2xl">
+>>>>>>> Stashed changes
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+<<<<<<< Updated upstream
             className="text-[34px] sm:text-[44px] lg:text-[50px] xl:text-[54px] font-extrabold leading-[1.08] tracking-tight text-balance"
+=======
+            className="text-[34px] sm:text-[42px] lg:text-[46px] font-extrabold text-(--explorer-navy) leading-[1.08] tracking-tight text-balance"
+>>>>>>> Stashed changes
           >
             <span className="block text-(--explorer-navy)">{JOB_SEARCH_DATA.headlineLine1}</span>
             <span

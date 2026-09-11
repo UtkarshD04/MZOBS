@@ -4,6 +4,7 @@ import Card, { CardHead } from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
 import CountUp from '../../components/ui/CountUp'
+import { PillTabs } from '../../components/ui/Tabs'
 import { TableWrap, Table, Tr, Td } from '../../components/ui/Table'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { PageSkeleton } from '../../components/ui/Skeleton'
@@ -14,9 +15,18 @@ import { Field, Input, Select, Textarea } from '../../components/ui/Field'
 import { useApp } from '../../context/AppContext'
 import { useCouponsQuery, useCreateCouponMutation, useUpdateCouponMutation, useDeleteCouponMutation } from '../../hooks/useCoupons'
 
+const APPLIES_TO_TABS = [
+  { label: 'All', value: 'all' },
+  { label: 'Employee subscription', value: 'employee_subscription' },
+  { label: 'Employer CV credits', value: 'employer_cv_credit' },
+]
+const appliesToLabel = { employee_subscription: 'Employee subscription', employer_cv_credit: 'Employer CV credits' }
+const appliesToTone = { employee_subscription: 'navy', employer_cv_credit: 'gold' }
+
 const EMPTY_FORM = {
   code: '',
   description: '',
+  appliesTo: 'employee_subscription',
   discountType: 'percentage',
   discountValue: '',
   maxDiscountAmount: '',
@@ -29,6 +39,7 @@ function toPayload(form) {
   return {
     code: form.code.trim().toUpperCase(),
     description: form.description.trim(),
+    appliesTo: form.appliesTo,
     discountType: form.discountType,
     discountValue: Number(form.discountValue),
     maxDiscountAmount: form.discountType === 'percentage' && form.maxDiscountAmount !== '' ? Number(form.maxDiscountAmount) : null,
@@ -45,6 +56,7 @@ function CouponFormModal({ app, coupon, onDone }) {
       ? {
           code: coupon.code,
           description: coupon.description ?? '',
+          appliesTo: coupon.appliesTo ?? 'employee_subscription',
           discountType: coupon.discountType,
           discountValue: String(coupon.discountValue),
           maxDiscountAmount: coupon.maxDiscountAmount != null ? String(coupon.maxDiscountAmount) : '',
@@ -90,6 +102,12 @@ function CouponFormModal({ app, coupon, onDone }) {
         <Field label="Description" optional>
           <Textarea value={form.description} onChange={(e) => set('description', e.target.value)} placeholder="Internal note about this coupon" />
         </Field>
+        <Field label="Applies to" hint="Which payment this coupon can be redeemed on.">
+          <Select value={form.appliesTo} onChange={(e) => set('appliesTo', e.target.value)}>
+            <option value="employee_subscription">Employee subscription (₹299 placement fee)</option>
+            <option value="employer_cv_credit">Employer CV credits</option>
+          </Select>
+        </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Discount type">
             <Select value={form.discountType} onChange={(e) => set('discountType', e.target.value)}>
@@ -132,7 +150,9 @@ function CouponFormModal({ app, coupon, onDone }) {
 
 export default function Coupons() {
   const app = useApp()
-  const { data: coupons = [], isLoading, isError, refetch } = useCouponsQuery()
+  const [tab, setTab] = useState(0)
+  const appliesToFilter = APPLIES_TO_TABS[tab].value
+  const { data: coupons = [], isLoading, isError, refetch } = useCouponsQuery(appliesToFilter !== 'all' ? { appliesTo: appliesToFilter } : {})
   const updateCoupon = useUpdateCouponMutation()
   const deleteCoupon = useDeleteCouponMutation()
 
@@ -173,11 +193,15 @@ export default function Coupons() {
       <StaggerItem className="flex items-start justify-between gap-5 flex-wrap mb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Coupons</h1>
-          <p className="text-sm text-ink-secondary mt-1">Create discount codes candidates can apply on the ₹299 placement programme payment.</p>
+          <p className="text-sm text-ink-secondary mt-1">Discount codes for the employee ₹299 placement fee and employer CV-credit purchases.</p>
         </div>
         <Button variant="primary" onClick={() => app.openModal(<CouponFormModal app={app} onDone={refetch} />)}>
           <Plus size={15} /> Create coupon
         </Button>
+      </StaggerItem>
+
+      <StaggerItem className="mb-5">
+        <PillTabs items={APPLIES_TO_TABS.map((t) => t.label)} active={tab} onChange={setTab} />
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
@@ -204,7 +228,7 @@ export default function Coupons() {
       <StaggerItem>
         {coupons.length === 0 ? (
           <Card>
-            <EmptyState icon={Ticket} title="No coupons yet" body="Create one to offer candidates a discount on the placement programme fee." />
+            <EmptyState icon={Ticket} title="No coupons" body="Nothing matches this filter yet — create a coupon to offer a discount." />
           </Card>
         ) : (
           <Card>
@@ -212,13 +236,14 @@ export default function Coupons() {
               <span className="text-[15px] font-semibold">{coupons.length} coupons</span>
             </CardHead>
             <TableWrap className="border-none rounded-none">
-              <Table columns={['Code', 'Discount', 'Min order', 'Usage', 'Expires', 'Status', '']}>
+              <Table columns={['Code', 'Applies to', 'Discount', 'Min order', 'Usage', 'Expires', 'Status', '']}>
                 {coupons.map((c) => (
                   <Tr key={c.id}>
                     <Td>
                       <div className="font-mono font-semibold tracking-wide">{c.code}</div>
                       {c.description && <div className="text-xs text-ink-tertiary mt-0.5">{c.description}</div>}
                     </Td>
+                    <Td><Badge tone={appliesToTone[c.appliesTo] ?? 'gray'} dot={false}>{appliesToLabel[c.appliesTo] ?? c.appliesTo}</Badge></Td>
                     <Td>{describe(c)}</Td>
                     <Td>{c.minOrderAmount ? `₹${c.minOrderAmount}` : '—'}</Td>
                     <Td>

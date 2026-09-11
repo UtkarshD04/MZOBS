@@ -1,4 +1,4 @@
-import { ArrowRight, Briefcase, Sparkles, Users2 } from 'lucide-react'
+import { ArrowRight, Briefcase, Users2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Reveal from '../../ui/Reveal'
@@ -58,10 +58,6 @@ export default function AboutCTABand() {
             className="relative z-10 h-full flex flex-col justify-end items-center text-center p-8 sm:p-14 gap-8"
           >
             <div className="flex flex-col items-center gap-5 max-w-2xl">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#e0e0e0] shadow-sm text-[11px] font-bold uppercase tracking-wider text-[#3d3d3d]">
-                <Sparkles size={12} className="text-[var(--careers-accent)]" /> Two sides. One platform.
-              </span>
-
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#111827] tracking-tight leading-tight">
                 {EMOTIONAL_LINES.map((line) => (
                   <span key={line.em} className="block">

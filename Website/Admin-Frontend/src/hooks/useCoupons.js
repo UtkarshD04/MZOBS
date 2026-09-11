@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as couponsService from '../services/couponsService'
 import { queryKeys } from '../lib/queryClient'
 
-export function useCouponsQuery() {
-  return useQuery({ queryKey: queryKeys.coupons, queryFn: couponsService.listCoupons })
+export function useCouponsQuery(filters = {}) {
+  return useQuery({ queryKey: [...queryKeys.coupons, filters], queryFn: () => couponsService.listCoupons(filters) })
 }
 
 export function useCreateCouponMutation() {

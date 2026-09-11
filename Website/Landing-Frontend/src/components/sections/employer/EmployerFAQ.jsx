@@ -58,8 +58,7 @@ export default function EmployerFAQ() {
     <section id="faq" className="bg-[#F1EDE5] py-20 md:py-28 px-6 md:px-12">
       <div className="max-w-7xl mx-auto grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
         <FadeInView className="lg:sticky lg:top-28 self-start">
-          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#1F5A43]">Good questions</span>
-          <h2 className="mt-3 font-serif text-4xl sm:text-5xl font-bold text-[#20251F] tracking-tight leading-[0.98]">Answers before you begin.</h2>
+          <h2 className="font-serif text-4xl sm:text-5xl font-bold text-[#20251F] tracking-tight leading-[0.98]">Answers before you begin.</h2>
           <p className="mt-5 text-[15px] text-[#526051] leading-relaxed">
             Everything you need to know about hiring on MZOBS. Still have questions?{' '}
             <Link to="/contact" className="font-bold text-[#1F5A43] underline decoration-[#246B5A] decoration-2 underline-offset-4 hover:text-[#246B5A] transition-colors">
