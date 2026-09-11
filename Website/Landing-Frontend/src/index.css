@@ -415,3 +415,239 @@
     transform: none !important;
   }
 }
+
+/* ============================================================
+   FLOATING BUBBLE / AMBIENT MOTION SYSTEM (decorative-only layer)
+   Purely additive: absolutely-positioned, pointer-events-none glass
+   "bubbles" layered behind existing section content — see
+   components/decor/HeroBubbleField.jsx and SectionFlowAccent.jsx.
+   Built from the same --explorer-* brand palette as the rest of this
+   page (see :root above), just at low opacity/blur, so it reads as
+   "this brand, alive" rather than a new decorative palette.
+
+   Three nested transform layers per bubble so each motion concern
+   (mouse parallax / continuous float / hover response) owns its own
+   element instead of fighting the others for the `transform` property:
+     .bubble-parallax  (JS-driven, mouse-reactive)
+       > .bubble-float    (CSS keyframe, continuous ambient motion)
+         > .bubble-hover    (:hover/:focus response)
+           > .bubble-surface  (the actual glass visual)
+   All animation is transform/opacity only — GPU-friendly, no layout
+   animation — and continuous motion is skipped entirely under
+   prefers-reduced-motion instead of just slowed down.
+============================================================ */
+:root {
+  --bubble-teal-rgb: 11, 122, 109;
+  --bubble-blue-rgb: 37, 99, 235;
+  --bubble-gold-rgb: 198, 138, 31;
+  --bubble-navy-rgb: 22, 50, 79;
+  /* Added for the restored centered hero (see JobSearchHero.jsx /
+     HeroBubbleField.jsx): the reference composition's Hire Talent and Get
+     Feedback bubbles, plus Learn & Grow's warmer orange, need tones outside
+     the original teal/blue/gold/navy set. */
+  --bubble-purple-rgb: 124, 92, 232;
+  --bubble-pink-rgb: 236, 97, 163;
+  --bubble-orange-rgb: 237, 137, 54;
+  --hero-cta-gradient: linear-gradient(90deg, #3b6df0 0%, #6c5cf0 100%);
+}
+
+.bubble-surface {
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 68% 78%, rgba(var(--bubble-tone-rgb), 0.16), transparent 60%),
+    linear-gradient(155deg, rgba(var(--bubble-tone-rgb), 0.22), rgba(var(--bubble-tone-rgb), 0.06) 70%);
+  box-shadow:
+    0 18px 38px -14px rgba(var(--bubble-tone-rgb), 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    inset 0 -10px 18px -12px rgba(var(--bubble-tone-rgb), 0.3);
+  backdrop-filter: blur(3px) saturate(1.1);
+  -webkit-backdrop-filter: blur(3px) saturate(1.1);
+}
+.bubble-tone-teal {
+  --bubble-tone-rgb: var(--bubble-teal-rgb);
+}
+.bubble-tone-blue {
+  --bubble-tone-rgb: var(--bubble-blue-rgb);
+}
+.bubble-tone-gold {
+  --bubble-tone-rgb: var(--bubble-gold-rgb);
+}
+.bubble-tone-navy {
+  --bubble-tone-rgb: var(--bubble-navy-rgb);
+}
+
+/* Richer, more saturated fill for the six labeled "major" bubbles (Find
+   Jobs, Hire Talent, etc.) — .bubble-surface's paler tint reads fine for
+   the small unlabeled orbs, but the reference screenshot's labeled bubbles
+   carry white text directly on a solid-ish colored glass, not a pastel
+   wash, so they need enough fill opacity for that text to stay legible. */
+.bubble-surface-major {
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 45%),
+    radial-gradient(circle at 72% 82%, rgba(0, 0, 0, 0.12), transparent 60%),
+    linear-gradient(155deg, rgba(var(--bubble-tone-rgb), 0.94), rgba(var(--bubble-tone-rgb), 0.74) 75%);
+  box-shadow:
+    0 22px 46px -14px rgba(var(--bubble-tone-rgb), 0.55),
+    inset 0 1px 1px rgba(255, 255, 255, 0.65),
+    inset 0 -14px 22px -14px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(2px) saturate(1.15);
+  -webkit-backdrop-filter: blur(2px) saturate(1.15);
+}
+.bubble-tone-purple {
+  --bubble-tone-rgb: var(--bubble-purple-rgb);
+}
+.bubble-tone-pink {
+  --bubble-tone-rgb: var(--bubble-pink-rgb);
+}
+.bubble-tone-orange {
+  --bubble-tone-rgb: var(--bubble-orange-rgb);
+}
+
+.bubble-blob {
+  border-radius: 9999px;
+  filter: blur(38px);
+  background: radial-gradient(circle, rgba(var(--bubble-tone-rgb), 0.5), rgba(var(--bubble-tone-rgb), 0) 70%);
+}
+
+/* Abstract-shape layer (rounded squares/rectangles, not circles) — softer
+   and more subdued than .bubble-surface's orbs, meant to bleed off the
+   Hero's edges as ambient texture rather than read as another bubble. */
+.bubble-shape {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: linear-gradient(155deg, rgba(var(--bubble-tone-rgb), 0.16), rgba(var(--bubble-tone-rgb), 0.04) 70%);
+  box-shadow: 0 14px 30px -18px rgba(var(--bubble-tone-rgb), 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Scroll-linked drift, applied only to the background-wash layer (see
+   HeroBubbleField.jsx's --sy, set from a capped/clamped window.scrollY) —
+   the subtlest depth cue, background elements shift a little as the page
+   scrolls instead of staying perfectly locked to the viewport. */
+.bg-scroll-layer {
+  transform: translateY(var(--sy, 0px));
+  transition: transform 0.15s linear;
+}
+
+/* Hero's own airy backdrop: light blue/lavender base, cyan-green glow
+   bottom-left, pink glow bottom-right, warm glow bottom-center — see
+   JobSearchHero.jsx. Fixed/light-only, matching the rest of this page's
+   --explorer-* palette above (no light-dark() in this block either). */
+.hero-atmosphere {
+  background:
+    radial-gradient(ellipse 620px 420px at 12% 96%, rgba(var(--bubble-teal-rgb), 0.16), transparent 70%),
+    radial-gradient(ellipse 620px 420px at 88% 96%, rgba(var(--bubble-pink-rgb), 0.15), transparent 70%),
+    radial-gradient(ellipse 520px 340px at 50% 102%, rgba(var(--bubble-orange-rgb), 0.12), transparent 70%),
+    radial-gradient(ellipse 900px 600px at 14% 6%, rgba(var(--bubble-blue-rgb), 0.08), transparent 65%),
+    radial-gradient(ellipse 900px 600px at 86% 6%, rgba(var(--bubble-purple-rgb), 0.08), transparent 65%),
+    linear-gradient(180deg, #f3f6fd 0%, #f6f4fb 48%, #fbf5f0 100%);
+}
+
+/* Bleeds past the hero's own bottom edge into the section below — a
+   deliberately oversized, low-opacity blob that reads as the Hero
+   "handing off" into whatever comes next (see item 12/13 of the restore
+   brief: a strong, organic Hero → next-section transition). Sits in its
+   own non-clipped wrapper (not the bubble field's overflow-hidden inset-0)
+   so it can actually cross the section boundary. */
+@keyframes heroHandoffPulse {
+  0%, 100% { transform: translate(-50%, 0) scale(1); opacity: 0.9; }
+  50% { transform: translate(-50%, 0) scale(1.08); opacity: 1; }
+}
+.hero-handoff-blob {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  /* Static fallback for prefers-reduced-motion (no keyframe applied then,
+     so this is the only thing centering it on `left: 50%`) — the animation
+     below re-states the same translateX at each of its keyframes. */
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  filter: blur(60px);
+  background: radial-gradient(circle, rgba(var(--bubble-blue-rgb), 0.22), rgba(var(--bubble-purple-rgb), 0.14) 55%, transparent 75%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-handoff-blob {
+    animation: heroHandoffPulse 14s ease-in-out infinite;
+  }
+}
+
+.bubble-parallax {
+  transform: translate3d(calc(var(--mx, 0) * var(--px, 0px)), calc(var(--my, 0) * var(--py, 0px)), 0);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.bubble-hover {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+}
+.bubble-hover:hover,
+.bubble-hover:focus-visible {
+  transform: translateY(-5px) scale(1.04);
+  filter: brightness(1.05);
+}
+
+/* --amp-y/--amp-x/--amp-r let a caller shrink these to a known-safe swing
+   (e.g. the six major Hero bubbles, each solved so their position *plus*
+   this amplitude never overlaps a neighbor or clips a viewport/nav edge —
+   see HeroBubbleField.jsx's MAJOR_BUBBLES) without touching the keyframe
+   itself; anything that doesn't set them keeps the original swing. */
+@keyframes bubbleFloatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(var(--amp-y, -18px)); }
+}
+@keyframes bubbleFloatDiagonal {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(var(--amp-x, 16px), var(--amp-y, -18px)); }
+}
+@keyframes bubbleFloatX {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(var(--amp-x, 18px)); }
+}
+@keyframes bubbleBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+@keyframes bubbleFloatRotate {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(var(--amp-y, -15px)) rotate(var(--amp-r, 5deg)); }
+}
+@keyframes bubbleDriftSlow {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(10px, -14px); }
+  66% { transform: translate(-9px, 9px); }
+}
+@keyframes bubbleBlobDrift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-22px, 18px) scale(1.08); }
+}
+@keyframes bubbleMediumDrift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  33% { transform: translate(8px, -10px) rotate(2deg) scale(1.03); }
+  66% { transform: translate(-7px, 6px) rotate(-2deg) scale(0.97); }
+}
+@keyframes bubblePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.12); opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bubble-anim-float-y { animation: bubbleFloatY var(--dur, 12s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+  .bubble-anim-float-diagonal { animation: bubbleFloatDiagonal var(--dur, 13s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+  .bubble-anim-float-x { animation: bubbleFloatX var(--dur, 15s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+  .bubble-anim-breathe { animation: bubbleBreathe var(--dur, 11s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+  .bubble-anim-float-rotate { animation: bubbleFloatRotate var(--dur, 18s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+  .bubble-anim-drift-slow { animation: bubbleDriftSlow var(--dur, 20s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+  .bubble-anim-blob-drift { animation: bubbleBlobDrift var(--dur, 26s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+  .bubble-anim-medium-drift { animation: bubbleMediumDrift var(--dur, 20s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+  .bubble-anim-pulse { animation: bubblePulse var(--dur, 8s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bubble-parallax {
+    transform: none !important;
+    transition: none !important;
+  }
+}
