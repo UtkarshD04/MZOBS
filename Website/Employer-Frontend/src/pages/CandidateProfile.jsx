@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import {
   ArrowLeft, Briefcase, CalendarPlus, Download, ExternalLink, GraduationCap, Lock, Mail, MapPin, Phone,
   ThumbsDown, ThumbsUp, Unlock, Wallet, FileText, Award, FolderGit2,
@@ -16,7 +17,7 @@ import ErrorState from '../components/ui/ErrorState'
 import EmptyState from '../components/ui/EmptyState'
 import Modal from '../components/ui/Modal'
 import { Field, Textarea } from '../components/ui/Field'
-import { useCandidateQuery, useSetCandidateStage, useCandidatePrivateDetailsQuery, useCandidateResumeUrl } from '../hooks/useCandidates'
+import { useCandidateQuery, useSetCandidateStage, useCandidateResumeUrl } from '../hooks/useCandidates'
 import { useAccessStatusQuery } from '../hooks/useSubscription'
 import { useCreditBalanceQuery, useUnlockCandidate } from '../hooks/useCvCredits'
 import { useInterviewsQuery } from '../hooks/useInterviews'
@@ -40,10 +41,6 @@ export default function CandidateProfile() {
   const unlockCandidate = useUnlockCandidate()
   const remainingCredits = creditBalance?.wallet?.remainingCredits ?? 0
 
-  // Only fired at all when the plan is active — private data never renders
-  // briefly before being masked, it's just never requested in the inactive case.
-  const { data: privateDetails, isFetching: privateDetailsLoading } = useCandidatePrivateDetailsQuery(id, { enabled: !!access?.active })
-
   function openResume() {
     setResumeOpen(true)
     setResumeUrl(null)
@@ -54,8 +51,15 @@ export default function CandidateProfile() {
   function confirmCreditUnlock() {
     setUnlockConfirmOpen(false)
     unlockCandidate.mutate(id, {
+      onSuccess: (data) => {
+        if (data.alreadyUnlocked) toast('This candidate is already unlocked for your company.')
+        else toast.success('Candidate unlocked — 1 CV credit used.')
+      },
       onError: (err) => {
-        if (err.response?.data?.code === 'INSUFFICIENT_CREDITS') navigate('/cv-credits')
+        if (err.response?.data?.code === 'INSUFFICIENT_CREDITS') {
+          toast.error('No CV credits remaining. Buy more to unlock this candidate.')
+          navigate('/cv-credits')
+        }
       },
     })
   }
@@ -210,52 +214,41 @@ export default function CandidateProfile() {
 
         <div className="flex flex-col gap-5">
           <Card>
-            <CardHead><CardTitle>Contact Details</CardTitle></CardHead>
-            {!access?.active ? (
-              <CardBody>
-                <div className="flex items-start gap-2.5 text-[12.5px] text-ink-secondary leading-relaxed">
-                  <Lock size={15} className="text-amber mt-0.5 flex-shrink-0" />
-                  <span>Activate your employer plan to view this applicant's contact details.</span>
-                </div>
-                <Button variant="secondary" size="sm" className="w-full mt-3" onClick={() => navigate('/subscription')}>
-                  Activate Plan
-                </Button>
-              </CardBody>
-            ) : privateDetailsLoading ? (
-              <CardBody className="text-[12.5px] text-ink-tertiary">Loading…</CardBody>
-            ) : (
-              <CardBody className="flex flex-col gap-3">
-                <InfoRow icon={Mail} label="Email" value={privateDetails?.email || '—'} />
-                <InfoRow icon={Phone} label="Phone" value={privateDetails?.phone || '—'} />
-              </CardBody>
-            )}
-          </Card>
-
-          <Card>
             <CardHead>
-              <CardTitle>CV Credit Unlock</CardTitle>
+              <CardTitle>CV Access</CardTitle>
               {candidate.unlocked && <Badge tone="green" icon={<Unlock size={11} />}>Unlocked</Badge>}
             </CardHead>
             {candidate.unlocked ? (
               <CardBody className="flex flex-col gap-3">
+                <div className="flex items-center gap-2 text-[12.5px] font-semibold text-green">
+                  <Unlock size={15} /> Unlocked for your company
+                </div>
                 <InfoRow icon={Mail} label="Email" value={candidate.email || '—'} />
                 <InfoRow icon={Phone} label="Phone" value={candidate.phone || '—'} />
                 <Button variant="secondary" size="sm" className="w-full mt-1" loading={unlockCandidate.isPending} onClick={downloadCreditResume}>
                   <Download size={14} /> Download Resume
                 </Button>
+                <p className="text-[11.5px] text-ink-tertiary text-center mt-1">No further credits will be used for this profile.</p>
               </CardBody>
             ) : (
               <CardBody>
                 <div className="flex items-start gap-2.5 text-[12.5px] text-ink-secondary leading-relaxed">
                   <Lock size={15} className="text-amber mt-0.5 flex-shrink-0" />
-                  <span>{candidate.contactPreview?.email} · {candidate.contactPreview?.phone}</span>
+                  <div>
+                    <p className="font-semibold text-ink">Unlock candidate contact details</p>
+                    <p className="mt-1">Use 1 CV credit (₹25) to unlock this candidate's phone, email and verified resume.</p>
+                  </div>
                 </div>
-                <Button variant="gold" size="sm" className="w-full mt-3" loading={unlockCandidate.isPending} onClick={() => setUnlockConfirmOpen(true)}>
-                  <Lock size={14} /> Unlock contact & CV — 1 credit
+                <div className="text-[12px] text-ink-tertiary mt-3">{candidate.contactPreview?.email} · {candidate.contactPreview?.phone}</div>
+                <div className="flex items-center justify-between text-[12px] text-ink-secondary mt-3 pt-3 border-t border-border">
+                  <span>Available balance</span>
+                  <span className="font-semibold text-ink">{remainingCredits} credit{remainingCredits === 1 ? '' : 's'}</span>
+                </div>
+                <Button variant="gold" size="sm" className="w-full mt-3" disabled={remainingCredits === 0} loading={unlockCandidate.isPending} onClick={() => (remainingCredits === 0 ? navigate('/cv-credits') : setUnlockConfirmOpen(true))}>
+                  <Lock size={14} /> {remainingCredits === 0 ? 'Buy credits' : 'Unlock contact & CV — 1 credit'}
                 </Button>
-                <div className="text-[11.5px] text-ink-tertiary text-center mt-2">
-                  {remainingCredits} credit{remainingCredits === 1 ? '' : 's'} remaining — {' '}
-                  <button onClick={() => navigate('/cv-credits')} className="underline hover:text-ink-secondary">buy more</button>
+                <div className="text-center mt-2">
+                  <button onClick={() => navigate('/cv-credits')} className="text-[11.5px] text-ink-tertiary underline hover:text-ink-secondary">View credit packs</button>
                 </div>
               </CardBody>
             )}
@@ -291,19 +284,24 @@ export default function CandidateProfile() {
         open={unlockConfirmOpen}
         onClose={() => setUnlockConfirmOpen(false)}
         title="Unlock this candidate?"
-        subtitle="This spends 1 CV credit (₹25) and gives you unlimited access to this candidate's contact details and resume going forward."
+        subtitle={`${candidate.name} — ${candidate.headline}. This will use 1 CV credit (₹25). You will get unlimited access to this candidate's phone number, email and resume for your company.`}
         size="sm"
         footer={
           <>
             <Button variant="secondary" size="sm" onClick={() => setUnlockConfirmOpen(false)}>Cancel</Button>
             <Button variant="gold" size="sm" onClick={confirmCreditUnlock}>
-              <Lock size={14} /> Confirm — use 1 credit
+              <Lock size={14} /> Confirm unlock
             </Button>
           </>
         }
       >
-        <div className="text-[13px] text-ink-secondary">
-          You have <span className="font-semibold text-ink">{remainingCredits}</span> credit{remainingCredits === 1 ? '' : 's'} remaining.
+        <div className="flex items-center justify-between text-[13px] text-ink-secondary">
+          <span>Current balance</span>
+          <span className="font-semibold text-ink">{remainingCredits} credit{remainingCredits === 1 ? '' : 's'}</span>
+        </div>
+        <div className="flex items-center justify-between text-[13px] text-ink-secondary mt-1.5">
+          <span>Balance after unlock</span>
+          <span className="font-semibold text-ink">{Math.max(remainingCredits - 1, 0)} credit{Math.max(remainingCredits - 1, 0) === 1 ? '' : 's'}</span>
         </div>
       </Modal>
 

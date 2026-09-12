@@ -63,6 +63,10 @@ export default function Candidates() {
     const id = unlockTarget
     setUnlockTarget(null)
     unlockCandidate.mutate(id, {
+      onSuccess: (data) => {
+        if (data.alreadyUnlocked) toast('This candidate is already unlocked for your company.')
+        else toast.success('Candidate unlocked — 1 CV credit used.')
+      },
       onError: (err) => {
         if (err.response?.data?.code === 'INSUFFICIENT_CREDITS') {
           toast.error('No CV credits remaining. Buy more to unlock this candidate.')
@@ -119,6 +123,7 @@ export default function Candidates() {
 
   const pageCount = Math.max(1, Math.ceil(candidates.length / PAGE_SIZE))
   const paged = useMemo(() => candidates.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [candidates, page])
+  const unlockTargetCandidate = useMemo(() => candidates.find((c) => c.id === unlockTarget) ?? null, [candidates, unlockTarget])
 
   return (
     <div>
@@ -126,6 +131,11 @@ export default function Candidates() {
         title="Applicants"
         subtitle="Candidates who applied to your job postings, in real time. Every profile here has a Mzobs-verified resume."
       />
+
+      <button onClick={() => navigate('/cv-credits')} className="mb-5 w-full flex items-center justify-between gap-4 rounded-xl border border-navy/15 bg-navy-tint px-4 py-3 text-left hover:border-navy/35 hover:bg-navy-tint-strong transition-colors">
+        <span className="flex items-center gap-3"><span className="w-9 h-9 rounded-lg bg-navy text-white flex items-center justify-center"><Wallet size={17} /></span><span><span className="block text-[13px] font-semibold">CV access wallet</span><span className="block text-[11.5px] text-ink-secondary mt-0.5">Unlock phone, email and resume access for ₹25 per candidate.</span></span></span>
+        <span className="text-right"><span className="block text-lg leading-none font-bold tabular-nums">{remainingCredits}</span><span className="block mt-1 text-[10.5px] font-semibold uppercase tracking-wide text-ink-tertiary">credits left</span></span>
+      </button>
 
       <Card className="mb-5">
         <CardBody className="flex items-center gap-3 flex-wrap">
@@ -222,11 +232,20 @@ export default function Candidates() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <span className="text-[11.5px] text-ink-tertiary truncate">{c.contactPreview?.email} · {c.contactPreview?.phone}</span>
-                      <Button variant="gold" size="sm" loading={unlockCandidate.isPending && unlockCandidate.variables === c.id} onClick={() => setUnlockTarget(c.id)}>
-                        <Lock size={13} /> Unlock — 1 credit
-                      </Button>
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <span className="text-[11.5px] text-ink-tertiary truncate">{c.contactPreview?.email} · {c.contactPreview?.phone}</span>
+                        {remainingCredits > 0 ? (
+                          <Button variant="gold" size="sm" loading={unlockCandidate.isPending && unlockCandidate.variables === c.id} onClick={() => setUnlockTarget(c.id)}>
+                            <Lock size={13} /> Unlock contact & CV — 1 credit
+                          </Button>
+                        ) : (
+                          <Button variant="secondary" size="sm" onClick={() => navigate('/cv-credits')}>
+                            <Wallet size={13} /> Buy credits
+                          </Button>
+                        )}
+                      </div>
+                      <span className="text-[11px] text-ink-tertiary text-right">{remainingCredits} credit{remainingCredits === 1 ? '' : 's'} remaining</span>
                     </div>
                   )}
                 </div>
@@ -266,19 +285,28 @@ export default function Candidates() {
         open={!!unlockTarget}
         onClose={() => setUnlockTarget(null)}
         title="Unlock this candidate?"
-        subtitle="This spends 1 CV credit (₹25) and gives you unlimited access to this candidate's contact details and resume going forward."
+        subtitle={
+          unlockTargetCandidate
+            ? `${unlockTargetCandidate.name} — ${unlockTargetCandidate.headline}. This will use 1 CV credit (₹25). You will get unlimited access to this candidate's phone number, email and resume for your company.`
+            : 'This will use 1 CV credit (₹25). You will get unlimited access to this candidate\'s phone number, email and resume for your company.'
+        }
         size="sm"
         footer={
           <>
             <Button variant="secondary" size="sm" onClick={() => setUnlockTarget(null)}>Cancel</Button>
             <Button variant="gold" size="sm" onClick={confirmUnlock}>
-              <Lock size={14} /> Confirm — use 1 credit
+              <Lock size={14} /> Confirm unlock
             </Button>
           </>
         }
       >
-        <div className="text-[13px] text-ink-secondary">
-          You have <span className="font-semibold text-ink">{remainingCredits}</span> credit{remainingCredits === 1 ? '' : 's'} remaining.
+        <div className="flex items-center justify-between text-[13px] text-ink-secondary">
+          <span>Current balance</span>
+          <span className="font-semibold text-ink">{remainingCredits} credit{remainingCredits === 1 ? '' : 's'}</span>
+        </div>
+        <div className="flex items-center justify-between text-[13px] text-ink-secondary mt-1.5">
+          <span>Balance after unlock</span>
+          <span className="font-semibold text-ink">{Math.max(remainingCredits - 1, 0)} credit{Math.max(remainingCredits - 1, 0) === 1 ? '' : 's'}</span>
         </div>
       </Modal>
 
