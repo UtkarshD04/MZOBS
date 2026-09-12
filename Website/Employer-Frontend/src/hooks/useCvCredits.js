@@ -67,8 +67,8 @@ export function useUnlockCandidate() {
       qc.invalidateQueries({ queryKey: queryKeys.cvCredits })
       qc.invalidateQueries({ queryKey: queryKeys.cvUnlocks })
       qc.invalidateQueries({ queryKey: ['candidates'] })
+      qc.invalidateQueries({ queryKey: queryKeys.candidate(candidateId) })
       qc.setQueryData(queryKeys.candidate(candidateId), data.candidate)
-      if (!data.alreadyUnlocked) toast.success('Unlocked — 1 CV credit used')
     },
     onError: (err) => {
       if (err.response?.data?.code === 'INSUFFICIENT_CREDITS') return // handled inline by the caller (redirect to Buy Credits)
