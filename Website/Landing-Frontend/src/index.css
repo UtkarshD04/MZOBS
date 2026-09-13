@@ -590,6 +590,17 @@
     #ffffff;
 }
 
+/* One step fainter still, for Latest Jobs — a tall, content-heavy section
+   (job cards need to stay crisp/legible), so only its own top band picks
+   up a last, quiet trace of the Hero's blue/teal tones before settling
+   into --explorer-bg for the cards below. */
+.hero-afterglow-faint {
+  background:
+    radial-gradient(ellipse 680px 300px at 20% 0%, rgba(var(--bubble-blue-rgb), 0.05), transparent 70%),
+    radial-gradient(ellipse 680px 300px at 80% 0%, rgba(var(--bubble-teal-rgb), 0.05), transparent 70%),
+    var(--explorer-bg);
+}
+
 .bubble-parallax {
   transform: translate3d(calc(var(--mx, 0) * var(--px, 0px)), calc(var(--my, 0) * var(--py, 0px)), 0);
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
