@@ -92,21 +92,21 @@ export default function CategoryGrid({ onSelect }) {
                     <button
                       type="button"
                       onClick={() => handleSelect(cat)}
-                      className="explorer-tile-btn group flex items-center gap-3 w-full h-full text-left bg-white border border-(--explorer-border) rounded-lg p-4 motion-safe:hover:-translate-y-px hover:border-(--explorer-teal-border) hover:shadow-[0_4px_16px_-8px_rgba(11,122,109,0.25)] transition-[border-color,box-shadow,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal)"
+                      className="explorer-tile-btn group flex items-center gap-3 w-full h-full text-left bg-white border border-(--explorer-border) rounded-lg p-4 motion-safe:hover:-translate-y-px hover:border-(--explorer-blue-border) hover:shadow-[0_4px_16px_-8px_rgba(37,99,235,0.25)] transition-[border-color,box-shadow,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
                     >
-                      <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-(--explorer-teal-surface) text-(--explorer-teal) shrink-0">
+                      <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-(--explorer-blue-surface) text-(--explorer-blue) shrink-0">
                         <Icon size={16} strokeWidth={1.75} aria-hidden="true" />
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block font-bold text-[13.5px] text-(--explorer-navy) truncate">{cat.title}</span>
                         <span className="block text-[12px] text-(--explorer-muted) truncate">
                           {countsFailed ? 'Browse roles' : `${cat.count} opening${cat.count === 1 ? '' : 's'}`}
-                          {cat.title === topTitle && <span className="ml-1.5 font-bold uppercase tracking-wide text-(--explorer-teal)">· Most in-demand</span>}
+                          {cat.title === topTitle && <span className="ml-1.5 font-bold uppercase tracking-wide text-(--explorer-blue)">· Most in-demand</span>}
                         </span>
                       </span>
                       <ArrowRight
                         size={14}
-                        className="shrink-0 text-(--explorer-teal) opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+                        className="shrink-0 text-(--explorer-blue) opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
                         aria-hidden="true"
                       />
                     </button>
