@@ -4,7 +4,6 @@ import ApplyPanel from './ApplyPanel'
 import ExplorerButton from '../../ui/ExplorerButton'
 import { isJobSaved, toggleJobSaved } from '../../../lib/savedJobs'
 import {
-  toneForCompany,
   Avatar,
   NewBadge,
   jobHref,
@@ -82,12 +81,12 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
       <div className="relative -m-6 mb-0 sm:-m-7 sm:mb-0 px-6 pt-6 sm:px-7 sm:pt-7 pb-6 overflow-hidden rounded-t-xl">
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(120% 100% at 15% 0%, var(--explorer-teal-surface) 0%, rgba(231,245,241,0) 60%)' }}
+          style={{ background: 'radial-gradient(120% 100% at 15% 0%, var(--explorer-blue-surface) 0%, rgba(239,246,255,0) 60%)' }}
           aria-hidden="true"
         />
         <div className="relative flex items-start gap-4">
           <span aria-hidden="true">
-            <Avatar initials={initialsOf(job.company)} tone={toneForCompany(job.company)} size="lg" />
+            <Avatar initials={initialsOf(job.company)} tone="bg-(--explorer-blue-surface) text-(--explorer-blue)" size="lg" />
           </span>
           <div className="min-w-0 flex-1">
             <div className="flex items-start gap-2">
@@ -110,10 +109,10 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
             </p>
             {job.salary && <p className="mt-1.5 text-[17px] font-bold text-(--explorer-navy)">{job.salary}</p>}
             {job.recruiterOnline && (
-              <span className="mt-2 inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-(--explorer-teal)">
+              <span className="mt-2 inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-(--explorer-blue)">
                 <span className="relative flex h-1.5 w-1.5 shrink-0">
-                  <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-(--explorer-teal) opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-(--explorer-teal)" />
+                  <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-(--explorer-blue) opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-(--explorer-blue)" />
                 </span>
                 Actively reviewing candidates
               </span>
@@ -165,12 +164,12 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
       {job.benefits?.length > 0 && (
         <>
           <Divider />
-          <div className="rounded-xl border border-(--explorer-teal-border)/60 bg-(--explorer-teal-surface) px-5 py-5 sm:px-6 sm:py-6">
+          <div className="rounded-xl border border-(--explorer-blue-border)/60 bg-(--explorer-blue-surface) px-5 py-5 sm:px-6 sm:py-6">
             <SectionHeading label="Candidate highlights" title="Why this role stands out" />
             <ul className="mt-0! grid sm:grid-cols-2 gap-x-6 gap-y-3">
               {job.benefits.map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-[13px] text-(--explorer-navy) leading-relaxed">
-                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-(--explorer-teal) shrink-0 mt-0.5" aria-hidden="true">
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-(--explorer-blue) shrink-0 mt-0.5" aria-hidden="true">
                     <Check size={12} />
                   </span>
                   {item}
@@ -193,7 +192,7 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
             <button
               type="button"
               onClick={() => setDescExpanded((v) => !v)}
-              className="mt-2.5 text-[13px] font-bold text-(--explorer-teal) hover:text-(--explorer-teal-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) rounded-xs"
+              className="mt-2.5 text-[13px] font-bold text-(--explorer-blue) hover:text-(--explorer-blue-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) rounded-xs"
             >
               {descExpanded ? 'Show less' : 'Read full description'}
             </button>
@@ -209,13 +208,13 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
           <button
             type="button"
             onClick={onNext}
-            className="w-full flex items-center justify-between gap-3 py-3 text-left group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) rounded-xs"
+            className="w-full flex items-center justify-between gap-3 py-3 text-left group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) rounded-xs"
           >
             <span className="min-w-0">
               <span className="block text-[11px] font-semibold uppercase tracking-wide text-(--explorer-muted)">Next opportunity</span>
               <span className="block mt-0.5 text-[13.5px] font-bold text-(--explorer-navy) truncate">{nextJob.title}</span>
             </span>
-            <ArrowRight size={16} className="shrink-0 text-(--explorer-muted) group-hover:text-(--explorer-teal) group-hover:translate-x-0.5 transition-[color,transform]" aria-hidden="true" />
+            <ArrowRight size={16} className="shrink-0 text-(--explorer-muted) group-hover:text-(--explorer-blue) group-hover:translate-x-0.5 transition-[color,transform]" aria-hidden="true" />
           </button>
         </>
       )}

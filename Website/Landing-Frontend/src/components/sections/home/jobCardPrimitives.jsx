@@ -10,11 +10,12 @@ import { EMPLOYEE_APP_URL } from '../../../lib/config'
 // Kept to this page's own --explorer-* palette (not the shared Badge/CompanyLogo
 // tone system, which is a separate, differently-shaded color set used
 // elsewhere on the site) so every pill and avatar here stays visually
-// consistent and restrained — blue for primary actions, teal used sparingly
-// for selection/success signals only, everything else neutral.
-export const LOGO_TONES = ['bg-(--explorer-blue-surface) text-(--explorer-blue)', 'bg-(--explorer-teal-surface) text-(--explorer-teal)']
+// consistent and restrained — blue for primary actions and accents
+// (matching the Hero's own blue/purple CTA identity), everything else
+// neutral.
+export const LOGO_TONES = ['bg-(--explorer-blue-surface) text-(--explorer-blue)']
 export const WORK_MODE_STYLE = {
-  Remote: 'bg-(--explorer-teal-surface) text-(--explorer-teal)',
+  Remote: 'bg-(--explorer-blue-surface) text-(--explorer-blue)',
   Hybrid: 'bg-(--explorer-bg) text-(--explorer-navy)',
   'On-site': 'bg-(--explorer-bg) text-(--explorer-muted)',
 }
@@ -36,7 +37,6 @@ export function initialsOf(name) {
 // position and re-shuffling every time the result set re-sorts.
 const AVATAR_TONES = [
   'bg-(--explorer-blue-surface) text-(--explorer-blue)',
-  'bg-(--explorer-teal-surface) text-(--explorer-teal)',
   'bg-(--explorer-bg) text-(--explorer-navy)',
   'bg-[#EEF2FF] text-[#4338CA]',
   'bg-[#FEF3E8] text-[#B45309]',
@@ -81,12 +81,12 @@ export function CompanyMark({ company, logo, size = 'sm', tone }) {
   return <Avatar initials={initialsOf(company)} tone={tone ?? toneForCompany(company)} size={size} />
 }
 
-// Small teal marker shown only when Company.verificationStatus is actually
+// Small blue marker shown only when Company.verificationStatus is actually
 // 'verified' (see Backend's toLatestJobSummary) — never rendered as a
 // default/assumed state, so its presence always means something real.
 export function VerifiedMark() {
   return (
-    <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-(--explorer-teal)">
+    <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-(--explorer-blue)">
       <ShieldCheck size={12.5} aria-hidden="true" /> Verified employer
     </span>
   )
@@ -96,7 +96,7 @@ export function VerifiedMark() {
 // means today or yesterday, not just "sorted first".
 export function NewBadge() {
   return (
-    <span className="inline-flex items-center h-4 px-1.5 rounded bg-(--explorer-teal) text-white text-[9px] font-bold uppercase tracking-wide shrink-0">
+    <span className="inline-flex items-center h-4 px-1.5 rounded bg-(--explorer-blue) text-white text-[9px] font-bold uppercase tracking-wide shrink-0">
       New
     </span>
   )
@@ -126,10 +126,10 @@ export function IconButton({ icon, label, onClick, active = false, href }) {
         title={label}
         aria-label={label}
         aria-pressed={href ? undefined : active}
-        className={`explorer-icon-btn flex items-center justify-center w-10.5 h-10.5 rounded-full border motion-safe:transition-[background-color,border-color,color,transform] duration-150 motion-safe:hover:-translate-y-px motion-safe:active:translate-y-0 motion-safe:active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) ${
+        className={`explorer-icon-btn flex items-center justify-center w-10.5 h-10.5 rounded-full border motion-safe:transition-[background-color,border-color,color,transform] duration-150 motion-safe:hover:-translate-y-px motion-safe:active:translate-y-0 motion-safe:active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
           active
-            ? 'border-(--explorer-teal-border) bg-(--explorer-teal-surface) text-(--explorer-teal)'
-            : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-teal-border) hover:bg-(--explorer-teal-surface) hover:text-(--explorer-teal)'
+            ? 'border-(--explorer-blue-border) bg-(--explorer-blue-surface) text-(--explorer-blue)'
+            : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-blue-border) hover:bg-(--explorer-blue-surface) hover:text-(--explorer-blue)'
         }`}
       >
         {icon}
@@ -231,7 +231,7 @@ export function FactTile({ icon, label, value, tone = 'neutral' }) {
 export function SectionHeading({ title, subtitle, label }) {
   return (
     <div className="mt-8 mb-4">
-      {label && <p className="text-[11px] font-bold uppercase tracking-wide text-(--explorer-teal) mb-1">{label}</p>}
+      {label && <p className="text-[11px] font-bold uppercase tracking-wide text-(--explorer-blue) mb-1">{label}</p>}
       <h4 className="font-bold text-[15px] text-(--explorer-navy)">{title}</h4>
       {subtitle && <p className="mt-1 text-[12.5px] text-(--explorer-muted)">{subtitle}</p>}
     </div>
