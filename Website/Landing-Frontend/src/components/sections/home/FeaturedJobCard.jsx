@@ -21,7 +21,7 @@ export default function FeaturedJobCard({ job, onOpen }) {
     >
       <div className="flex items-start gap-4">
         <span aria-hidden="true">
-          <CompanyMark company={job.company} logo={job.logo} size="lg" />
+          <CompanyMark company={job.company} logo={job.logo} size="lg" tone="bg-(--explorer-blue-surface) text-(--explorer-blue)" />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
