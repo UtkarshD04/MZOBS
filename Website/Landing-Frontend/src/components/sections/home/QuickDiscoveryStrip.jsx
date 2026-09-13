@@ -9,7 +9,7 @@ import { QUICK_DISCOVERY_DATA } from '../../../lib/content'
 // second row of marketing badges competing with the search bar above it.
 export default function QuickDiscoveryStrip({ onSelect }) {
   return (
-    <section className="bg-white pb-10 px-6 md:px-10">
+    <section className="hero-afterglow pt-6 pb-10 px-6 md:px-10">
       <Reveal direction="up" duration={0.5} className="max-w-7xl mx-auto">
         <StaggerGroup className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2">
           {QUICK_DISCOVERY_DATA.map((item, i) => (
