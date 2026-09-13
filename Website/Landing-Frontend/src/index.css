@@ -575,6 +575,21 @@
   }
 }
 
+/* Continues the Hero's atmosphere (see .hero-atmosphere above) a little
+   further down the page instead of cutting straight from its colorful
+   bubble field to flat white on QuickDiscoveryStrip — same --bubble-*-rgb
+   tokens as the Hero, just much lower opacity so the quick-discovery links
+   stay crisp. Sits right under the Hero's handoff blob and fades out by
+   its own bottom edge, so by the time Latest Jobs' plain --explorer-bg
+   begins the page has settled back to flat. */
+.hero-afterglow {
+  background:
+    radial-gradient(ellipse 640px 260px at 14% 0%, rgba(var(--bubble-teal-rgb), 0.07), transparent 72%),
+    radial-gradient(ellipse 640px 260px at 86% 0%, rgba(var(--bubble-pink-rgb), 0.06), transparent 72%),
+    radial-gradient(ellipse 560px 240px at 50% 100%, rgba(var(--bubble-blue-rgb), 0.05), transparent 75%),
+    #ffffff;
+}
+
 .bubble-parallax {
   transform: translate3d(calc(var(--mx, 0) * var(--px, 0px)), calc(var(--my, 0) * var(--py, 0px)), 0);
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);

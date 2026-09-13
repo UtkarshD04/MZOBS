@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Seo from '../components/Seo'
 import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
 import JobSearchHero from '../components/sections/home/JobSearchHero'
-import TrustStrip from '../components/sections/home/TrustStrip'
 import QuickDiscoveryStrip from '../components/sections/home/QuickDiscoveryStrip'
 import LatestJobs from '../components/sections/home/LatestJobs'
 import HotJobsByCity from '../components/sections/home/HotJobsByCity'
@@ -13,7 +12,6 @@ import CategoryGrid from '../components/sections/home/CategoryGrid'
 import RecommendedForYou from '../components/sections/home/RecommendedForYou'
 import CompaniesHiring from '../components/sections/home/CompaniesHiring'
 import HomeEmployerCTA from '../components/sections/home/HomeEmployerCTA'
-import { fetchLatestJobs } from '../lib/publicJobs'
 
 // q and location are each a *list* of terms — the hero search box lets a
 // visitor tag on several job titles/skills/companies, or several
@@ -43,28 +41,6 @@ export default function Home() {
   // searches the Latest jobs section in place instead of handing the
   // visitor off to the dashboard app.
   const [jobFilters, setJobFilters] = useState(EMPTY_FILTERS)
-
-  // The real, live total open-role count the trust strip's "N live
-  // openings" figure uses — a tiny, unfiltered snapshot of the public feed,
-  // deliberately separate from LatestJobs.jsx's own fetch (that section
-  // re-fetches per filter/sort change and is the real explorer; this is
-  // just page furniture above it).
-  const [heroStatus, setHeroStatus] = useState('loading')
-  const [heroTotal, setHeroTotal] = useState(null)
-
-  useEffect(() => {
-    const controller = new AbortController()
-    fetchLatestJobs({ sort: 'newest', limit: 1 }, { signal: controller.signal })
-      .then(({ total }) => {
-        setHeroTotal(total)
-        setHeroStatus('ready')
-      })
-      .catch((err) => {
-        if (err?.name === 'AbortError') return
-        setHeroStatus('error')
-      })
-    return () => controller.abort()
-  }, [])
 
   // Used by entry points above the Latest jobs section (quick-discovery
   // pills, popular searches, and the hero search bar's own "Find jobs" —
@@ -99,29 +75,26 @@ export default function Home() {
       {/* 2. Hero: headline + job search bar + popular searches */}
       <JobSearchHero filters={jobFilters} onSearch={applyJobFilters} />
 
-      {/* 3. Slim, real-data trust strip */}
-      <TrustStrip total={heroTotal} status={heroStatus} />
-
-      {/* 4. Quick job-discovery strip: freshers, remote, top metros */}
+      {/* 3. Quick job-discovery strip: freshers, remote, top metros */}
       <QuickDiscoveryStrip onSelect={applyJobFilters} />
 
-      {/* 5. Latest opportunities — the visual heart of the home page */}
+      {/* 4. Latest opportunities — the visual heart of the home page */}
       <LatestJobs filters={jobFilters} onFiltersChange={updateJobFilters} onClearFilters={() => setJobFilters(EMPTY_FILTERS)} />
 
-      {/* 6. Hot jobs by city — where hiring is happening right now */}
+      {/* 5. Hot jobs by city — where hiring is happening right now */}
       <HotJobsByCity />
 
-      {/* 7. Explore jobs by category — tiles filter Latest jobs in place,
+      {/* 6. Explore jobs by category — tiles filter Latest jobs in place,
           same pattern as the hero search / quick-discovery pills above. */}
       <CategoryGrid onSelect={applyJobFilters} />
 
-      {/* 8. Jobs matching your profile — signed-in visitors only (see RecommendedForYou.jsx) */}
+      {/* 7. Jobs matching your profile — signed-in visitors only (see RecommendedForYou.jsx) */}
       <RecommendedForYou />
 
-      {/* 9. Companies hiring through MZOBS (single, consolidated company section) */}
+      {/* 8. Companies hiring through MZOBS (single, consolidated company section) */}
       <CompaniesHiring onSelect={applyJobFilters} />
 
-      {/* 10. Employer CTA band */}
+      {/* 9. Employer CTA band */}
       <HomeEmployerCTA />
 
       <Footer />
