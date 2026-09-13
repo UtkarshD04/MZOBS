@@ -108,7 +108,7 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
   const compactJobs = jobs.slice(1, 1 + MAX_COMPACT_ROWS)
 
   return (
-    <section id="latest-jobs" className="bg-(--explorer-bg) py-16 md:py-20 px-6 md:px-10 scroll-mt-20">
+    <section id="latest-jobs" className="hero-afterglow-faint py-16 md:py-20 px-6 md:px-10 scroll-mt-20">
       <div className="max-w-7xl mx-auto">
         <Reveal direction="up" duration={0.7} className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
           <div className="max-w-xl">
