@@ -60,8 +60,12 @@ export function Avatar({ initials, tone, size = 'sm' }) {
 // falling back to the same initials-avatar every other job surface uses —
 // so a job never shows a placeholder/stock logo, only genuine employer
 // branding or a refined monogram. Used by the Featured job card and the
-// compact job rows on the home page's discovery section.
-export function CompanyMark({ company, logo, size = 'sm' }) {
+// compact job rows on the home page's discovery section. `tone` overrides
+// the usual per-company hash rotation (see toneForCompany) — Fresh
+// opportunities (FeaturedJobCard.jsx/CompactJobRow.jsx) pins it to the
+// section's own blue accent instead, so its avatars never land on a tone
+// (teal, orange...) that clashes with that section's Hero-matched palette.
+export function CompanyMark({ company, logo, size = 'sm', tone }) {
   if (logo) {
     return (
       <img
@@ -74,7 +78,7 @@ export function CompanyMark({ company, logo, size = 'sm' }) {
       />
     )
   }
-  return <Avatar initials={initialsOf(company)} tone={toneForCompany(company)} size={size} />
+  return <Avatar initials={initialsOf(company)} tone={tone ?? toneForCompany(company)} size={size} />
 }
 
 // Small teal marker shown only when Company.verificationStatus is actually

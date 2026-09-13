@@ -15,7 +15,7 @@ export default function CompactJobRow({ job, onOpen }) {
       className="explorer-tile-btn group w-full min-w-0 text-left flex items-center gap-3 p-3.5 rounded-xl border border-(--explorer-border) bg-white motion-safe:hover:-translate-y-px hover:border-(--explorer-blue-border) hover:bg-(--explorer-blue-surface)/60 transition-[background-color,border-color,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
     >
       <span aria-hidden="true">
-        <CompanyMark company={job.company} logo={job.logo} size="sm" />
+        <CompanyMark company={job.company} logo={job.logo} size="sm" tone="bg-(--explorer-blue-surface) text-(--explorer-blue)" />
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1.5">
