@@ -17,7 +17,7 @@ export default function FeaturedJobCard({ job, onOpen }) {
     <button
       type="button"
       onClick={onOpen}
-      className="explorer-tile-btn group w-full min-w-0 text-left flex flex-col bg-white border border-(--explorer-border) rounded-2xl p-6 sm:p-7 shadow-[0_1px_2px_rgba(16,42,67,0.04)] motion-safe:hover:-translate-y-px hover:border-(--explorer-teal-border) hover:shadow-[0_16px_32px_-16px_rgba(11,122,109,0.22)] transition-[border-color,box-shadow,transform] duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal)"
+      className="explorer-tile-btn group w-full min-w-0 text-left flex flex-col bg-white border border-(--explorer-border) rounded-2xl p-6 sm:p-7 shadow-[0_1px_2px_rgba(16,42,67,0.04)] motion-safe:hover:-translate-y-px hover:border-(--explorer-blue-border) hover:shadow-[0_16px_32px_-16px_rgba(37,99,235,0.22)] transition-[border-color,box-shadow,transform] duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
     >
       <div className="flex items-start gap-4">
         <span aria-hidden="true">
@@ -74,7 +74,10 @@ export default function FeaturedJobCard({ job, onOpen }) {
       {job.description && <p className="mt-4 text-[13.5px] text-(--explorer-muted) leading-relaxed line-clamp-2">{job.description}</p>}
 
       <div className="mt-6 pt-5 border-t border-(--explorer-border) flex items-center justify-between gap-3">
-        <span className="inline-flex items-center gap-1.5 h-10 px-5 rounded-md bg-(--explorer-teal) text-white text-[13.5px] font-bold group-hover:bg-(--explorer-teal-hover) transition-colors">
+        <span
+          className="inline-flex items-center gap-1.5 h-10 px-5 rounded-md text-white text-[13.5px] font-bold shadow-[0_1px_2px_rgba(37,99,235,0.16),0_10px_20px_-10px_rgba(59,109,240,0.55)] motion-safe:transition-transform motion-safe:duration-200 group-hover:brightness-110"
+          style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
+        >
           View role <ArrowUpRight size={15} aria-hidden="true" />
         </span>
         <span className="flex flex-col items-end gap-1 text-right">

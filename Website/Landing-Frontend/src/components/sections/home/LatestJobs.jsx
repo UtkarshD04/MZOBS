@@ -112,7 +112,7 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
       <div className="max-w-7xl mx-auto">
         <Reveal direction="up" duration={0.7} className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
           <div className="max-w-xl">
-            <p className="text-[12.5px] font-bold uppercase tracking-wide text-(--explorer-teal)">Open roles</p>
+            <p className="text-[12.5px] font-bold uppercase tracking-wide text-(--explorer-blue)">Open roles</p>
             <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-(--explorer-navy) tracking-tight text-balance">
               Fresh opportunities, worth a closer look.
             </h2>
@@ -136,15 +136,15 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
               type="button"
               aria-expanded={filtersOpen}
               onClick={() => setFiltersOpen((v) => !v)}
-              className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md border text-[13.5px] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) ${
+              className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-md border text-[13.5px] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
                 filtersOpen
-                  ? 'border-(--explorer-teal-border) bg-(--explorer-teal-surface) text-(--explorer-teal)'
-                  : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-teal-border) hover:bg-(--explorer-teal-surface) hover:text-(--explorer-teal)'
+                  ? 'border-(--explorer-blue-border) bg-(--explorer-blue-surface) text-(--explorer-blue)'
+                  : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-blue-border) hover:bg-(--explorer-blue-surface) hover:text-(--explorer-blue)'
               }`}
             >
               <SlidersHorizontal size={15} aria-hidden="true" /> Filters
               {activeFilterCount > 0 && (
-                <span className="flex items-center justify-center w-4.5 h-4.5 rounded-full bg-(--explorer-teal) text-white text-[10px] font-bold">
+                <span className="flex items-center justify-center w-4.5 h-4.5 rounded-full bg-(--explorer-blue) text-white text-[10px] font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -159,7 +159,7 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
                 key={chip.id}
                 type="button"
                 onClick={() => onFiltersChange(chip.clear(filters))}
-                className="inline-flex items-center gap-1.5 h-8 pl-3 pr-2 rounded-full border border-(--explorer-border) bg-white text-[12.5px] font-semibold text-(--explorer-navy) hover:border-(--explorer-teal-border) hover:bg-(--explorer-teal-surface) hover:text-(--explorer-teal) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal)"
+                className="inline-flex items-center gap-1.5 h-8 pl-3 pr-2 rounded-full border border-(--explorer-border) bg-white text-[12.5px] font-semibold text-(--explorer-navy) hover:border-(--explorer-blue-border) hover:bg-(--explorer-blue-surface) hover:text-(--explorer-blue) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
               >
                 {chip.label}
                 <X size={12} aria-hidden="true" />
@@ -168,7 +168,7 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
             <button
               type="button"
               onClick={onClearFilters}
-              className="inline-flex items-center gap-1 text-[13px] font-bold text-(--explorer-teal) hover:text-(--explorer-navy) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) rounded-xs"
+              className="inline-flex items-center gap-1 text-[13px] font-bold text-(--explorer-blue) hover:text-(--explorer-navy) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) rounded-xs"
             >
               <X size={13} aria-hidden="true" /> {clearAllLabel}
             </button>
@@ -222,7 +222,7 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
                       value={sort}
                       onChange={(e) => setSort(e.target.value)}
                       aria-label="Sort jobs"
-                      className="h-7 pl-2.5 pr-6 rounded-md border border-(--explorer-border) bg-white text-[11.5px] font-semibold text-(--explorer-navy) outline-none appearance-none hover:border-(--explorer-navy)/25 focus:border-(--explorer-teal) focus:ring-[3px] focus:ring-(--explorer-teal)/15 transition-colors"
+                      className="h-7 pl-2.5 pr-6 rounded-md border border-(--explorer-border) bg-white text-[11.5px] font-semibold text-(--explorer-navy) outline-none appearance-none hover:border-(--explorer-navy)/25 focus:border-(--explorer-blue) focus:ring-[3px] focus:ring-(--explorer-blue)/15 transition-colors"
                     >
                       {SORT_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>

@@ -343,15 +343,20 @@
   --explorer-navy: #16324f;
   --explorer-navy-deep: #0f2338;
   --explorer-muted: #64748b;
-  /* Kept only for decorative, non-interactive tone rotation (company logo
-     tints, industry badges — see jobCardPrimitives.jsx's LOGO_TONES/
-     AVATAR_TONES, CompaniesHiring.jsx's INDUSTRY_TONES, JobDetailPanel's
-     "Salary" FactTile). Every button, link, hover accent and focus ring on
-     this page uses the teal system below instead — see the MZOBS button
-     system further down this file. */
+  /* Originally kept only for decorative, non-interactive tone rotation
+     (company logo tints, industry badges — see jobCardPrimitives.jsx's
+     LOGO_TONES/AVATAR_TONES, CompaniesHiring.jsx's INDUSTRY_TONES,
+     JobDetailPanel's "Salary" FactTile) while every button/link/hover/focus
+     on this page used the teal system below instead. Now also the primary
+     accent for the Latest Jobs section (LatestJobs.jsx, FeaturedJobCard.jsx,
+     CompactJobRow.jsx, JobFiltersPanel.jsx) — that section sits directly
+     under the Hero, whose CTA/focus states are this same blue (see
+     --hero-cta-gradient), so it picks up blue instead of the sitewide teal
+     to read as a continuation of the Hero rather than a different section. */
   --explorer-blue: #2563eb;
   --explorer-blue-hover: #1d4ed8;
   --explorer-blue-surface: #eff6ff;
+  --explorer-blue-border: #bfd3fb;
   --explorer-teal: #0b7a6d;
   --explorer-teal-hover: #075f55;
   --explorer-teal-surface: #e7f5f1;
