@@ -76,10 +76,10 @@ function FilterPill({ active, onClick, children }) {
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`shrink-0 h-9 px-4 rounded-full text-[13px] font-bold whitespace-nowrap transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) ${
+      className={`shrink-0 h-9 px-4 rounded-full text-[13px] font-bold whitespace-nowrap transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
         active
-          ? 'bg-(--explorer-teal) text-white shadow-[0_1px_2px_rgba(11,122,109,0.16),0_10px_20px_-8px_rgba(11,122,109,0.55)]'
-          : 'bg-white/60 backdrop-blur-sm border border-(--explorer-border) text-(--explorer-navy) shadow-[0_1px_2px_rgba(16,42,67,0.04)] hover:border-(--explorer-teal-border) hover:bg-(--explorer-teal-surface)/70 hover:text-(--explorer-teal)'
+          ? 'bg-(--explorer-blue) text-white shadow-[0_1px_2px_rgba(37,99,235,0.16),0_10px_20px_-8px_rgba(37,99,235,0.55)]'
+          : 'bg-white/60 backdrop-blur-sm border border-(--explorer-border) text-(--explorer-navy) shadow-[0_1px_2px_rgba(16,42,67,0.04)] hover:border-(--explorer-blue-border) hover:bg-(--explorer-blue-surface)/70 hover:text-(--explorer-blue)'
       }`}
     >
       {children}
@@ -95,7 +95,7 @@ function CarouselArrow({ dir, onClick, disabled }) {
       onClick={onClick}
       disabled={disabled}
       aria-label={dir === -1 ? 'Previous cities' : 'Next cities'}
-      className="explorer-icon-btn flex items-center justify-center w-10 h-10 rounded-full border border-white/50 bg-white/70 backdrop-blur-md text-(--explorer-navy) shadow-[0_4px_14px_-6px_rgba(22,50,79,0.25)] transition-[background-color,border-color,color,transform] duration-150 motion-safe:hover:-translate-y-px hover:border-(--explorer-teal-border) hover:bg-white hover:text-(--explorer-teal) disabled:opacity-30 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal)"
+      className="explorer-icon-btn flex items-center justify-center w-10 h-10 rounded-full border border-white/50 bg-white/70 backdrop-blur-md text-(--explorer-navy) shadow-[0_4px_14px_-6px_rgba(22,50,79,0.25)] transition-[background-color,border-color,color,transform] duration-150 motion-safe:hover:-translate-y-px hover:border-(--explorer-blue-border) hover:bg-white hover:text-(--explorer-blue) disabled:opacity-30 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
     >
       <Icon size={17} />
     </button>
@@ -118,7 +118,7 @@ function PaginationDots({ count, activeIndex, onSelect }) {
           onClick={() => onSelect(i)}
           aria-label={`Go to city ${i + 1}`}
           aria-current={i === activeIndex}
-          className={`h-1.5 rounded-full transition-all duration-300 ${i === activeIndex ? 'w-6 bg-(--explorer-gold)' : 'w-1.5 bg-(--explorer-border) hover:bg-(--explorer-teal-border)'}`}
+          className={`h-1.5 rounded-full transition-all duration-300 ${i === activeIndex ? 'w-6 bg-(--explorer-gold)' : 'w-1.5 bg-(--explorer-border) hover:bg-(--explorer-blue-border)'}`}
         />
       ))}
     </div>
@@ -143,11 +143,11 @@ function CityCard({ city, stats, isTopCity, onOpen }) {
   const salary = formatSalaryRange(stats.salaryMin, stats.salaryMax)
 
   return (
-    <div className="group relative flex flex-col w-[272px] sm:w-[300px] shrink-0 rounded-2xl bg-white border border-(--explorer-border) overflow-hidden transition-[transform,box-shadow,border-color] duration-300 motion-safe:hover:-translate-y-1.5 hover:shadow-[0_20px_44px_-22px_rgba(22,50,79,0.4)] hover:border-(--explorer-teal-border)">
+    <div className="group relative flex flex-col w-[272px] sm:w-[300px] shrink-0 rounded-2xl bg-white border border-(--explorer-border) overflow-hidden transition-[transform,box-shadow,border-color] duration-300 motion-safe:hover:-translate-y-1.5 hover:shadow-[0_20px_44px_-22px_rgba(22,50,79,0.4)] hover:border-(--explorer-blue-border)">
       <button
         type="button"
         onClick={onOpen}
-        className="relative h-[168px] overflow-hidden text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--explorer-teal)"
+        className="relative h-[168px] overflow-hidden text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--explorer-blue)"
         aria-label={`Explore jobs in ${city.city}`}
       >
         <CityVisual city={city.city} landmark={city.landmark} imageUrl={city.imageUrl} />
@@ -191,7 +191,7 @@ function CityCard({ city, stats, isTopCity, onOpen }) {
         <div className="mt-3.5 flex items-center justify-between gap-2 text-[12.5px]">
           <span className="font-bold text-(--explorer-navy)">{salary || 'Varies by role'}</span>
           {stats.newThisWeek > 0 && (
-            <span className="inline-flex items-center gap-1 font-semibold text-(--explorer-teal) shrink-0">
+            <span className="inline-flex items-center gap-1 font-semibold text-(--explorer-blue) shrink-0">
               <TrendingUp size={12} aria-hidden="true" />
               {stats.newThisWeek} new this week
             </span>
@@ -203,7 +203,7 @@ function CityCard({ city, stats, isTopCity, onOpen }) {
             className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-(--explorer-muted)"
             title="Employer identity and job information verified by MZOBS"
           >
-            <ShieldCheck size={11} className="text-(--explorer-teal)" aria-hidden="true" />
+            <ShieldCheck size={11} className="text-(--explorer-blue)" aria-hidden="true" />
             {stats.verifiedEmployers > 0 ? `${stats.verifiedEmployers} verified employer${stats.verifiedEmployers === 1 ? '' : 's'}` : 'Verified employers'}
           </span>
           <ExplorerTextLink onClick={onOpen} className="text-[12.5px] shrink-0">

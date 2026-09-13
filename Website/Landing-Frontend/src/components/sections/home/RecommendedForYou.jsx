@@ -23,10 +23,10 @@ function RecommendedJobCard({ job }) {
   return (
     <a
       href={jobHref(job)}
-      className="explorer-tile-btn group flex flex-col gap-2.5 p-4 rounded-xl border border-(--explorer-border) bg-white motion-safe:hover:-translate-y-px hover:border-(--explorer-teal-border) hover:bg-(--explorer-teal-surface)/40 transition-[background-color,border-color,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal)"
+      className="explorer-tile-btn group flex flex-col gap-2.5 p-4 rounded-xl border border-(--explorer-border) bg-white motion-safe:hover:-translate-y-px hover:border-(--explorer-blue-border) hover:bg-(--explorer-blue-surface)/40 transition-[background-color,border-color,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
     >
       <div className="flex items-center gap-3">
-        <CompanyMark company={job.company} logo={job.logo} />
+        <CompanyMark company={job.company} logo={job.logo} tone="bg-(--explorer-blue-surface) text-(--explorer-blue)" />
         <div className="min-w-0 flex-1">
           <p className="font-bold text-[13.5px] text-(--explorer-navy) truncate">{job.title}</p>
           <p className="text-[12px] text-(--explorer-muted) truncate">
@@ -43,7 +43,7 @@ function RecommendedJobCard({ job }) {
       )}
 
       {job.matchReasons?.[0] && (
-        <p className="flex items-start gap-1.5 text-[11.5px] font-semibold text-(--explorer-teal)">
+        <p className="flex items-start gap-1.5 text-[11.5px] font-semibold text-(--explorer-blue)">
           <Sparkles size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
           <span className="truncate">{job.matchReasons[0]}</span>
         </p>
@@ -61,8 +61,8 @@ function RecommendedJobCardSkeleton() {
 // up match" rule the scoring itself follows (see Backend's jobMatching.js).
 function SignedOutPrompt() {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-xl border border-(--explorer-border) bg-(--explorer-teal-surface)/40 p-6">
-      <span className="flex items-center justify-center w-11 h-11 rounded-full bg-white text-(--explorer-teal) shrink-0" aria-hidden="true">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-xl border border-(--explorer-border) bg-(--explorer-blue-surface)/40 p-6">
+      <span className="flex items-center justify-center w-11 h-11 rounded-full bg-white text-(--explorer-blue) shrink-0" aria-hidden="true">
         <UserCheck size={20} />
       </span>
       <div className="flex-1 min-w-0">
@@ -130,7 +130,7 @@ export default function RecommendedForYou() {
       <div className="max-w-5xl mx-auto">
         <Reveal direction="up" duration={0.7} className="mb-8 flex items-end justify-between gap-4 flex-wrap">
           <div>
-            <p className="text-[12.5px] font-bold uppercase tracking-wide text-(--explorer-teal)">For you</p>
+            <p className="text-[12.5px] font-bold uppercase tracking-wide text-(--explorer-blue)">For you</p>
             <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-(--explorer-navy) tracking-tight">Jobs matching your profile</h2>
             <p className="mt-2 text-[15px] text-(--explorer-muted)">
               Matched against your skills, preferred role and location — never a guessed score.
