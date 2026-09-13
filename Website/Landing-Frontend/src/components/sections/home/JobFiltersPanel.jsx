@@ -15,10 +15,10 @@ function Chip({ active, onClick, children }) {
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`inline-flex items-center h-8 px-3 rounded-full border text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) ${
+      className={`inline-flex items-center h-8 px-3 rounded-full border text-[12.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
         active
-          ? 'border-(--explorer-teal) bg-(--explorer-teal) text-white'
-          : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-teal-border) hover:bg-(--explorer-teal-surface) hover:text-(--explorer-teal)'
+          ? 'border-(--explorer-blue) bg-(--explorer-blue) text-white'
+          : 'border-(--explorer-border) bg-white text-(--explorer-navy) hover:border-(--explorer-blue-border) hover:bg-(--explorer-blue-surface) hover:text-(--explorer-blue)'
       }`}
     >
       {children}
@@ -57,7 +57,7 @@ export default function JobFiltersPanel({ open, filters, onChange, onClear }) {
           <button
             type="button"
             onClick={onClear}
-            className="inline-flex items-center gap-1 text-[13px] font-bold text-(--explorer-teal) hover:text-(--explorer-teal-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal) rounded-xs"
+            className="inline-flex items-center gap-1 text-[13px] font-bold text-(--explorer-blue) hover:text-(--explorer-blue-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) rounded-xs"
           >
             <X size={13} aria-hidden="true" /> Clear all
           </button>

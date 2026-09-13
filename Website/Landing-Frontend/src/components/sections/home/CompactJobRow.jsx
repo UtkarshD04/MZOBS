@@ -12,7 +12,7 @@ export default function CompactJobRow({ job, onOpen }) {
     <button
       type="button"
       onClick={onOpen}
-      className="explorer-tile-btn group w-full min-w-0 text-left flex items-center gap-3 p-3.5 rounded-xl border border-(--explorer-border) bg-white motion-safe:hover:-translate-y-px hover:border-(--explorer-teal-border) hover:bg-(--explorer-teal-surface)/60 transition-[background-color,border-color,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal)"
+      className="explorer-tile-btn group w-full min-w-0 text-left flex items-center gap-3 p-3.5 rounded-xl border border-(--explorer-border) bg-white motion-safe:hover:-translate-y-px hover:border-(--explorer-blue-border) hover:bg-(--explorer-blue-surface)/60 transition-[background-color,border-color,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
     >
       <span aria-hidden="true">
         <CompanyMark company={job.company} logo={job.logo} size="sm" />
@@ -33,7 +33,7 @@ export default function CompactJobRow({ job, onOpen }) {
       </span>
       <ChevronRight
         size={15}
-        className="shrink-0 text-(--explorer-teal) opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-[opacity,transform]"
+        className="shrink-0 text-(--explorer-blue) opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-[opacity,transform]"
         aria-hidden="true"
       />
     </button>
