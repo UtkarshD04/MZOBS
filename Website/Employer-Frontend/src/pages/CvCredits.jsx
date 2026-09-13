@@ -106,7 +106,7 @@ export default function CvCredits() {
       <div className="grid grid-cols-3 gap-5 mb-6 max-xl:grid-cols-1">
         {plans.map((plan) => (
           <Card key={plan.id} pad hover className="relative flex flex-col overflow-hidden border-border-strong">
-            {plan.code?.includes('200') && <span className="absolute right-0 top-0 rounded-bl-xl bg-navy px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">Popular</span>}
+            {plan.id === popularPlanId && <span className="absolute right-0 top-0 rounded-bl-xl bg-navy px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">Most popular</span>}
             <div className="text-[11.5px] font-semibold tracking-wide uppercase text-ink-tertiary">{plan.name}</div>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-[28px] font-bold tracking-tight">{fmtINR(plan.amountRupees)}</span>
