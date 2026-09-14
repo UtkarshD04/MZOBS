@@ -1,24 +1,17 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Search, MapPin, Check, ChevronDown, SlidersHorizontal, X, ArrowRight, ArrowUpRight, Users, Flame, Sparkles } from 'lucide-react'
+import { Search, MapPin, Check, ChevronDown, SlidersHorizontal, X, ArrowRight, ArrowUpRight, Sparkles, SearchX, RotateCw } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { CompanyMark } from './jobCardPrimitives'
+import { fetchLatestJobs } from '../../../lib/publicJobs'
 
-// ============================================================
-// DEMO DATA — every job, company and count on this page is a placeholder
-// standing in for a real listings feed. Field names mirror the shape the
-// real job objects already use elsewhere on this page (see
-// FeaturedJobCard.jsx / CompactJobRow.jsx / lib/publicJobs.js) — title,
-// company, location, experience, salary display string, workMode — plus a
-// few marketplace-only fields (salaryMin/Max for the range filter,
-// experienceLevel for the radio filter, category for the nav, status for
-// the live indicator) so swapping in a real fetch later only means mapping
-// the API response onto this same shape, not rewriting the JSX below.
-// Company names are intentionally fictional — this is a design mockup, not
-// a claim that these employers hire through MZOBS.
-// ============================================================
+// Real, live listings from the public jobs feed (Backend's
+// GET /api/jobs — see lib/publicJobs.js's fetchLatestJobs) — the same feed
+// that powers the "Fresh opportunities" section below on this page. Only
+// jobs admin/ops have approved and pushed live (visibleToCandidates +
+// sourcing/delivered) ever show up here.
 const CATEGORIES = [
   { key: 'all', label: 'All' },
   { key: 'tech', label: 'Technology' },
@@ -33,15 +26,66 @@ const CATEGORIES = [
 const JOB_TYPES = ['Full-time', 'Part-time', 'Internship', 'Contract']
 const WORK_MODES = ['On-site', 'Hybrid', 'Remote']
 const EXPERIENCE_LEVELS = [
-  { key: 'entry', label: 'Entry level' },
-  { key: 'mid', label: 'Mid level' },
-  { key: 'senior', label: 'Senior level' },
+  { key: 'entry', label: 'Entry level (0–3 yrs)' },
+  { key: 'mid', label: 'Mid level (3–5 yrs)' },
+  { key: 'senior', label: 'Senior level (5+ yrs)' },
 ]
 const SORT_OPTIONS = [
   { key: 'latest', label: 'Latest' },
-  { key: 'urgent', label: 'Urgently hiring' },
   { key: 'salary', label: 'Highest salary' },
 ]
+
+// Backend's `track` enum has no 'finance' value (it uses 'analytics'
+// instead) — mirrors CategoryGrid.jsx's same precedent of matching Finance
+// roles by title/department text instead of a track filter.
+const EXPERIENCE_LEVEL_BUCKETS = {
+  entry: ['0-1', '1-3'],
+  mid: ['3-5'],
+  senior: ['5-10', '10+'],
+}
+
+// Mirrors Backend's SALARY_RANGES buckets (jobQueryFilters.js) — the sidebar
+// slider is continuous, so a chosen minimum maps onto every bucket whose
+// upper bound clears it.
+const SALARY_BUCKETS_LAKHS = [
+  { key: '0-3', maxLakhs: 3 },
+  { key: '3-6', maxLakhs: 6 },
+  { key: '6-10', maxLakhs: 10 },
+  { key: '10-15', maxLakhs: 15 },
+  { key: '15+', maxLakhs: Infinity },
+]
+
+function minSalaryToBuckets(minLakhs) {
+  if (!minLakhs) return []
+  return SALARY_BUCKETS_LAKHS.filter((b) => b.maxLakhs > minLakhs).map((b) => b.key)
+}
+
+const FETCH_DEBOUNCE_MS = 250
+// Public feed's hard cap per page (see Backend's teaserPaginationParams) —
+// this section shows one page, no "load more".
+const RESULTS_LIMIT = 20
+
+function buildApiParams({ category, search, sort, filterState }) {
+  const params = { limit: RESULTS_LIMIT, sort: sort === 'salary' ? 'salary_desc' : 'newest' }
+  const trimmedSearch = search.trim()
+
+  if (category === 'finance') {
+    params.q = trimmedSearch || 'Finance'
+  } else {
+    if (category !== 'all') params.track = category
+    if (trimmedSearch) params.q = trimmedSearch
+  }
+
+  if (filterState.jobTypes.size) params.employmentType = [...filterState.jobTypes]
+  if (filterState.workModes.size) params.workMode = [...filterState.workModes]
+  if (filterState.location.trim()) params.location = filterState.location.trim()
+  if (EXPERIENCE_LEVEL_BUCKETS[filterState.experienceLevel]) params.experience = EXPERIENCE_LEVEL_BUCKETS[filterState.experienceLevel]
+
+  const salaryBuckets = minSalaryToBuckets(filterState.minSalary)
+  if (salaryBuckets.length) params.salary = salaryBuckets
+
+  return params
+}
 
 // Soft, desaturated tones a card can land on — cycled by grid position (not
 // random, not per-company hash) so the alternation reads as a deliberate
@@ -55,204 +99,21 @@ const CARD_TONES = [
   { bg: '#FBF7EF', border: '#EEE2C9' }, // soft cream
 ]
 
-// The bottom transition's small location-pill row references five cities
-// that already appear as real job locations in DEMO_JOBS above (Bengaluru,
-// Mumbai, Delhi NCR, Hyderabad, Pune) — not invented placeholder names —
-// so it reads as "these are the opportunities you just saw", bridging
-// toward wherever a future city/location section picks up next.
 const TRANSITION_NODES = [{ label: 'Bengaluru' }, { label: 'Mumbai' }, { label: 'Delhi NCR' }, { label: 'Hyderabad' }, { label: 'Pune' }]
 
+// Only status kinds backed by a real field (postedDaysAgo) — no invented
+// "urgent"/applicant-count badges, since the public feed carries no such
+// signal for any job.
 const STATUS_STYLES = {
   posted: { label: 'Just posted', dot: 'bg-(--explorer-muted)', text: 'text-(--explorer-muted)' },
   newToday: { label: 'New today', dot: 'bg-(--explorer-blue)', text: 'text-(--explorer-blue)' },
-  urgent: { label: 'Urgent hiring', dot: 'bg-(--explorer-gold)', text: 'text-(--explorer-gold-hover)' },
-  applicants: { label: null, dot: 'bg-(--explorer-teal)', text: 'text-(--explorer-teal)' },
 }
 
-const DEMO_JOBS = [
-  {
-    id: 'demo-1',
-    company: 'Solace Technologies',
-    title: 'Senior Product Designer',
-    location: 'Bengaluru, India',
-    salaryMin: 12,
-    salaryMax: 18,
-    salaryLabel: '₹12 – 18 LPA',
-    experience: '4–6 years',
-    experienceLevel: 'senior',
-    workMode: 'Hybrid',
-    jobType: 'Full-time',
-    category: 'design',
-    status: { kind: 'posted' },
-    featured: true,
-    description: 'Build meaningful digital experiences for enterprise teams across India.',
-  },
-  {
-    id: 'demo-2',
-    company: 'Nimbus Cloud Systems',
-    title: 'Backend Engineer, Payments',
-    location: 'Hyderabad, India',
-    salaryMin: 14,
-    salaryMax: 22,
-    salaryLabel: '₹14 – 22 LPA',
-    experience: '3–5 years',
-    experienceLevel: 'mid',
-    workMode: 'Remote',
-    jobType: 'Full-time',
-    category: 'tech',
-    status: { kind: 'urgent' },
-  },
-  {
-    id: 'demo-3',
-    company: 'Crestline Retail',
-    title: 'Regional Sales Manager',
-    location: 'Mumbai, India',
-    salaryMin: 9,
-    salaryMax: 14,
-    salaryLabel: '₹9 – 14 LPA',
-    experience: '5–8 years',
-    experienceLevel: 'senior',
-    workMode: 'On-site',
-    jobType: 'Full-time',
-    category: 'sales',
-    status: { kind: 'applicants', meta: '18 applicants' },
-  },
-  {
-    id: 'demo-4',
-    company: 'Everbright Media',
-    title: 'Performance Marketing Lead',
-    location: 'Delhi NCR, India',
-    salaryMin: 10,
-    salaryMax: 16,
-    salaryLabel: '₹10 – 16 LPA',
-    experience: '3–5 years',
-    experienceLevel: 'mid',
-    workMode: 'Hybrid',
-    jobType: 'Full-time',
-    category: 'marketing',
-    status: { kind: 'newToday' },
-  },
-  {
-    id: 'demo-5',
-    company: 'Northstar Fintech',
-    title: 'Financial Analyst',
-    location: 'Pune, India',
-    salaryMin: 7,
-    salaryMax: 11,
-    salaryLabel: '₹7 – 11 LPA',
-    experience: '1–3 years',
-    experienceLevel: 'entry',
-    workMode: 'On-site',
-    jobType: 'Full-time',
-    category: 'finance',
-    status: { kind: 'posted' },
-  },
-  {
-    id: 'demo-6',
-    company: 'Pinnacle Logistics',
-    title: 'Operations Manager',
-    location: 'Chennai, India',
-    salaryMin: 8,
-    salaryMax: 13,
-    salaryLabel: '₹8 – 13 LPA',
-    experience: '4–7 years',
-    experienceLevel: 'senior',
-    workMode: 'On-site',
-    jobType: 'Full-time',
-    category: 'ops',
-    status: { kind: 'applicants', meta: '9 applicants' },
-  },
-  {
-    id: 'demo-7',
-    company: 'Coral Bay Hospitality',
-    title: 'Talent Acquisition Specialist',
-    location: 'Gurugram, India',
-    salaryMin: 6,
-    salaryMax: 10,
-    salaryLabel: '₹6 – 10 LPA',
-    experience: '2–4 years',
-    experienceLevel: 'mid',
-    workMode: 'Hybrid',
-    jobType: 'Full-time',
-    category: 'hr',
-    status: { kind: 'urgent' },
-  },
-  {
-    id: 'demo-8',
-    company: 'Lumen Robotics',
-    title: 'Frontend Engineer, React',
-    location: 'Bengaluru, India',
-    salaryMin: 10,
-    salaryMax: 16,
-    salaryLabel: '₹10 – 16 LPA',
-    experience: '2–4 years',
-    experienceLevel: 'mid',
-    workMode: 'Remote',
-    jobType: 'Full-time',
-    category: 'tech',
-    status: { kind: 'newToday' },
-  },
-  {
-    id: 'demo-9',
-    company: 'Ashford Consulting',
-    title: 'Business Development Executive',
-    location: 'Ahmedabad, India',
-    salaryMin: 4,
-    salaryMax: 7,
-    salaryLabel: '₹4 – 7 LPA',
-    experience: '0–2 years',
-    experienceLevel: 'entry',
-    workMode: 'On-site',
-    jobType: 'Full-time',
-    category: 'sales',
-    status: { kind: 'posted' },
-  },
-  {
-    id: 'demo-10',
-    company: 'Meridian EdTech',
-    title: 'Brand & Content Designer',
-    location: 'Remote, India',
-    salaryMin: 6,
-    salaryMax: 9,
-    salaryLabel: '₹6 – 9 LPA',
-    experience: '1–3 years',
-    experienceLevel: 'entry',
-    workMode: 'Remote',
-    jobType: 'Contract',
-    category: 'design',
-    status: { kind: 'applicants', meta: '5 applicants' },
-  },
-  {
-    id: 'demo-11',
-    company: 'Zenith Finserv',
-    title: 'Growth & Ops Intern',
-    location: 'Jaipur, India',
-    salaryMin: 2,
-    salaryMax: 4,
-    salaryLabel: '₹2 – 4 LPA',
-    experience: '0–1 years',
-    experienceLevel: 'entry',
-    workMode: 'On-site',
-    jobType: 'Internship',
-    category: 'ops',
-    status: { kind: 'posted' },
-  },
-  {
-    id: 'demo-12',
-    company: 'BluePeak Analytics',
-    title: 'HR Business Partner',
-    location: 'Kolkata, India',
-    salaryMin: 9,
-    salaryMax: 13,
-    salaryLabel: '₹9 – 13 LPA',
-    experience: '3–6 years',
-    experienceLevel: 'mid',
-    workMode: 'Hybrid',
-    jobType: 'Full-time',
-    category: 'hr',
-    status: { kind: 'urgent' },
-  },
-]
+function deriveJobStatus(job) {
+  if (job.postedDaysAgo === 0) return { kind: 'newToday' }
+  if (job.postedDaysAgo <= 3) return { kind: 'posted' }
+  return null
+}
 
 function CustomCheckbox({ checked, onChange, children }) {
   return (
@@ -389,14 +250,12 @@ function StatusTag({ status }) {
   const reduceMotion = useReducedMotion()
   if (!status) return null
   const style = STATUS_STYLES[status.kind]
-  const label = status.kind === 'applicants' ? status.meta : style.label
-  const Icon = status.kind === 'urgent' ? Flame : status.kind === 'applicants' ? Users : null
   return (
     <span className={`inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wide ${style.text}`}>
       <span className="relative flex items-center justify-center w-1.5 h-1.5">
         {/* A slow, barely-there breathing ring — not Tailwind's default 1s
             ping, which reads as busy rather than "alive". ~3s cycle, low
-            amplitude, on every status kind (not just urgent/new). */}
+            amplitude. */}
         {!reduceMotion && (
           <motion.span
             className={`absolute inset-0 rounded-full ${style.dot}`}
@@ -407,8 +266,7 @@ function StatusTag({ status }) {
         )}
         <span className={`relative w-1.5 h-1.5 rounded-full ${style.dot}`} aria-hidden="true" />
       </span>
-      {Icon && <Icon size={11} aria-hidden="true" />}
-      {label}
+      {style.label}
     </span>
   )
 }
@@ -425,7 +283,7 @@ function JobCard({ job, tone, onOpen }) {
         <span className="motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-[1.03]">
           <CompanyMark company={job.company} size="sm" tone="bg-white text-(--explorer-navy)" />
         </span>
-        <StatusTag status={job.status} />
+        <StatusTag status={deriveJobStatus(job)} />
       </div>
 
       <p className="mt-3 text-[12px] font-bold text-(--explorer-navy)/70 truncate">{job.company}</p>
@@ -436,12 +294,12 @@ function JobCard({ job, tone, onOpen }) {
         <span className="truncate">{job.location}</span>
       </p>
 
-      <p className="mt-2 text-[15px] font-black text-(--explorer-navy)">{job.salaryLabel}</p>
+      <p className="mt-2 text-[15px] font-black text-(--explorer-navy)">{job.salary}</p>
 
       <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
-        <span className="px-2 py-0.5 rounded-full bg-white/70">{job.jobType}</span>
+        <span className="px-2 py-0.5 rounded-full bg-white/70">{job.employmentType}</span>
         <span className="px-2 py-0.5 rounded-full bg-white/70">{job.workMode}</span>
-        <span className="px-2 py-0.5 rounded-full bg-white/70">{job.experience}</span>
+        {job.experience && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.experience}</span>}
       </div>
 
       <div className="mt-auto pt-4 flex items-center justify-end">
@@ -481,7 +339,7 @@ function FeaturedJobTile({ job, tone, onOpen }) {
           <span className="inline-flex items-center gap-1.5 text-[10.5px] font-black uppercase tracking-wide text-(--explorer-navy)/70">
             <Sparkles size={12} className="text-(--explorer-gold-hover)" aria-hidden="true" /> Featured opportunity
           </span>
-          <StatusTag status={job.status} />
+          <StatusTag status={deriveJobStatus(job)} />
         </div>
 
         <div className="mt-4 flex items-center gap-3">
@@ -498,14 +356,14 @@ function FeaturedJobTile({ job, tone, onOpen }) {
           <MapPin size={13} className="shrink-0" aria-hidden="true" />
           {job.location}
         </p>
-        <p className="mt-1.5 text-[22px] font-black text-(--explorer-navy)">{job.salaryLabel}</p>
+        <p className="mt-1.5 text-[22px] font-black text-(--explorer-navy)">{job.salary}</p>
 
         {job.description && <p className="mt-3 text-[13.5px] text-(--explorer-navy)/75 leading-relaxed max-w-md">{job.description}</p>}
 
         <div className="mt-4 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
-          <span className="px-2.5 py-1 rounded-full bg-white/70">{job.jobType}</span>
+          <span className="px-2.5 py-1 rounded-full bg-white/70">{job.employmentType}</span>
           <span className="px-2.5 py-1 rounded-full bg-white/70">{job.workMode}</span>
-          <span className="px-2.5 py-1 rounded-full bg-white/70">{job.experience}</span>
+          {job.experience && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.experience}</span>}
         </div>
       </div>
 
@@ -516,6 +374,21 @@ function FeaturedJobTile({ job, tone, onOpen }) {
         </span>
       </div>
     </button>
+  )
+}
+
+function JobCardSkeleton({ tone, featured }) {
+  return (
+    <div
+      className={`animate-pulse rounded-2xl border p-5 ${featured ? 'min-h-[320px]' : 'min-h-[220px]'}`}
+      style={{ backgroundColor: tone.bg, borderColor: tone.border }}
+    >
+      <div className="w-10 h-10 rounded-full bg-white/70" />
+      <div className="mt-4 h-2.5 w-24 rounded-full bg-white/70" />
+      <div className="mt-2 h-4 w-40 rounded-full bg-white/70" />
+      <div className="mt-4 h-3 w-28 rounded-full bg-white/70" />
+      <div className="mt-3 h-5 w-32 rounded-full bg-white/70" />
+    </div>
   )
 }
 
@@ -536,6 +409,12 @@ export default function JobMarketplace() {
     minSalary: 0,
   })
 
+  const [jobs, setJobs] = useState([])
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
+  const [retryToken, setRetryToken] = useState(0)
+
   const activeFilterCount =
     filterState.jobTypes.size +
     filterState.workModes.size +
@@ -547,53 +426,57 @@ export default function JobMarketplace() {
     setFilterState({ jobTypes: new Set(), workModes: new Set(), experienceLevel: '', location: '', minSalary: 0 })
   }
 
-  const results = useMemo(() => {
-    let list = DEMO_JOBS.filter((job) => {
-      if (category !== 'all' && job.category !== category) return false
-      if (search.trim()) {
-        const q = search.trim().toLowerCase()
-        if (!job.title.toLowerCase().includes(q) && !job.company.toLowerCase().includes(q)) return false
-      }
-      if (filterState.jobTypes.size > 0 && !filterState.jobTypes.has(job.jobType)) return false
-      if (filterState.workModes.size > 0 && !filterState.workModes.has(job.workMode)) return false
-      if (filterState.experienceLevel && job.experienceLevel !== filterState.experienceLevel) return false
-      if (filterState.location.trim() && !job.location.toLowerCase().includes(filterState.location.trim().toLowerCase())) return false
-      if (job.salaryMax < filterState.minSalary) return false
-      return true
-    })
+  const filterSignature = JSON.stringify([
+    ...filterState.jobTypes,
+    ...filterState.workModes,
+    filterState.experienceLevel,
+    filterState.location,
+    filterState.minSalary,
+  ])
 
-    if (sort === 'urgent') {
-      list = [...list].sort((a, b) => (b.status.kind === 'urgent') - (a.status.kind === 'urgent'))
-    } else if (sort === 'salary') {
-      list = [...list].sort((a, b) => b.salaryMax - a.salaryMax)
+  useEffect(() => {
+    let cancelled = false
+    const controller = new AbortController()
+    setLoading(true)
+    setLoadError(false)
+
+    const timer = setTimeout(() => {
+      fetchLatestJobs(buildApiParams({ category, search, sort, filterState }), { signal: controller.signal })
+        .then(({ jobs: fetchedJobs, total: fetchedTotal }) => {
+          if (cancelled) return
+          setJobs(fetchedJobs)
+          setTotal(fetchedTotal)
+        })
+        .catch((err) => {
+          if (cancelled || err?.name === 'AbortError') return
+          // A real fetch failure — show an honest error state with a Retry
+          // action rather than quietly swapping in invented sample jobs.
+          setJobs([])
+          setTotal(0)
+          setLoadError(true)
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false)
+        })
+    }, FETCH_DEBOUNCE_MS)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+      controller.abort()
     }
-    return list
-  }, [category, search, sort, filterState])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, search, sort, filterSignature, retryToken])
 
-  const featured = results.find((j) => j.featured)
-  const restJobs = results.filter((j) => j.id !== featured?.id)
+  const featured = jobs[0]
+  const restJobs = jobs.slice(1)
+
+  const showInitialLoading = loading && jobs.length === 0 && !loadError
+  const showError = !loading && loadError
+  const showEmpty = !loading && !loadError && jobs.length === 0
 
   function openJob(job) {
-    // Demo listings have no real detail record — a genuine job's card
-    // (FeaturedJobCard/CompactJobRow above) already routes to /jobs/:id
-    // with the real object in router state; this mirrors that exact
-    // pattern so wiring in real data later needs no routing changes here.
-    navigate(`/jobs/${encodeURIComponent(job.id)}`, { state: { job: toRealJobShape(job) } })
-  }
-
-  function toRealJobShape(job) {
-    return {
-      id: job.id,
-      title: job.title,
-      company: job.company,
-      location: job.location,
-      salary: job.salaryLabel,
-      experience: job.experience,
-      workMode: job.workMode,
-      employmentType: job.jobType,
-      description: job.description,
-      postedDaysAgo: 0,
-    }
+    navigate(`/jobs/${encodeURIComponent(job.id)}`, { state: { job } })
   }
 
   function scrollToNextSection() {
@@ -698,7 +581,7 @@ export default function JobMarketplace() {
               <div className="shrink-0">
                 <p className="text-[10.5px] font-black uppercase tracking-wide text-(--explorer-muted)">Total jobs</p>
                 <p className="text-[22px] font-black text-(--explorer-navy) leading-none mt-0.5">
-                  {results.length} <span className="text-[14px] font-bold text-(--explorer-muted)">opportunities</span>
+                  {loading ? '—' : total} <span className="text-[14px] font-bold text-(--explorer-muted)">opportunities</span>
                 </p>
               </div>
 
@@ -733,13 +616,27 @@ export default function JobMarketplace() {
             {/* Grid */}
             <AnimatePresence mode="wait">
               <motion.div
-                key={`${category}-${sort}-${search}-${JSON.stringify([...filterState.jobTypes, ...filterState.workModes, filterState.experienceLevel, filterState.location, filterState.minSalary])}`}
+                key={`${category}-${sort}-${search}-${filterSignature}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {results.length === 0 ? (
+                {showError ? (
+                  <div className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
+                    <SearchX size={26} className="text-(--explorer-muted)" aria-hidden="true" />
+                    <p className="text-[15px] font-bold text-(--explorer-navy)">Couldn't load jobs right now</p>
+                    <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">There was a problem reaching the jobs feed. Check your connection and try again.</p>
+                    <button
+                      type="button"
+                      onClick={() => setRetryToken((n) => n + 1)}
+                      className="mt-1.5 inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-white text-[13px] font-bold"
+                      style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
+                    >
+                      <RotateCw size={14} aria-hidden="true" /> Retry
+                    </button>
+                  </div>
+                ) : showEmpty ? (
                   <div className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
                     <p className="text-[15px] font-bold text-(--explorer-navy)">No roles match these filters</p>
                     <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">Try clearing a filter or searching a different keyword.</p>
@@ -754,16 +651,26 @@ export default function JobMarketplace() {
                   </div>
                 ) : (
                   <StaggerGroup className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" staggerDelay={0.08}>
-                    {featured && (
-                      <StaggerItem y={20} scale={1} duration={0.5} className="sm:col-span-2 sm:row-span-2">
-                        <FeaturedJobTile job={featured} tone={CARD_TONES[0]} onOpen={() => openJob(featured)} />
-                      </StaggerItem>
-                    )}
-                    {restJobs.map((job, i) => (
-                      <StaggerItem key={job.id} y={20} scale={1} duration={0.45}>
-                        <JobCard job={job} tone={CARD_TONES[(i + 1) % CARD_TONES.length]} onOpen={() => openJob(job)} />
-                      </StaggerItem>
-                    ))}
+                    {showInitialLoading
+                      ? Array.from({ length: 8 }).map((_, i) => (
+                          <StaggerItem key={i} y={20} scale={1} duration={0.4} className={i === 0 ? 'sm:col-span-2 sm:row-span-2' : ''}>
+                            <JobCardSkeleton tone={CARD_TONES[i % CARD_TONES.length]} featured={i === 0} />
+                          </StaggerItem>
+                        ))
+                      : (
+                        <>
+                          {featured && (
+                            <StaggerItem y={20} scale={1} duration={0.5} className="sm:col-span-2 sm:row-span-2">
+                              <FeaturedJobTile job={featured} tone={CARD_TONES[0]} onOpen={() => openJob(featured)} />
+                            </StaggerItem>
+                          )}
+                          {restJobs.map((job, i) => (
+                            <StaggerItem key={job.id} y={20} scale={1} duration={0.45}>
+                              <JobCard job={job} tone={CARD_TONES[(i + 1) % CARD_TONES.length]} onOpen={() => openJob(job)} />
+                            </StaggerItem>
+                          ))}
+                        </>
+                      )}
                   </StaggerGroup>
                 )}
               </motion.div>
@@ -855,7 +762,7 @@ export default function JobMarketplace() {
                 className="mt-8 w-full h-11 rounded-full text-white text-[14px] font-bold"
                 style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
               >
-                Show {results.length} opportunities
+                Show {loading ? '' : total} opportunities
               </button>
             </motion.div>
           </motion.div>
