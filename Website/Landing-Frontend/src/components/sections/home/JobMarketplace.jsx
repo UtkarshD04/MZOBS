@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Search, MapPin, Check, ChevronDown, SlidersHorizontal, X, ArrowRight, ArrowUpRight, ShieldCheck, Sparkles, Loader2, RotateCw, SearchX } from 'lucide-react'
@@ -38,10 +38,26 @@ const CARD_TONES = [
   { bg: '#FBF7EF', border: '#EEE2C9' }, // soft cream
 ]
 
+<<<<<<< Updated upstream
 // The bottom transition's small location-pill row — major hiring hubs
 // already used consistently elsewhere on this page (see HOT_CITIES_DATA),
 // not tied to whatever's in the current result page.
 const TRANSITION_NODES = [{ label: 'Bengaluru' }, { label: 'Mumbai' }, { label: 'Delhi NCR' }, { label: 'Hyderabad' }, { label: 'Pune' }]
+=======
+// Only status kinds backed by a real field (postedDaysAgo) — no invented
+// "urgent"/applicant-count badges, since the public feed carries no such
+// signal for any job.
+const STATUS_STYLES = {
+  posted: { label: 'Just posted', dot: 'bg-(--explorer-muted)', text: 'text-(--explorer-muted)' },
+  newToday: { label: 'New today', dot: 'bg-(--explorer-blue)', text: 'text-(--explorer-blue)' },
+}
+
+function deriveJobStatus(job) {
+  if (job.postedDaysAgo === 0) return { kind: 'newToday' }
+  if (job.postedDaysAgo <= 3) return { kind: 'posted' }
+  return null
+}
+>>>>>>> Stashed changes
 
 function CustomCheckbox({ checked, onChange, children }) {
   return (
@@ -344,7 +360,6 @@ function FeaturedJobTileSkeleton() {
 export default function JobMarketplace() {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
-  const sectionRef = useRef(null)
 
   const [category, setCategory] = useState('')
   const [search, setSearch] = useState('')
@@ -435,16 +450,16 @@ export default function JobMarketplace() {
     navigate(`/jobs/${job.id ?? encodeURIComponent(job.title)}`, { state: { job } })
   }
 
-  function scrollToNextSection() {
-    sectionRef.current?.nextElementSibling?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
   return (
+<<<<<<< Updated upstream
     <section
       ref={sectionRef}
       id="latest-jobs"
       className="hero-afterglow-faint relative py-16 md:py-20 px-6 md:px-10 scroll-mt-20"
     >
+=======
+    <section className="hero-afterglow-faint relative py-16 md:py-20 px-6 md:px-10">
+>>>>>>> Stashed changes
       <div className="max-w-[1400px] mx-auto">
         {/* Heading — the hero's handoff into an actual marketplace */}
         <Reveal direction="up" duration={0.6} className="max-w-2xl">
@@ -637,58 +652,6 @@ export default function JobMarketplace() {
           </div>
         </div>
 
-        {/* Transition toward the next section — compact on purpose (no
-            network diagram, no empty canvas): the same location pin/city
-            language the cards above already use, gathered into one small
-            row that settles into place, then the CTA. ~200px total, so the
-            next section starts close behind it rather than after a big gap. */}
-        <div className="mt-10 md:mt-12 flex flex-col items-center text-center">
-          <motion.div
-            className="flex flex-wrap items-center justify-center gap-1.5"
-            initial={reduceMotion ? false : 'hidden'}
-            whileInView="show"
-            viewport={{ once: true, amount: 0.6 }}
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07 } } }}
-          >
-            {TRANSITION_NODES.map((node) => (
-              <motion.span
-                key={node.label}
-                variants={{ hidden: { opacity: 0, y: -8 }, show: { opacity: 1, y: 0 } }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-                className="inline-flex items-center gap-1 h-6 pl-2 pr-2.5 rounded-full bg-(--explorer-blue-surface) text-[11px] font-bold text-(--explorer-blue)"
-              >
-                <MapPin size={10} aria-hidden="true" />
-                {node.label}
-              </motion.span>
-            ))}
-          </motion.div>
-
-          <Reveal direction="up" duration={0.45} delay={0.35}>
-            <p className="mt-3.5 text-[15.5px] font-black text-(--explorer-navy)">Opportunities don't stop at one city.</p>
-            <p className="mt-1 text-[13px] text-(--explorer-navy)/70">Explore where India's next opportunities are opening up.</p>
-          </Reveal>
-
-          <Reveal direction="up" duration={0.45} delay={0.48}>
-            <button
-              type="button"
-              onClick={scrollToNextSection}
-              className="group mt-3.5 inline-flex items-center gap-2 text-[15px] font-black text-(--explorer-navy) focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--explorer-blue) rounded-lg"
-            >
-              <span
-                style={{ backgroundImage: 'var(--hero-cta-gradient)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
-              >
-                Explore jobs across India
-              </span>
-              <motion.span
-                animate={reduceMotion ? {} : { x: [0, 5, 0] }}
-                transition={{ duration: 1.6, repeat: reduceMotion ? 0 : Infinity, ease: 'easeInOut' }}
-                className="text-(--explorer-blue)"
-              >
-                <ArrowRight size={17} aria-hidden="true" />
-              </motion.span>
-            </button>
-          </Reveal>
-        </div>
       </div>
 
       {/* Mobile filter drawer */}
