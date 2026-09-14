@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, ArrowLeft, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, ShieldCheck } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, ShieldCheck, UploadCloud, FileText, Trash2, ArrowUpRight } from 'lucide-react'
 import { Field, Input, PrimaryButton, SecondaryButton } from '../ui/JobsAuthField'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
 import StepProgress from '../ui/StepProgress'
 import OtpInput from '../ui/OtpInput'
 import { loginEmployeeWithGoogle, signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../lib/employeeAuth'
 import { saveEmployeeSession, buildAppRedirectUrl } from '../../lib/employeeSession'
+import { uploadEmployeeResume, validateResumeFileClientSide } from '../../lib/employeeResume'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../lib/config'
 
@@ -57,6 +58,14 @@ export default function EmployeeSignupForm() {
   const [status, setStatus] = useState('idle') // idle | submitting | success
   const [showPassword, setShowPassword] = useState(false)
   const [googleCredential, setGoogleCredential] = useState(null)
+  const [authToken, setAuthToken] = useState(null)
+  const [authEmployee, setAuthEmployee] = useState(null)
+
+  // CV upload state (post-signup)
+  const [resumeFile, setResumeFile] = useState(null)
+  const [resumeError, setResumeError] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [uploadDone, setUploadDone] = useState(false)
 
   const [otp, setOtp] = useState('')
   const [otpSent, setOtpSent] = useState(false)
@@ -181,23 +190,119 @@ export default function EmployeeSignupForm() {
         ? await signupEmployeeWithGoogle({ credential: googleCredential, phone: form.phone, phoneToken })
         : await signupEmployee({ ...form, phoneToken })
 
+      setAuthToken(token)
+      setAuthEmployee(employee)
       setStatus('success')
-      setTimeout(() => completeAuth(token, employee), 900)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
     }
   }
 
+  function handleResumeChange(e) {
+    const file = e.target.files?.[0] ?? null
+    e.target.value = ''
+    if (!file) return
+    const err = validateResumeFileClientSide(file)
+    if (err) { setResumeError(err); return }
+    setResumeError('')
+    setResumeFile(file)
+  }
+
+  async function handleUploadResume() {
+    if (!resumeFile || !authToken) return
+    setUploading(true)
+    setResumeError('')
+    try {
+      await uploadEmployeeResume(authToken, resumeFile)
+      setUploadDone(true)
+    } catch (err) {
+      setResumeError(err.message || 'Upload failed. You can add your resume later.')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  function handleFinish() {
+    completeAuth(authToken, authEmployee)
+  }
+
   if (status === 'success') {
     return (
-      <div className="py-10 flex flex-col items-center text-center gap-3">
-        <div className="w-14 h-14 rounded-full bg-(--jobs-teal-tint) flex items-center justify-center">
-          <CheckCircle2 size={28} className="text-(--jobs-teal-dark)" />
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="py-6">
+        {/* Account created banner */}
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-(--jobs-teal-tint) text-(--jobs-teal-dark) mb-6">
+          <CheckCircle2 size={20} className="shrink-0" />
+          <div>
+            <p className="text-[13.5px] font-bold">Account created successfully!</p>
+            <p className="text-[12px] opacity-80">Now upload your CV so employers can find you.</p>
+          </div>
         </div>
-        <p className="text-base font-black text-(--jobs-navy)">Your MZOBS account is ready.</p>
-        <p className="text-[13px] text-(--jobs-ink-soft)">Taking you back home...</p>
-      </div>
+
+        {/* CV upload */}
+        {!uploadDone ? (
+          <>
+            <p className="text-[13.5px] font-bold text-(--jobs-navy) mb-3">Upload your resume</p>
+
+            {resumeFile ? (
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle) mb-3">
+                <FileText size={18} className="text-(--jobs-blue-dark) shrink-0" />
+                <span className="flex-1 min-w-0 text-[13px] font-semibold text-(--jobs-navy) truncate">{resumeFile.name}</span>
+                <button
+                  type="button"
+                  onClick={() => { setResumeFile(null); setResumeError('') }}
+                  className="text-(--jobs-ink-soft) hover:text-red-600 transition-colors shrink-0"
+                  aria-label="Remove"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ) : (
+              <label className="flex items-center gap-3 px-4 py-4 rounded-xl border-2 border-dashed border-(--jobs-border) bg-(--jobs-bg-subtle) cursor-pointer hover:border-(--jobs-blue)/50 transition-colors mb-3">
+                <UploadCloud size={20} className="text-(--jobs-ink-soft) shrink-0" />
+                <div>
+                  <p className="text-[13px] font-semibold text-(--jobs-navy)">Click to upload your CV</p>
+                  <p className="text-[11.5px] text-(--jobs-ink-soft)">PDF, DOC or DOCX — up to 5MB</p>
+                </div>
+                <input type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={handleResumeChange} />
+              </label>
+            )}
+
+            {resumeError && <p className="text-xs text-red-600 mb-3">{resumeError}</p>}
+
+            <div className="flex flex-col gap-2">
+              <PrimaryButton
+                type="button"
+                onClick={handleUploadResume}
+                disabled={!resumeFile || uploading}
+              >
+                {uploading ? 'Uploading...' : <><UploadCloud size={16} /> Upload CV</>}
+              </PrimaryButton>
+              <button
+                type="button"
+                onClick={handleFinish}
+                className="text-[13px] font-semibold text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors py-2"
+              >
+                Skip for now
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center text-center gap-3 py-4">
+            <div className="w-12 h-12 rounded-full bg-(--jobs-teal-tint) flex items-center justify-center">
+              <CheckCircle2 size={24} className="text-(--jobs-teal-dark)" />
+            </div>
+            <p className="text-[14px] font-bold text-(--jobs-navy)">CV uploaded!</p>
+            <button
+              type="button"
+              onClick={handleFinish}
+              className="inline-flex items-center gap-1.5 text-[13px] font-bold text-(--jobs-blue-dark) hover:underline"
+            >
+              Continue <ArrowUpRight size={14} />
+            </button>
+          </div>
+        )}
+      </motion.div>
     )
   }
 
