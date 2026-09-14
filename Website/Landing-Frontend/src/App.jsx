@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import ScrollToTop from './components/layout/ScrollToTop'
 import CursorDot from './components/ui/CursorDot'
+import ScrollToTopButton from './components/ui/ScrollToTopButton'
 import { requestNotificationPermission } from './lib/webPush'
 import Home from './pages/Home'
 import JobDetail from './pages/JobDetail'
@@ -36,6 +37,7 @@ export default function App() {
     <>
       <ScrollToTop />
       <CursorDot />
+      <ScrollToTopButton />
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}

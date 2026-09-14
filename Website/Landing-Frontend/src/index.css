@@ -98,6 +98,12 @@
        just makes anchor-link jumps (navbar links, ScrollToTop.jsx's hash
        handling) glide instead of snapping instantly. */
     scroll-behavior: smooth;
+    /* The rubber-band overscroll area (trackpad/touch bounce past the top
+       or bottom edge) paints the root element's background, not body's —
+       every page ends in Footer.jsx's --explorer-blue-surface tint, so
+       matching it here means the bounce blends into the footer instead of
+       flashing body's plain white underneath it. */
+    background: var(--explorer-blue-surface);
   }
   body {
     background: var(--color-bg);
