@@ -69,11 +69,13 @@ export function CityVisual({ city, landmark, imageUrl, zoomOnHover = true, eager
   )
 }
 
-// The seven-city "destination row" this section browses — a curated subset
-// of HOT_CITIES_DATA.cities (real metadata/photography, unchanged), not a
-// new dataset. Every city here already has real monument photography
-// configured in content.js.
-const FEATURED_CITY_SLUGS = ['mumbai', 'bengaluru', 'delhi-ncr', 'hyderabad', 'pune', 'chennai', 'kolkata']
+// The destination row is chosen live from real opening counts — not a
+// fixed curated list of "showcase" metros — so a city only ever appears
+// here when it genuinely has openings right now (the same real-demand-only
+// rule CategoryGrid applies to categories). HOT_CITIES_DATA.cities still
+// supplies the display metadata (photo/state/landmark) for whichever slugs
+// the live data says are hiring.
+const MAX_FEATURED_CITIES = 7
 
 // Desktop: the active destination is visibly larger than its neighbors;
 // mobile keeps every card the same (large) size and relies on scroll-snap +
@@ -234,7 +236,7 @@ function CityDestination({ meta, stats, categories, isActive, isMobile, onSelect
 export default function HotJobsByCity() {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
-  const [activeSlug, setActiveSlug] = useState(FEATURED_CITY_SLUGS[0])
+  const [activeSlug, setActiveSlug] = useState(null)
   const [liveCities, setLiveCities] = useState(null) // null = still loading
   const [loadError, setLoadError] = useState(false)
   const [retryToken, setRetryToken] = useState(0)
@@ -259,27 +261,40 @@ export default function HotJobsByCity() {
     }
   }, [retryToken])
 
-  // Joins display metadata (name/state/slug/photo) with live stats by slug —
-  // real per-category counts come straight off the same byFilter buckets
-  // HOT_CITIES_DATA.filters already defines (tech/sales/finance/marketing/
-  // ops), never invented, sorted to the top 3 non-zero for the hover/active
-  // breakdown.
+  // Joins display metadata (name/state/slug/photo) with live stats by slug,
+  // drops any city with zero real openings right now (a "0+ open roles"
+  // card next to gorgeous monument photography reads as broken, not
+  // premium), and ranks the rest hottest-first — real per-category counts
+  // come straight off the same byFilter buckets HOT_CITIES_DATA.filters
+  // already defines (tech/sales/finance/marketing/ops), never invented.
   const destinations = useMemo(() => {
-    const bySlug = new Map((liveCities ?? []).map((c) => [c.slug, c]))
-    return FEATURED_CITY_SLUGS.map((slug) => {
-      const meta = HOT_CITIES_DATA.cities.find((c) => c.slug === slug)
-      if (!meta) return null
-      const byFilter = bySlug.get(slug)?.byFilter
-      const stats = byFilter?.all
-      const categories = HOT_CITIES_DATA.filters
-        .filter((f) => f.key !== 'all')
-        .map((f) => [f.label, byFilter?.[f.key]?.openings ?? 0])
-        .filter(([, count]) => count > 0)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-      return { meta, stats, categories }
-    }).filter(Boolean)
+    if (!liveCities) return []
+    return liveCities
+      .map((c) => {
+        const meta = HOT_CITIES_DATA.cities.find((m) => m.slug === c.slug)
+        const stats = c.byFilter?.all
+        if (!meta || !stats || stats.openings <= 0) return null
+        const categories = HOT_CITIES_DATA.filters
+          .filter((f) => f.key !== 'all')
+          .map((f) => [f.label, c.byFilter?.[f.key]?.openings ?? 0])
+          .filter(([, count]) => count > 0)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+        return { meta, stats, categories }
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.stats.openings - a.stats.openings)
+      .slice(0, MAX_FEATURED_CITIES)
   }, [liveCities])
+
+  // Keep the active card pointed at a real destination as the live list
+  // loads in (or changes) — a stale/empty activeSlug would otherwise leave
+  // every card rendering at its smaller "inactive" size.
+  useEffect(() => {
+    if (destinations.length > 0 && !destinations.some((d) => d.meta.slug === activeSlug)) {
+      setActiveSlug(destinations[0].meta.slug)
+    }
+  }, [destinations, activeSlug])
 
   const activeIndex = Math.max(0, destinations.findIndex((d) => d.meta.slug === activeSlug))
 
@@ -364,6 +379,11 @@ export default function HotJobsByCity() {
           </div>
         ) : showInitialLoading ? (
           <CityDestinationSkeleton />
+        ) : destinations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
+            <p className="text-[15px] font-bold text-(--explorer-navy)">No live city openings right now</p>
+            <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">Check back soon as new roles come in.</p>
+          </div>
         ) : (
           <Reveal direction="up" duration={0.6} delay={0.1}>
             <div
