@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowUpRight, Sparkles } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
-import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { CATEGORY_DATA } from '../../../lib/content'
 import { fetchCategoryCounts } from '../../../lib/publicJobs'
 
-// Resolves a category's real, live count from GET /api/jobs/categories —
-// `counts` is `{ tracks: { tech: N, ... }, freshers: N, remote: N, finance: N }`.
-// Returns null (not 0) until the request has actually resolved, so the
-// caller can tell "we don't know yet" apart from "genuinely zero right now".
 function liveCount(cat, counts) {
   if (!counts) return null
   if (cat.trackKey === 'freshers') return counts.freshers ?? 0
@@ -18,29 +14,56 @@ function liveCount(cat, counts) {
   return 0
 }
 
-// Clicking a tile filters "Latest jobs" in place — same pattern as the hero
-// search bar and QuickDiscoveryStrip. 'finance' has no Job.track value the
-// job-list endpoint's `track` filter accepts (see content.js's comment
-// above CATEGORY_DATA), so it searches by title/skill/company text instead.
 function paramsFor(cat) {
   if (cat.searchParams) return cat.searchParams
   if (cat.trackKey === 'finance') return { q: cat.title }
   return { track: cat.trackKey }
 }
 
-function CategoryTileSkeleton() {
+// Each category gets a distinct tonal card — same soft palette as
+// JobMarketplace — keyed by trackKey (not array position) so a category's
+// color stays fixed even as the grid below re-sorts by live opening count.
+const CATEGORY_TONES = {
+  tech: { bg: '#EAF2FE', border: '#D3E4FC', icon: '#2563EB', bar: '#2563EB' },
+  sales: { bg: '#FDF0E6', border: '#F6DDC3', icon: '#EA580C', bar: '#EA580C' },
+  marketing: { bg: '#E8F7F1', border: '#CBEADD', icon: '#059669', bar: '#059669' },
+  design: { bg: '#F1EEFC', border: '#DDD2F7', icon: '#7C3AED', bar: '#7C3AED' },
+  finance: { bg: '#FBF7EF', border: '#EEE2C9', icon: '#D97706', bar: '#D97706' },
+  hr: { bg: '#E0F2FE', border: '#BAE6FD', icon: '#0284C7', bar: '#0284C7' },
+  ops: { bg: '#FFF1F2', border: '#FECDD3', icon: '#E11D48', bar: '#E11D48' },
+  support: { bg: '#F0FDFA', border: '#99F6E4', icon: '#0D9488', bar: '#0D9488' },
+  freshers: { bg: '#ECFDF5', border: '#A7F3D0', icon: '#16A34A', bar: '#16A34A' },
+  remote: { bg: '#EFF6FF', border: '#BFDBFE', icon: '#3B82F6', bar: '#3B82F6' },
+}
+const DEFAULT_TONE = CATEGORY_TONES.tech
+const SKELETON_TONES = Object.values(CATEGORY_TONES)
+
+// A muted, low-saturation treatment for a category with zero real openings
+// right now — same card, same click-through, just visually quieter than a
+// populated one so an empty category never competes for attention with an
+// actually-hiring one.
+const EMPTY_TONE = { bg: '#F6F8FB', border: 'var(--explorer-border)', icon: 'var(--explorer-muted)', bar: 'var(--explorer-border)' }
+
+function CategoryCardSkeleton({ tone }) {
   return (
-    <div className="flex items-center gap-3 h-full bg-white border border-(--explorer-border) rounded-lg p-4 animate-pulse">
-      <div className="w-9 h-9 rounded-lg bg-(--explorer-bg) shrink-0" />
-      <div className="min-w-0 flex-1 flex flex-col gap-1.5">
-        <div className="h-3 w-2/3 rounded bg-(--explorer-bg)" />
-        <div className="h-2.5 w-1/3 rounded bg-(--explorer-bg)" />
+    <div
+      className="animate-pulse rounded-2xl border p-5 min-h-[148px] flex flex-col justify-between"
+      style={{ backgroundColor: tone.bg, borderColor: tone.border }}
+    >
+      <div className="flex items-start justify-between">
+        <div className="w-10 h-10 rounded-xl bg-white/60" />
+      </div>
+      <div>
+        <div className="h-3.5 w-2/3 rounded-full bg-white/70 mb-2" />
+        <div className="h-2.5 w-1/3 rounded-full bg-white/60" />
+        <div className="mt-3 h-[3px] w-full rounded-full bg-white/50" />
       </div>
     </div>
   )
 }
 
 export default function CategoryGrid({ onSelect }) {
+  const reduceMotion = useReducedMotion()
   const [counts, setCounts] = useState(null)
   const [countsFailed, setCountsFailed] = useState(false)
 
@@ -48,19 +71,19 @@ export default function CategoryGrid({ onSelect }) {
     const controller = new AbortController()
     fetchCategoryCounts({ signal: controller.signal })
       .then(setCounts)
-      .catch((err) => {
-        if (err?.name !== 'AbortError') setCountsFailed(true)
-      })
+      .catch((err) => { if (err?.name !== 'AbortError') setCountsFailed(true) })
     return () => controller.abort()
   }, [])
 
   const loaded = Boolean(counts) || countsFailed
-  const categories = CATEGORY_DATA.categories.map((cat) => ({ ...cat, count: liveCount(cat, counts) }))
+  // Busiest category first — with a small/real dataset, a fixed content
+  // order left populated categories scattered among several "0 openings"
+  // ones; leading with what's actually hiring reads as alive, not sparse.
+  const categories = CATEGORY_DATA.categories
+    .map((cat) => ({ ...cat, count: liveCount(cat, counts) }))
+    .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
   const totalOpenings = categories.reduce((sum, c) => sum + (c.count ?? 0), 0)
-  const maxCount = Math.max(...categories.map((c) => c.count ?? 0))
-  // Quietly flags the single busiest category once real counts are in — a
-  // small text tag, not a differently-sized/decorated tile, so the grid
-  // stays even and the flag never causes layout shift while counts load.
+  const maxCount = Math.max(...categories.map((c) => c.count ?? 0), 1)
   const topTitle = loaded && !countsFailed && maxCount > 0 ? categories.find((c) => c.count === maxCount)?.title : null
 
   function handleSelect(cat) {
@@ -68,52 +91,133 @@ export default function CategoryGrid({ onSelect }) {
   }
 
   return (
-    <section id="categories" className="bg-white py-16 md:py-20 px-6 md:px-10">
+    <section id="categories" className="hero-afterglow-faint py-16 md:py-20 px-6 md:px-10">
       <div className="max-w-7xl mx-auto">
-        <Reveal direction="up" duration={0.7} className="max-w-xl mb-9">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-(--explorer-navy) tracking-tight">{CATEGORY_DATA.title}</h2>
-          <p className="mt-2 text-[15px] text-(--explorer-muted)">
+
+        {/* Header — mirrors JobMarketplace's editorial header style */}
+        <Reveal direction="up" duration={0.6} className="max-w-2xl mb-10">
+          <motion.span
+            initial={reduceMotion ? false : { scaleY: 0 }}
+            whileInView={{ scaleY: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="block w-px h-8 mb-4 origin-top"
+            style={{ backgroundImage: 'linear-gradient(180deg, transparent, var(--explorer-blue-border))' }}
+            aria-hidden="true"
+          />
+          <span className="inline-flex items-center gap-1.5 text-[11.5px] font-black uppercase tracking-wide text-(--explorer-teal)">
+            <span className="relative flex items-center justify-center w-1.5 h-1.5">
+              {!reduceMotion && (
+                <span className="absolute inset-0 rounded-full bg-(--explorer-teal) animate-ping opacity-60" aria-hidden="true" />
+              )}
+              <span className="relative w-1.5 h-1.5 rounded-full bg-(--explorer-teal)" aria-hidden="true" />
+            </span>
+            Browse by field
+          </span>
+          <h2 className="mt-2.5 text-[32px] sm:text-[40px] font-black leading-[1.08] tracking-tight text-balance text-(--explorer-navy)">
+            {CATEGORY_DATA.title}
+          </h2>
+          <p className="mt-3 text-[15px] text-(--explorer-navy)/70 leading-relaxed">
             {CATEGORY_DATA.subtitle}
-            {loaded && !countsFailed && ` ${totalOpenings.toLocaleString('en-IN')} openings across ${CATEGORY_DATA.categories.length} categories.`}
+            {loaded && !countsFailed && (
+              <span className="ml-1 font-bold text-(--explorer-navy)">
+                {totalOpenings.toLocaleString('en-IN')} openings across {CATEGORY_DATA.categories.length} categories.
+              </span>
+            )}
           </p>
         </Reveal>
 
-        <StaggerGroup className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        {/* Card grid */}
+        <motion.div
+          className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5"
+          initial={reduceMotion ? false : 'hidden'}
+          whileInView="show"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
+        >
           {!loaded
-            ? Array.from({ length: CATEGORY_DATA.categories.length }).map((_, i) => (
-                <StaggerItem key={i}>
-                  <CategoryTileSkeleton />
-                </StaggerItem>
+            ? SKELETON_TONES.map((tone, i) => (
+                <motion.div
+                  key={i}
+                  variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <CategoryCardSkeleton tone={tone} />
+                </motion.div>
               ))
-            : categories.map((cat) => {
+            : categories.map((cat, i) => {
                 const Icon = cat.icon
+                const isEmpty = loaded && !countsFailed && cat.count === 0
+                const tone = isEmpty ? EMPTY_TONE : CATEGORY_TONES[cat.trackKey] ?? DEFAULT_TONE
+                const pct = cat.count != null ? Math.round((cat.count / maxCount) * 100) : 0
+                const isTop = cat.title === topTitle
+
                 return (
-                  <StaggerItem key={cat.title}>
+                  <motion.div
+                    key={cat.title}
+                    variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  >
                     <button
                       type="button"
                       onClick={() => handleSelect(cat)}
-                      className="explorer-tile-btn group flex items-center gap-3 w-full h-full text-left bg-white border border-(--explorer-border) rounded-lg p-4 motion-safe:hover:-translate-y-px hover:border-(--explorer-blue-border) hover:shadow-[0_4px_16px_-8px_rgba(37,99,235,0.25)] transition-[border-color,box-shadow,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+                      className="job-card-sheen group relative w-full h-full min-h-[148px] text-left flex flex-col justify-between rounded-2xl border p-5 motion-safe:transition-[transform,box-shadow] motion-safe:duration-300 motion-safe:hover:-translate-y-1 hover:shadow-[0_16px_40px_-16px_rgba(22,50,79,0.22),inset_0_0_0_1px_rgba(22,50,79,0.1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+                      style={{ backgroundColor: tone.bg, borderColor: tone.border }}
                     >
-                      <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-(--explorer-blue-surface) text-(--explorer-blue) shrink-0">
-                        <Icon size={16} strokeWidth={1.75} aria-hidden="true" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-bold text-[13.5px] text-(--explorer-navy) truncate">{cat.title}</span>
-                        <span className="block text-[12px] text-(--explorer-muted) truncate">
-                          {countsFailed ? 'Browse roles' : `${cat.count} opening${cat.count === 1 ? '' : 's'}`}
-                          {cat.title === topTitle && <span className="ml-1.5 font-bold uppercase tracking-wide text-(--explorer-blue)">· Most in-demand</span>}
+                      {/* Top row: icon + arrow */}
+                      <div className="flex items-start justify-between gap-2">
+                        <span
+                          className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/70 motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-110 shrink-0"
+                          style={{ color: tone.icon }}
+                        >
+                          <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
                         </span>
-                      </span>
-                      <ArrowRight
-                        size={14}
-                        className="shrink-0 text-(--explorer-blue) opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
-                        aria-hidden="true"
-                      />
+                        <ArrowUpRight
+                          size={15}
+                          className="opacity-0 group-hover:opacity-100 motion-safe:transition-all motion-safe:duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 mt-0.5 shrink-0"
+                          style={{ color: tone.icon }}
+                          aria-hidden="true"
+                        />
+                      </div>
+
+                      {/* Bottom: title + count + bar */}
+                      <div className="mt-3">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[13.5px] font-extrabold text-(--explorer-navy) leading-snug">{cat.title}</span>
+                          {isTop && (
+                            <span
+                              className="inline-flex items-center gap-0.5 text-[9.5px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-white/70"
+                              style={{ color: tone.icon }}
+                            >
+                              <Sparkles size={8} aria-hidden="true" /> Top
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[12px] font-semibold mt-0.5" style={{ color: tone.icon }}>
+                          {countsFailed ? 'Browse roles' : isEmpty ? 'No openings yet' : `${cat.count} opening${cat.count === 1 ? '' : 's'}`}
+                        </p>
+
+                        {/* Demand bar — skipped for an empty category; a
+                            0%-width fill just reads as a rendering glitch,
+                            not a real "no demand" signal. */}
+                        {!countsFailed && cat.count > 0 && (
+                          <div className="mt-3 h-[3px] w-full rounded-full bg-white/50 overflow-hidden">
+                            <motion.div
+                              className="h-full rounded-full"
+                              style={{ background: tone.bar }}
+                              initial={{ width: 0 }}
+                              whileInView={{ width: `${pct}%` }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 0.8, delay: 0.1 + i * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </button>
-                  </StaggerItem>
+                  </motion.div>
                 )
               })}
-        </StaggerGroup>
+        </motion.div>
       </div>
     </section>
   )
