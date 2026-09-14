@@ -7,7 +7,6 @@ import FloatingQuickNav from '../components/ui/FloatingQuickNav'
 import JobSearchHero from '../components/sections/home/JobSearchHero'
 import QuickDiscoveryStrip from '../components/sections/home/QuickDiscoveryStrip'
 import JobMarketplace from '../components/sections/home/JobMarketplace'
-import LatestJobs from '../components/sections/home/LatestJobs'
 import HotJobsByCity from '../components/sections/home/HotJobsByCity'
 import CategoryGrid from '../components/sections/home/CategoryGrid'
 import RecommendedForYou from '../components/sections/home/RecommendedForYou'
@@ -41,25 +40,15 @@ export default function Home() {
   // pills, and the full Filters panel inside Latest jobs itself) now
   // searches the Latest jobs section in place instead of handing the
   // visitor off to the dashboard app.
-  const [jobFilters, setJobFilters] = useState(EMPTY_FILTERS)
-
-  // Used by entry points above the Latest jobs section (quick-discovery
-  // pills, popular searches, and the hero search bar's own "Find jobs" —
-  // see JobSearchHero.jsx) — jumps the visitor down to the results and
-  // reflects it in the URL as a #latest-jobs hash, so a search never leaves
-  // this page (and the URL stays shareable/bookmarkable) instead of
-  // redirecting to the dashboard app.
   function applyJobFilters(next) {
     setJobFilters((prev) => ({ ...prev, ...normalizeFilters(next) }))
-    if (typeof window !== 'undefined') window.history.replaceState(null, '', '#latest-jobs')
-    document.getElementById('latest-jobs')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  // Used by the Filters panel inside Latest jobs itself — it's already in
-  // view, so no need to scroll on every chip click.
   function updateJobFilters(next) {
     setJobFilters(normalizeFilters(next))
   }
+
+  const [jobFilters, setJobFilters] = useState(EMPTY_FILTERS)
 
   return (
     // id="services" preserves the shared Footer's "/#services" link
@@ -82,9 +71,6 @@ export default function Home() {
       {/* 3b. Job marketplace — browse-and-filter demo grid, the hero's
           momentum turned into an actual place to discover roles */}
       <JobMarketplace />
-
-      {/* 4. Latest opportunities — the visual heart of the home page */}
-      <LatestJobs filters={jobFilters} onFiltersChange={updateJobFilters} onClearFilters={() => setJobFilters(EMPTY_FILTERS)} />
 
       {/* 5. Hot jobs by city — where hiring is happening right now */}
       <HotJobsByCity />
