@@ -45,8 +45,6 @@ export default function Home() {
   // follow-up work, not done here.
   const [jobFilters, setJobFilters] = useState(EMPTY_FILTERS)
 
-<<<<<<< Updated upstream
-=======
   // Used by every entry point above the Job marketplace section
   // (quick-discovery pills, popular searches, category tiles, company
   // cards, and the hero search bar's own "Find jobs" — see
@@ -54,18 +52,12 @@ export default function Home() {
   // search in the URL as a #latest-jobs hash (kept as-is on purpose:
   // JobDetail.jsx's "Back to jobs" links and any existing bookmarks
   // already point at it) instead of redirecting to the dashboard app.
->>>>>>> Stashed changes
   function applyJobFilters(next) {
     setJobFilters((prev) => ({ ...prev, ...normalizeFilters(next) }))
+    if (typeof window !== 'undefined') window.history.replaceState(null, '', '#latest-jobs')
+    document.getElementById('latest-jobs')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-<<<<<<< Updated upstream
-  function updateJobFilters(next) {
-    setJobFilters(normalizeFilters(next))
-  }
-
-=======
->>>>>>> Stashed changes
   return (
     // id="services" preserves the shared Footer's "/#services" link
     // (Footer.jsx / FOOTER_DATA, rendered on every page) now that this
