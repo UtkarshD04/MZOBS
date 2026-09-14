@@ -40,6 +40,8 @@ export default function Home() {
   // pills, and the full Filters panel inside Latest jobs itself) now
   // searches the Latest jobs section in place instead of handing the
   // visitor off to the dashboard app.
+  const [jobFilters, setJobFilters] = useState(EMPTY_FILTERS)
+
   function applyJobFilters(next) {
     setJobFilters((prev) => ({ ...prev, ...normalizeFilters(next) }))
   }
@@ -47,8 +49,6 @@ export default function Home() {
   function updateJobFilters(next) {
     setJobFilters(normalizeFilters(next))
   }
-
-  const [jobFilters, setJobFilters] = useState(EMPTY_FILTERS)
 
   return (
     // id="services" preserves the shared Footer's "/#services" link
