@@ -38,27 +38,6 @@ const CARD_TONES = [
   { bg: '#FBF7EF', border: '#EEE2C9' }, // soft cream
 ]
 
-<<<<<<< Updated upstream
-// The bottom transition's small location-pill row — major hiring hubs
-// already used consistently elsewhere on this page (see HOT_CITIES_DATA),
-// not tied to whatever's in the current result page.
-const TRANSITION_NODES = [{ label: 'Bengaluru' }, { label: 'Mumbai' }, { label: 'Delhi NCR' }, { label: 'Hyderabad' }, { label: 'Pune' }]
-=======
-// Only status kinds backed by a real field (postedDaysAgo) — no invented
-// "urgent"/applicant-count badges, since the public feed carries no such
-// signal for any job.
-const STATUS_STYLES = {
-  posted: { label: 'Just posted', dot: 'bg-(--explorer-muted)', text: 'text-(--explorer-muted)' },
-  newToday: { label: 'New today', dot: 'bg-(--explorer-blue)', text: 'text-(--explorer-blue)' },
-}
-
-function deriveJobStatus(job) {
-  if (job.postedDaysAgo === 0) return { kind: 'newToday' }
-  if (job.postedDaysAgo <= 3) return { kind: 'posted' }
-  return null
-}
->>>>>>> Stashed changes
-
 function CustomCheckbox({ checked, onChange, children }) {
   return (
     <label className="flex items-center gap-2.5 cursor-pointer select-none group">
@@ -451,15 +430,7 @@ export default function JobMarketplace() {
   }
 
   return (
-<<<<<<< Updated upstream
-    <section
-      ref={sectionRef}
-      id="latest-jobs"
-      className="hero-afterglow-faint relative py-16 md:py-20 px-6 md:px-10 scroll-mt-20"
-    >
-=======
-    <section className="hero-afterglow-faint relative py-16 md:py-20 px-6 md:px-10">
->>>>>>> Stashed changes
+    <section id="latest-jobs" className="hero-afterglow-faint relative py-16 md:py-20 px-6 md:px-10 scroll-mt-20">
       <div className="max-w-[1400px] mx-auto">
         {/* Heading — the hero's handoff into an actual marketplace */}
         <Reveal direction="up" duration={0.6} className="max-w-2xl">
