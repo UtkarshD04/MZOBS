@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, ArrowLeft, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, ShieldCheck } from 'lucide-react'
 import { Field, Input, PrimaryButton, SecondaryButton } from '../ui/JobsAuthField'
@@ -7,7 +7,7 @@ import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/Googl
 import StepProgress from '../ui/StepProgress'
 import OtpInput from '../ui/OtpInput'
 import { loginEmployeeWithGoogle, signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../lib/employeeAuth'
-import { saveEmployeeSession } from '../../lib/employeeSession'
+import { saveEmployeeSession, buildAppRedirectUrl } from '../../lib/employeeSession'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../lib/config'
 
@@ -49,6 +49,8 @@ function validateStep2(form) {
 
 export default function EmployeeSignupForm() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirect = searchParams.get('redirect')
   const [step, setStep] = useState(1)
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
@@ -83,6 +85,18 @@ export default function EmployeeSignupForm() {
       setOtpError('')
       setResendIn(0)
     }
+  }
+
+  // Arrived via the dashboard app's `?redirect=` handoff (e.g. from "Apply"
+  // on a job) — send them back there with the token instead of landing on
+  // this site's own home page.
+  function completeAuth(token, employee) {
+    if (redirect) {
+      window.location.href = buildAppRedirectUrl(redirect, token)
+      return
+    }
+    saveEmployeeSession({ token, employee })
+    navigate('/')
   }
 
   function handleChangePhoneNumber() {
@@ -133,8 +147,7 @@ export default function EmployeeSignupForm() {
     // instead of walking them through the signup wizard again.
     try {
       const { token, employee } = await loginEmployeeWithGoogle({ credential })
-      saveEmployeeSession({ token, employee })
-      navigate('/')
+      completeAuth(token, employee)
       return
     } catch (err) {
       if (err.status !== 404) {
@@ -167,10 +180,9 @@ export default function EmployeeSignupForm() {
       const { token, employee } = googleCredential
         ? await signupEmployeeWithGoogle({ credential: googleCredential, phone: form.phone, phoneToken })
         : await signupEmployee({ ...form, phoneToken })
-      saveEmployeeSession({ token, employee })
 
       setStatus('success')
-      setTimeout(() => navigate('/'), 900)
+      setTimeout(() => completeAuth(token, employee), 900)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })

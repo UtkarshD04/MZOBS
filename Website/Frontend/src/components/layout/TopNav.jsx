@@ -69,6 +69,15 @@ export default function TopNav() {
           <span className="notif-dot absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold-dot border-2 border-surface" />
         </button>
         {authed && (
+          <button
+            onClick={() => navigate('/app/profile')}
+            title="View Profile"
+            className="w-9 h-9 rounded-[10px] flex items-center justify-center text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors"
+          >
+            <User size={18} />
+          </button>
+        )}
+        {authed && (
           <div ref={bellRef} className="relative">
             <button
               onClick={() => {

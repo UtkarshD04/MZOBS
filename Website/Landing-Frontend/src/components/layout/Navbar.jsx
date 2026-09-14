@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Menu, X, LogOut } from 'lucide-react'
+import { Menu, X, LogOut, User } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
-import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange } from '../../lib/employeeSession'
+import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange, buildAppRedirectUrl } from '../../lib/employeeSession'
 
 // Sitewide header — same on every route, including Home, so it never
 // visibly changes when navigating (e.g. clicking "For Employers").
@@ -44,6 +44,20 @@ export default function Navbar() {
     navigate('/')
   }
 
+  // The dashboard app (Frontend) lives on a separate origin, so its profile
+  // page can't just be linked to directly — the session's token has to be
+  // handed off via ?token= the same way sign-in does (see employeeSession.js).
+  // A stored session with no token (shouldn't normally happen, but session
+  // state can go stale) falls back to sign-in instead of silently doing
+  // nothing — signing in again picks the redirect back up automatically.
+  function goToProfile() {
+    if (session?.token) {
+      window.location.href = buildAppRedirectUrl('/app/profile', session.token)
+    } else {
+      navigate('/employees/signin?redirect=%2Fapp%2Fprofile')
+    }
+  }
+
   return (
     <>
       <header
@@ -71,7 +85,13 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-3 shrink-0">
             {session ? (
               <>
-                <span className="text-[13.5px] font-semibold text-(--jobs-navy) px-3 py-2">Hi, {session.employee?.name?.split(' ')[0] ?? 'there'}</span>
+                <button
+                  onClick={goToProfile}
+                  className="flex items-center gap-1.5 text-[13.5px] font-semibold text-(--jobs-navy) hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
+                  title="View profile"
+                >
+                  <User size={15} /> Hi, {session.employee?.name?.split(' ')[0] ?? 'there'}
+                </button>
                 <button
                   onClick={handleSignOut}
                   className="flex items-center gap-1.5 text-[13.5px] font-semibold text-(--jobs-navy)/75 hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
@@ -140,7 +160,15 @@ export default function Navbar() {
                 <div className="flex flex-col gap-2 pt-4">
                   {session ? (
                     <>
-                      <span className="h-10 flex items-center justify-center text-(--jobs-navy) text-[13.5px] font-bold">Hi, {session.employee?.name?.split(' ')[0] ?? 'there'}</span>
+                      <button
+                        onClick={() => {
+                          setOpen(false)
+                          goToProfile()
+                        }}
+                        className="h-10 flex items-center justify-center gap-1.5 rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"
+                      >
+                        <User size={15} /> Hi, {session.employee?.name?.split(' ')[0] ?? 'there'}
+                      </button>
                       <button
                         onClick={handleSignOut}
                         className="h-10 flex items-center justify-center gap-1.5 rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"

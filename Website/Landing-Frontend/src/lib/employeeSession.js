@@ -1,12 +1,25 @@
-// Minimal logged-in-state tracking for this site's own navbar. The
-// dashboard app isn't wired up yet (signin/signup land back on this site's
-// home page instead of handing off there — see EmployeeSign{in,up}Form.jsx),
-// so this is the only place an employee's session lives for now.
+import { EMPLOYEE_APP_URL } from './config'
+
+// Minimal logged-in-state tracking for this site's own navbar. Only used
+// when signin/signup happen with no `?redirect=` (a direct visit to this
+// site) — arriving via the dashboard app's handoff (see
+// EmployeeSign{in,up}Form.jsx) skips this and uses buildAppRedirectUrl below instead.
 const STORAGE_KEY = 'mzobs-employee-session'
 // Same-tab components (e.g. Navbar) can't rely on the browser's `storage`
 // event — that only fires in *other* tabs — so a custom event covers this
 // tab too, right after a successful login/signup/logout.
 const CHANGE_EVENT = 'mzobs-employee-session-changed'
+
+// The dashboard app (Frontend) sends employees here via `?redirect=<path>`
+// when it needs them signed in (see Website/Frontend/src/lib/auth.js
+// signInUrl()) — since localStorage isn't shared across origins/ports, the
+// token has to be handed off as a `?token=` query param instead. Frontend's
+// main.jsx reads it once on load and stores it there.
+export function buildAppRedirectUrl(redirectPath, token) {
+  const url = new URL(redirectPath, EMPLOYEE_APP_URL)
+  url.searchParams.set('token', token)
+  return url.toString()
+}
 
 export function saveEmployeeSession({ token, employee }) {
   try {
