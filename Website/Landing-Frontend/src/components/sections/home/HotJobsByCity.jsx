@@ -286,6 +286,7 @@ export default function HotJobsByCity() {
   function selectCity(slug) {
     setActiveSlug(slug)
     cardRefs.current[slug]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+    pauseAutoScrollThenResume()
   }
 
   function openCity(slug) {
@@ -296,6 +297,42 @@ export default function HotJobsByCity() {
     const next = destinations[activeIndex + dir]
     if (next) selectCity(next.meta.slug)
   }
+
+  // Gentle, continuous auto-scroll ("marquee") — paused on hover/touch (so
+  // reading/clicking a destination never fights the motion), briefly paused
+  // after a click-driven selectCity too (its own smooth scrollIntoView
+  // would otherwise fight the rAF increment below), and skipped entirely
+  // under prefers-reduced-motion. Loops back to the start once it reaches
+  // the end rather than bouncing, and only runs at all when the row
+  // actually overflows (nothing to scroll otherwise).
+  const [autoScrollPaused, setAutoScrollPaused] = useState(false)
+  const resumeTimerRef = useRef(null)
+
+  function pauseAutoScrollThenResume(delay = 1400) {
+    setAutoScrollPaused(true)
+    clearTimeout(resumeTimerRef.current)
+    resumeTimerRef.current = setTimeout(() => setAutoScrollPaused(false), delay)
+  }
+
+  useEffect(() => () => clearTimeout(resumeTimerRef.current), [])
+
+  useEffect(() => {
+    const el = trackRef.current
+    if (!el || destinations.length <= 1) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    let raf
+    function tick() {
+      if (!autoScrollPaused && el.scrollWidth > el.clientWidth + 10) {
+        const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2
+        if (atEnd) el.scrollTo({ left: 0, behavior: 'smooth' })
+        else el.scrollLeft += 0.5
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [destinations.length, autoScrollPaused])
 
   const showInitialLoading = liveCities === null && !loadError
 
@@ -332,6 +369,10 @@ export default function HotJobsByCity() {
             <div
               ref={trackRef}
               className="careers-scroll-x flex items-center gap-5 overflow-x-auto snap-x snap-mandatory -mx-6 md:-mx-10 px-6 md:px-10 pb-2"
+              onMouseEnter={() => setAutoScrollPaused(true)}
+              onMouseLeave={() => setAutoScrollPaused(false)}
+              onTouchStart={() => setAutoScrollPaused(true)}
+              onTouchEnd={() => setAutoScrollPaused(false)}
             >
               {destinations.map(({ meta, stats, categories }) => (
                 <CityDestination
