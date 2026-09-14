@@ -293,11 +293,7 @@ export default function Profile() {
           <Section
             id="resume"
             extra={resumeMissing && <span className="text-green text-[12.5px] font-semibold">Add {weight}%</span>}
-            action={
-              <a href="/app/resume" className="text-navy font-semibold text-[13px] hover:underline">
-                Manage resume
-              </a>
-            }
+            action={null}
           >
             {resumeMissing ? (
               <div className="flex flex-col sm:flex-row items-center gap-5">
@@ -323,7 +319,7 @@ export default function Profile() {
                     <li>Upload your resume (PDF or DOC)</li>
                     <li>Get it verified by the Mzobs team</li>
                   </ol>
-                  <Button variant="primary" onClick={() => (window.location.href = '/app/resume')}>
+                  <Button variant="primary" onClick={() => jumpTo('resume')}>
                     <Plus size={15} /> Upload resume
                   </Button>
                 </div>
