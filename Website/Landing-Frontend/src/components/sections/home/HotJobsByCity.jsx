@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, Flame, ShieldCheck, TrendingUp, ChevronLeft, ChevronRight, SearchX, RotateCw } from 'lucide-react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { MapPin, ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, SearchX, RotateCw } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
-import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
-import ExplorerButton, { ExplorerTextLink } from '../../ui/ExplorerButton'
-import CountUp from '../../ui/CountUp'
+import ExplorerButton from '../../ui/ExplorerButton'
 import { HOT_CITIES_DATA } from '../../../lib/content'
 import { fetchHotCities } from '../../../lib/publicJobs'
-import { formatSalaryRange } from '../../../lib/formatCurrency'
+import { buildJobsUrl } from '../../../lib/jobsUrl'
 
 function hashOf(str) {
   return [...str].reduce((sum, ch) => sum + ch.charCodeAt(0), 0)
@@ -70,31 +69,41 @@ export function CityVisual({ city, landmark, imageUrl, zoomOnHover = true, eager
   )
 }
 
-function FilterPill({ active, onClick, children }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={`shrink-0 h-9 px-4 rounded-full text-[13px] font-bold whitespace-nowrap transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
-        active
-          ? 'bg-(--explorer-blue) text-white shadow-[0_1px_2px_rgba(37,99,235,0.16),0_10px_20px_-8px_rgba(37,99,235,0.55)]'
-          : 'bg-white/60 backdrop-blur-sm border border-(--explorer-border) text-(--explorer-navy) shadow-[0_1px_2px_rgba(16,42,67,0.04)] hover:border-(--explorer-blue-border) hover:bg-(--explorer-blue-surface)/70 hover:text-(--explorer-blue)'
-      }`}
-    >
-      {children}
-    </button>
-  )
+// The seven-city "destination row" this section browses — a curated subset
+// of HOT_CITIES_DATA.cities (real metadata/photography, unchanged), not a
+// new dataset. Every city here already has real monument photography
+// configured in content.js.
+const FEATURED_CITY_SLUGS = ['mumbai', 'bengaluru', 'delhi-ncr', 'hyderabad', 'pune', 'chennai', 'kolkata']
+
+// Desktop: the active destination is visibly larger than its neighbors;
+// mobile keeps every card the same (large) size and relies on scroll-snap +
+// an intentionally-partial edge card for the "swipeable" cue instead —
+// see the spec's "1 large active city + part of the next" mobile note.
+const SIZE = {
+  desktop: { active: { w: 460, h: 480 }, inactive: { w: 280, h: 420 } },
+  mobile: { active: { w: 300, h: 420 }, inactive: { w: 300, h: 420 } },
 }
 
-function CarouselArrow({ dir, onClick, disabled }) {
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 639px)')
+    setIsMobile(mql.matches)
+    const onChange = (e) => setIsMobile(e.matches)
+    mql.addEventListener('change', onChange)
+    return () => mql.removeEventListener('change', onChange)
+  }, [])
+  return isMobile
+}
+
+function ArrowButton({ dir, onClick, disabled }) {
   const Icon = dir === -1 ? ChevronLeft : ChevronRight
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      aria-label={dir === -1 ? 'Previous cities' : 'Next cities'}
+      aria-label={dir === -1 ? 'Previous city' : 'Next city'}
       className="explorer-icon-btn flex items-center justify-center w-10 h-10 rounded-full border border-white/50 bg-white/70 backdrop-blur-md text-(--explorer-navy) shadow-[0_4px_14px_-6px_rgba(22,50,79,0.25)] transition-[background-color,border-color,color,transform] duration-150 motion-safe:hover:-translate-y-px hover:border-(--explorer-blue-border) hover:bg-white hover:text-(--explorer-blue) disabled:opacity-30 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
     >
       <Icon size={17} />
@@ -102,136 +111,136 @@ function CarouselArrow({ dir, onClick, disabled }) {
   )
 }
 
-// A dot-progress indicator (not literal "City • City • City" text labels —
-// that would just repeat what the cards already say) showing which card is
-// currently centered; click to jump. Active dot uses the gold accent so it
-// reads as a deliberate highlight, not another teal element competing with
-// the CTAs.
-function PaginationDots({ count, activeIndex, onSelect }) {
-  if (count <= 1) return null
+function CityDestinationSkeleton() {
   return (
-    <div className="hidden sm:flex items-center justify-center gap-2 mt-6">
-      {Array.from({ length: count }).map((_, i) => (
-        <button
-          key={i}
-          type="button"
-          onClick={() => onSelect(i)}
-          aria-label={`Go to city ${i + 1}`}
-          aria-current={i === activeIndex}
-          className={`h-1.5 rounded-full transition-all duration-300 ${i === activeIndex ? 'w-6 bg-(--explorer-gold)' : 'w-1.5 bg-(--explorer-border) hover:bg-(--explorer-blue-border)'}`}
-        />
-      ))}
+    <div className="flex gap-5">
+      <div className="w-[280px] sm:w-[460px] h-[420px] sm:h-[480px] shrink-0 rounded-[28px] bg-(--explorer-border)/60 animate-pulse" />
+      <div className="hidden sm:block w-[280px] h-[420px] shrink-0 rounded-[28px] bg-(--explorer-border)/40 animate-pulse" />
+      <div className="hidden md:block w-[280px] h-[420px] shrink-0 rounded-[28px] bg-(--explorer-border)/30 animate-pulse" />
     </div>
   )
 }
 
-function CityCardSkeleton() {
-  return (
-    <div className="w-[272px] sm:w-[300px] shrink-0 rounded-2xl bg-white border border-(--explorer-border) overflow-hidden animate-pulse">
-      <div className="h-[168px] bg-(--explorer-bg)" />
-      <div className="p-5 flex flex-col gap-3">
-        <div className="h-6 w-24 rounded bg-(--explorer-bg)" />
-        <div className="h-4 w-36 rounded bg-(--explorer-bg)" />
-        <div className="h-4 w-full rounded bg-(--explorer-bg)" />
-      </div>
-    </div>
-  )
-}
-
-function CityCard({ city, stats, isTopCity, onOpen }) {
-  const categories = stats.topCategories ?? []
-  const salary = formatSalaryRange(stats.salaryMin, stats.salaryMax)
+// One destination — the monument photograph IS the card (full-bleed, no
+// white chrome around it), not an image dropped inside a card. Active vs
+// neighbor is purely a size + contrast + information-density difference on
+// the same visual object, driven by framer-motion spring transitions (see
+// SIZE above) so moving between cities never snaps abruptly.
+function CityDestination({ meta, stats, categories, isActive, isMobile, onSelect, onOpen, registerRef }) {
+  const [hovered, setHovered] = useState(false)
+  const reduceMotion = useReducedMotion()
+  const target = isMobile ? SIZE.mobile.active : isActive ? SIZE.desktop.active : SIZE.desktop.inactive
+  const showCategories = isActive || hovered
+  const openings = stats?.openings ?? 0
 
   return (
-    <div className="group relative flex flex-col w-[272px] sm:w-[300px] shrink-0 rounded-2xl bg-white border border-(--explorer-border) overflow-hidden transition-[transform,box-shadow,border-color] duration-300 motion-safe:hover:-translate-y-1.5 hover:shadow-[0_20px_44px_-22px_rgba(22,50,79,0.4)] hover:border-(--explorer-blue-border)">
-      <button
-        type="button"
-        onClick={onOpen}
-        className="relative h-[168px] overflow-hidden text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--explorer-blue)"
-        aria-label={`Explore jobs in ${city.city}`}
+    <motion.button
+      ref={registerRef}
+      type="button"
+      onClick={() => (isActive ? onOpen() : onSelect())}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+      aria-label={`${isActive ? 'Explore' : 'Preview'} jobs in ${meta.city}`}
+      className="group relative shrink-0 snap-center text-left overflow-hidden rounded-[28px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--explorer-blue)"
+      animate={{ width: target.w, height: target.h }}
+      transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28 }}
+      style={{ boxShadow: isActive ? '0 30px 60px -24px rgba(16,42,67,0.45)' : '0 14px 32px -18px rgba(16,42,67,0.3)' }}
+      whileHover={reduceMotion ? undefined : { y: -5 }}
+    >
+      <motion.div
+        className="absolute inset-0"
+        animate={{ scale: hovered ? 1.04 : 1 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
       >
-        <CityVisual city={city.city} landmark={city.landmark} imageUrl={city.imageUrl} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+        <CityVisual city={meta.city} landmark={meta.landmark} imageUrl={meta.imageUrl} zoomOnHover={false} eager={isActive} />
+      </motion.div>
 
-        {(isTopCity || stats.newThisWeek > 0) && (
-          <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white text-[10.5px] font-black motion-safe:transition-colors motion-safe:duration-300 group-hover:bg-white/25">
-            {isTopCity ? <TrendingUp size={11} aria-hidden="true" /> : <Flame size={11} aria-hidden="true" />}
-            {isTopCity ? 'Trending' : 'Hiring Fast'}
-          </span>
-        )}
+      {/* Contrast: active reads crisp/saturated, neighbors recede slightly —
+          "the monument is the card" only works if the active one still pops. */}
+      <div
+        className="absolute inset-0 motion-safe:transition-opacity motion-safe:duration-300"
+        style={{ backgroundColor: isActive ? 'transparent' : 'rgba(10,16,28,0.28)' }}
+        aria-hidden="true"
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent motion-safe:transition-opacity motion-safe:duration-300"
+        style={{ opacity: hovered ? 1 : 0.92 }}
+        aria-hidden="true"
+      />
 
-        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-1.5 text-white">
-          <MapPin size={14} className="shrink-0 opacity-85" aria-hidden="true" />
-          <h3 className="text-[21px] font-black tracking-tight leading-none truncate">{city.city}</h3>
-        </div>
-      </button>
+      {/* Bottom information overlay */}
+      <motion.div
+        className="absolute inset-x-0 bottom-0 p-5 sm:p-6"
+        animate={{ y: hovered ? -12 : 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+      >
+        <p className="flex items-center gap-1.5 text-white/80 text-[11.5px] font-bold uppercase tracking-wide">
+          <MapPin size={12} className="shrink-0" aria-hidden="true" />
+          {meta.state}
+        </p>
+        <h3 className={`mt-1 font-black text-white tracking-tight leading-none ${isActive ? 'text-[30px] sm:text-[36px]' : 'text-[22px]'}`}>
+          {meta.city}
+        </h3>
 
-      <div className="flex flex-col flex-1 p-5">
-        {isTopCity && (
-          <p className="mb-2 inline-flex items-center gap-1 text-[10.5px] font-black uppercase tracking-wide text-(--explorer-gold-hover)">
-            <Flame size={11} aria-hidden="true" /> #1 Trending Hiring City
-          </p>
-        )}
+        <motion.p
+          className="mt-2 font-bold text-white/90"
+          animate={{ fontSize: hovered || isActive ? 15 : 13 }}
+          transition={{ duration: 0.35 }}
+        >
+          {openings.toLocaleString('en-IN')}+ open {openings === 1 ? 'role' : 'roles'}
+        </motion.p>
 
-        <div className="flex items-baseline gap-1.5">
-          <CountUp value={stats.openings} suffix="+" className="text-[26px] font-black text-(--explorer-navy) tracking-tight" />
-          <span className="text-[12.5px] font-semibold text-(--explorer-muted)">openings</span>
-        </div>
-
-        {categories.length > 0 && (
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {categories.map((c) => (
-              <span key={c} className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-(--explorer-bg) text-(--explorer-muted)">
-                {c}
-              </span>
-            ))}
-          </div>
-        )}
-
-        <div className="mt-3.5 flex items-center justify-between gap-2 text-[12.5px]">
-          <span className="font-bold text-(--explorer-navy)">{salary || 'Varies by role'}</span>
-          {stats.newThisWeek > 0 && (
-            <span className="inline-flex items-center gap-1 font-semibold text-(--explorer-blue) shrink-0">
-              <TrendingUp size={12} aria-hidden="true" />
-              {stats.newThisWeek} new this week
-            </span>
+        <AnimatePresence>
+          {showCategories && categories.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.25 }}
+              className="mt-2.5 flex flex-col gap-1"
+            >
+              {categories.map(([label, count]) => (
+                <div key={label} className="flex items-center justify-between gap-3 text-[11.5px] text-white/75">
+                  <span className="font-semibold">{label}</span>
+                  <span className="font-black text-white">{count}</span>
+                </div>
+              ))}
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
 
-        <div className="mt-4 pt-3.5 border-t border-(--explorer-border) flex items-center justify-between gap-2">
-          <span
-            className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-(--explorer-muted)"
-            title="Employer identity and job information verified by MZOBS"
-          >
-            <ShieldCheck size={11} className="text-(--explorer-blue)" aria-hidden="true" />
-            {stats.verifiedEmployers > 0 ? `${stats.verifiedEmployers} verified employer${stats.verifiedEmployers === 1 ? '' : 's'}` : 'Verified employers'}
-          </span>
-          <ExplorerTextLink onClick={onOpen} className="text-[12.5px] shrink-0">
-            Explore jobs
-          </ExplorerTextLink>
-        </div>
-      </div>
-    </div>
+        <span
+          className={`mt-3 inline-flex items-center gap-1 text-[12.5px] font-black text-white motion-safe:transition-opacity motion-safe:duration-300 ${
+            isActive ? 'opacity-100' : hovered ? 'opacity-100' : 'opacity-70'
+          }`}
+        >
+          {isActive ? 'Explore city' : 'Preview'}
+          <ArrowRight size={13} className="motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1" aria-hidden="true" />
+        </span>
+      </motion.div>
+    </motion.button>
   )
 }
 
 // "Where are the opportunities right now?" — a city-first counterpart to
 // CategoryGrid's "by category" (see Home.jsx, rendered directly after it).
-// Every number here is real, fetched live from Backend's
-// GET /api/jobs/hot-cities (see hotCities.js) — nothing is hardcoded/
-// illustrative. Clicking a city opens its own dedicated page
-// (/jobs/city/:slug, see pages/CityJobs.jsx) with a real job list.
+// Every number is real, fetched live from Backend's GET /api/jobs/hot-cities
+// (see hotCities.js) — the monument photographs are the section's whole
+// visual language; there is no separate card chrome around them. Clicking
+// the active destination opens its own dedicated page (/jobs/city/:slug,
+// see pages/CityJobs.jsx) with a real job list.
 export default function HotJobsByCity() {
   const navigate = useNavigate()
-  const [activeFilter, setActiveFilter] = useState('all')
+  const isMobile = useIsMobile()
+  const [activeSlug, setActiveSlug] = useState(FEATURED_CITY_SLUGS[0])
   const [liveCities, setLiveCities] = useState(null) // null = still loading
   const [loadError, setLoadError] = useState(false)
   const [retryToken, setRetryToken] = useState(0)
 
   const trackRef = useRef(null)
-  const [canPrev, setCanPrev] = useState(false)
-  const [canNext, setCanNext] = useState(true)
-  const [activeIndex, setActiveIndex] = useState(0)
+  const cardRefs = useRef({})
 
   useEffect(() => {
     let cancelled = false
@@ -250,116 +259,62 @@ export default function HotJobsByCity() {
     }
   }, [retryToken])
 
-  // Joins display metadata (name/state/slug/photo) with live stats by slug,
-  // drops cities with zero real openings for the active filter (a "2,840+"
-  // card is premium; a "0+" card just looks broken), and ranks the rest by
-  // real opening count — "hottest first" reads as discovery, not a
-  // leaderboard, since only the single leading card gets any extra emphasis.
-  const cities = useMemo(() => {
-    if (!liveCities) return []
-    const bySlug = new Map(liveCities.map((c) => [c.slug, c]))
-    return HOT_CITIES_DATA.cities
-      .map((meta) => {
-        const stats = bySlug.get(meta.slug)?.byFilter?.[activeFilter]
-        return stats ? { ...meta, stats } : null
-      })
-      .filter((c) => c && c.stats.openings > 0)
-      .sort((a, b) => b.stats.openings - a.stats.openings)
-  }, [liveCities, activeFilter])
+  // Joins display metadata (name/state/slug/photo) with live stats by slug —
+  // real per-category counts come straight off the same byFilter buckets
+  // HOT_CITIES_DATA.filters already defines (tech/sales/finance/marketing/
+  // ops), never invented, sorted to the top 3 non-zero for the hover/active
+  // breakdown.
+  const destinations = useMemo(() => {
+    const bySlug = new Map((liveCities ?? []).map((c) => [c.slug, c]))
+    return FEATURED_CITY_SLUGS.map((slug) => {
+      const meta = HOT_CITIES_DATA.cities.find((c) => c.slug === slug)
+      if (!meta) return null
+      const byFilter = bySlug.get(slug)?.byFilter
+      const stats = byFilter?.all
+      const categories = HOT_CITIES_DATA.filters
+        .filter((f) => f.key !== 'all')
+        .map((f) => [f.label, byFilter?.[f.key]?.openings ?? 0])
+        .filter(([, count]) => count > 0)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+      return { meta, stats, categories }
+    }).filter(Boolean)
+  }, [liveCities])
 
-  const topCityName = cities[0]?.city
+  const activeIndex = Math.max(0, destinations.findIndex((d) => d.meta.slug === activeSlug))
 
-  function updateEdges() {
-    const el = trackRef.current
-    if (!el || cities.length === 0) return
-    setCanPrev(el.scrollLeft > 4)
-    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 4)
-    const perCard = el.scrollWidth / cities.length
-    setActiveIndex(Math.min(cities.length - 1, Math.round(el.scrollLeft / perCard)))
+  function selectCity(slug) {
+    setActiveSlug(slug)
+    cardRefs.current[slug]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
   }
 
-  useEffect(() => {
-    const el = trackRef.current
-    if (!el) return
-    updateEdges()
-    el.addEventListener('scroll', updateEdges, { passive: true })
-    window.addEventListener('resize', updateEdges)
-    return () => {
-      el.removeEventListener('scroll', updateEdges)
-      window.removeEventListener('resize', updateEdges)
-    }
-    // Re-measure whenever the filter changes the track's contents/width.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cities.length])
-
-  function scroll(dir) {
-    const el = trackRef.current
-    if (!el) return
-    el.scrollBy({ left: dir * el.clientWidth * 0.86, behavior: 'smooth' })
+  function openCity(slug) {
+    navigate(`/jobs/city/${slug}`)
   }
 
-  function scrollToIndex(i) {
-    const el = trackRef.current
-    if (!el || cities.length === 0) return
-    el.scrollTo({ left: (el.scrollWidth / cities.length) * i, behavior: 'smooth' })
+  function step(dir) {
+    const next = destinations[activeIndex + dir]
+    if (next) selectCity(next.meta.slug)
   }
 
-  // Gentle, continuous auto-scroll ("marquee") — paused on hover/touch (so
-  // reading/clicking a card never fights the motion) and skipped entirely
-  // under prefers-reduced-motion. Loops back to the start once it reaches
-  // the end rather than bouncing, and only runs at all when the row
-  // actually overflows (nothing to scroll otherwise).
-  const [autoScrollPaused, setAutoScrollPaused] = useState(false)
-  useEffect(() => {
-    const el = trackRef.current
-    if (!el || cities.length <= 1) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    let raf
-    function step() {
-      if (!autoScrollPaused && el.scrollWidth > el.clientWidth + 10) {
-        const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2
-        if (atEnd) el.scrollTo({ left: 0, behavior: 'smooth' })
-        else el.scrollLeft += 0.6
-      }
-      raf = requestAnimationFrame(step)
-    }
-    raf = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(raf)
-  }, [cities.length, autoScrollPaused])
-
-  // No router state needed — CityJobs resolves the city's display metadata
-  // from HOT_CITIES_DATA by slug alone (works identically on a direct link
-  // or refresh) and fetches its own live stats/job list.
-  function openCity(city) {
-    navigate(`/jobs/city/${city.slug}`)
-  }
+  const showInitialLoading = liveCities === null && !loadError
 
   return (
     <section id="hot-jobs-by-city" className="bg-(--explorer-bg) py-16 md:py-20 px-6 md:px-10 overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <Reveal direction="up" duration={0.7} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-2.5">
+        <Reveal direction="up" duration={0.7} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div className="max-w-xl">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-(--explorer-navy) tracking-tight">{HOT_CITIES_DATA.title}</h2>
+            <p className="text-[11.5px] font-black uppercase tracking-wide text-(--explorer-teal)">{HOT_CITIES_DATA.eyebrow}</p>
+            <h2 className="mt-1.5 text-2xl sm:text-[34px] font-black text-(--explorer-navy) tracking-tight text-balance">{HOT_CITIES_DATA.title}</h2>
             <p className="mt-2 text-[15px] text-(--explorer-muted)">{HOT_CITIES_DATA.subtitle}</p>
           </div>
-          {cities.length > 0 && (
+          {destinations.length > 0 && (
             <div className="hidden sm:flex items-center gap-2 shrink-0 pb-1">
-              <CarouselArrow dir={-1} onClick={() => scroll(-1)} disabled={!canPrev} />
-              <CarouselArrow dir={1} onClick={() => scroll(1)} disabled={!canNext} />
+              <ArrowButton dir={-1} onClick={() => step(-1)} disabled={activeIndex <= 0} />
+              <ArrowButton dir={1} onClick={() => step(1)} disabled={activeIndex >= destinations.length - 1} />
             </div>
           )}
         </Reveal>
-
-        <p className="text-[12.5px] text-(--explorer-muted) mb-6 max-w-xl">{HOT_CITIES_DATA.brandLine}</p>
-
-        <div className="careers-scroll-x flex items-center gap-2 overflow-x-auto pb-1 mb-7 -mx-1 px-1">
-          {HOT_CITIES_DATA.filters.map((f) => (
-            <FilterPill key={f.key} active={activeFilter === f.key} onClick={() => setActiveFilter(f.key)}>
-              {f.label}
-            </FilterPill>
-          ))}
-        </div>
 
         {loadError ? (
           <div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
@@ -370,41 +325,72 @@ export default function HotJobsByCity() {
               <RotateCw size={14} aria-hidden="true" /> Retry
             </ExplorerButton>
           </div>
-        ) : liveCities === null ? (
-          <div className="flex gap-5 overflow-hidden">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <CityCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : cities.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
-            <SearchX size={26} className="text-(--explorer-muted)" aria-hidden="true" />
-            <p className="text-[15px] font-bold text-(--explorer-navy)">No live openings in this category yet</p>
-            <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">Try a different category, or check back soon as employers post new requirements.</p>
-          </div>
+        ) : showInitialLoading ? (
+          <CityDestinationSkeleton />
         ) : (
-          <>
+          <Reveal direction="up" duration={0.6} delay={0.1}>
             <div
               ref={trackRef}
-              className="careers-scroll-x overflow-x-auto snap-x snap-mandatory -mx-6 md:-mx-10 px-6 md:px-10 pb-2"
-              onMouseEnter={() => setAutoScrollPaused(true)}
-              onMouseLeave={() => setAutoScrollPaused(false)}
-              onTouchStart={() => setAutoScrollPaused(true)}
-              onTouchEnd={() => setAutoScrollPaused(false)}
+              className="careers-scroll-x flex items-center gap-5 overflow-x-auto snap-x snap-mandatory -mx-6 md:-mx-10 px-6 md:px-10 pb-2"
             >
-              <StaggerGroup className="flex gap-5 w-max" amount="some">
-                {cities.map((city) => (
-                  <StaggerItem key={city.slug} className="snap-start">
-                    <CityCard city={city} stats={city.stats} isTopCity={city.city === topCityName} onOpen={() => openCity(city)} />
-                  </StaggerItem>
-                ))}
-              </StaggerGroup>
+              {destinations.map(({ meta, stats, categories }) => (
+                <CityDestination
+                  key={meta.slug}
+                  meta={meta}
+                  stats={stats}
+                  categories={categories}
+                  isActive={meta.slug === activeSlug}
+                  isMobile={isMobile}
+                  registerRef={(el) => {
+                    cardRefs.current[meta.slug] = el
+                  }}
+                  onSelect={() => selectCity(meta.slug)}
+                  onOpen={() => openCity(meta.slug)}
+                />
+              ))}
             </div>
-            <PaginationDots count={cities.length} activeIndex={activeIndex} onSelect={scrollToIndex} />
-          </>
+          </Reveal>
         )}
 
-        <p className="sm:hidden mt-4 text-center text-[12px] font-semibold text-(--explorer-muted)">← Swipe to explore more cities →</p>
+        {/* City navigation — an editorial text list, not pills */}
+        {destinations.length > 0 && (
+          <Reveal direction="up" duration={0.5} delay={0.2} className="mt-7 careers-scroll-x overflow-x-auto -mx-1 px-1">
+            <div className="flex items-center gap-5 sm:gap-6 min-w-max">
+              {destinations.map(({ meta }) => (
+                <button
+                  key={meta.slug}
+                  type="button"
+                  onClick={() => selectCity(meta.slug)}
+                  aria-pressed={meta.slug === activeSlug}
+                  className={`relative shrink-0 pb-2 text-[13px] font-bold uppercase tracking-wide whitespace-nowrap motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
+                    meta.slug === activeSlug ? 'text-(--explorer-navy)' : 'text-(--explorer-muted) hover:text-(--explorer-navy)'
+                  }`}
+                >
+                  {meta.city}
+                  {meta.slug === activeSlug && (
+                    <motion.span
+                      layoutId="city-nav-underline"
+                      className="absolute left-0 right-0 -bottom-px h-[2px] bg-(--explorer-teal) rounded-full"
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </Reveal>
+        )}
+
+        {/* Transition toward the next section */}
+        <Reveal direction="up" duration={0.5} delay={0.25} className="mt-12 flex flex-col items-center text-center">
+          <p className="text-[13px] font-bold text-(--explorer-navy)/70 tracking-wide">Don't see your city?</p>
+          <a
+            href={buildJobsUrl({})}
+            className="group mt-1.5 inline-flex items-center gap-1.5 text-[14.5px] font-black text-(--explorer-blue) hover:text-(--explorer-blue-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--explorer-blue) rounded-lg"
+          >
+            Explore all locations
+            <ArrowUpRight size={16} className="motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+          </a>
+        </Reveal>
       </div>
     </section>
   )

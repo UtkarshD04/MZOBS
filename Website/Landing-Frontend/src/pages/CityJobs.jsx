@@ -106,7 +106,7 @@ export default function CityJobs() {
           <SearchX size={26} className="mx-auto text-(--explorer-muted)" aria-hidden="true" />
           <p className="mt-3 text-[15px] font-bold text-(--explorer-navy)">This city isn't on Mzobs yet</p>
           <ExplorerTextLink to="/#hot-jobs-by-city" className="mt-3 justify-center">
-            Back to Hot Jobs by City
+            Back to Explore Jobs by City
           </ExplorerTextLink>
         </div>
       ) : (
@@ -124,7 +124,7 @@ export default function CityJobs() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/10" />
               <div className="relative z-10 max-w-5xl mx-auto h-full px-6 md:px-10 pt-24 pb-6 flex flex-col justify-end">
                 <ExplorerTextLink to="/#hot-jobs-by-city" arrow={false} className="text-white/85 hover:text-white w-fit mb-4">
-                  <ArrowLeft size={14} aria-hidden="true" /> Back to Hot Jobs by City
+                  <ArrowLeft size={14} aria-hidden="true" /> Back to Explore Jobs by City
                 </ExplorerTextLink>
                 <div className="flex items-center gap-1.5 text-white/80 text-[13px] font-semibold mb-1.5">
                   <MapPin size={13} aria-hidden="true" /> {city.state}

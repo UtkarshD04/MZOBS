@@ -34,22 +34,38 @@ function normalizeFilters(next) {
 }
 
 export default function Home() {
-  // Lifted here (not local to LatestJobs) so the hero search bar and the
-  // quick-discovery pills above it can both drive the same result set —
-  // every "filter" entry point on this page (hero search, quick-discovery
-  // pills, and the full Filters panel inside Latest jobs itself) now
-  // searches the Latest jobs section in place instead of handing the
-  // visitor off to the dashboard app.
+  // Was shared with LatestJobs.jsx (a results list driven by this exact
+  // state) before that section was removed in favor of Job marketplace
+  // below, which owns its own independent filter/search/category state.
+  // Still lifted here and still fed by every entry point above the fold
+  // (hero search, quick-discovery pills, category tiles, company cards)
+  // because applyJobFilters' scroll-down handoff below is still genuinely
+  // useful — but note none of those callers' search terms currently reach
+  // Job marketplace's own filters, only the scroll does. Wiring that up is
+  // follow-up work, not done here.
   const [jobFilters, setJobFilters] = useState(EMPTY_FILTERS)
 
+<<<<<<< Updated upstream
+=======
+  // Used by every entry point above the Job marketplace section
+  // (quick-discovery pills, popular searches, category tiles, company
+  // cards, and the hero search bar's own "Find jobs" — see
+  // JobSearchHero.jsx) — jumps the visitor down to it and reflects the
+  // search in the URL as a #latest-jobs hash (kept as-is on purpose:
+  // JobDetail.jsx's "Back to jobs" links and any existing bookmarks
+  // already point at it) instead of redirecting to the dashboard app.
+>>>>>>> Stashed changes
   function applyJobFilters(next) {
     setJobFilters((prev) => ({ ...prev, ...normalizeFilters(next) }))
   }
 
+<<<<<<< Updated upstream
   function updateJobFilters(next) {
     setJobFilters(normalizeFilters(next))
   }
 
+=======
+>>>>>>> Stashed changes
   return (
     // id="services" preserves the shared Footer's "/#services" link
     // (Footer.jsx / FOOTER_DATA, rendered on every page) now that this
@@ -68,15 +84,17 @@ export default function Home() {
       {/* 3. Quick job-discovery strip: freshers, remote, top metros */}
       <QuickDiscoveryStrip onSelect={applyJobFilters} />
 
-      {/* 3b. Job marketplace — browse-and-filter demo grid, the hero's
-          momentum turned into an actual place to discover roles */}
+      {/* 4. Job marketplace — the hero's momentum turned into a real,
+          filterable place to browse actual openings (own search/category/
+          filter state, real listings feed — see JobMarketplace.jsx) */}
       <JobMarketplace />
 
       {/* 5. Hot jobs by city — where hiring is happening right now */}
       <HotJobsByCity />
 
-      {/* 6. Explore jobs by category — tiles filter Latest jobs in place,
-          same pattern as the hero search / quick-discovery pills above. */}
+      {/* 6. Explore jobs by category — scrolls up to Job marketplace (see
+          applyJobFilters above), same pattern as the hero search /
+          quick-discovery pills. */}
       <CategoryGrid onSelect={applyJobFilters} />
 
       {/* 7. Jobs matching your profile — signed-in visitors only (see RecommendedForYou.jsx) */}

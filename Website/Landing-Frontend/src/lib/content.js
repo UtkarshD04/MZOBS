@@ -837,8 +837,8 @@ export const QUICK_DISCOVERY_DATA = [
 // in either component needs to change for that, they just read `imageUrl`.
 export const HOT_CITIES_DATA = {
   eyebrow: "Live Hiring Activity",
-  title: "Hot Jobs by City",
-  subtitle: "Discover where the best opportunities are hiring right now.",
+  title: "Explore Jobs by City",
+  subtitle: "Where opportunity meets ambition.",
   brandLine: "Explore opportunities. Find your city. Get matched with the right job.",
   filters: [
     { key: "all", label: "All Jobs" },
