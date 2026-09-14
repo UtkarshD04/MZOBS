@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { Field, Input, PrimaryButton } from '../ui/JobsAuthField'
 import { GoogleAuthButton, OrDivider } from '../ui/GoogleAuthButton'
 import { loginEmployee, loginEmployeeWithGoogle } from '../../lib/employeeAuth'
-import { saveEmployeeSession } from '../../lib/employeeSession'
+import { saveEmployeeSession, buildAppRedirectUrl } from '../../lib/employeeSession'
 
 const initialForm = { email: '', password: '' }
 
@@ -18,6 +18,8 @@ function validate(form) {
 
 export default function EmployeeSigninForm() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirect = searchParams.get('redirect')
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | submitting
@@ -25,6 +27,18 @@ export default function EmployeeSigninForm() {
 
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }))
+  }
+
+  // Arrived via the dashboard app's `?redirect=` handoff (e.g. from "Apply"
+  // on a job) — send them back there with the token instead of landing on
+  // this site's own home page.
+  function completeAuth(token, employee) {
+    if (redirect) {
+      window.location.href = buildAppRedirectUrl(redirect, token)
+      return
+    }
+    saveEmployeeSession({ token, employee })
+    navigate('/')
   }
 
   async function handleSubmit(e) {
@@ -35,11 +49,8 @@ export default function EmployeeSigninForm() {
 
     setStatus('submitting')
     try {
-      // The dashboard app isn't wired up to render anything yet — land back
-      // on this site's own home page after a successful login for now.
       const { token, employee } = await loginEmployee(form)
-      saveEmployeeSession({ token, employee })
-      navigate('/')
+      completeAuth(token, employee)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
@@ -51,8 +62,7 @@ export default function EmployeeSigninForm() {
     setStatus('submitting')
     try {
       const { token, employee } = await loginEmployeeWithGoogle({ credential })
-      saveEmployeeSession({ token, employee })
-      navigate('/')
+      completeAuth(token, employee)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })

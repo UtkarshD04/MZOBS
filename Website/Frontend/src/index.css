@@ -88,6 +88,73 @@
   initial-value: 0;
 }
 
+/* Scoped palette override matching Landing-Frontend's --jobs-* "hero blue"
+   theme (Website/Landing-Frontend/src/index.css) exactly, for pages that
+   should read as the same product as the marketing site rather than this
+   app's own navy/gold dashboard palette. Landing-Frontend is light-only, so
+   this locks light values regardless of the dashboard's dark-mode toggle —
+   otherwise dark-mode text/surface tokens would clash with these fixed hues. */
+.theme-landing {
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f7f9fb;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f1f5f9;
+  --color-surface-sunken: #eef2f6;
+
+  --color-ink: #102a43;
+  --color-ink-secondary: #51697e;
+  --color-ink-tertiary: #7c93a6;
+
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  --color-navy-700: #1d4ed8;
+  --color-navy: #2563eb;
+  --color-navy-hover: #1d4ed8;
+  --color-navy-tint: #eef6ff;
+  --color-navy-tint-strong: #dbeafe;
+  --color-navy-ring: rgba(37, 99, 235, 0.16);
+
+  --color-gold: #b8934a;
+  --color-gold-strong: #9a7638;
+  --color-gold-dot: #d4af6a;
+  --color-gold-tint: rgba(212, 175, 106, 0.16);
+
+  --color-green: #0a6f64;
+  --color-green-dot: #12a594;
+  --color-green-tint: #e8f8f5;
+
+  --color-red: #dc2626;
+  --color-red-dot: #ef4444;
+  --color-red-tint: #fee2e2;
+
+  --color-amber: #b8934a;
+  --color-amber-dot: #d4af6a;
+  --color-amber-tint: rgba(212, 175, 106, 0.16);
+
+  --color-gray-tint: #f1f5f9;
+  --color-gray-dot: #94a3b8;
+
+  /* Navy-tinted shadows (matching EmployeeSignin.jsx's card shadow hue) and
+     rounder, pill-like corners (matching ApplyPanel.jsx's buttons/cards) —
+     Landing-Frontend's signature "soft, rounded, glowing" look, not just its colors. */
+  --shadow-xs: 0 1px 2px rgba(16, 42, 67, 0.04);
+  --shadow-sm: 0 1px 3px rgba(16, 42, 67, 0.06), 0 1px 2px rgba(16, 42, 67, 0.04);
+  --shadow-md: 0 8px 24px -4px rgba(16, 42, 67, 0.1), 0 2px 6px rgba(16, 42, 67, 0.05);
+  --shadow-lg: 0 24px 56px -12px rgba(16, 42, 67, 0.18), 0 4px 12px rgba(16, 42, 67, 0.06);
+  --shadow-navy: 0 6px 16px -4px rgba(37, 99, 235, 0.32);
+  --radius-md: 14px;
+  --radius-lg: 18px;
+}
+
+.theme-landing .glow-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
 @layer base {
   * {
     -webkit-font-smoothing: antialiased;

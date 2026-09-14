@@ -20,26 +20,9 @@ import { useInterviewsQuery } from '../hooks/useInterviews'
 import { useSavedJobsQuery } from '../hooks/useSavedJobs'
 import { useRecentlyViewedQuery } from '../hooks/useRecentlyViewed'
 import { useRecommendedJobsQuery } from '../hooks/useRecommendedJobs'
+import { profileCompletion } from '../lib/profileCompletion'
 
 const APPLICATION_STAGE_INDEX = { new: 1, screening: 2, shortlisted: 3, shared: 4, interview: 5, selected: 6, rejected: 6 }
-
-const COMPLETION_CHECKS = [
-  { key: 'resumeHeadline', label: 'Add a resume headline', test: (p) => !!p.resumeHeadline },
-  { key: 'skills', label: 'Add your skills', test: (p) => (p.skills ?? []).length > 0 },
-  { key: 'education', label: 'Add your education', test: (p) => (p.education ?? []).length > 0 },
-  { key: 'currentCity', label: 'Set your current city', test: (p) => !!p.currentCity },
-  { key: 'resume', label: 'Upload your resume', test: (p) => p.resume?.status !== 'none' },
-  { key: 'links', label: 'Add a portfolio or LinkedIn link', test: (p) => !!(p.portfolioLink || p.linkedin) },
-  { key: 'preferredRole', label: 'Set a preferred role', test: (p) => !!p.preferredRole },
-  { key: 'preferredLocations', label: 'Add preferred locations', test: (p) => (p.preferredLocations ?? []).length > 0 },
-]
-
-function profileCompletion(profile) {
-  if (!profile) return { percent: 0, missing: [] }
-  const missing = COMPLETION_CHECKS.filter((c) => !c.test(profile)).map((c) => c.label)
-  const percent = Math.round(((COMPLETION_CHECKS.length - missing.length) / COMPLETION_CHECKS.length) * 100)
-  return { percent, missing }
-}
 
 function recentActivity(profile, applications) {
   const items = []
@@ -132,7 +115,9 @@ export default function Dashboard() {
           <div className="flex items-center gap-3 mt-3">
             <Ring value={completion} size={52} thick={6} />
             <div className="text-[13px] text-ink-secondary">
-              {completion < 100 ? `Missing: ${completionMissing.slice(0, 2).join(', ')}${completionMissing.length > 2 ? `, +${completionMissing.length - 2} more` : ''}` : 'Your profile is complete'}
+              {completion < 100
+                ? `Missing: ${completionMissing.slice(0, 2).map((c) => c.label).join(', ')}${completionMissing.length > 2 ? `, +${completionMissing.length - 2} more` : ''}`
+                : 'Your profile is complete'}
             </div>
           </div>
         </Card>
