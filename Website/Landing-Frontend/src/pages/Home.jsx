@@ -6,6 +6,7 @@ import Footer from '../components/layout/Footer'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
 import JobSearchHero from '../components/sections/home/JobSearchHero'
 import QuickDiscoveryStrip from '../components/sections/home/QuickDiscoveryStrip'
+import JobMarketplace from '../components/sections/home/JobMarketplace'
 import LatestJobs from '../components/sections/home/LatestJobs'
 import HotJobsByCity from '../components/sections/home/HotJobsByCity'
 import CategoryGrid from '../components/sections/home/CategoryGrid'
@@ -77,6 +78,10 @@ export default function Home() {
 
       {/* 3. Quick job-discovery strip: freshers, remote, top metros */}
       <QuickDiscoveryStrip onSelect={applyJobFilters} />
+
+      {/* 3b. Job marketplace — browse-and-filter demo grid, the hero's
+          momentum turned into an actual place to discover roles */}
+      <JobMarketplace />
 
       {/* 4. Latest opportunities — the visual heart of the home page */}
       <LatestJobs filters={jobFilters} onFiltersChange={updateJobFilters} onClearFilters={() => setJobFilters(EMPTY_FILTERS)} />
