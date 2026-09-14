@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+<<<<<<< Updated upstream
 import { Search, MapPin, Check, ChevronDown, SlidersHorizontal, X, ArrowRight, ArrowUpRight, Sparkles, SearchX, RotateCw } from 'lucide-react'
+=======
+import { Search, MapPin, Check, ChevronDown, SlidersHorizontal, X, ArrowRight, ArrowUpRight, ShieldCheck, Sparkles, Loader2, RotateCw, SearchX } from 'lucide-react'
+>>>>>>> Stashed changes
 import Reveal from '../../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { CompanyMark } from './jobCardPrimitives'
 import { fetchLatestJobs } from '../../../lib/publicJobs'
+<<<<<<< Updated upstream
 
 // Real, live listings from the public jobs feed (Backend's
 // GET /api/jobs — see lib/publicJobs.js's fetchLatestJobs) — the same feed
@@ -33,7 +38,27 @@ const EXPERIENCE_LEVELS = [
 const SORT_OPTIONS = [
   { key: 'latest', label: 'Latest' },
   { key: 'salary', label: 'Highest salary' },
+=======
+import { WORK_MODES, EMPLOYMENT_TYPES, EXPERIENCE_OPTIONS, SALARY_OPTIONS, DEPARTMENT_OPTIONS } from '../../../lib/jobFilters'
+
+// ============================================================
+// Real data — every job/count here comes from Backend's GET /api/jobs (see
+// fetchLatestJobs, the exact same feed LatestJobs.jsx/CityJobs.jsx use), not
+// a hardcoded list. Filter option lists (job type, work mode, experience,
+// salary, category/track) are the same shared constants the rest of the
+// site's filtering already uses (lib/jobFilters.js), so a value picked here
+// means the same thing Backend expects — no separate demo taxonomy.
+// ============================================================
+const CATEGORIES = [{ key: '', label: 'All' }, ...DEPARTMENT_OPTIONS.map((o) => ({ key: o.value, label: o.label }))]
+const EXPERIENCE_CHOICES = EXPERIENCE_OPTIONS.filter((o) => o.value)
+const SALARY_CHOICES = SALARY_OPTIONS.filter((o) => o.value)
+const SORT_OPTIONS = [
+  { key: 'newest', label: 'Newest' },
+  { key: 'salary_desc', label: 'Highest salary' },
+  { key: 'salary_asc', label: 'Lowest salary' },
+>>>>>>> Stashed changes
 ]
+const RESULTS_LIMIT = 12
 
 // Backend's `track` enum has no 'finance' value (it uses 'analytics'
 // instead) — mirrors CategoryGrid.jsx's same precedent of matching Finance
@@ -99,6 +124,7 @@ const CARD_TONES = [
   { bg: '#FBF7EF', border: '#EEE2C9' }, // soft cream
 ]
 
+<<<<<<< Updated upstream
 const TRANSITION_NODES = [{ label: 'Bengaluru' }, { label: 'Mumbai' }, { label: 'Delhi NCR' }, { label: 'Hyderabad' }, { label: 'Pune' }]
 
 // Only status kinds backed by a real field (postedDaysAgo) — no invented
@@ -115,6 +141,13 @@ function deriveJobStatus(job) {
   return null
 }
 
+=======
+// The bottom transition's small location-pill row — major hiring hubs
+// already used consistently elsewhere on this page (see HOT_CITIES_DATA),
+// not tied to whatever's in the current result page.
+const TRANSITION_NODES = [{ label: 'Bengaluru' }, { label: 'Mumbai' }, { label: 'Delhi NCR' }, { label: 'Hyderabad' }, { label: 'Pune' }]
+
+>>>>>>> Stashed changes
 function CustomCheckbox({ checked, onChange, children }) {
   return (
     <label className="flex items-center gap-2.5 cursor-pointer select-none group">
@@ -157,7 +190,9 @@ function FilterGroup({ label, children }) {
 }
 
 // Shared between the desktop sidebar and the mobile drawer — one filter
-// state, two presentations.
+// state, two presentations. Field names/values match Backend's
+// parseJobFilters (jobType→employmentType, workMode, experience, salary,
+// location) exactly, so this can be handed straight to fetchLatestJobs.
 function FilterSidebarContent({ state, setState, activeCount, onClear }) {
   function toggleInSet(key, value) {
     setState((prev) => {
@@ -184,7 +219,7 @@ function FilterSidebarContent({ state, setState, activeCount, onClear }) {
       </div>
 
       <FilterGroup label="Job type">
-        {JOB_TYPES.map((t) => (
+        {EMPLOYMENT_TYPES.map((t) => (
           <CustomCheckbox key={t} checked={state.jobTypes.has(t)} onChange={() => toggleInSet('jobTypes', t)}>
             {t}
           </CustomCheckbox>
@@ -200,13 +235,13 @@ function FilterSidebarContent({ state, setState, activeCount, onClear }) {
       </FilterGroup>
 
       <FilterGroup label="Experience">
-        {EXPERIENCE_LEVELS.map((lvl) => (
+        {EXPERIENCE_CHOICES.map((opt) => (
           <CustomRadio
-            key={lvl.key}
-            checked={state.experienceLevel === lvl.key}
-            onChange={() => setState((prev) => ({ ...prev, experienceLevel: prev.experienceLevel === lvl.key ? '' : lvl.key }))}
+            key={opt.value}
+            checked={state.experience === opt.value}
+            onChange={() => setState((prev) => ({ ...prev, experience: prev.experience === opt.value ? '' : opt.value }))}
           >
-            {lvl.label}
+            {opt.label}
           </CustomRadio>
         ))}
       </FilterGroup>
@@ -225,48 +260,59 @@ function FilterSidebarContent({ state, setState, activeCount, onClear }) {
       </FilterGroup>
 
       <FilterGroup label="Salary">
-        <div>
-          <div className="flex items-center justify-between text-[12.5px] font-bold text-(--explorer-navy) mb-1.5">
-            <span>Minimum</span>
-            <span className="text-(--explorer-blue)">₹{state.minSalary}L+</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="30"
-            step="1"
-            value={state.minSalary}
-            onChange={(e) => setState((prev) => ({ ...prev, minSalary: Number(e.target.value) }))}
-            className="w-full accent-(--explorer-blue)"
-            aria-label="Minimum salary in lakhs per annum"
-          />
-        </div>
+        {SALARY_CHOICES.map((opt) => (
+          <CustomRadio
+            key={opt.value}
+            checked={state.salary === opt.value}
+            onChange={() => setState((prev) => ({ ...prev, salary: prev.salary === opt.value ? '' : opt.value }))}
+          >
+            {opt.label}
+          </CustomRadio>
+        ))}
       </FilterGroup>
     </div>
   )
 }
 
-function StatusTag({ status }) {
+// A job earns a tag only when it has something real to say — freshly
+// posted (Backend's own postedDaysAgo) or a verified employer
+// (Company.verificationStatus, same signal VerifiedMark uses elsewhere on
+// this page) — never an invented "urgent"/applicant-count claim.
+function StatusTag({ job }) {
   const reduceMotion = useReducedMotion()
+<<<<<<< Updated upstream
   if (!status) return null
   const style = STATUS_STYLES[status.kind]
+=======
+  const isRecent = job.postedDaysAgo != null && job.postedDaysAgo <= 1
+  if (!isRecent && !job.verified) return null
+  const label = isRecent ? (job.postedDaysAgo === 0 ? 'Posted today' : 'New') : 'Verified employer'
+  const dot = isRecent ? 'bg-(--explorer-blue)' : 'bg-(--explorer-teal)'
+  const text = isRecent ? 'text-(--explorer-blue)' : 'text-(--explorer-teal)'
+
+>>>>>>> Stashed changes
   return (
-    <span className={`inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wide ${style.text}`}>
+    <span className={`inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wide ${text}`}>
       <span className="relative flex items-center justify-center w-1.5 h-1.5">
         {/* A slow, barely-there breathing ring — not Tailwind's default 1s
             ping, which reads as busy rather than "alive". ~3s cycle, low
             amplitude. */}
         {!reduceMotion && (
           <motion.span
-            className={`absolute inset-0 rounded-full ${style.dot}`}
+            className={`absolute inset-0 rounded-full ${dot}`}
             animate={{ scale: [1, 2.1, 1], opacity: [0.55, 0, 0.55] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             aria-hidden="true"
           />
         )}
-        <span className={`relative w-1.5 h-1.5 rounded-full ${style.dot}`} aria-hidden="true" />
+        <span className={`relative w-1.5 h-1.5 rounded-full ${dot}`} aria-hidden="true" />
       </span>
+<<<<<<< Updated upstream
       {style.label}
+=======
+      {!isRecent && <ShieldCheck size={11} aria-hidden="true" />}
+      {label}
+>>>>>>> Stashed changes
     </span>
   )
 }
@@ -281,9 +327,13 @@ function JobCard({ job, tone, onOpen }) {
     >
       <div className="flex items-start justify-between gap-3">
         <span className="motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-[1.03]">
-          <CompanyMark company={job.company} size="sm" tone="bg-white text-(--explorer-navy)" />
+          <CompanyMark company={job.company} logo={job.logo} size="sm" tone="bg-white text-(--explorer-navy)" />
         </span>
+<<<<<<< Updated upstream
         <StatusTag status={deriveJobStatus(job)} />
+=======
+        <StatusTag job={job} />
+>>>>>>> Stashed changes
       </div>
 
       <p className="mt-3 text-[12px] font-bold text-(--explorer-navy)/70 truncate">{job.company}</p>
@@ -294,11 +344,19 @@ function JobCard({ job, tone, onOpen }) {
         <span className="truncate">{job.location}</span>
       </p>
 
+<<<<<<< Updated upstream
       <p className="mt-2 text-[15px] font-black text-(--explorer-navy)">{job.salary}</p>
 
       <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
         <span className="px-2 py-0.5 rounded-full bg-white/70">{job.employmentType}</span>
         <span className="px-2 py-0.5 rounded-full bg-white/70">{job.workMode}</span>
+=======
+      <p className="mt-2 text-[15px] font-black text-(--explorer-navy)">{job.salary || 'Salary undisclosed'}</p>
+
+      <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
+        {job.employmentType && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.employmentType}</span>}
+        {job.workMode && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.workMode}</span>}
+>>>>>>> Stashed changes
         {job.experience && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.experience}</span>}
       </div>
 
@@ -339,12 +397,16 @@ function FeaturedJobTile({ job, tone, onOpen }) {
           <span className="inline-flex items-center gap-1.5 text-[10.5px] font-black uppercase tracking-wide text-(--explorer-navy)/70">
             <Sparkles size={12} className="text-(--explorer-gold-hover)" aria-hidden="true" /> Featured opportunity
           </span>
+<<<<<<< Updated upstream
           <StatusTag status={deriveJobStatus(job)} />
+=======
+          <StatusTag job={job} />
+>>>>>>> Stashed changes
         </div>
 
         <div className="mt-4 flex items-center gap-3">
           <span className="motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-[1.05]">
-            <CompanyMark company={job.company} size="lg" tone="bg-white text-(--explorer-navy)" />
+            <CompanyMark company={job.company} logo={job.logo} size="lg" tone="bg-white text-(--explorer-navy)" />
           </span>
           <div className="min-w-0">
             <p className="text-[12.5px] font-bold text-(--explorer-navy)/70 truncate">{job.company}</p>
@@ -356,13 +418,22 @@ function FeaturedJobTile({ job, tone, onOpen }) {
           <MapPin size={13} className="shrink-0" aria-hidden="true" />
           {job.location}
         </p>
+<<<<<<< Updated upstream
         <p className="mt-1.5 text-[22px] font-black text-(--explorer-navy)">{job.salary}</p>
+=======
+        <p className="mt-1.5 text-[22px] font-black text-(--explorer-navy)">{job.salary || 'Salary undisclosed'}</p>
+>>>>>>> Stashed changes
 
         {job.description && <p className="mt-3 text-[13.5px] text-(--explorer-navy)/75 leading-relaxed max-w-md">{job.description}</p>}
 
         <div className="mt-4 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
+<<<<<<< Updated upstream
           <span className="px-2.5 py-1 rounded-full bg-white/70">{job.employmentType}</span>
           <span className="px-2.5 py-1 rounded-full bg-white/70">{job.workMode}</span>
+=======
+          {job.employmentType && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.employmentType}</span>}
+          {job.workMode && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.workMode}</span>}
+>>>>>>> Stashed changes
           {job.experience && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.experience}</span>}
         </div>
       </div>
@@ -377,6 +448,7 @@ function FeaturedJobTile({ job, tone, onOpen }) {
   )
 }
 
+<<<<<<< Updated upstream
 function JobCardSkeleton({ tone, featured }) {
   return (
     <div
@@ -388,6 +460,36 @@ function JobCardSkeleton({ tone, featured }) {
       <div className="mt-2 h-4 w-40 rounded-full bg-white/70" />
       <div className="mt-4 h-3 w-28 rounded-full bg-white/70" />
       <div className="mt-3 h-5 w-32 rounded-full bg-white/70" />
+=======
+function JobCardSkeleton() {
+  return (
+    <div className="rounded-2xl border border-(--explorer-border) bg-white p-5 animate-pulse flex flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <div className="w-9 h-9 rounded-xl bg-(--explorer-bg)" />
+        <div className="w-14 h-2.5 rounded bg-(--explorer-bg)" />
+      </div>
+      <div className="h-2.5 w-1/2 rounded bg-(--explorer-bg)" />
+      <div className="h-4 w-3/4 rounded bg-(--explorer-bg)" />
+      <div className="h-2.5 w-1/3 rounded bg-(--explorer-bg)" />
+      <div className="h-4 w-1/2 rounded bg-(--explorer-bg) mt-1" />
+    </div>
+  )
+}
+
+function FeaturedJobTileSkeleton() {
+  return (
+    <div className="sm:col-span-2 sm:row-span-2 rounded-2xl border border-(--explorer-border) bg-white p-7 animate-pulse flex flex-col gap-4">
+      <div className="h-2.5 w-32 rounded bg-(--explorer-bg)" />
+      <div className="flex items-center gap-3">
+        <div className="w-14 h-14 rounded-2xl bg-(--explorer-bg)" />
+        <div className="flex-1 flex flex-col gap-2">
+          <div className="h-2.5 w-1/3 rounded bg-(--explorer-bg)" />
+          <div className="h-5 w-2/3 rounded bg-(--explorer-bg)" />
+        </div>
+      </div>
+      <div className="h-2.5 w-1/4 rounded bg-(--explorer-bg)" />
+      <div className="h-6 w-1/3 rounded bg-(--explorer-bg)" />
+>>>>>>> Stashed changes
     </div>
   )
 }
@@ -397,16 +499,16 @@ export default function JobMarketplace() {
   const reduceMotion = useReducedMotion()
   const sectionRef = useRef(null)
 
-  const [category, setCategory] = useState('all')
+  const [category, setCategory] = useState('')
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('newest')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [filterState, setFilterState] = useState({
     jobTypes: new Set(),
     workModes: new Set(),
-    experienceLevel: '',
+    experience: '',
     location: '',
-    minSalary: 0,
+    salary: '',
   })
 
   const [jobs, setJobs] = useState([])
@@ -418,14 +520,15 @@ export default function JobMarketplace() {
   const activeFilterCount =
     filterState.jobTypes.size +
     filterState.workModes.size +
-    (filterState.experienceLevel ? 1 : 0) +
+    (filterState.experience ? 1 : 0) +
     (filterState.location.trim() ? 1 : 0) +
-    (filterState.minSalary > 0 ? 1 : 0)
+    (filterState.salary ? 1 : 0)
 
   function clearFilters() {
-    setFilterState({ jobTypes: new Set(), workModes: new Set(), experienceLevel: '', location: '', minSalary: 0 })
+    setFilterState({ jobTypes: new Set(), workModes: new Set(), experience: '', location: '', salary: '' })
   }
 
+<<<<<<< Updated upstream
   const filterSignature = JSON.stringify([
     ...filterState.jobTypes,
     ...filterState.workModes,
@@ -442,6 +545,31 @@ export default function JobMarketplace() {
 
     const timer = setTimeout(() => {
       fetchLatestJobs(buildApiParams({ category, search, sort, filterState }), { signal: controller.signal })
+=======
+  // Real fetch, debounced the same way LatestJobs.jsx debounces its own —
+  // every control here (category tab, search box, sort, sidebar filters)
+  // maps straight onto Backend's GET /api/jobs query params.
+  useEffect(() => {
+    let cancelled = false
+    const controller = new AbortController()
+    setLoadError(false)
+
+    const timer = setTimeout(() => {
+      fetchLatestJobs(
+        {
+          q: search.trim() ? [search.trim()] : [],
+          location: filterState.location.trim() ? [filterState.location.trim()] : [],
+          experience: filterState.experience,
+          workMode: [...filterState.workModes],
+          salary: filterState.salary,
+          employmentType: [...filterState.jobTypes],
+          track: category ? [category] : [],
+          sort,
+          limit: RESULTS_LIMIT,
+        },
+        { signal: controller.signal }
+      )
+>>>>>>> Stashed changes
         .then(({ jobs: fetchedJobs, total: fetchedTotal }) => {
           if (cancelled) return
           setJobs(fetchedJobs)
@@ -449,8 +577,11 @@ export default function JobMarketplace() {
         })
         .catch((err) => {
           if (cancelled || err?.name === 'AbortError') return
+<<<<<<< Updated upstream
           // A real fetch failure — show an honest error state with a Retry
           // action rather than quietly swapping in invented sample jobs.
+=======
+>>>>>>> Stashed changes
           setJobs([])
           setTotal(0)
           setLoadError(true)
@@ -458,7 +589,11 @@ export default function JobMarketplace() {
         .finally(() => {
           if (!cancelled) setLoading(false)
         })
+<<<<<<< Updated upstream
     }, FETCH_DEBOUNCE_MS)
+=======
+    }, 250)
+>>>>>>> Stashed changes
 
     return () => {
       cancelled = true
@@ -466,17 +601,31 @@ export default function JobMarketplace() {
       controller.abort()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+<<<<<<< Updated upstream
   }, [category, search, sort, filterSignature, retryToken])
 
   const featured = jobs[0]
   const restJobs = jobs.slice(1)
 
+=======
+  }, [category, search, sort, filterState, retryToken])
+
+  const featured = jobs[0]
+  const restJobs = jobs.slice(1)
+>>>>>>> Stashed changes
   const showInitialLoading = loading && jobs.length === 0 && !loadError
   const showError = !loading && loadError
   const showEmpty = !loading && !loadError && jobs.length === 0
 
   function openJob(job) {
+<<<<<<< Updated upstream
     navigate(`/jobs/${encodeURIComponent(job.id)}`, { state: { job } })
+=======
+    // Same route/shape every other job surface on this page already uses
+    // (FeaturedJobCard/CompactJobRow → /jobs/:id with the real object in
+    // router state) — this is real data, not a parallel demo path.
+    navigate(`/jobs/${job.id ?? encodeURIComponent(job.title)}`, { state: { job } })
+>>>>>>> Stashed changes
   }
 
   function scrollToNextSection() {
@@ -484,7 +633,11 @@ export default function JobMarketplace() {
   }
 
   return (
-    <section ref={sectionRef} className="hero-afterglow-faint relative py-16 md:py-20 px-6 md:px-10">
+    <section
+      ref={sectionRef}
+      id="latest-jobs"
+      className="hero-afterglow-faint relative py-16 md:py-20 px-6 md:px-10 scroll-mt-20"
+    >
       <div className="max-w-[1400px] mx-auto">
         {/* Heading — the hero's handoff into an actual marketplace */}
         <Reveal direction="up" duration={0.6} className="max-w-2xl">
@@ -521,7 +674,7 @@ export default function JobMarketplace() {
           <div className="flex items-center gap-5 sm:gap-6 border-b border-(--explorer-border) min-w-max">
             {CATEGORIES.map((c) => (
               <button
-                key={c.key}
+                key={c.key || 'all'}
                 type="button"
                 onClick={() => setCategory(c.key)}
                 aria-pressed={category === c.key}
@@ -580,8 +733,14 @@ export default function JobMarketplace() {
             <Reveal direction="up" duration={0.5} delay={0.1} className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6">
               <div className="shrink-0">
                 <p className="text-[10.5px] font-black uppercase tracking-wide text-(--explorer-muted)">Total jobs</p>
+<<<<<<< Updated upstream
                 <p className="text-[22px] font-black text-(--explorer-navy) leading-none mt-0.5">
                   {loading ? '—' : total} <span className="text-[14px] font-bold text-(--explorer-muted)">opportunities</span>
+=======
+                <p className="flex items-center gap-2 text-[22px] font-black text-(--explorer-navy) leading-none mt-0.5">
+                  {total} <span className="text-[14px] font-bold text-(--explorer-muted)">opportunities</span>
+                  {loading && jobs.length > 0 && <Loader2 size={14} className="animate-spin text-(--explorer-muted)" aria-hidden="true" />}
+>>>>>>> Stashed changes
                 </p>
               </div>
 
@@ -614,6 +773,7 @@ export default function JobMarketplace() {
             </Reveal>
 
             {/* Grid */}
+<<<<<<< Updated upstream
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${category}-${sort}-${search}-${filterSignature}`}
@@ -671,10 +831,67 @@ export default function JobMarketplace() {
                           ))}
                         </>
                       )}
+=======
+            {showError ? (
+              <div className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
+                <SearchX size={26} className="text-(--explorer-muted)" aria-hidden="true" />
+                <p className="text-[15px] font-bold text-(--explorer-navy)">Couldn't load jobs right now</p>
+                <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">There was a problem reaching the jobs feed. Check your connection and try again.</p>
+                <button
+                  type="button"
+                  onClick={() => setRetryToken((n) => n + 1)}
+                  className="mt-1.5 inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-white text-[13px] font-bold"
+                  style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
+                >
+                  <RotateCw size={14} aria-hidden="true" /> Retry
+                </button>
+              </div>
+            ) : showInitialLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <FeaturedJobTileSkeleton />
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <JobCardSkeleton key={i} />
+                ))}
+              </div>
+            ) : showEmpty ? (
+              <div className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
+                <SearchX size={26} className="text-(--explorer-muted)" aria-hidden="true" />
+                <p className="text-[15px] font-bold text-(--explorer-navy)">No roles match these filters</p>
+                <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">Try clearing a filter or searching a different keyword.</p>
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="mt-1.5 inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-white text-[13px] font-bold"
+                  style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
+                >
+                  Clear all filters
+                </button>
+              </div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${category}-${sort}-${search}-${JSON.stringify([...filterState.jobTypes, ...filterState.workModes, filterState.experience, filterState.location, filterState.salary])}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <StaggerGroup className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" staggerDelay={0.08}>
+                    {featured && (
+                      <StaggerItem y={20} scale={1} duration={0.5} className="sm:col-span-2 sm:row-span-2">
+                        <FeaturedJobTile job={featured} tone={CARD_TONES[0]} onOpen={() => openJob(featured)} />
+                      </StaggerItem>
+                    )}
+                    {restJobs.map((job, i) => (
+                      <StaggerItem key={job.id ?? `${job.title}-${job.company}`} y={20} scale={1} duration={0.45}>
+                        <JobCard job={job} tone={CARD_TONES[(i + 1) % CARD_TONES.length]} onOpen={() => openJob(job)} />
+                      </StaggerItem>
+                    ))}
+>>>>>>> Stashed changes
                   </StaggerGroup>
-                )}
-              </motion.div>
-            </AnimatePresence>
+                </motion.div>
+              </AnimatePresence>
+            )}
           </div>
         </div>
 
@@ -762,7 +979,11 @@ export default function JobMarketplace() {
                 className="mt-8 w-full h-11 rounded-full text-white text-[14px] font-bold"
                 style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
               >
+<<<<<<< Updated upstream
                 Show {loading ? '' : total} opportunities
+=======
+                Show {total} opportunities
+>>>>>>> Stashed changes
               </button>
             </motion.div>
           </motion.div>
