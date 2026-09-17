@@ -197,6 +197,7 @@ export default function JobMatching() {
   })
   const [recommendedSort, setRecommendedSort] = useState('match')
   const [autoOpened, setAutoOpened] = useState(false)
+  const [locatingForSort, setLocatingForSort] = useState(false)
 
   const filters = parseFiltersFromParams(searchParams)
   const page = Math.max(1, Number.parseInt(searchParams.get('page'), 10) || 1)
@@ -287,6 +288,35 @@ export default function JobMatching() {
 
   function commitFilters(next) {
     setSearchParams(toParams(next), { replace: false })
+  }
+
+  // "Nearest to me" needs a coordinate before it means anything — ask the
+  // browser for one only when this sort is actually picked, not eagerly.
+  function handleSortChange(value) {
+    if (value !== 'nearest') {
+      commitFilters({ ...filters, sort: value })
+      return
+    }
+    if (filters.lat != null && filters.lng != null) {
+      commitFilters({ ...filters, sort: value })
+      return
+    }
+    if (!navigator.geolocation) {
+      app.addToast('error', 'Your browser does not support location access.')
+      return
+    }
+    setLocatingForSort(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocatingForSort(false)
+        commitFilters({ ...filters, sort: 'nearest', lat: position.coords.latitude, lng: position.coords.longitude })
+      },
+      () => {
+        setLocatingForSort(false)
+        app.addToast('error', "Couldn't get your location. Check your browser's location permission and try again.")
+      },
+      { enableHighAccuracy: false, timeout: 10000 }
+    )
   }
 
   function goToPage(nextPage) {
@@ -424,10 +454,10 @@ export default function JobMatching() {
                     </span>
                   )}
                 </Button>
-                <Select className="h-8 text-[12.5px]" value={filters.sort} onChange={(e) => commitFilters({ ...filters, sort: e.target.value })}>
+                <Select className="h-8 text-[12.5px]" value={filters.sort} disabled={locatingForSort} onChange={(e) => handleSortChange(e.target.value)}>
                   {SORT_OPTIONS.filter((o) => o.value !== 'relevance' || filters.q).map((o) => (
                     <option key={o.value} value={o.value}>
-                      {o.label}
+                      {o.value === 'nearest' && locatingForSort ? 'Locating…' : o.label}
                     </option>
                   ))}
                 </Select>
