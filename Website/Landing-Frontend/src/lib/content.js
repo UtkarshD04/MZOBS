@@ -558,6 +558,7 @@ export const FOOTER_DATA = {
   rightLinks: [
     { label: "Privacy Policy", to: "/privacy-policy" },
     { label: "Terms of Service", to: "/terms-of-service" },
+    { label: "Delete Account", to: "/delete-account" },
   ]
 }
 
