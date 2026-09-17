@@ -18,6 +18,7 @@ import TermsOfService from './pages/TermsOfService'
 import EmployeeSignin from './pages/EmployeeSignin'
 import EmployeeForgotPassword from './pages/EmployeeForgotPassword'
 import EmployeeResetPassword from './pages/EmployeeResetPassword'
+import DeleteAccount from './pages/DeleteAccount'
 import Employer from './pages/Employer'
 import EmployerPricing from './pages/EmployerPricing'
 import EmployerSignup from './pages/EmployerSignup'
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="/employees/signin" element={<EmployeeSignin />} />
             <Route path="/employees/forgot-password" element={<EmployeeForgotPassword />} />
             <Route path="/employees/reset-password" element={<EmployeeResetPassword />} />
+            <Route path="/delete-account" element={<DeleteAccount />} />
             <Route path="/employers" element={<Employer />} />
             <Route path="/employers/pricing" element={<EmployerPricing />} />
             <Route path="/employers/signup" element={<EmployerSignup />} />

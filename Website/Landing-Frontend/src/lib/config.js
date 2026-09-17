@@ -21,6 +21,11 @@ export const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL ?? 'http://l
 // approved and pushed live, for the home page's "Latest jobs" section.
 export const PUBLIC_JOBS_API_URL = import.meta.env.VITE_PUBLIC_JOBS_API_URL ?? 'http://localhost:4000/api/jobs'
 
+// Same Backend — the public, no-login account deletion page Play Store's
+// Account Deletion policy requires (see /delete-account). Deliberately not
+// under EMPLOYEE_API_URL: this must work for someone who can't log in.
+export const ACCOUNT_DELETION_API_URL = import.meta.env.VITE_ACCOUNT_DELETION_API_URL ?? 'http://localhost:4000/api/account-deletion'
+
 // Google OAuth Web Client ID — must match GOOGLE_CLIENT_ID on the backend,
 // since it checks this as the token audience. Left blank, the Google button
 // renders but fails on click instead of crashing the app.
