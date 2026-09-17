@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Inbox, FileText, Send, Download, UserCheck, Check } from 'lucide-react'
+import { Inbox, FileText, Send, Download, UserCheck, Check, Star } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -83,7 +83,7 @@ export default function Resumes() {
   const { data: rawTeam = [] } = useTeamQuery()
   const [selectedIds, setSelectedIds] = useState(new Set())
 
-  const rows = useMemo(() => rawRows.filter((c) => c.subscription?.status === 'paid' && c.resume?.file), [rawRows])
+  const rows = useMemo(() => rawRows.filter((c) => c.resume?.file), [rawRows])
   const team = useMemo(() => rawTeam.filter((s) => s.accessLevel !== 'admin'), [rawTeam])
   const assignedCount = useMemo(() => rows.filter((c) => c.resume?.assignedTo).length, [rows])
   const pendingByStaff = useMemo(() => {
@@ -163,7 +163,10 @@ export default function Resumes() {
                     <div className="flex items-center gap-2.5">
                       <Avatar initials={c.name?.slice(0, 2)?.toUpperCase()} size="sm" />
                       <div className="min-w-0">
-                        <div className="font-semibold truncate">{c.name}</div>
+                        <div className="font-semibold truncate flex items-center gap-1.5">
+                          {c.name}
+                          {c.subscription?.status === 'paid' && <Star size={13} className="text-gold fill-gold flex-shrink-0" title="Paid subscription" />}
+                        </div>
                         <div className="text-xs text-ink-tertiary truncate">{c.currentCity || 'City not set'}</div>
                       </div>
                     </div>
