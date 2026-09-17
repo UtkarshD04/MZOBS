@@ -65,9 +65,12 @@ export default function Shortlisted() {
                       </div>
                     </Td>
                     <Td>
-                      <Badge tone={c.shortlist?.trustScore >= 85 ? 'green' : 'gold'} dot={false}>
-                        {c.shortlist?.trustScore}/100
-                      </Badge>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge tone={c.shortlist?.trustScore >= 85 ? 'green' : 'gold'} dot={false}>
+                          {c.shortlist?.trustScore}/100
+                        </Badge>
+                        {c.isPremium && <Badge tone="gold">Premium</Badge>}
+                      </div>
                     </Td>
                     <Td className="text-ink-tertiary">{c.skillTrack?.key ? `${c.skillTrack.label} · ${c.skillTrack.grade}` : '—'}</Td>
                     <Td className="text-ink-tertiary">{c.shortlist?.sentToOpsBy?.name ?? '—'}</Td>
