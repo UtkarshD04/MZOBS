@@ -185,6 +185,7 @@ export default function Candidates() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <button onClick={() => navigate(`/candidates/${c.id}`)} className="text-[14.5px] font-semibold hover:text-navy hover:underline truncate">{c.name}</button>
                       <CandidateStageBadge status={c.stage} />
+                      {c.premium && <Badge tone="gold">Premium</Badge>}
                     </div>
                     <div className="text-[12.5px] text-ink-secondary mt-0.5">{c.headline}</div>
                     <div className="text-[12px] text-ink-tertiary mt-0.5">Applied for {c.appliedFor}</div>
