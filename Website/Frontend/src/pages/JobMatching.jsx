@@ -29,6 +29,11 @@ import JobTitleAutocomplete from '../components/jobs/JobTitleAutocomplete'
 import { hasEmployeeToken, signInUrl } from '../lib/auth'
 
 const PAGE_SIZE = 20
+// Mirrors Backend's FREE_APPLICATION_LIMIT (employeeApplicationController.js)
+// — free accounts can apply to up to this many jobs, lifetime; premium is
+// unlimited. Kept in sync manually since this is a plain UI-side mirror,
+// not a value fetched from the server.
+const FREE_APPLICATION_LIMIT = 5
 const TABS = ['All openings', 'My track', 'Recommended', 'Saved', 'Compare']
 const TAB = { ALL: 0, MY_TRACK: 1, RECOMMENDED: 2, SAVED: 3, COMPARE: 4 }
 const RECOMMENDED_SORT_OPTIONS = [
@@ -38,7 +43,7 @@ const RECOMMENDED_SORT_OPTIONS = [
   { value: 'salary_asc', label: 'Salary: low to high' },
 ]
 
-function JobCard({ job, applied, eligible, authed, saved, employeeTrack, onToggleSave, onApplied, matchReasons }) {
+function JobCard({ job, applied, eligible, limitReached, authed, saved, employeeTrack, onToggleSave, onApplied, matchReasons }) {
   const app = useApp()
   const cat = categoryOf(job.track)
   const onTrack = !!job.track && job.track === employeeTrack
@@ -97,6 +102,10 @@ function JobCard({ job, applied, eligible, authed, saved, employeeTrack, onToggl
             <Badge tone="green" icon={<CheckCircle2 size={11} />} dot={false}>
               Applied — with Mzobs
             </Badge>
+          ) : limitReached ? (
+            <Button variant="gold" size="sm" onClick={() => (window.location.href = '/app/subscription')}>
+              Upgrade to apply — free limit reached
+            </Button>
           ) : (
             <Button variant="primary" size="sm" disabled={authed && !eligible} onClick={() => openApplyModal(app, job, onApplied)}>
               Apply through Mzobs
@@ -364,6 +373,9 @@ export default function JobMatching() {
   if (listError) return <ErrorState onRetry={refetchList} />
 
   const eligible = profile?.resume?.status === 'verified'
+  const isPremium = !!profile?.isPremium
+  const applicationsUsed = applications.length
+  const limitReached = authed && !isPremium && applicationsUsed >= FREE_APPLICATION_LIMIT
   // Applications come back with `job` populated (for title/company display
   // elsewhere), and a populated ref keeps its object shape rather than
   // collapsing to the `jobId` string form — so read the id from there.
@@ -374,6 +386,7 @@ export default function JobMatching() {
     job,
     applied: appliedJobIds.has(job.id),
     eligible,
+    limitReached,
     authed,
     saved: savedIds.has(job.id),
     employeeTrack: track?.key,
@@ -394,23 +407,32 @@ export default function JobMatching() {
       </StaggerItem>
 
       <StaggerItem className="mb-5">
-        <Card pad className={`flex items-start gap-3 ${eligible ? 'border-navy-ring bg-navy-tint' : 'border-gold-dot/40 bg-gold-tint'}`}>
-          <ShieldCheck size={18} className={`mt-0.5 flex-shrink-0 ${eligible ? 'text-navy' : 'text-gold-strong'}`} />
+        <Card pad className={`flex items-start gap-3 ${eligible && !limitReached ? 'border-navy-ring bg-navy-tint' : 'border-gold-dot/40 bg-gold-tint'}`}>
+          <ShieldCheck size={18} className={`mt-0.5 flex-shrink-0 ${eligible && !limitReached ? 'text-navy' : 'text-gold-strong'}`} />
           <div className="flex-1 min-w-0">
             <div className="text-[13.5px] font-semibold">
               {!authed
                 ? 'Sign in to apply for openings'
-                : eligible
-                  ? `You're eligible to apply${track?.key ? ` — ${track.label || track.key}, Grade ${track.grade || '-'}` : ''}`
-                  : 'Finish verification to unlock applications'}
+                : limitReached
+                  ? "You've used all 5 free applications"
+                  : eligible
+                    ? `You're eligible to apply${track?.key ? ` — ${track.label || track.key}, Grade ${track.grade || '-'}` : ''}`
+                    : 'Finish verification to unlock applications'}
             </div>
             <p className="text-[13px] text-ink-secondary mt-0.5">
               {!authed
                 ? 'Browse and filter freely. Sign in (or create a free account) when you find a role you want — applying sends your profile to our team, never straight to the employer.'
-                : eligible
-                  ? 'Your resume is verified. When you apply, Mzobs screens you, shortlists against the requirement, and forwards your resume to the company.'
-                  : 'Applications open once your resume is verified by the Mzobs team.'}
+                : limitReached
+                  ? 'Free accounts can apply to up to 5 jobs. Upgrade to premium for unlimited applications.'
+                  : eligible
+                    ? `Your resume is verified. When you apply, Mzobs screens you, shortlists against the requirement, and forwards your resume to the company.${isPremium ? '' : ` ${applicationsUsed}/${FREE_APPLICATION_LIMIT} free applications used.`}`
+                    : 'Applications open once your resume is verified by the Mzobs team.'}
             </p>
+            {limitReached && (
+              <Button variant="gold" size="sm" className="mt-2.5" onClick={() => (window.location.href = '/app/subscription')}>
+                Upgrade for unlimited applications
+              </Button>
+            )}
           </div>
         </Card>
       </StaggerItem>
