@@ -48,6 +48,7 @@ export const SORT_OPTIONS = [
   { value: 'salary_desc', label: 'Salary: high to low' },
   { value: 'salary_asc', label: 'Salary: low to high' },
   { value: 'relevance', label: 'Most relevant' },
+  { value: 'nearest', label: 'Nearest to me' },
 ]
 
 export const DEPARTMENT_OPTIONS = Object.entries(CATEGORIES).map(([value, c]) => ({ value, label: c.label }))
@@ -74,6 +75,10 @@ export const DEFAULT_FILTERS = {
   postedWithin: '',
   company: [],
   sort: 'newest',
+  // Only meaningful together with sort: 'nearest' — carried in the URL like
+  // every other filter so a "nearest" link stays reproducible on reload/share.
+  lat: null,
+  lng: null,
 }
 
 function csvParam(searchParams, key) {
@@ -100,6 +105,8 @@ export function parseFiltersFromParams(searchParams) {
     postedWithin: singleParam(searchParams, 'postedWithin', POSTED_WITHIN_LABELS),
     company: csvParam(searchParams, 'company'),
     sort: SORT_OPTIONS.some((o) => o.value === searchParams.get('sort')) ? searchParams.get('sort') : 'newest',
+    lat: searchParams.get('lat') ? Number(searchParams.get('lat')) : null,
+    lng: searchParams.get('lng') ? Number(searchParams.get('lng')) : null,
   }
 }
 
@@ -118,6 +125,10 @@ export function toParams(filters) {
   if (filters.postedWithin) params.postedWithin = filters.postedWithin
   if (filters.company?.length) params.company = filters.company.join(',')
   if (filters.sort && filters.sort !== 'newest') params.sort = filters.sort
+  if (filters.sort === 'nearest' && filters.lat != null && filters.lng != null) {
+    params.lat = String(filters.lat)
+    params.lng = String(filters.lng)
+  }
   return params
 }
 

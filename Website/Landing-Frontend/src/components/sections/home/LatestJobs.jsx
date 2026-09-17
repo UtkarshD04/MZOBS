@@ -14,6 +14,7 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' },
   { value: 'salary_desc', label: 'Highest salary' },
   { value: 'salary_asc', label: 'Lowest salary' },
+  { value: 'nearest', label: 'Nearest to me' },
 ]
 
 // Debounce before asking Backend for a new filtered result set — chip
@@ -41,7 +42,38 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
   const navigate = useNavigate()
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [sort, setSort] = useState('newest')
+  const [coords, setCoords] = useState(null)
+  const [locating, setLocating] = useState(false)
+  const [locationError, setLocationError] = useState(false)
   const isFiltered = hasActiveFilters(filters)
+
+  // "Nearest to me" needs a coordinate before it means anything — ask the
+  // browser for one on selection rather than eagerly on page load, so a
+  // visitor who never touches this sort is never prompted for location.
+  function handleSortChange(value) {
+    setLocationError(false)
+    if (value !== 'nearest' || coords) {
+      setSort(value)
+      return
+    }
+    if (!navigator.geolocation) {
+      setLocationError(true)
+      return
+    }
+    setLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCoords({ lat: position.coords.latitude, lng: position.coords.longitude })
+        setSort('nearest')
+        setLocating(false)
+      },
+      () => {
+        setLocationError(true)
+        setLocating(false)
+      },
+      { enableHighAccuracy: false, timeout: 10000 }
+    )
+  }
 
   const [jobs, setJobs] = useState(jobsProp ?? [])
   const [total, setTotal] = useState(jobsProp?.length ?? 0)
@@ -59,7 +91,8 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
     setLoadError(false)
 
     const timer = setTimeout(() => {
-      fetchLatestJobs({ ...filters, sort, limit: RESULTS_LIMIT }, { signal: controller.signal })
+      const geoParams = sort === 'nearest' && coords ? { lat: coords.lat, lng: coords.lng } : {}
+      fetchLatestJobs({ ...filters, sort, ...geoParams, limit: RESULTS_LIMIT }, { signal: controller.signal })
         .then(({ jobs: fetchedJobs, total: fetchedTotal }) => {
           if (cancelled) return
           setJobs(fetchedJobs)
@@ -84,7 +117,7 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
       controller.abort()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, sort, jobsProp, retryToken])
+  }, [filters, sort, coords, jobsProp, retryToken])
 
   // A discovery surface only — every card/row here hands off to the job's
   // own detail route (pages/JobDetail.jsx), which is where the full
@@ -220,19 +253,26 @@ export default function LatestJobs({ jobs: jobsProp, filters, onFiltersChange, o
                   <div className="relative shrink-0">
                     <select
                       value={sort}
-                      onChange={(e) => setSort(e.target.value)}
+                      onChange={(e) => handleSortChange(e.target.value)}
+                      disabled={locating}
                       aria-label="Sort jobs"
-                      className="h-7 pl-2.5 pr-6 rounded-md border border-(--explorer-border) bg-white text-[11.5px] font-semibold text-(--explorer-navy) outline-none appearance-none hover:border-(--explorer-navy)/25 focus:border-(--explorer-blue) focus:ring-[3px] focus:ring-(--explorer-blue)/15 transition-colors"
+                      className="h-7 pl-2.5 pr-6 rounded-md border border-(--explorer-border) bg-white text-[11.5px] font-semibold text-(--explorer-navy) outline-none appearance-none hover:border-(--explorer-navy)/25 focus:border-(--explorer-blue) focus:ring-[3px] focus:ring-(--explorer-blue)/15 transition-colors disabled:opacity-60"
                     >
                       {SORT_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
-                          {opt.label}
+                          {opt.value === 'nearest' && locating ? 'Locating…' : opt.label}
                         </option>
                       ))}
                     </select>
                     <ChevronDown size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-(--explorer-muted) pointer-events-none" aria-hidden="true" />
                   </div>
                 </div>
+
+                {locationError && (
+                  <p className="text-[11.5px] text-(--explorer-muted) px-0.5 -mt-1">
+                    Couldn't get your location — check your browser's location permission and try again.
+                  </p>
+                )}
 
                 <div className="flex flex-col gap-2">
                   {showInitialLoading
