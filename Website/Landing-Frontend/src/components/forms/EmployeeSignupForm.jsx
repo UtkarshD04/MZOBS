@@ -182,6 +182,11 @@ export default function EmployeeSignupForm() {
     const nextErrors = validateStep2(form)
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
+    // Defense in depth alongside hiding the submit button below — the
+    // backend rejects an unverified signup outright once OTP is configured
+    // (Backend/src/controllers/employeeAuthController.js signup), so this
+    // guards against submitting via Enter with no button in the DOM.
+    if (OTP_CONFIGURED && !phoneToken) return
 
     setStatus('submitting')
     try {
@@ -458,14 +463,18 @@ export default function EmployeeSignupForm() {
 
             {errors.form && <p className="text-xs text-red-600 mb-4 -mt-2">{errors.form}</p>}
 
-            <PrimaryButton className="mt-1" disabled={status === 'submitting'}>
-              {status === 'submitting' ? 'Creating your account...' : <>Create account <ArrowRight size={16} /></>}
-            </PrimaryButton>
+            {!OTP_CONFIGURED || phoneToken ? (
+              <>
+                <PrimaryButton className="mt-1" disabled={status === 'submitting'}>
+                  {status === 'submitting' ? 'Creating your account...' : <>Create account <ArrowRight size={16} /></>}
+                </PrimaryButton>
 
-            <p className="flex items-start gap-2 mt-4 text-[11.5px] text-(--jobs-ink-soft) leading-relaxed">
-              <ShieldCheck size={14} className="shrink-0 mt-0.5 text-(--jobs-teal-dark)" />
-              Your profile is private. Employers see it only when you apply or are matched for a relevant role.
-            </p>
+                <p className="flex items-start gap-2 mt-4 text-[11.5px] text-(--jobs-ink-soft) leading-relaxed">
+                  <ShieldCheck size={14} className="shrink-0 mt-0.5 text-(--jobs-teal-dark)" />
+                  Your profile is private. Employers see it only when you apply or are matched for a relevant role.
+                </p>
+              </>
+            ) : null}
           </motion.form>
         )}
       </AnimatePresence>
