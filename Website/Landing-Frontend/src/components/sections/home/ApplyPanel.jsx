@@ -151,7 +151,7 @@ function SignupPrompt({ job, onCreateAccount }) {
 
 const initialSignupForm = { name: '', email: '', phone: '', password: '' }
 
-function validateSignup(form, hasGoogle) {
+function validateSignup(form, hasGoogle, phoneToken) {
   const errors = {}
   if (!hasGoogle) {
     if (!form.name.trim()) errors.name = 'Please enter your full name.'
@@ -162,6 +162,7 @@ function validateSignup(form, hasGoogle) {
   }
   if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
   else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
+  else if (OTP_CONFIGURED && !phoneToken) errors.phone = 'Please verify your mobile number via OTP.'
   return errors
 }
 
@@ -246,11 +247,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    // OTP verification is temporarily optional — not required to continue
-    // (same relaxation as EmployeeSignupForm's step 2), since the MSG91
-    // widget config that phone verification depends on isn't reliably
-    // available on every deployment yet.
-    const nextErrors = validateSignup(form, Boolean(googleCredential))
+    const nextErrors = validateSignup(form, Boolean(googleCredential), phoneToken)
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
@@ -365,7 +362,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
 
       {errors.form && <p className="text-[12.5px] text-red-600 mb-3">{errors.form}</p>}
 
-      <button type="submit" disabled={status === 'submitting'} className={`${primaryButtonClass} w-full mt-2`}>
+      <button type="submit" disabled={status === 'submitting' || (OTP_CONFIGURED && !phoneToken)} className={`${primaryButtonClass} w-full mt-2`}>
         {status === 'submitting' && <Loader2 size={15} className="animate-spin" aria-hidden="true" />}
         {status === 'submitting' ? 'Creating your account…' : 'Create account'}
       </button>

@@ -12,9 +12,9 @@ import { uploadEmployeeResume, validateResumeFileClientSide } from '../../lib/em
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../lib/config'
 
-// OTP verification is optional, but there's no point offering a "Send OTP"
-// button that's guaranteed to fail when this deployment has no widget
-// credentials — just skip straight to the phone-number-only step.
+// Whether this deployment has widget credentials at all — if not, there's
+// no point offering a "Send OTP" button guaranteed to fail, and OTP can't be
+// required (nothing to verify against).
 const OTP_CONFIGURED = Boolean(MSG91_WIDGET_ID && MSG91_TOKEN_AUTH)
 
 const STEP_LABELS = ['Account', 'Mobile number']
@@ -40,11 +40,11 @@ function validateStep1(form, hasGoogle) {
   return errors
 }
 
-function validateStep2(form) {
+function validateStep2(form, phoneToken) {
   const errors = {}
   if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
   else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
-  // OTP verification is temporarily optional — not required to continue.
+  else if (OTP_CONFIGURED && !phoneToken) errors.phone = 'Please verify your mobile number via OTP.'
   return errors
 }
 
@@ -180,7 +180,7 @@ export default function EmployeeSignupForm() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const nextErrors = validateStep2(form)
+    const nextErrors = validateStep2(form, phoneToken)
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
@@ -459,7 +459,7 @@ export default function EmployeeSignupForm() {
 
             {errors.form && <p className="text-xs text-red-600 mb-4 -mt-2">{errors.form}</p>}
 
-            <PrimaryButton className="mt-1" disabled={status === 'submitting'}>
+            <PrimaryButton className="mt-1" disabled={status === 'submitting' || (OTP_CONFIGURED && !phoneToken)}>
               {status === 'submitting' ? 'Creating your account...' : <>Create account <ArrowRight size={16} /></>}
             </PrimaryButton>
 
