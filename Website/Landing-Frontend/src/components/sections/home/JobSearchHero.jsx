@@ -19,7 +19,7 @@ function toTags(values) {
 // screenshot): headline/toggle/search bar centered on the page, bracketed
 // by the six large "alive" bubbles in HeroBubbleField.jsx. The search bar
 // itself is always the candidate one — "I'm hiring talent" is a straight
-// nav link to the employer signup flow, not a second search-bar mode.
+// nav link to the employer home page, not a second search-bar mode.
 const HeroCtaClasses =
   'group relative inline-flex items-center justify-center gap-1.5 rounded-full px-6 h-11 text-[13.5px] font-bold text-white whitespace-nowrap shadow-[0_10px_24px_-8px_rgba(59,109,240,0.55)] ' +
   'transition-transform duration-200 motion-safe:hover:-translate-y-px motion-safe:active:translate-y-0 motion-safe:active:scale-[0.98] ' +
@@ -136,7 +136,7 @@ export default function JobSearchHero({ filters, onSearch }) {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/employers/signup')}
+              onClick={() => navigate('/employers')}
               aria-pressed="false"
               className="rounded-full px-5 h-9 text-[12.5px] font-bold uppercase tracking-wide text-(--explorer-muted) transition-colors duration-200 hover:text-(--explorer-navy)"
             >
