@@ -30,11 +30,12 @@ function loadWidget() {
   // verification, like Create account) stuck with no visible explanation.
   // Failing fast here turns that into a diagnosable error instead.
   if (!MSG91_WIDGET_ID || !MSG91_TOKEN_AUTH) {
-    loadPromise = Promise.reject(new Error('OTP sign-in is not configured on this deployment. Please try again later or contact support.'))
-    return loadPromise
+    return (loadPromise = Promise.reject(
+      new Error('OTP sign-in is not configured on this deployment. Please try again later or contact support.')
+    ))
   }
 
-  loadPromise = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     if (typeof window.sendOtp === 'function') return resolve()
 
     ensureCaptchaElement()
@@ -88,6 +89,15 @@ function loadWidget() {
     attempt()
   })
 
+  // If loading/initializing ever fails (script blocked, domain not
+  // whitelisted, timeout, ...), clear the cached promise so the next call
+  // actually retries instead of replaying the same stale rejection forever
+  // — otherwise one transient failure would permanently break OTP for the
+  // rest of the page's lifetime with no way to recover short of a reload.
+  loadPromise = promise.catch((err) => {
+    loadPromise = null
+    throw err
+  })
   return loadPromise
 }
 
