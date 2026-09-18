@@ -139,6 +139,30 @@ const TABLET_ORBS = [
   { size: 11, top: '88%', left: '4%', tone: 'pink', anim: 'bubble-anim-float-y', dur: '22s', delay: '0.6s' },
 ]
 
+// Mobile (<md): the centered column has almost no side margin to work
+// with, so foreground circles are out — instead, soft blurred washes
+// bleed in from the four corners (same treatment as BG_BLOBS, just
+// scaled down) plus a handful of small accent dots pinned to the
+// corners themselves, never the edges beside them, so nothing ever
+// sits behind text regardless of how long it wraps. The previous
+// version here was two 6–8px dots, which read as "no bubbles at all"
+// at phone viewing distance — this keeps the same corner-only safety
+// rule but makes the layer actually visible.
+const MOBILE_BLOBS = [
+  { size: 220, top: '-8%', left: '-12%', tone: 'blue', dur: '30s', delay: '0s' },
+  { size: 180, top: '8%', left: '108%', tone: 'purple', dur: '34s', delay: '1.5s' },
+  { size: 200, top: '96%', left: '-10%', tone: 'teal', dur: '32s', delay: '0.8s' },
+  { size: 220, top: '100%', left: '105%', tone: 'pink', dur: '28s', delay: '2.2s' },
+]
+const MOBILE_ORBS = [
+  { size: 14, top: '4%', left: '6%', tone: 'blue', anim: 'bubble-anim-float-y', dur: '14s', delay: '0s' },
+  { size: 12, top: '3%', left: '90%', tone: 'orange', anim: 'bubble-anim-float-x', dur: '17s', delay: '0.6s' },
+  { size: 10, top: '10%', left: '94%', tone: 'pink', anim: 'bubble-anim-pulse', dur: '11s', delay: '1.2s' },
+  { size: 16, top: '95%', left: '8%', tone: 'purple', anim: 'bubble-anim-drift-slow', dur: '20s', delay: '0.4s' },
+  { size: 12, top: '97%', left: '92%', tone: 'teal', anim: 'bubble-anim-float-y', dur: '18s', delay: '1.6s' },
+  { size: 9, top: '90%', left: '4%', tone: 'blue', anim: 'bubble-anim-pulse', dur: '10s', delay: '2s' },
+]
+
 function BubbleBlob({ b }) {
   return (
     <div className="bubble-parallax absolute" style={{ top: b.top, left: b.left, '--px': '3px', '--py': '2px' }}>
@@ -286,15 +310,12 @@ export default function HeroBubbleField() {
         {TABLET_ORBS.map((orb, i) => <Orb key={`t-orb-${i}`} orb={orb} px="18px" py="14px" />)}
       </div>
 
-      {/* Mobile: two tiny dots pinned into the section's own top/bottom
-          padding, well clear of any text at any content length */}
-      <div className="md:hidden">
-        <div className="bubble-parallax absolute top-3 right-4" style={{ '--px': '6px', '--py': '4px' }}>
-          <div className="bubble-surface bubble-tone-blue bubble-anim-float-y" style={{ width: 8, height: 8, '--dur': '14s', '--delay': '0s' }} />
-        </div>
-        <div className="bubble-parallax absolute bottom-3 right-8" style={{ '--px': '6px', '--py': '4px' }}>
-          <div className="bubble-surface bubble-tone-orange bubble-anim-float-x" style={{ width: 6, height: 6, '--dur': '17s', '--delay': '1s' }} />
-        </div>
+      {/* Mobile: soft corner-bleeding washes + a handful of small accent
+          dots, all pinned to the four corners so nothing ever sits behind
+          the centered text. */}
+      <div className="md:hidden absolute inset-0">
+        {MOBILE_BLOBS.map((b, i) => <BubbleBlob key={`m-blob-${i}`} b={b} />)}
+        {MOBILE_ORBS.map((orb, i) => <Orb key={`m-orb-${i}`} orb={orb} px="8px" py="6px" />)}
       </div>
     </div>
   )
