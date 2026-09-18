@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { Upload, FileText, Download, CheckCircle2, ShieldCheck, Clock, Send } from 'lucide-react'
+import { Upload, FileText, Eye, CheckCircle2, ShieldCheck, Clock, Send } from 'lucide-react'
 import Card, { CardHead } from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Ring from '../components/ui/Ring'
@@ -11,6 +11,7 @@ import { PageSkeleton } from '../components/ui/Skeleton'
 import ErrorState from '../components/ui/ErrorState'
 import { useApp } from '../context/AppContext'
 import { useResumeQuery, useUploadResumeMutation } from '../hooks/useResume'
+import { openResumeViewer } from '../components/ResumeViewerModal'
 import { FILE_BASE_URL } from '../lib/config'
 import { openConfirmResumeReplaceModal } from '../lib/modals'
 
@@ -117,8 +118,8 @@ export default function ResumeCenter() {
                 </div>
               </div>
               {resume.url && (
-                <Button size="sm" onClick={() => window.open(`${FILE_BASE_URL}${resume.url}`, '_blank')}>
-                  <Download size={14} /> Download
+                <Button size="sm" onClick={() => openResumeViewer(app, `${FILE_BASE_URL}${resume.url}`, resume.file)}>
+                  <Eye size={14} /> View
                 </Button>
               )}
             </div>
@@ -172,8 +173,8 @@ export default function ResumeCenter() {
                     </Td>
                     <Td>
                       {r.url && (
-                        <Button variant="ghost" size="sm" onClick={() => window.open(`${FILE_BASE_URL}${r.url}`, '_blank')}>
-                          <Download size={14} />
+                        <Button variant="ghost" size="sm" onClick={() => openResumeViewer(app, `${FILE_BASE_URL}${r.url}`, r.file)}>
+                          <Eye size={14} />
                         </Button>
                       )}
                     </Td>
