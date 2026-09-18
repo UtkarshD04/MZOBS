@@ -2,6 +2,20 @@ import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from './config'
 
 const SCRIPT_URLS = ['https://verify.msg91.com/otp-provider.js', 'https://verify.phone91.com/otp-provider.js']
 
+// With exposeMethods:true, MSG91 still needs a real DOM element to render
+// its (invisible) reCAPTCHA into via captchaRenderId — without one, sendOtp
+// fails server-side with "Invalid Captcha Token" since no captcha token was
+// ever generated. It renders nothing visible in the normal case, so an
+// off-screen div is enough.
+const CAPTCHA_ELEMENT_ID = 'msg91-otp-captcha'
+
+function ensureCaptchaElement() {
+  if (document.getElementById(CAPTCHA_ELEMENT_ID)) return
+  const el = document.createElement('div')
+  el.id = CAPTCHA_ELEMENT_ID
+  document.body.appendChild(el)
+}
+
 // Loads MSG91's widget script once and calls initSendOTP with
 // exposeMethods:true, which attaches sendOtp/verifyOtp/retryOtp onto
 // `window` instead of showing MSG91's own popup — our own form UI drives
@@ -23,12 +37,35 @@ function loadWidget() {
   loadPromise = new Promise((resolve, reject) => {
     if (typeof window.sendOtp === 'function') return resolve()
 
+    ensureCaptchaElement()
+
+    // success/failure here fire when MSG91's own popup completes a flow —
+    // irrelevant with exposeMethods:true since we never show that popup and
+    // drive send/verify ourselves, so they're no-ops.
     const configuration = {
       widgetId: MSG91_WIDGET_ID,
       tokenAuth: MSG91_TOKEN_AUTH,
       exposeMethods: true,
+      captchaRenderId: CAPTCHA_ELEMENT_ID,
       success: () => {},
       failure: () => {},
+    }
+
+    // exposeMethods attaches sendOtp/verifyOtp/retryOtp onto `window`
+    // asynchronously (an internal widget config fetch) — poll for it rather
+    // than assume it's synchronous once initSendOTP returns.
+    function waitForExposedMethods() {
+      const start = Date.now()
+      const POLL_MS = 100
+      const TIMEOUT_MS = 10000
+      const poll = () => {
+        if (typeof window.sendOtp === 'function') return resolve()
+        if (Date.now() - start > TIMEOUT_MS) {
+          return reject(new Error('OTP widget did not initialize in time. Check that this domain is whitelisted in the MSG91 widget settings.'))
+        }
+        setTimeout(poll, POLL_MS)
+      }
+      poll()
     }
 
     let i = 0
@@ -39,7 +76,7 @@ function loadWidget() {
       script.onload = () => {
         if (typeof window.initSendOTP !== 'function') return reject(new Error('OTP widget failed to load'))
         window.initSendOTP(configuration)
-        resolve()
+        waitForExposedMethods()
       }
       script.onerror = () => {
         i += 1
