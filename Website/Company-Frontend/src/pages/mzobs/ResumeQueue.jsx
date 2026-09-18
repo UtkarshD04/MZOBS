@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { FileCheck, FileText, ShieldCheck, Download, Clock, Video, UserPlus, IdCard, Link2 } from 'lucide-react'
+import { FileCheck, FileText, ShieldCheck, Eye, Clock, Video, UserPlus, IdCard, Link2 } from 'lucide-react'
 import Card, { CardHead } from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -21,6 +21,7 @@ import { useTeamQuery } from '../../hooks/useTeam'
 import { useResumeQueueQuery, useResumeQueueStatsQuery, useReviewResumeMutation, useAssignResumeMutation, useBulkAssignResumesMutation } from '../../hooks/useResumes'
 import { useMockInterviewsQuery } from '../../hooks/useMockInterviews'
 import { ScheduleMockModal } from './MockInterviews'
+import { openResumeViewer } from '../../components/ResumeViewerModal'
 import { FILE_BASE_URL } from '../../lib/config'
 
 const TABS = ['Pending', 'Changes requested', 'Verified', 'Not uploaded']
@@ -443,8 +444,8 @@ export default function ResumeQueue() {
                       </div>
                     </div>
                     {c.resume.url && (
-                      <Button size="sm" onClick={() => window.open(`${FILE_BASE_URL}${c.resume.url}`, '_blank')}>
-                        <Download size={13} /> Open
+                      <Button size="sm" onClick={() => openResumeViewer(app, `${FILE_BASE_URL}${c.resume.url}`, c.resume.file)}>
+                        <Eye size={13} /> View
                       </Button>
                     )}
                   </div>

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Inbox, FileText, Download, Star } from 'lucide-react'
+import { Inbox, FileText, Eye, Star } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Avatar from '../../components/ui/Avatar'
 import EmptyState from '../../components/ui/EmptyState'
@@ -8,10 +8,13 @@ import { TableWrap, Table, Tr, Td } from '../../components/ui/Table'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
+import { useApp } from '../../context/AppContext'
 import { useResumeQueueQuery } from '../../hooks/useResumes'
+import { openResumeViewer } from '../../components/ResumeViewerModal'
 import { FILE_BASE_URL } from '../../lib/config'
 
 export default function Resumes() {
+  const app = useApp()
   const { data: rawRows = [], isLoading, isError, refetch } = useResumeQueueQuery({})
 
   const rows = useMemo(() => rawRows.filter((c) => c.resume?.file), [rawRows])
@@ -64,8 +67,8 @@ export default function Resumes() {
                       <FileText size={15} className="text-navy flex-shrink-0" />
                       <span className="truncate max-w-[220px]">{c.resume.file}</span>
                       {c.resume.url && (
-                        <button onClick={() => window.open(`${FILE_BASE_URL}${c.resume.url}`, '_blank')} title="Open" className="text-ink-tertiary hover:text-navy flex-shrink-0">
-                          <Download size={14} />
+                        <button onClick={() => openResumeViewer(app, `${FILE_BASE_URL}${c.resume.url}`, c.resume.file)} title="View" className="text-ink-tertiary hover:text-navy flex-shrink-0">
+                          <Eye size={14} />
                         </button>
                       )}
                     </div>
