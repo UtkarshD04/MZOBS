@@ -4,12 +4,14 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X, LogOut, User } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
 import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange, buildAppRedirectUrl } from '../../lib/employeeSession'
+import EmployeeAuthModal from '../forms/EmployeeAuthModal'
 
 // Sitewide header — same on every route, including Home, so it never
 // visibly changes when navigating (e.g. clicking "For Employers").
 export default function Navbar() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   // Starts null (not read from localStorage here) so the server-rendered/
@@ -100,12 +102,13 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <Link
-                to="/employees/signin"
+              <button
+                type="button"
+                onClick={() => setAuthModalOpen(true)}
                 className="text-[13.5px] font-semibold text-(--jobs-navy) hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
               >
                 Sign in
-              </Link>
+              </button>
             )}
             {!session && (
               <Link
@@ -177,13 +180,16 @@ export default function Navbar() {
                       </button>
                     </>
                   ) : (
-                    <Link
-                      to="/employees/signin"
-                      onClick={() => setOpen(false)}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpen(false)
+                        setAuthModalOpen(true)
+                      }}
                       className="h-10 flex items-center justify-center rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"
                     >
                       Sign in
-                    </Link>
+                    </button>
                   )}
                   {!session && (
                     <Link
@@ -200,6 +206,8 @@ export default function Navbar() {
           </>
         )}
       </AnimatePresence>
+
+      <EmployeeAuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </>
   )
 }

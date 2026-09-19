@@ -1,7 +1,7 @@
 import Seo from '../components/Seo'
 import AuthHeader from '../components/ui/AuthHeader'
 import CareerOnboardingPanel from '../components/ui/CareerOnboardingPanel'
-import EmployeeSignupForm from '../components/forms/EmployeeSignupForm'
+import EmployeePhoneAuthForm from '../components/forms/EmployeePhoneAuthForm'
 
 export default function EmployeeSignup() {
   return (
@@ -29,7 +29,7 @@ export default function EmployeeSignup() {
             </div>
 
             <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(16,42,67,0.04),0_20px_44px_-16px_rgba(16,42,67,0.14)] border border-(--jobs-border) p-6 sm:p-8">
-              <EmployeeSignupForm />
+              <EmployeePhoneAuthForm />
             </div>
           </div>
         </div>

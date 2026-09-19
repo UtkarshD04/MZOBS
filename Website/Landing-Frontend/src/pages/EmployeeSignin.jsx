@@ -1,9 +1,8 @@
-import { Link } from 'react-router-dom'
 import Seo from '../components/Seo'
 import AuthHeader from '../components/ui/AuthHeader'
 import Footer from '../components/layout/Footer'
 import CareerOnboardingPanel from '../components/ui/CareerOnboardingPanel'
-import EmployeeSigninForm from '../components/forms/EmployeeSigninForm'
+import EmployeePhoneAuthForm from '../components/forms/EmployeePhoneAuthForm'
 
 export default function EmployeeSignin() {
   return (
@@ -31,17 +30,7 @@ export default function EmployeeSignin() {
             </div>
 
             <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(16,42,67,0.04),0_20px_44px_-16px_rgba(16,42,67,0.14)] border border-(--jobs-border) p-6 sm:p-8">
-              <div className="mb-6">
-                <h2 className="text-lg font-black text-(--jobs-navy) tracking-tight">Sign in to your account</h2>
-                <p className="text-[13px] text-(--jobs-ink-soft) mt-1">
-                  Don&apos;t have an account?{' '}
-                  <Link to="/employees/signup" className="font-bold text-(--jobs-blue-dark) hover:text-(--jobs-navy) transition-colors">
-                    Create one
-                  </Link>
-                </p>
-              </div>
-
-              <EmployeeSigninForm />
+              <EmployeePhoneAuthForm />
             </div>
           </div>
         </div>
