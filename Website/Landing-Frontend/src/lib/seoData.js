@@ -43,8 +43,8 @@ export const STATIC_PAGE_SEO = {
     description: 'Read the Mzobs privacy policy to understand how we collect, use, and protect your data.',
   },
   '/terms-of-service': {
-    title: 'Terms of Service — Mzobs',
-    description: 'Read the terms of service that govern the use of the Mzobs platform.',
+    title: 'Terms & Conditions — Mzobs',
+    description: 'Read the Mzobs Terms & Conditions that govern the use of the platform for candidates and employers.',
   },
   // One entry per HOT_CITIES_DATA.cities slug (see components/sections/home/
   // HotJobsByCity.jsx and pages/CityJobs.jsx) — adding a city there means
