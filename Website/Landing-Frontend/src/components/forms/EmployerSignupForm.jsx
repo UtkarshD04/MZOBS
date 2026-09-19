@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users, Globe, MapPin } from 'lucide-react'
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
+import TermsConsent from '../ui/TermsConsent'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
 import { EMPLOYER_APP_URL } from '../../lib/config'
 import { signupEmployer, signupEmployerWithGoogle } from '../../lib/employerAuth'
@@ -20,7 +21,7 @@ const initialForm = {
   hq: '',
 }
 
-function validate(form, hasGoogle) {
+function validate(form, hasGoogle, acceptedTerms) {
   const errors = {}
   if (!hasGoogle) {
     if (!form.name.trim()) errors.name = 'Please enter your full name.'
@@ -36,6 +37,7 @@ function validate(form, hasGoogle) {
   if (!form.size) errors.size = 'Please select a company size.'
   if (!form.website.trim()) errors.website = 'Please enter your company website.'
   if (!form.hq.trim()) errors.hq = 'Please enter your headquarters city.'
+  if (!acceptedTerms) errors.terms = 'Please accept the Terms & Conditions and Privacy Policy to create an account.'
   return errors
 }
 
@@ -50,6 +52,7 @@ export default function EmployerSignupForm() {
   const [status, setStatus] = useState('idle') // idle | submitting
   const [showPassword, setShowPassword] = useState(false)
   const [googleCredential, setGoogleCredential] = useState(null)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
 
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }))
@@ -64,7 +67,7 @@ export default function EmployerSignupForm() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const nextErrors = validate(form, Boolean(googleCredential))
+    const nextErrors = validate(form, Boolean(googleCredential), acceptedTerms)
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
@@ -189,9 +192,11 @@ export default function EmployerSignupForm() {
         </Field>
       </div>
 
+      <TermsConsent tone="careers" checked={acceptedTerms} onChange={setAcceptedTerms} error={errors.terms} className="mb-4" />
+
       {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
 
-      <SubmitButton disabled={status === 'submitting'} className="mt-2">
+      <SubmitButton disabled={status === 'submitting' || !acceptedTerms} className="mt-2">
         {status === 'submitting' ? (
           'Creating your workspace...'
         ) : (
@@ -201,9 +206,6 @@ export default function EmployerSignupForm() {
         )}
       </SubmitButton>
 
-      <p className="text-[11.5px] text-[#9E9E9E] text-center mt-4 leading-relaxed">
-        By signing up, you agree to Mzobs' Terms of Service and Privacy Policy.
-      </p>
     </form>
   )
 }

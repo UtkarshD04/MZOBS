@@ -5,6 +5,7 @@ import { ArrowRight, ArrowLeft, CheckCircle2, User, Mail, Phone, UploadCloud, Fi
 import { Field, Input, PrimaryButton, SecondaryButton } from '../ui/JobsAuthField'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
 import OtpInput from '../ui/OtpInput'
+import TermsConsent from '../ui/TermsConsent'
 import {
   loginEmployeeWithGoogle,
   phoneLoginEmployee,
@@ -43,6 +44,10 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
+  // Required before a NEW account is created (profile step, or the phone step
+  // when a new Google user still needs to verify a number). Existing accounts
+  // signing in never see this.
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
 
   const [googleCredential, setGoogleCredential] = useState(null)
 
@@ -189,6 +194,10 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
 
   async function finishSignup(token) {
     setError('')
+    if (!acceptedTerms) {
+      setError('Please accept the Terms & Conditions and Privacy Policy to continue.')
+      return
+    }
     setCreatingAccount(true)
     try {
       const { token: sessionToken, employee } = googleCredential
@@ -209,6 +218,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
     setError('')
     if (!name.trim()) return setError('Please enter your full name.')
     if (!EMAIL_RE.test(email.trim())) return setError('Enter a valid email address.')
+    if (!acceptedTerms) return setError('Please accept the Terms & Conditions and Privacy Policy to continue.')
     finishSignup(phoneToken)
   }
 
@@ -330,6 +340,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
           <form
             onSubmit={(e) => {
               e.preventDefault()
+              if (googleCredential && !acceptedTerms) return setError('Please accept the Terms & Conditions and Privacy Policy to continue.')
               if (phone.replace(/\D/g, '').length === 10) handleSendOtp()
             }}
           >
@@ -355,7 +366,9 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
 
             {error && <p className="text-xs text-red-600 mb-4 -mt-2">{error}</p>}
 
-            <PrimaryButton className="mt-1" disabled={sendingOtp || phone.length !== 10}>
+            {googleCredential && <TermsConsent checked={acceptedTerms} onChange={setAcceptedTerms} className="mb-4" />}
+
+            <PrimaryButton className="mt-1" disabled={sendingOtp || phone.length !== 10 || (googleCredential && !acceptedTerms)}>
               {sendingOtp ? 'Sending...' : <>Send OTP <ArrowRight size={16} /></>}
             </PrimaryButton>
           </form>
@@ -363,17 +376,17 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
           <OrDivider label="or continue with Google" />
           <GoogleAuthButton onCredential={handleGoogleCredential} onError={(message) => setError(message)} />
 
-          <p className="text-[11.5px] text-(--jobs-ink-soft) text-center mt-5 leading-relaxed">
+          {!googleCredential && <p className="text-[11.5px] text-(--jobs-ink-soft) text-center mt-5 leading-relaxed">
             By continuing, you agree to Mzobs'{' '}
             <a href="/terms-of-service" className="font-bold text-(--jobs-navy) hover:text-(--jobs-blue-dark) transition-colors">
-              Terms of Service
+              Terms &amp; Conditions
             </a>{' '}
             and{' '}
             <a href="/privacy-policy" className="font-bold text-(--jobs-navy) hover:text-(--jobs-blue-dark) transition-colors">
               Privacy Policy
             </a>
             .
-          </p>
+          </p>}
         </motion.div>
       )}
 
@@ -425,9 +438,11 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
             <Input icon={Mail} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" />
           </Field>
 
+          <TermsConsent checked={acceptedTerms} onChange={setAcceptedTerms} className="mb-4" />
+
           {error && <p className="text-xs text-red-600 mb-4 -mt-2">{error}</p>}
 
-          <PrimaryButton className="mt-1" disabled={creatingAccount}>
+          <PrimaryButton className="mt-1" disabled={creatingAccount || !acceptedTerms}>
             {creatingAccount ? 'Creating your account...' : <>Continue <ArrowRight size={16} /></>}
           </PrimaryButton>
 
