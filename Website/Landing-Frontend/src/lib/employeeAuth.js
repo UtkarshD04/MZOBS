@@ -23,6 +23,13 @@ export function signupEmployee({ name, email, phone, password, experience, gradu
   return postJSON('/auth/signup', { name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken })
 }
 
+// Logs an *existing* account in using nothing but a verified phoneToken — no
+// password. A 404 just means this number isn't registered yet, which the
+// phone-first auth flow reads as "show the signup details step".
+export function phoneLoginEmployee({ phone, phoneToken }) {
+  return postJSON('/auth/phone-login', { phone, phoneToken })
+}
+
 export function loginEmployeeWithGoogle({ credential }) {
   return postJSON('/auth/google-login', { credential })
 }
