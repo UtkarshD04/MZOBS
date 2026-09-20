@@ -99,7 +99,7 @@ function JobCard({ job, tone, onOpen }) {
         <span className="truncate">{job.location}</span>
       </p>
 
-      <p className="mt-2 text-[15px] font-black text-(--explorer-navy)">{job.salary || 'Salary undisclosed'}</p>
+      <p className="mt-2 text-[15px] font-black text-(--explorer-navy)">{job.salary || 'Not disclosed'}</p>
 
       <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
         {job.employmentType && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.employmentType}</span>}
@@ -161,7 +161,7 @@ function FeaturedJobTile({ job, tone, onOpen }) {
           <MapPin size={13} className="shrink-0" aria-hidden="true" />
           {job.location}
         </p>
-        <p className="mt-1.5 text-[22px] font-black text-(--explorer-navy)">{job.salary || 'Salary undisclosed'}</p>
+        <p className="mt-1.5 text-[22px] font-black text-(--explorer-navy)">{job.salary || 'Not disclosed'}</p>
 
         {job.description && <p className="mt-3 text-[13.5px] text-(--explorer-navy)/75 leading-relaxed max-w-md">{job.description}</p>}
 

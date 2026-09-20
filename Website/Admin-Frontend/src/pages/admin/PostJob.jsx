@@ -41,6 +41,8 @@ const emptyForm = {
   description: '',
   benefits: '',
   deadline: '',
+  instantHiring: false,
+  salaryHidden: false,
 }
 
 export default function PostJob() {
@@ -60,8 +62,8 @@ export default function PostJob() {
       department: form.department,
       experienceMin: form.experienceMin,
       experienceMax: form.experienceMax,
-      salaryMin: form.salaryMin,
-      salaryMax: form.salaryMax,
+      salaryMin: form.salaryHidden ? '0' : form.salaryMin,
+      salaryMax: form.salaryHidden ? '0' : form.salaryMax,
       vacancies: form.vacancies,
       location: form.location,
       description: form.description,
@@ -79,8 +81,8 @@ export default function PostJob() {
       employmentType: form.employmentType,
       experienceMin: Number(form.experienceMin),
       experienceMax: Number(form.experienceMax),
-      salaryMin: Number(form.salaryMin),
-      salaryMax: Number(form.salaryMax),
+      salaryMin: form.salaryHidden ? 0 : Number(form.salaryMin),
+      salaryMax: form.salaryHidden ? 0 : Number(form.salaryMax),
       vacancies: Number(form.vacancies),
       location: form.location.trim(),
       workMode: form.workMode,
@@ -89,6 +91,7 @@ export default function PostJob() {
       description: form.description.trim(),
       benefits: form.benefits.split(',').map((s) => s.trim()).filter(Boolean),
       deadline: form.deadline,
+      instantHiring: form.instantHiring,
     }
 
     createJob.mutate(payload, {
@@ -191,10 +194,14 @@ export default function PostJob() {
             </div>
             <Field label="Salary range (annual, ₹)">
               <div className="flex items-center gap-2">
-                <Input type="number" min={0} placeholder="Min" value={form.salaryMin} onChange={set('salaryMin')} />
+                <Input type="number" min={0} placeholder="Min" value={form.salaryMin} onChange={set('salaryMin')} disabled={form.salaryHidden} />
                 <span className="text-ink-tertiary text-[13px]">to</span>
-                <Input type="number" min={0} placeholder="Max" value={form.salaryMax} onChange={set('salaryMax')} />
+                <Input type="number" min={0} placeholder="Max" value={form.salaryMax} onChange={set('salaryMax')} disabled={form.salaryHidden} />
               </div>
+              <label className="flex items-center gap-2 mt-2 text-[12.5px] text-ink-secondary cursor-pointer">
+                <input type="checkbox" checked={form.salaryHidden} onChange={(e) => setForm((f) => ({ ...f, salaryHidden: e.target.checked }))} />
+                Salary not disclosed (candidates see "Not disclosed")
+              </label>
             </Field>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Track" optional hint="Powers the employee 'My track' filter">
@@ -210,6 +217,12 @@ export default function PostJob() {
                 <Input type="date" value={form.deadline} onChange={set('deadline')} />
               </Field>
             </div>
+            <Field label="Urgent hiring" optional hint="Shown in the candidate 'Urgent hiring' section. Everyone can see it, only premium members can apply.">
+              <Select value={form.instantHiring ? 'yes' : 'no'} onChange={(e) => setForm((f) => ({ ...f, instantHiring: e.target.value === 'yes' }))}>
+                <option value="no">No, regular opening</option>
+                <option value="yes">Yes, mark as urgent</option>
+              </Select>
+            </Field>
           </CardBody>
         </Card>
       </StaggerItem>

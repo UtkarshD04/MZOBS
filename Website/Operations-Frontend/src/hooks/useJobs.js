@@ -40,3 +40,11 @@ export function useNotifyHrMutation() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs'] }),
   })
 }
+
+export function useSetJobUrgentMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, instantHiring }) => jobsService.setJobUrgent(id, instantHiring),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs'] }),
+  })
+}

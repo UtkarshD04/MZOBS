@@ -8,6 +8,7 @@ import Badge from '../components/ui/Badge'
 import Chip from '../components/ui/Chip'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
 import { useProfileQuery, useCompleteProfileMutation } from '../hooks/useProfile'
+import { profileCompletion } from '../lib/profileCompletion'
 
 // Signup only collects name, mobile and email. This wizard is the mandatory
 // "complete your profile" step shown right after the one-time payment succeeds
@@ -94,6 +95,24 @@ export default function Onboarding() {
   const [github, setGithub] = useState('')
 
   const isExperienced = employmentStatus === 'Experienced Professional'
+
+  // Real completion: the saved profile overlaid with everything typed so far.
+  const { percent: completionPercent } = profileCompletion({
+    ...profile,
+    resumeHeadline,
+    skills,
+    education: degree.trim() ? [{ degree, institute: institution, year: gradYear }] : [],
+    currentCity,
+    state: stateName,
+    pincode,
+    dob,
+    gender,
+    preferredRole,
+    preferredLocations: locations,
+    interests,
+    portfolioLink,
+    linkedin,
+  })
 
   function toggle(list, setList, item) {
     setList(list.includes(item) ? list.filter((x) => x !== item) : [...list, item])
@@ -200,9 +219,10 @@ export default function Onboarding() {
       <div className="h-16 flex items-center px-7 gap-4.5 border-b border-border bg-surface flex-shrink-0">
         <div className="w-[26px] h-[26px] rounded-lg bg-gradient-to-br from-navy-700 to-navy text-white flex items-center justify-center text-xs font-extrabold">M</div>
         <div className="flex-1 h-1.5 bg-surface-sunken rounded-full overflow-hidden">
-          <motion.div className="h-full bg-navy rounded-full" animate={{ width: `${((step + 1) / TOTAL) * 100}%` }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} />
+          <motion.div className="h-full bg-navy rounded-full" animate={{ width: `${completionPercent}%` }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} />
         </div>
-        <span className="text-xs text-ink-tertiary flex-shrink-0">{step === TOTAL - 1 ? 'Complete' : `Step ${step + 1} of ${TOTAL}`}</span>
+        <span className="text-xs font-semibold text-ink flex-shrink-0">Profile {completionPercent}% complete</span>
+        <span className="text-xs text-ink-tertiary flex-shrink-0 max-sm:hidden">{step === TOTAL - 1 ? 'Done' : `Step ${step + 1} of ${TOTAL}`}</span>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-10">
