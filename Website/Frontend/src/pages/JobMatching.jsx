@@ -44,7 +44,7 @@ const RECOMMENDED_SORT_OPTIONS = [
   { value: 'salary_asc', label: 'Salary: low to high' },
 ]
 
-function JobCard({ job, applied, eligible, limitReached, authed, saved, employeeTrack, onToggleSave, onApplied, matchReasons }) {
+function JobCard({ job, applied, eligible, limitReached, premiumOnly, authed, saved, employeeTrack, onToggleSave, onApplied, matchReasons }) {
   const app = useApp()
   const cat = categoryOf(job.track)
   const onTrack = !!job.track && job.track === employeeTrack
@@ -60,6 +60,11 @@ function JobCard({ job, applied, eligible, limitReached, authed, saved, employee
               <Badge tone={cat.tone} dot={false}>
                 {cat.label}
               </Badge>
+              {job.instantHiring && (
+                <Badge tone="gold" dot={false}>
+                  Urgent hiring
+                </Badge>
+              )}
               {onTrack && (
                 <Badge tone="gold" icon={<Sparkles size={11} />} dot={false}>
                   Your track
@@ -103,6 +108,11 @@ function JobCard({ job, applied, eligible, limitReached, authed, saved, employee
             <Badge tone="green" icon={<CheckCircle2 size={11} />} dot={false}>
               Applied — with Mzobs
             </Badge>
+          ) : premiumOnly ? (
+            // Urgent-hiring roles are visible to everyone; applying is a premium perk.
+            <Button variant="gold" size="sm" disabled title="Urgent hiring jobs open with premium">
+              For premium members
+            </Button>
           ) : limitReached ? (
             <Button variant="gold" size="sm" onClick={() => (window.location.href = '/app/subscription')}>
               Upgrade to apply — free limit reached
@@ -112,7 +122,7 @@ function JobCard({ job, applied, eligible, limitReached, authed, saved, employee
               Apply through Mzobs
             </Button>
           )}
-          <Button size="sm" onClick={() => openJobDetailModal(app, job, onApplied)}>
+          <Button size="sm" onClick={() => openJobDetailModal(app, { ...job, premiumOnly }, onApplied)}>
             View details
           </Button>
           <button onClick={onToggleSave} className={`ml-auto p-1.5 rounded-lg ${saved ? 'text-gold-strong' : 'text-ink-tertiary hover:bg-surface-hover hover:text-ink'}`}>
@@ -394,6 +404,7 @@ export default function JobMatching() {
     applied: appliedJobIds.has(job.id),
     eligible,
     limitReached,
+    premiumOnly: !!job.instantHiring && !isPremium,
     authed,
     saved: savedIds.has(job.id),
     employeeTrack: track?.key,

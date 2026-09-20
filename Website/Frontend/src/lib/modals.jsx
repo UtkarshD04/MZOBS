@@ -152,15 +152,22 @@ export function openJobDetailModal(app, job, onApplied) {
       </ModalBody>
       <ModalFoot>
         <Button onClick={app.closeModal}>Close</Button>
-        <Button
-          variant="primary"
-          onClick={() => {
-            app.closeModal()
-            openApplyModal(app, job, onApplied)
-          }}
-        >
-          Apply through Mzobs
-        </Button>
+        {job.premiumOnly ? (
+          // Urgent-hiring roles are visible to everyone; applying is a premium perk.
+          <Button variant="gold" disabled>
+            For premium members
+          </Button>
+        ) : (
+          <Button
+            variant="primary"
+            onClick={() => {
+              app.closeModal()
+              openApplyModal(app, job, onApplied)
+            }}
+          >
+            Apply through Mzobs
+          </Button>
+        )}
       </ModalFoot>
     </>,
     true
