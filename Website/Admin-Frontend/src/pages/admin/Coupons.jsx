@@ -104,7 +104,7 @@ function CouponFormModal({ app, coupon, onDone }) {
         </Field>
         <Field label="Applies to" hint="Which payment this coupon can be redeemed on.">
           <Select value={form.appliesTo} onChange={(e) => set('appliesTo', e.target.value)}>
-            <option value="employee_subscription">Employee subscription (₹299 placement fee)</option>
+            <option value="employee_subscription">Employee subscription (₹99 placement fee)</option>
             <option value="employer_cv_credit">Employer CV credits</option>
           </Select>
         </Field>
@@ -193,7 +193,7 @@ export default function Coupons() {
       <StaggerItem className="flex items-start justify-between gap-5 flex-wrap mb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Coupons</h1>
-          <p className="text-sm text-ink-secondary mt-1">Discount codes for the employee ₹299 placement fee and employer CV-credit purchases.</p>
+          <p className="text-sm text-ink-secondary mt-1">Discount codes for the employee ₹99 placement fee and employer CV-credit purchases.</p>
         </div>
         <Button variant="primary" onClick={() => app.openModal(<CouponFormModal app={app} onDone={refetch} />)}>
           <Plus size={15} /> Create coupon

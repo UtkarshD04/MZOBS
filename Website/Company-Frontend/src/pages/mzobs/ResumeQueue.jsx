@@ -411,7 +411,7 @@ export default function ResumeQueue() {
                       <span className="text-[15px] font-semibold">{c.name}</span>
                       <Badge tone={RESUME_STATUS_TONE[c.resume?.status ?? 'none']}>{c.resume?.status ?? 'none'}</Badge>
                       <Badge tone={c.subscription?.status === 'paid' ? 'green' : 'red'} dot={false}>
-                        {c.subscription?.status === 'paid' ? '₹299 paid' : 'Unpaid'}
+                        {c.subscription?.status === 'paid' ? '₹99 paid' : 'Unpaid'}
                       </Badge>
                     </div>
                     <div className="text-[13px] text-ink-secondary mt-1">
