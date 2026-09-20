@@ -25,6 +25,7 @@ import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import FilterSidebar from '../components/jobs/FilterSidebar'
 import FilterChips from '../components/jobs/FilterChips'
 import JobFilterDrawer from '../components/jobs/JobFilterDrawer'
+import LocationConsentModal from '../components/jobs/LocationConsentModal'
 import JobTitleAutocomplete from '../components/jobs/JobTitleAutocomplete'
 import { hasEmployeeToken, signInUrl } from '../lib/auth'
 
@@ -314,6 +315,12 @@ export default function JobMatching() {
       app.addToast('error', 'Your browser does not support location access.')
       return
     }
+    // Explain first, then let the browser ask — declining here never shows its prompt.
+    app.openModal(<LocationConsentModal onAllow={requestNearestLocation} onCancel={app.closeModal} />)
+  }
+
+  function requestNearestLocation() {
+    app.closeModal()
     setLocatingForSort(true)
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -380,7 +387,7 @@ export default function JobMatching() {
   // elsewhere), and a populated ref keeps its object shape rather than
   // collapsing to the `jobId` string form — so read the id from there.
   const appliedJobIds = new Set(applications.map((a) => a.job?.id))
-  const activeFilterCount = filters.workMode.length + filters.employmentType.length + filters.track.length + filters.skills.length + (filters.location ? 1 : 0) + (filters.experience ? 1 : 0) + (filters.salary ? 1 : 0) + (filters.postedWithin ? 1 : 0) + filters.company.length
+  const activeFilterCount = filters.workMode.length + filters.employmentType.length + filters.track.length + filters.skills.length + (filters.location ? 1 : 0) + filters.experience.length + (filters.experienceYears != null ? 1 : 0) + filters.salary.length + (filters.postedWithin ? 1 : 0) + filters.company.length
 
   const cardProps = (job) => ({
     job,

@@ -1,12 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Search, MapPin, Check, ChevronDown, SlidersHorizontal, X, ArrowRight, ArrowUpRight, ShieldCheck, Sparkles, Loader2, RotateCw, SearchX } from 'lucide-react'
+import { Search, MapPin, ChevronDown, SlidersHorizontal, X, ArrowRight, ArrowUpRight, ShieldCheck, Sparkles, Loader2, RotateCw, SearchX } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { CompanyMark } from './jobCardPrimitives'
-import { fetchLatestJobs } from '../../../lib/publicJobs'
-import { WORK_MODES, EMPLOYMENT_TYPES, EXPERIENCE_OPTIONS, SALARY_OPTIONS, DEPARTMENT_OPTIONS } from '../../../lib/jobFilters'
+import LocationConsentDialog from '../../ui/LocationConsentDialog'
+import MarketplaceFilters from './MarketplaceFilters'
+import { fetchLatestJobs, fetchJobFacets } from '../../../lib/publicJobs'
+import {
+  MARKETPLACE_DEFAULTS,
+  SORT_CHOICES,
+  DEPARTMENT_CHOICES,
+  countMarketplaceFilters,
+  filterParams,
+  listParams,
+  marketplaceChips,
+  toggleIn,
+} from '../../../lib/marketplaceFilters'
 
 // ============================================================
 // Real data — every job/count here comes from Backend's GET /api/jobs (see
@@ -16,14 +27,7 @@ import { WORK_MODES, EMPLOYMENT_TYPES, EXPERIENCE_OPTIONS, SALARY_OPTIONS, DEPAR
 // site's filtering already uses (lib/jobFilters.js), so a value picked here
 // means the same thing Backend expects — no separate demo taxonomy.
 // ============================================================
-const CATEGORIES = [{ key: '', label: 'All' }, ...DEPARTMENT_OPTIONS.map((o) => ({ key: o.value, label: o.label }))]
-const EXPERIENCE_CHOICES = EXPERIENCE_OPTIONS.filter((o) => o.value)
-const SALARY_CHOICES = SALARY_OPTIONS.filter((o) => o.value)
-const SORT_OPTIONS = [
-  { key: 'newest', label: 'Newest' },
-  { key: 'salary_desc', label: 'Highest salary' },
-  { key: 'salary_asc', label: 'Lowest salary' },
-]
+const CATEGORIES = [{ key: '', label: 'All' }, ...DEPARTMENT_CHOICES.map((o) => ({ key: o.value, label: o.label }))]
 const RESULTS_LIMIT = 12
 
 // Soft, desaturated tones a card can land on — cycled by grid position (not
@@ -37,132 +41,6 @@ const CARD_TONES = [
   { bg: '#F1EEFC', border: '#DDD2F7' }, // muted lavender
   { bg: '#FBF7EF', border: '#EEE2C9' }, // soft cream
 ]
-
-function CustomCheckbox({ checked, onChange, children }) {
-  return (
-    <label className="flex items-center gap-2.5 cursor-pointer select-none group">
-      <input type="checkbox" checked={checked} onChange={onChange} className="sr-only" />
-      <span
-        className={`flex items-center justify-center w-4.5 h-4.5 rounded-[6px] border-2 shrink-0 motion-safe:transition-colors motion-safe:duration-150 ${
-          checked ? 'bg-(--explorer-blue) border-(--explorer-blue)' : 'bg-white border-(--explorer-border) group-hover:border-(--explorer-blue-border)'
-        }`}
-      >
-        <Check size={11} strokeWidth={3.5} className={checked ? 'text-white' : 'text-transparent'} aria-hidden="true" />
-      </span>
-      <span className="text-[13.5px] font-medium text-(--explorer-navy)">{children}</span>
-    </label>
-  )
-}
-
-function CustomRadio({ checked, onChange, children }) {
-  return (
-    <label className="flex items-center gap-2.5 cursor-pointer select-none group">
-      <input type="radio" checked={checked} onChange={onChange} className="sr-only" />
-      <span
-        className={`flex items-center justify-center w-4.5 h-4.5 rounded-full border-2 shrink-0 motion-safe:transition-colors motion-safe:duration-150 ${
-          checked ? 'border-(--explorer-blue)' : 'border-(--explorer-border) group-hover:border-(--explorer-blue-border)'
-        }`}
-      >
-        <span className={`w-2 h-2 rounded-full motion-safe:transition-transform motion-safe:duration-150 ${checked ? 'bg-(--explorer-blue) scale-100' : 'bg-transparent scale-0'}`} />
-      </span>
-      <span className="text-[13.5px] font-medium text-(--explorer-navy)">{children}</span>
-    </label>
-  )
-}
-
-function FilterGroup({ label, children }) {
-  return (
-    <div>
-      <p className="text-[11px] font-black uppercase tracking-wide text-(--explorer-muted) mb-3">{label}</p>
-      <div className="flex flex-col gap-2.5">{children}</div>
-    </div>
-  )
-}
-
-// Shared between the desktop sidebar and the mobile drawer — one filter
-// state, two presentations. Field names/values match Backend's
-// parseJobFilters (jobType→employmentType, workMode, experience, salary,
-// location) exactly, so this can be handed straight to fetchLatestJobs.
-function FilterSidebarContent({ state, setState, activeCount, onClear }) {
-  function toggleInSet(key, value) {
-    setState((prev) => {
-      const set = new Set(prev[key])
-      if (set.has(value)) set.delete(value)
-      else set.add(value)
-      return { ...prev, [key]: set }
-    })
-  }
-
-  return (
-    <div className="flex flex-col gap-7">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-[13px] font-black uppercase tracking-wide text-(--explorer-navy)">Filters</p>
-        {activeCount > 0 && (
-          <button
-            type="button"
-            onClick={onClear}
-            className="inline-flex items-center gap-1 text-[12.5px] font-bold text-(--explorer-blue) hover:text-(--explorer-blue-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) rounded-xs"
-          >
-            <X size={12} aria-hidden="true" /> Clear all
-          </button>
-        )}
-      </div>
-
-      <FilterGroup label="Job type">
-        {EMPLOYMENT_TYPES.map((t) => (
-          <CustomCheckbox key={t} checked={state.jobTypes.has(t)} onChange={() => toggleInSet('jobTypes', t)}>
-            {t}
-          </CustomCheckbox>
-        ))}
-      </FilterGroup>
-
-      <FilterGroup label="Work mode">
-        {WORK_MODES.map((m) => (
-          <CustomCheckbox key={m} checked={state.workModes.has(m)} onChange={() => toggleInSet('workModes', m)}>
-            {m}
-          </CustomCheckbox>
-        ))}
-      </FilterGroup>
-
-      <FilterGroup label="Experience">
-        {EXPERIENCE_CHOICES.map((opt) => (
-          <CustomRadio
-            key={opt.value}
-            checked={state.experience === opt.value}
-            onChange={() => setState((prev) => ({ ...prev, experience: prev.experience === opt.value ? '' : opt.value }))}
-          >
-            {opt.label}
-          </CustomRadio>
-        ))}
-      </FilterGroup>
-
-      <FilterGroup label="Location">
-        <div className="relative">
-          <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-(--explorer-muted)" aria-hidden="true" />
-          <input
-            type="text"
-            value={state.location}
-            onChange={(e) => setState((prev) => ({ ...prev, location: e.target.value }))}
-            placeholder="Search location..."
-            className="w-full h-9 pl-9 pr-3 rounded-lg border border-(--explorer-border) bg-white text-[13px] text-(--explorer-navy) outline-none focus:border-(--explorer-blue) focus:ring-3 focus:ring-(--explorer-blue)/12 transition-colors"
-          />
-        </div>
-      </FilterGroup>
-
-      <FilterGroup label="Salary">
-        {SALARY_CHOICES.map((opt) => (
-          <CustomRadio
-            key={opt.value}
-            checked={state.salary === opt.value}
-            onChange={() => setState((prev) => ({ ...prev, salary: prev.salary === opt.value ? '' : opt.value }))}
-          >
-            {opt.label}
-          </CustomRadio>
-        ))}
-      </FilterGroup>
-    </div>
-  )
-}
 
 // A job earns a tag only when it has something real to say — freshly
 // posted (Backend's own postedDaysAgo) or a verified employer
@@ -340,62 +218,89 @@ export default function JobMarketplace() {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
 
-  const [category, setCategory] = useState('')
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('newest')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [filterState, setFilterState] = useState({
-    jobTypes: new Set(),
-    workModes: new Set(),
-    experience: '',
-    location: '',
-    salary: '',
-  })
+  const [filterState, setFilterState] = useState(MARKETPLACE_DEFAULTS)
+  const [facets, setFacets] = useState(null)
+
+  // "Nearest to me": we ask (in our own dialog) BEFORE the browser prompt.
+  const [coords, setCoords] = useState(null)
+  const [consentOpen, setConsentOpen] = useState(false)
+  const [locating, setLocating] = useState(false)
+  const [locationNotice, setLocationNotice] = useState('')
 
   const [jobs, setJobs] = useState([])
   const [total, setTotal] = useState(0)
+  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [loadMoreError, setLoadMoreError] = useState(false)
   const [loadError, setLoadError] = useState(false)
   const [retryToken, setRetryToken] = useState(0)
 
-  const activeFilterCount =
-    filterState.jobTypes.size +
-    filterState.workModes.size +
-    (filterState.experience ? 1 : 0) +
-    (filterState.location.trim() ? 1 : 0) +
-    (filterState.salary ? 1 : 0)
+  // Company chips need a name, and a selected company must keep its name even
+  // if a later facet response no longer lists it.
+  const companyNames = useRef(new Map())
+  facets?.companies?.forEach((c) => companyNames.current.set(c.id, c.name))
+
+  const activeFilterCount = countMarketplaceFilters(filterState)
+  const chips = marketplaceChips(filterState, { companyNameOf: (id) => companyNames.current.get(id) })
 
   function clearFilters() {
-    setFilterState({ jobTypes: new Set(), workModes: new Set(), experience: '', location: '', salary: '' })
+    setFilterState(MARKETPLACE_DEFAULTS)
+  }
+
+  function handleSortChange(next) {
+    setLocationNotice('')
+    if (next !== 'nearest' || coords) {
+      setSort(next)
+      return
+    }
+    setConsentOpen(true)
+  }
+
+  function allowLocation() {
+    setConsentOpen(false)
+    if (!navigator.geolocation) {
+      setLocationNotice('Your browser doesn\u2019t support location, so jobs can\u2019t be sorted by distance.')
+      return
+    }
+    setLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCoords({ lat: position.coords.latitude, lng: position.coords.longitude })
+        setSort('nearest')
+        setLocating(false)
+      },
+      (err) => {
+        setLocating(false)
+        setLocationNotice(
+          err.code === 1
+            ? 'Location permission was denied. Allow it in your browser settings to sort jobs by distance.'
+            : 'We couldn\u2019t get your location just now. Please try again.'
+        )
+      },
+      { timeout: 10000, maximumAge: 5 * 60 * 1000 }
+    )
   }
 
   // Real fetch, debounced the same way LatestJobs.jsx debounces its own —
-  // every control here (category tab, search box, sort, sidebar filters)
+  // every control here (department tabs, search box, sort, sidebar filters)
   // maps straight onto Backend's GET /api/jobs query params.
   useEffect(() => {
     let cancelled = false
     const controller = new AbortController()
     setLoadError(false)
+    setLoadMoreError(false)
 
     const timer = setTimeout(() => {
-      fetchLatestJobs(
-        {
-          q: search.trim() ? [search.trim()] : [],
-          location: filterState.location.trim() ? [filterState.location.trim()] : [],
-          experience: filterState.experience,
-          workMode: [...filterState.workModes],
-          salary: filterState.salary,
-          employmentType: [...filterState.jobTypes],
-          track: category ? [category] : [],
-          sort,
-          limit: RESULTS_LIMIT,
-        },
-        { signal: controller.signal }
-      )
+      fetchLatestJobs(listParams(filterState, { search, sort, coords, limit: RESULTS_LIMIT, page: 1 }), { signal: controller.signal })
         .then(({ jobs: fetchedJobs, total: fetchedTotal }) => {
           if (cancelled) return
           setJobs(fetchedJobs)
           setTotal(fetchedTotal)
+          setPage(1)
         })
         .catch((err) => {
           if (cancelled || err?.name === 'AbortError') return
@@ -413,8 +318,41 @@ export default function JobMarketplace() {
       clearTimeout(timer)
       controller.abort()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, search, sort, filterState, retryToken])
+  }, [search, sort, coords, filterState, retryToken])
+
+  // Live counts next to every option. Best-effort: if this fails the filters
+  // still work, they just show no numbers.
+  useEffect(() => {
+    let cancelled = false
+    const controller = new AbortController()
+    const timer = setTimeout(() => {
+      fetchJobFacets(filterParams(filterState, search), { signal: controller.signal })
+        .then((data) => !cancelled && setFacets(data))
+        .catch(() => {})
+    }, 250)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [search, filterState, retryToken])
+
+  async function loadMore() {
+    const nextPage = page + 1
+    setLoadingMore(true)
+    setLoadMoreError(false)
+    try {
+      const { jobs: more } = await fetchLatestJobs(listParams(filterState, { search, sort, coords, limit: RESULTS_LIMIT, page: nextPage }))
+      setJobs((prev) => [...prev, ...more.filter((j) => !prev.some((p) => p.id === j.id))])
+      setPage(nextPage)
+    } catch {
+      setLoadMoreError(true)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  const hasMore = jobs.length < total
 
   const featured = jobs[0]
   const restJobs = jobs.slice(1)
@@ -465,27 +403,31 @@ export default function JobMarketplace() {
         {/* Category navigation — editorial, underlined, not pills */}
         <Reveal direction="up" duration={0.5} delay={0.05} className="mt-8 careers-scroll-x overflow-x-auto -mx-1 px-1">
           <div className="flex items-center gap-5 sm:gap-6 border-b border-(--explorer-border) min-w-max">
-            {CATEGORIES.map((c) => (
-              <button
-                key={c.key || 'all'}
-                type="button"
-                onClick={() => setCategory(c.key)}
-                aria-pressed={category === c.key}
-                className={`relative shrink-0 pb-3 text-[13.5px] font-bold whitespace-nowrap motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
-                  category === c.key ? 'text-(--explorer-navy)' : 'text-(--explorer-muted) hover:text-(--explorer-navy)'
-                }`}
-              >
-                {c.label}
-                {category === c.key && (
-                  <motion.span
-                    layoutId="marketplace-category-underline"
-                    className="absolute left-0 right-0 -bottom-px h-[2.5px] rounded-full"
-                    style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
-                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  />
-                )}
-              </button>
-            ))}
+            {CATEGORIES.map((c) => {
+              // "All" means no department filter; every other tab toggles its department
+              // (several can be on at once, same as the sidebar's Department list).
+              const active = c.key ? filterState.tracks.includes(c.key) : filterState.tracks.length === 0
+              return (
+                <button
+                  key={c.key || 'all'}
+                  type="button"
+                  onClick={() => setFilterState((prev) => ({ ...prev, tracks: c.key ? toggleIn(prev.tracks, c.key) : [] }))}
+                  aria-pressed={active}
+                  className={`relative shrink-0 pb-3 text-[13.5px] font-bold whitespace-nowrap motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
+                    active ? 'text-(--explorer-navy)' : 'text-(--explorer-muted) hover:text-(--explorer-navy)'
+                  }`}
+                >
+                  {c.label}
+                  {active && (
+                    <span
+                      className="absolute left-0 right-0 -bottom-px h-[2.5px] rounded-full"
+                      style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
+              )
+            })}
           </div>
         </Reveal>
 
@@ -500,8 +442,8 @@ export default function JobMarketplace() {
             transition={{ duration: 0.6, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
             className="hidden lg:block"
           >
-            <div className="sticky top-24 rounded-2xl border border-(--explorer-border) bg-white p-6">
-              <FilterSidebarContent state={filterState} setState={setFilterState} activeCount={activeFilterCount} onClear={clearFilters} />
+            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain rounded-2xl border border-(--explorer-border) bg-white p-6">
+              <MarketplaceFilters state={filterState} setState={setFilterState} facets={facets} activeCount={activeFilterCount} onClear={clearFilters} />
             </div>
           </motion.div>
 
@@ -546,19 +488,47 @@ export default function JobMarketplace() {
               <div className="relative shrink-0">
                 <select
                   value={sort}
-                  onChange={(e) => setSort(e.target.value)}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  disabled={locating}
                   aria-label="Sort jobs"
                   className="h-10 pl-4 pr-9 rounded-full border border-(--explorer-border) bg-white text-[13px] font-bold text-(--explorer-navy) outline-none appearance-none cursor-pointer focus:border-(--explorer-blue) focus:ring-3 focus:ring-(--explorer-blue)/12 transition-colors"
                 >
-                  {SORT_OPTIONS.map((opt) => (
+                  {SORT_CHOICES.map((opt) => (
                     <option key={opt.key} value={opt.key}>
-                      Sort: {opt.label}
+                      Sort: {opt.key === 'nearest' && locating ? 'Locating\u2026' : opt.label}
                     </option>
                   ))}
                 </select>
                 <ChevronDown size={13} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-(--explorer-muted) pointer-events-none" aria-hidden="true" />
               </div>
             </Reveal>
+
+            {locationNotice && (
+              <p role="status" className="mb-4 rounded-xl border border-(--explorer-border) bg-(--explorer-bg) px-4 py-3 text-[13px] text-(--explorer-navy)">
+                {locationNotice}
+              </p>
+            )}
+
+            {/* Everything applied, each removable with one click */}
+            {chips.length > 0 && (
+              <div className="mb-5 flex flex-wrap items-center gap-2" aria-label="Applied filters">
+                {chips.map((chip) => (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    onClick={() => setFilterState((prev) => chip.clear(prev))}
+                    aria-label={`Remove filter ${chip.label}`}
+                    className="inline-flex items-center gap-1.5 h-8 pl-3 pr-2.5 rounded-full border border-(--explorer-blue-border) bg-(--explorer-blue-surface) text-[12.5px] font-semibold text-(--explorer-blue) hover:bg-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+                  >
+                    {chip.label}
+                    <X size={12} aria-hidden="true" />
+                  </button>
+                ))}
+                <button type="button" onClick={clearFilters} className="text-[12.5px] font-bold text-(--explorer-muted) hover:text-(--explorer-navy) transition-colors ml-1">
+                  Clear all
+                </button>
+              </div>
+            )}
 
             {/* Grid */}
             {showError ? (
@@ -599,7 +569,7 @@ export default function JobMarketplace() {
             ) : (
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={`${category}-${sort}-${search}-${JSON.stringify([...filterState.jobTypes, ...filterState.workModes, filterState.experience, filterState.location, filterState.salary])}`}
+                  key={`${sort}-${search}-${JSON.stringify(filterState)}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -619,6 +589,21 @@ export default function JobMarketplace() {
                   </StaggerGroup>
                 </motion.div>
               </AnimatePresence>
+            )}
+
+            {!showError && !showEmpty && !showInitialLoading && hasMore && (
+              <div className="mt-8 flex flex-col items-center gap-2">
+                <button
+                  type="button"
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                  className="inline-flex items-center gap-2 h-11 px-6 rounded-full border border-(--explorer-border) bg-white text-[13.5px] font-bold text-(--explorer-navy) hover:border-(--explorer-blue-border) hover:text-(--explorer-blue) transition-colors disabled:opacity-60"
+                >
+                  {loadingMore ? <Loader2 size={15} className="animate-spin" aria-hidden="true" /> : null}
+                  {loadingMore ? 'Loading\u2026' : `Show more jobs (${total - jobs.length} left)`}
+                </button>
+                {loadMoreError && <p className="text-[12.5px] text-(--explorer-muted)">Couldn&rsquo;t load more jobs. Please try again.</p>}
+              </div>
             )}
           </div>
         </div>
@@ -648,7 +633,7 @@ export default function JobMarketplace() {
                   <X size={16} aria-hidden="true" />
                 </button>
               </div>
-              <FilterSidebarContent state={filterState} setState={setFilterState} activeCount={activeFilterCount} onClear={clearFilters} />
+              <MarketplaceFilters state={filterState} setState={setFilterState} facets={facets} activeCount={activeFilterCount} onClear={clearFilters} />
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(false)}
@@ -661,6 +646,8 @@ export default function JobMarketplace() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LocationConsentDialog open={consentOpen} onAllow={allowLocation} onCancel={() => setConsentOpen(false)} />
     </section>
   )
 }

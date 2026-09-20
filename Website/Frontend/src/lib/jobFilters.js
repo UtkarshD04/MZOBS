@@ -40,8 +40,12 @@ export const POSTED_WITHIN_OPTIONS = [
   { value: '1', label: 'Last 24 hours' },
   { value: '3', label: 'Last 3 days' },
   { value: '7', label: 'Last 7 days' },
+  { value: '15', label: 'Last 15 days' },
   { value: '30', label: 'Last 30 days' },
 ]
+
+// "My experience is N years" — jobs whose range contains N (Backend: experienceYears).
+export const MAX_EXPERIENCE_YEARS = 30
 
 export const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest first' },
@@ -67,8 +71,10 @@ export const DEFAULT_FILTERS = {
   q: '',
   location: '',
   workMode: [],
-  experience: '',
-  salary: '',
+  // Experience and salary are multi-select (Backend ORs the selected ranges together).
+  experience: [],
+  experienceYears: null,
+  salary: [],
   employmentType: [],
   track: [],
   skills: [],
@@ -87,6 +93,12 @@ function csvParam(searchParams, key) {
   return [...new Set(raw.split(',').map((v) => v.trim()).filter(Boolean))]
 }
 
+function yearsParam(raw) {
+  if (raw == null || raw === '') return null
+  const n = Number(raw)
+  return Number.isInteger(n) && n >= 0 && n <= MAX_EXPERIENCE_YEARS ? n : null
+}
+
 function singleParam(searchParams, key, allowedLabels) {
   const v = searchParams.get(key) ?? ''
   return allowedLabels[v] ? v : ''
@@ -97,8 +109,9 @@ export function parseFiltersFromParams(searchParams) {
     q: searchParams.get('q') ?? '',
     location: searchParams.get('location') ?? '',
     workMode: csvParam(searchParams, 'workMode').filter((v) => WORK_MODES.includes(v)),
-    experience: singleParam(searchParams, 'experience', EXPERIENCE_LABELS),
-    salary: singleParam(searchParams, 'salary', SALARY_LABELS),
+    experience: csvParam(searchParams, 'experience').filter((v) => v && EXPERIENCE_LABELS[v]),
+    experienceYears: yearsParam(searchParams.get('experienceYears')),
+    salary: csvParam(searchParams, 'salary').filter((v) => v && SALARY_LABELS[v]),
     employmentType: csvParam(searchParams, 'employmentType').filter((v) => EMPLOYMENT_TYPES.includes(v)),
     track: csvParam(searchParams, 'track').filter((v) => DEPARTMENT_LABELS[v]),
     skills: csvParam(searchParams, 'skills'),
@@ -117,8 +130,9 @@ export function toParams(filters) {
   if (filters.q) params.q = filters.q
   if (filters.location) params.location = filters.location
   if (filters.workMode?.length) params.workMode = filters.workMode.join(',')
-  if (filters.experience) params.experience = filters.experience
-  if (filters.salary) params.salary = filters.salary
+  if (filters.experience?.length) params.experience = filters.experience.join(',')
+  if (filters.experienceYears != null) params.experienceYears = String(filters.experienceYears)
+  if (filters.salary?.length) params.salary = filters.salary.join(',')
   if (filters.employmentType?.length) params.employmentType = filters.employmentType.join(',')
   if (filters.track?.length) params.track = filters.track.join(',')
   if (filters.skills?.length) params.skills = filters.skills.join(',')
@@ -140,8 +154,9 @@ export function countActiveFilters(filters) {
   let n = 0
   if (filters.location) n++
   if (filters.workMode.length) n++
-  if (filters.experience) n++
-  if (filters.salary) n++
+  if (filters.experience.length) n++
+  if (filters.experienceYears != null) n++
+  if (filters.salary.length) n++
   if (filters.employmentType.length) n++
   if (filters.track.length) n++
   if (filters.skills.length) n++
@@ -161,8 +176,12 @@ export function buildFilterChips(filters, { companyNameOf } = {}) {
   if (filters.q) chips.push({ id: 'q', label: `“${filters.q}”`, clear: (f) => ({ ...f, q: '' }) })
   if (filters.location) chips.push({ id: 'location', label: filters.location, clear: (f) => ({ ...f, location: '' }) })
   filters.workMode.forEach((v) => chips.push({ id: `workMode:${v}`, label: v, clear: (f) => ({ ...f, workMode: f.workMode.filter((x) => x !== v) }) }))
-  if (filters.experience) chips.push({ id: 'experience', label: experienceLabel(filters.experience), clear: (f) => ({ ...f, experience: '' }) })
-  if (filters.salary) chips.push({ id: 'salary', label: salaryLabel(filters.salary), clear: (f) => ({ ...f, salary: '' }) })
+  filters.experience.forEach((v) => chips.push({ id: `experience:${v}`, label: experienceLabel(v), clear: (f) => ({ ...f, experience: f.experience.filter((x) => x !== v) }) }))
+  if (filters.experienceYears != null) {
+    const n = filters.experienceYears
+    chips.push({ id: 'experienceYears', label: `${n} ${n === 1 ? 'yr' : 'yrs'} experience`, clear: (f) => ({ ...f, experienceYears: null }) })
+  }
+  filters.salary.forEach((v) => chips.push({ id: `salary:${v}`, label: salaryLabel(v), clear: (f) => ({ ...f, salary: f.salary.filter((x) => x !== v) }) }))
   filters.employmentType.forEach((v) => chips.push({ id: `employmentType:${v}`, label: v, clear: (f) => ({ ...f, employmentType: f.employmentType.filter((x) => x !== v) }) }))
   filters.track.forEach((v) => chips.push({ id: `track:${v}`, label: departmentLabel(v), clear: (f) => ({ ...f, track: f.track.filter((x) => x !== v) }) }))
   filters.skills.forEach((v) => chips.push({ id: `skills:${v}`, label: v, clear: (f) => ({ ...f, skills: f.skills.filter((x) => x !== v) }) }))
