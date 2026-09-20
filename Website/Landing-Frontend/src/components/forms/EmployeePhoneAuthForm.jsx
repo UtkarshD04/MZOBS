@@ -9,6 +9,9 @@ import TermsConsent from '../ui/TermsConsent'
 import {
   loginEmployeeWithGoogle,
   phoneLoginEmployee,
+  sendEmployeeEmailOtp,
+  verifyEmployeeEmailOtp,
+  emailLoginEmployee,
   signupEmployee,
   signupEmployeeWithGoogle,
   verifyEmployeePhoneWidget,
@@ -27,10 +30,15 @@ const stepTransition = {
   transition: { duration: 0.18, ease: 'easeOut' },
 }
 
-// A single phone-first entry point for both signin and signup (no password
-// anywhere) — matches consumer apps like cult.fit: enter your number,
-// verify the OTP, and the backend tells us whether that's an existing
-// account (straight in) or a new one (collect name/email, then resume).
+// A single entry point for both signin and signup (no password anywhere).
+// Two ways in, "or" between them:
+//   - mobile number: verify the OTP; an existing account opens straight away, a new
+//     number collects name + email, then a resume.
+//   - email ("Continue with Email"): verify a code emailed to you; an existing account
+//     opens straight away, a new email collects name + mobile number, the number is
+//     verified with an OTP too, then a resume.
+// Either way, if the number OR the email already belongs to an account, that account
+// opens instead of a duplicate being created.
 // Both EmployeeSignin.jsx and EmployeeSignup.jsx render this same form, and
 // EmployeeAuthModal.jsx embeds it in a popup for on-site "Sign in" clicks
 // (passing onAuthComplete so the modal can close itself once auth finishes).
@@ -39,7 +47,9 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
   const [searchParams] = useSearchParams()
   const redirect = searchParams.get('redirect')
 
-  const [step, setStep] = useState('phone') // 'phone' | 'otp' | 'profile' | 'resume'
+  // 'phone' | 'otp' | 'profile' | 'resume'  (mobile number path)
+  // 'email' | 'emailOtp' | 'emailProfile'     (email path; a new email then reuses 'otp' to verify the number)
+  const [step, setStep] = useState('phone')
   const [phone, setPhone] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -60,6 +70,12 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
   const [resendIn, setResendIn] = useState(0)
 
   const [creatingAccount, setCreatingAccount] = useState(false)
+
+  // Email path: proof the address was verified (sent along with signup).
+  const [emailToken, setEmailToken] = useState(null)
+  const [emailOtp, setEmailOtp] = useState('')
+  const [emailBusy, setEmailBusy] = useState(false)
+  const [emailError, setEmailError] = useState('')
 
   // Resume step (new accounts only) — the account already exists and its
   // token is already known by the time this shows, so upload here hits the
@@ -95,7 +111,9 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
   }
 
   function resetToPhoneStep() {
-    setStep('phone')
+    // In the email path the number step is 'emailProfile' (name + number); "back" from
+    // its OTP screen should return there, not drop the verified email.
+    setStep(emailToken ? 'emailProfile' : 'phone')
     setOtp('')
     setOtpError('')
     setPhoneToken(null)
@@ -143,7 +161,9 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
       completeAuth(sessionToken, employee)
     } catch (err) {
       if (err.status === 404) {
-        if (googleCredential) await finishSignup(token)
+        // Google and email paths already know name + email, so the account can be
+        // created now; the plain number path still has to ask for them.
+        if (googleCredential || emailToken) await finishSignup(token)
         else setStep('profile')
       } else {
         setOtpError(err.message)
@@ -202,7 +222,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
     try {
       const { token: sessionToken, employee } = googleCredential
         ? await signupEmployeeWithGoogle({ credential: googleCredential, phone, phoneToken: token })
-        : await signupEmployee({ name: name.trim(), email: email.trim(), phone, phoneToken: token })
+        : await signupEmployee({ name: name.trim(), email: email.trim(), phone, phoneToken: token, emailToken: emailToken ?? undefined })
       setAuthToken(sessionToken)
       setAuthEmployee(employee)
       setStep('resume')
@@ -211,6 +231,88 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
     } finally {
       setCreatingAccount(false)
     }
+  }
+
+  // ── Email path ────────────────────────────────────────────────────────────
+  function startEmailFlow() {
+    setError('')
+    setEmailError('')
+    setEmailOtp('')
+    setEmailToken(null)
+    setGoogleCredential(null)
+    setStep('email')
+  }
+
+  function leaveEmailFlow() {
+    setEmailToken(null)
+    setEmailOtp('')
+    setEmailError('')
+    setError('')
+    setResendIn(0)
+    setStep('phone')
+  }
+
+  async function handleSendEmailCode() {
+    setEmailError('')
+    if (!EMAIL_RE.test(email.trim())) return setEmailError('Enter a valid email address.')
+    setEmailBusy(true)
+    try {
+      await sendEmployeeEmailOtp({ email: email.trim() })
+      setStep('emailOtp')
+      setEmailOtp('')
+      setResendIn(RESEND_COOLDOWN)
+    } catch (err) {
+      setEmailError(err.message)
+    } finally {
+      setEmailBusy(false)
+    }
+  }
+
+  async function handleResendEmailCode() {
+    setEmailError('')
+    setEmailBusy(true)
+    try {
+      await sendEmployeeEmailOtp({ email: email.trim() })
+      setEmailOtp('')
+      setResendIn(RESEND_COOLDOWN)
+    } catch (err) {
+      setEmailError(err.message)
+    } finally {
+      setEmailBusy(false)
+    }
+  }
+
+  // Verifies the emailed code, then opens the account for that address — or, if there
+  // isn't one (404), moves on to collecting name + mobile number for a new account.
+  async function handleVerifyEmailCode() {
+    setEmailError('')
+    setEmailBusy(true)
+    try {
+      const { emailToken: verified } = await verifyEmployeeEmailOtp({ email: email.trim(), otp: emailOtp })
+      setEmailToken(verified)
+      try {
+        const { token, employee } = await emailLoginEmployee({ email: email.trim(), emailToken: verified })
+        completeAuth(token, employee)
+      } catch (err) {
+        if (err.status === 404) setStep('emailProfile')
+        else throw err
+      }
+    } catch (err) {
+      setEmailError(err.message)
+    } finally {
+      setEmailBusy(false)
+    }
+  }
+
+  // New email: we still need a verified mobile number (recruiters call it), so verify it
+  // with the same OTP step the number path uses.
+  function handleContinueEmailProfile(e) {
+    e.preventDefault()
+    setError('')
+    if (!name.trim()) return setError('Please enter your full name.')
+    if (phone.length !== 10) return setError('Enter your 10-digit mobile number.')
+    if (!acceptedTerms) return setError('Please accept the Terms & Conditions and Privacy Policy to continue.')
+    handleSendOtp()
   }
 
   function handleContinueProfile(e) {
@@ -375,6 +477,15 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
 
           <OrDivider label="or continue with Google" />
           <GoogleAuthButton onCredential={handleGoogleCredential} onError={(message) => setError(message)} />
+          {!googleCredential && (
+            <button
+              type="button"
+              onClick={startEmailFlow}
+              className="mt-3 w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl text-[13px] font-bold border border-(--jobs-border) bg-white text-(--jobs-navy) hover:border-(--jobs-blue) hover:text-(--jobs-blue-dark) transition-colors"
+            >
+              <Mail size={16} strokeWidth={1.8} aria-hidden="true" /> Continue with Email
+            </button>
+          )}
 
           {!googleCredential && <p className="text-[11.5px] text-(--jobs-ink-soft) text-center mt-5 leading-relaxed">
             By continuing, you agree to Mzobs'{' '}
@@ -388,6 +499,108 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
             .
           </p>}
         </motion.div>
+      )}
+
+      {step === 'email' && (
+        <motion.form key="email" {...stepTransition} onSubmit={(e) => { e.preventDefault(); handleSendEmailCode() }} noValidate>
+          <div className="flex items-center gap-2 mb-1">
+            <button type="button" onClick={leaveEmailFlow} className="text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors" aria-label="Back">
+              <ArrowLeft size={16} />
+            </button>
+            <h2 className="text-base font-black text-(--jobs-navy)">Continue with Email</h2>
+          </div>
+          <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5 ml-6">
+            Enter your email and we will send you a 6-digit code. If you already have an account it opens, otherwise we will create one.
+          </p>
+
+          <Field label="Email address">
+            <Input icon={Mail} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" autoFocus />
+          </Field>
+
+          {emailError && <p className="text-xs text-red-600 mb-4 -mt-2">{emailError}</p>}
+
+          <PrimaryButton className="mt-1" disabled={emailBusy || !email.trim()}>
+            {emailBusy ? 'Sending...' : <>Send code <ArrowRight size={16} /></>}
+          </PrimaryButton>
+          <button type="button" onClick={leaveEmailFlow} className="block mx-auto mt-4 text-[12.5px] font-bold text-(--jobs-blue-dark) hover:underline">
+            Use mobile number instead
+          </button>
+        </motion.form>
+      )}
+
+      {step === 'emailOtp' && (
+        <motion.form key="emailOtp" {...stepTransition} onSubmit={(e) => { e.preventDefault(); if (emailOtp.length === 6) handleVerifyEmailCode() }}>
+          <div className="flex items-center gap-2 mb-1">
+            <button type="button" onClick={() => setStep('email')} className="text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors" aria-label="Back">
+              <ArrowLeft size={16} />
+            </button>
+            <h2 className="text-base font-black text-(--jobs-navy)">Verify your email</h2>
+          </div>
+          <div className="flex items-center justify-between mt-1 mb-5 ml-6">
+            <p className="text-[13px] text-(--jobs-ink-soft) break-all">Enter the 6-digit code sent to {email.trim()}</p>
+            <button type="button" onClick={() => setStep('email')} className="text-[12px] font-bold text-(--jobs-ink-soft) hover:text-(--jobs-blue-dark) transition-colors shrink-0 ml-2">
+              Change
+            </button>
+          </div>
+
+          <div className="max-w-72">
+            <OtpInput value={emailOtp} onChange={setEmailOtp} error={emailError} disabled={emailBusy} autoFocus />
+          </div>
+
+          <div className="flex items-center gap-3 mt-4">
+            <SecondaryButton onClick={handleVerifyEmailCode} disabled={emailBusy || emailOtp.length !== 6}>
+              {emailBusy ? 'Verifying...' : 'Verify & continue'}
+            </SecondaryButton>
+            <button
+              type="button"
+              onClick={handleResendEmailCode}
+              disabled={emailBusy || resendIn > 0}
+              className="text-[12.5px] font-bold text-(--jobs-blue-dark) hover:underline disabled:opacity-50 disabled:no-underline disabled:text-(--jobs-ink-soft)"
+            >
+              {resendIn > 0 ? `Resend in 0:${String(resendIn).padStart(2, '0')}` : 'Resend code'}
+            </button>
+          </div>
+        </motion.form>
+      )}
+
+      {step === 'emailProfile' && (
+        <motion.form key="emailProfile" {...stepTransition} onSubmit={handleContinueEmailProfile} noValidate>
+          <h2 className="text-base font-black text-(--jobs-navy)">Almost there</h2>
+          <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5 break-all">
+            {email.trim()} is verified. Add your name and mobile number so employers can reach you.
+          </p>
+
+          <Field label="Full name">
+            <Input icon={User} value={name} onChange={(e) => setName(e.target.value)} placeholder="Ananya Iyer" autoComplete="name" autoFocus />
+          </Field>
+
+          <Field label="Mobile number" hint="We will send an OTP to this number to verify it.">
+            <div className="flex gap-2">
+              <div className="h-11 px-3.5 flex items-center rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle) text-[13.5px] font-bold text-(--jobs-navy) shrink-0">
+                +91
+              </div>
+              <div className="flex-1 min-w-0">
+                <Input
+                  icon={Phone}
+                  type="tel"
+                  inputMode="numeric"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  placeholder="98765 43210"
+                  autoComplete="tel-national"
+                />
+              </div>
+            </div>
+          </Field>
+
+          <TermsConsent checked={acceptedTerms} onChange={setAcceptedTerms} className="mb-4" />
+
+          {error && <p className="text-xs text-red-600 mb-4 -mt-2">{error}</p>}
+
+          <PrimaryButton className="mt-1" disabled={sendingOtp || !name.trim() || phone.length !== 10 || !acceptedTerms}>
+            {sendingOtp ? 'Sending...' : <>Send OTP <ArrowRight size={16} /></>}
+          </PrimaryButton>
+        </motion.form>
       )}
 
       {step === 'otp' && (
