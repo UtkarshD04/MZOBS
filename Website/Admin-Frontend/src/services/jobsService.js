@@ -12,8 +12,8 @@ export function createJob(input) {
   return apiClient.post('/jobs', input).then((r) => r.data)
 }
 
-export function approveJob(id, { vacancies, visibleToCandidates, track }) {
-  return apiClient.patch(`/jobs/${id}/approve`, { vacancies, visibleToCandidates, track }).then((r) => r.data)
+export function approveJob(id, { vacancies, visibleToCandidates, track, instantHiring }) {
+  return apiClient.patch(`/jobs/${id}/approve`, { vacancies, visibleToCandidates, track, instantHiring }).then((r) => r.data)
 }
 
 export function recordJobPayment(id, { paymentMode, reference }) {
@@ -22,4 +22,8 @@ export function recordJobPayment(id, { paymentMode, reference }) {
 
 export function notifyHr(id) {
   return apiClient.post(`/jobs/${id}/notify-hr`).then((r) => r.data)
+}
+
+export function setJobUrgent(id, instantHiring) {
+  return apiClient.patch(`/jobs/${id}/urgent`, { instantHiring }).then((r) => r.data)
 }

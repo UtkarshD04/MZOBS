@@ -319,7 +319,7 @@ export default function Dashboard() {
           emptyMessage="Apply to a role to see similar openings here."
         />
         <JobListCard
-          title="Instant hiring"
+          title="Urgent hiring"
           jobs={instantHiringJobs}
           isLoading={instantHiringLoading}
           onSeeAll={() => navigate('/app/jobs')}

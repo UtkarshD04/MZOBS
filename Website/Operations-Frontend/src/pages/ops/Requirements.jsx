@@ -14,7 +14,7 @@ import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Input, Select } from '../../components/ui/Field'
 import { useApp } from '../../context/AppContext'
-import { useJobsQuery, useApproveJobMutation, useRecordJobPaymentMutation, useNotifyHrMutation } from '../../hooks/useJobs'
+import { useJobsQuery, useApproveJobMutation, useSetJobUrgentMutation, useRecordJobPaymentMutation, useNotifyHrMutation } from '../../hooks/useJobs'
 import { fmtINR } from '../../lib/utils'
 
 const TABS = ['To review', 'Awaiting payment', 'Sourcing', 'Delivered', 'All']
@@ -34,13 +34,14 @@ const RESUMES_PER_OPENING = 5
 function ReviewJobModal({ app, job, onDone }) {
   const [vacancies, setVacancies] = useState(job.vacancies)
   const [visible, setVisible] = useState(true)
+  const [urgent, setUrgent] = useState(!!job.instantHiring)
   const approve = useApproveJobMutation()
   const fee = vacancies * PER_OPENING_FEE
   const resumes = vacancies * RESUMES_PER_OPENING
 
   function submit() {
     approve.mutate(
-      { id: job.id, vacancies, visibleToCandidates: visible, track: job.track },
+      { id: job.id, vacancies, visibleToCandidates: visible, track: job.track, instantHiring: urgent },
       {
         onSuccess: (savedJob) => {
           app.closeModal()
@@ -85,6 +86,13 @@ function ReviewJobModal({ app, job, onDone }) {
           <Select value={visible ? 'yes' : 'no'} onChange={(e) => setVisible(e.target.value === 'yes')}>
             <option value="yes">Yes — show on the job board</option>
             <option value="no">No — source silently from our pool</option>
+          </Select>
+        </Field>
+
+        <Field label="Urgent hiring" hint="Shown in the candidate 'Urgent hiring' section. Only premium members can apply.">
+          <Select value={urgent ? 'yes' : 'no'} onChange={(e) => setUrgent(e.target.value === 'yes')}>
+            <option value="no">No, regular opening</option>
+            <option value="yes">Yes, mark as urgent</option>
           </Select>
         </Field>
 
@@ -172,6 +180,17 @@ export default function Requirements() {
   const { data: rows = [], isLoading, isError, refetch } = useJobsQuery(status ? { status } : {})
   const { data: allRows = [] } = useJobsQuery({})
   const notifyHr = useNotifyHrMutation()
+  const setUrgent = useSetJobUrgentMutation()
+
+  function toggleUrgent(job) {
+    setUrgent.mutate(
+      { id: job.id, instantHiring: !job.instantHiring },
+      {
+        onSuccess: () => app.addToast('success', job.instantHiring ? `"${job.title}" is no longer urgent` : `"${job.title}" marked urgent`),
+        onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
+      }
+    )
+  }
 
   function notify(job) {
     notifyHr.mutate(job.id, {
@@ -255,6 +274,7 @@ export default function Requirements() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[15px] font-semibold">{j.title}</span>
                         <Badge tone={st.tone}>{st.label}</Badge>
+                        {j.instantHiring && <Badge tone="red">Urgent</Badge>}
                       </div>
                       <div className="text-[13px] text-ink-secondary mt-1">
                         {j.company?.name} · Posted {j.postedOn ? new Date(j.postedOn).toLocaleDateString('en-IN') : 'not yet'}
@@ -315,6 +335,11 @@ export default function Requirements() {
                     {j.feeStatus === 'unpaid' && j.status === 'awaiting_payment' && (
                       <Button variant="gold" size="sm" onClick={() => app.openModal(<RecordPaymentModal app={app} job={j} onDone={refetch} />)}>
                         <IndianRupee size={14} /> Record payment
+                      </Button>
+                    )}
+                    {j.status !== 'draft' && j.status !== 'archived' && (
+                      <Button size="sm" onClick={() => toggleUrgent(j)} disabled={setUrgent.isPending}>
+                        {j.instantHiring ? 'Remove urgent' : 'Mark urgent'}
                       </Button>
                     )}
                     {j.status === 'sourcing' && (

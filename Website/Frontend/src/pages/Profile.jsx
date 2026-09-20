@@ -161,7 +161,7 @@ export default function Profile() {
 
   const { percent: completion, missing } = profileCompletion(profile)
   const weight = Math.round(100 / COMPLETION_CHECKS.length)
-  const p = personal ?? { name: profile.name, dob: profile.dob, phone: profile.phone, currentCity: profile.currentCity }
+  const p = personal ?? { name: profile.name, dob: profile.dob, phone: profile.phone, currentCity: profile.currentCity, state: profile.state, pincode: profile.pincode, gender: profile.gender }
   const c = career ?? { preferredRole: profile.preferredRole, expectedSalaryMin: profile.expectedSalaryMin, expectedSalaryMax: profile.expectedSalaryMax }
   const l = links ?? { portfolioLink: profile.portfolioLink, linkedin: profile.linkedin, github: profile.github }
   const resumeMissing = !profile.resume?.status || profile.resume.status === 'none'
@@ -614,8 +614,27 @@ export default function Profile() {
               <Field label="Location">
                 <Input value={p.currentCity ?? ''} onChange={(e) => setPersonal({ ...p, currentCity: e.target.value })} />
               </Field>
+              <Field label="State">
+                <Input value={p.state ?? ''} onChange={(e) => setPersonal({ ...p, state: e.target.value })} />
+              </Field>
+              <Field label="Pincode">
+                <Input inputMode="numeric" maxLength={6} value={p.pincode ?? ''} onChange={(e) => setPersonal({ ...p, pincode: e.target.value.replace(/\D/g, '') })} />
+              </Field>
+              <Field label="Gender">
+                <select
+                  className="h-10 px-[13px] rounded-[9px] border border-border-strong bg-surface text-ink text-[13.5px] w-full outline-none focus:border-navy"
+                  value={p.gender ?? ''}
+                  onChange={(e) => setPersonal({ ...p, gender: e.target.value })}
+                >
+                  <option value="">Select</option>
+                  <option>Female</option>
+                  <option>Male</option>
+                  <option>Other</option>
+                  <option>Prefer not to say</option>
+                </select>
+              </Field>
             </div>
-            <Button variant="primary" className="mt-4" onClick={() => save({ name: p.name, dob: p.dob, phone: p.phone, currentCity: p.currentCity }, 'Personal details saved')}>
+            <Button variant="primary" className="mt-4" onClick={() => save({ name: p.name, dob: p.dob, phone: p.phone, currentCity: p.currentCity, state: p.state, pincode: p.pincode, gender: p.gender }, 'Personal details saved')}>
               <Check size={15} /> Save changes
             </Button>
           </Section>
