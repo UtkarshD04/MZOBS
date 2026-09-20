@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
 import CollapsibleGroup from './CollapsibleGroup'
 import LocationAutocomplete from './LocationAutocomplete'
-import { WORK_MODES, EMPLOYMENT_TYPES, EXPERIENCE_OPTIONS, SALARY_OPTIONS, POSTED_WITHIN_OPTIONS, DEPARTMENT_OPTIONS, toggleValue } from '../../lib/jobFilters'
+import { WORK_MODES, EMPLOYMENT_TYPES, EXPERIENCE_OPTIONS, SALARY_OPTIONS, POSTED_WITHIN_OPTIONS, DEPARTMENT_OPTIONS, MAX_EXPERIENCE_YEARS, toggleValue } from '../../lib/jobFilters'
 
 function CheckboxRow({ id, checked, onChange, label, count }) {
   return (
@@ -74,28 +74,60 @@ export default function FilterSidebar({ filters, onChange, facets, lockedTrack, 
         ))}
       </CollapsibleGroup>
 
-      <CollapsibleGroup title="Experience" badge={filters.experience ? 1 : 0}>
-        {EXPERIENCE_OPTIONS.map((opt) => (
-          <RadioRow
-            key={opt.value || 'any'}
-            id={`${idPrefix}-experience-${opt.value || 'any'}`}
-            name={`${idPrefix}-experience`}
-            checked={filters.experience === opt.value}
-            onChange={() => patch({ experience: opt.value })}
+      <CollapsibleGroup title="Experience" badge={filters.experience.length + (filters.experienceYears != null ? 1 : 0)}>
+        {EXPERIENCE_OPTIONS.filter((opt) => opt.value).map((opt) => (
+          <CheckboxRow
+            key={opt.value}
+            id={`${idPrefix}-experience-${opt.value}`}
+            checked={filters.experience.includes(opt.value)}
+            onChange={() => patch({ experience: toggleValue(filters.experience, opt.value) })}
             label={opt.label}
+            count={countOf(facets?.experience, opt.value)}
           />
         ))}
+        <div className="mt-1.5 rounded-lg bg-surface-sunken px-3 py-2.5">
+          <div className="flex items-center justify-between">
+            <label htmlFor={`${idPrefix}-experience-years`} className="text-[12.5px] font-semibold text-ink">
+              My experience
+            </label>
+            <span className="text-[12.5px] font-semibold text-ink tabular-nums">
+              {filters.experienceYears == null ? 'Any' : `${filters.experienceYears} ${filters.experienceYears === 1 ? 'year' : 'years'}`}
+            </span>
+          </div>
+          <input
+            id={`${idPrefix}-experience-years`}
+            type="range"
+            min={0}
+            max={MAX_EXPERIENCE_YEARS}
+            step={1}
+            value={filters.experienceYears ?? 0}
+            onChange={(e) => patch({ experienceYears: Number(e.target.value) })}
+            className="mt-2 w-full accent-navy cursor-pointer"
+            aria-valuetext={filters.experienceYears == null ? 'Any experience' : `${filters.experienceYears} years`}
+          />
+          <div className="mt-0.5 flex items-center justify-between text-[11px] text-ink-tertiary">
+            <span>0</span>
+            {filters.experienceYears != null ? (
+              <button type="button" onClick={() => patch({ experienceYears: null })} className="font-semibold text-navy hover:underline cursor-pointer">
+                Clear
+              </button>
+            ) : (
+              <span>Drag to set</span>
+            )}
+            <span>{MAX_EXPERIENCE_YEARS}+</span>
+          </div>
+        </div>
       </CollapsibleGroup>
 
-      <CollapsibleGroup title="Salary" badge={filters.salary ? 1 : 0}>
-        {SALARY_OPTIONS.map((opt) => (
-          <RadioRow
-            key={opt.value || 'any'}
-            id={`${idPrefix}-salary-${opt.value || 'any'}`}
-            name={`${idPrefix}-salary`}
-            checked={filters.salary === opt.value}
-            onChange={() => patch({ salary: opt.value })}
+      <CollapsibleGroup title="Salary" badge={filters.salary.length}>
+        {SALARY_OPTIONS.filter((opt) => opt.value).map((opt) => (
+          <CheckboxRow
+            key={opt.value}
+            id={`${idPrefix}-salary-${opt.value}`}
+            checked={filters.salary.includes(opt.value)}
+            onChange={() => patch({ salary: toggleValue(filters.salary, opt.value) })}
             label={opt.label}
+            count={countOf(facets?.salary, opt.value)}
           />
         ))}
       </CollapsibleGroup>
@@ -169,6 +201,7 @@ export default function FilterSidebar({ filters, onChange, facets, lockedTrack, 
             checked={filters.postedWithin === opt.value}
             onChange={() => patch({ postedWithin: opt.value })}
             label={opt.label}
+            count={opt.value ? countOf(facets?.postedWithin, opt.value) : null}
           />
         ))}
       </CollapsibleGroup>

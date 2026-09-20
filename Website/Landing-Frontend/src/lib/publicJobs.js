@@ -46,6 +46,17 @@ export async function fetchJobById(id, { signal } = {}) {
   return res.json()
 }
 
+// Live "how many jobs would this option give me" counts for the marketplace
+// filters — see Backend's getJobFacets (GET /api/jobs/facets). Takes the same
+// params as fetchLatestJobs; each group's counts already leave that group's own
+// selection out, so sibling options keep meaningful numbers while you multi-select.
+export async function fetchJobFacets(params = {}, { signal } = {}) {
+  const qs = buildQueryString(params)
+  const res = await fetch(`${PUBLIC_JOBS_API_URL}/facets${qs ? `?${qs}` : ''}`, { signal })
+  if (!res.ok) throw new Error('Failed to load filter counts')
+  return res.json()
+}
+
 // Job title/skill/company and city/location autocomplete for the home-page
 // search bar — see Backend's getPublicJobSuggestions
 // (GET /api/jobs/suggestions). `type` is 'all' (title+skill+company,
