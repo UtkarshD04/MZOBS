@@ -307,6 +307,27 @@
   animation-play-state: paused;
 }
 
+/* Companies-hiring logo strip: right-to-left, pauses on hover/focus. */
+.company-marquee {
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.company-marquee-track {
+  animation: careersMarquee 40s linear infinite;
+}
+.company-marquee:hover .company-marquee-track,
+.company-marquee:focus-within .company-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .company-marquee-track {
+    animation: none;
+  }
+  .company-marquee {
+    overflow-x: auto;
+  }
+}
+
 /* ============================================================
    JOB-DISCOVERY REDESIGN — bright teal/navy job-marketplace
    palette. Used by the sitewide layout/Navbar.jsx (so the header

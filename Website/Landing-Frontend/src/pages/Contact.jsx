@@ -1,112 +1,127 @@
-import { Clock, Mail, MapPin, Phone } from 'lucide-react'
+import { ArrowUpRight, Clock, Mail, MapPin, Phone } from 'lucide-react'
 import Seo from '../components/Seo'
 import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
-import SectionLabel from '../components/ui/SectionLabel'
-import FloatingElement from '../components/ui/FloatingElement'
 import Reveal from '../components/ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
+import ExplorerButton from '../components/ui/ExplorerButton'
 import ContactForm from '../components/forms/ContactForm'
 import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from '../lib/config'
 
 const INFO_CARDS = [
   { icon: Mail, label: 'Email us', value: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
   { icon: Phone, label: 'Call us', value: CONTACT_PHONE, href: `tel:${CONTACT_PHONE.replace(/\s+/g, '')}` },
-  { icon: MapPin, label: 'Visit us', value: CONTACT_ADDRESS, href: undefined },
+  { icon: MapPin, label: 'Visit us', value: CONTACT_ADDRESS, href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT_ADDRESS)}` },
+]
+
+const OFFICE_HOURS = [
+  ['Monday – Friday', '9:30 AM – 6:30 PM'],
+  ['Saturday', '10:00 AM – 2:00 PM'],
+  ['Sunday', 'Closed'],
 ]
 
 export default function Contact() {
   return (
-    <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
+    <div className="min-h-screen bg-(--explorer-bg) text-(--explorer-navy) font-sans antialiased selection:bg-(--explorer-teal-surface)">
       <Seo path="/contact" {...STATIC_PAGE_SEO['/contact']} />
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative bg-white pt-[76px] overflow-hidden">
-        <FloatingElement duration={9} distance={18} className="absolute top-20 right-[8%] w-80 h-80 rounded-full bg-[var(--careers-tint-sage)]/60 blur-3xl pointer-events-none" />
-        <FloatingElement duration={11} delay={1.2} distance={22} className="absolute bottom-0 left-[6%] w-72 h-72 rounded-full bg-[var(--careers-cyan-soft)]/40 blur-3xl pointer-events-none" />
-
-        <div className="relative max-w-4xl mx-auto px-6 md:px-12 py-16 md:py-24 text-center">
-          <Reveal direction="up" duration={0.7} scale={0.96} blur>
-            <SectionLabel className="mx-auto">Get In Touch</SectionLabel>
-            <h1 className="mt-4 text-4xl sm:text-5xl md:text-6xl font-black text-black leading-[1.1] tracking-tight">
-              Let&rsquo;s Talk About Your{' '}
-              <span className="font-serif italic font-normal text-[var(--careers-accent)]">Next Hire</span> — Or Your Next Role.
+      {/* Hero — same atmosphere as the home page's search hero */}
+      <section className="hero-atmosphere relative pt-28 pb-24 md:pt-36 md:pb-28">
+        <div className="relative max-w-3xl mx-auto px-6 md:px-10 text-center">
+          <Reveal direction="up" duration={0.7}>
+            <span className="inline-block px-3.5 py-1.5 rounded-full bg-white/80 border border-(--explorer-border) text-[12px] font-bold uppercase tracking-wider text-(--explorer-blue)">
+              Get in touch
+            </span>
+            <h1 className="mt-5 text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight text-balance">
+              <span className="block text-(--explorer-navy)">Let&rsquo;s talk about your next hire</span>
+              <span
+                className="block"
+                style={{ backgroundImage: 'var(--hero-cta-gradient)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
+              >
+                — or your next role.
+              </span>
             </h1>
-            <p className="mt-6 text-base sm:text-lg text-[#595959] leading-relaxed font-medium max-w-2xl mx-auto">
-              Whether you're a job seeker with a question or an employer ready to hire, our team replies within one business day.
+            <p className="mt-5 text-[16px] sm:text-[17.5px] text-(--explorer-navy)/75 font-medium leading-relaxed max-w-2xl mx-auto">
+              Whether you&rsquo;re a job seeker with a question or an employer ready to hire, our team replies within one business day.
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* Info cards */}
-      <section className="max-w-6xl mx-auto px-6 pb-6">
+      {/* Info cards overlap the hero's bottom edge */}
+      <section className="relative z-10 max-w-6xl mx-auto px-6 -mt-14">
         <StaggerGroup className="grid sm:grid-cols-3 gap-4">
-          {INFO_CARDS.map((c) => (
-            <StaggerItem key={c.label}>
-              <div className="bg-white border border-[#e0e0e0] rounded-2xl p-6 text-center h-full transition-all duration-200 hover:border-[var(--careers-accent)]/40 hover:shadow-md">
-                <div className="w-11 h-11 rounded-xl bg-[#F5F5F5] text-[var(--careers-accent)] flex items-center justify-center mx-auto mb-3">
-                  <c.icon size={19} strokeWidth={1.8} />
-                </div>
-                <h3 className="text-[13.5px] font-black text-black">{c.label}</h3>
-                {c.href ? (
-                  <a href={c.href} className="text-[13px] text-[#595959] font-medium mt-1 block hover:text-[var(--careers-accent)] transition-colors duration-200">
-                    {c.value}
-                  </a>
-                ) : (
-                  <p className="text-[13px] text-[#595959] font-medium mt-1">{c.value}</p>
-                )}
-              </div>
-            </StaggerItem>
-          ))}
+          {INFO_CARDS.map((c) => {
+            const external = c.href.startsWith('http')
+            return (
+              <StaggerItem key={c.label}>
+                <a
+                  href={c.href}
+                  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  className="group flex items-start gap-4 h-full bg-white border border-(--explorer-border) rounded-xl p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.3)] transition-all duration-200 hover:border-(--explorer-blue-border) hover:shadow-[0_14px_32px_-16px_rgba(37,99,235,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+                >
+                  <span className="w-11 h-11 shrink-0 rounded-lg bg-(--explorer-blue-surface) text-(--explorer-blue) flex items-center justify-center">
+                    <c.icon size={19} strokeWidth={1.8} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="text-[13.5px] font-extrabold text-(--explorer-navy)">{c.label}</span>
+                      <ArrowUpRight size={15} className="text-(--explorer-muted) opacity-0 group-hover:opacity-100 transition-opacity duration-200" aria-hidden="true" />
+                    </span>
+                    <span className="mt-1 block text-[13.5px] text-(--explorer-muted) font-medium break-words">{c.value}</span>
+                  </span>
+                </a>
+              </StaggerItem>
+            )
+          })}
         </StaggerGroup>
       </section>
 
       {/* Form + office hours */}
-      <section className="max-w-6xl mx-auto px-6 pb-20 pt-10">
+      <section className="max-w-6xl mx-auto px-6 pt-10 pb-20">
         <div className="grid lg:grid-cols-5 gap-6">
-          <Reveal direction="left" blur className="lg:col-span-3">
-            <div className="bg-white rounded-3xl shadow-xl border border-[#e0e0e0] p-7 sm:p-9 h-full">
-              <h2 className="text-xl font-black text-black tracking-tight mb-1">Send us a message</h2>
-              <p className="text-[13.5px] text-[#595959] font-medium mb-6">Tell us a bit about what you need and we'll route it to the right team.</p>
+          <Reveal direction="up" className="lg:col-span-3">
+            <div className="bg-white rounded-xl border border-(--explorer-border) shadow-[0_10px_28px_-18px_rgba(15,23,42,0.25)] p-6 sm:p-8 h-full">
+              <h2 className="text-xl font-extrabold text-(--explorer-navy) tracking-tight">Send us a message</h2>
+              <p className="text-[14px] text-(--explorer-muted) mt-1 mb-6">Tell us a bit about what you need and we&rsquo;ll route it to the right team.</p>
               <ContactForm />
             </div>
           </Reveal>
 
-          <Reveal direction="right" delay={0.1} blur className="lg:col-span-2 flex flex-col gap-4">
-            <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[var(--careers-tint-sage)] shadow-lg">
-              <div
-                className="absolute inset-0 opacity-50"
-                style={{
-                  backgroundImage: 'radial-gradient(rgba(0,0,0,.06) 1px, transparent 1px)',
-                  backgroundSize: '20px 20px',
-                }}
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <MapPin size={44} className="text-[var(--careers-accent)]/40" strokeWidth={1.25} />
+          <Reveal direction="up" delay={0.1} className="lg:col-span-2 flex flex-col gap-4">
+            <div className="bg-white border border-(--explorer-border) rounded-xl p-6">
+              <div className="flex items-center gap-2.5 mb-4">
+                <span className="w-9 h-9 rounded-lg bg-(--explorer-teal-surface) text-(--explorer-teal) flex items-center justify-center">
+                  <Clock size={17} />
+                </span>
+                <h3 className="text-[14.5px] font-extrabold text-(--explorer-navy)">Office hours</h3>
               </div>
-            </div>
-            <div className="bg-white border border-[#e0e0e0] rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Clock size={16} className="text-[var(--careers-accent)]" />
-                <h3 className="text-[13.5px] font-black text-black">Office hours</h3>
-              </div>
-              <ul className="text-[13px] text-[#595959] font-medium space-y-1.5">
-                <li className="flex justify-between">
-                  <span>Monday – Friday</span>
-                  <span>9:30 AM – 6:30 PM</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Saturday</span>
-                  <span>10:00 AM – 2:00 PM</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Sunday</span>
-                  <span>Closed</span>
-                </li>
+              <ul className="text-[13.5px] font-medium divide-y divide-(--explorer-border)">
+                {OFFICE_HOURS.map(([day, hours]) => (
+                  <li key={day} className="flex justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+                    <span className="text-(--explorer-navy)">{day}</span>
+                    <span className={hours === 'Closed' ? 'text-(--explorer-muted)' : 'text-(--explorer-teal) font-bold'}>{hours}</span>
+                  </li>
+                ))}
               </ul>
+            </div>
+
+            <div className="rounded-xl bg-(--explorer-navy-deep) p-6 text-white">
+              <MapPin size={20} className="text-white/70" />
+              <h3 className="mt-3 text-[15px] font-extrabold">Our office</h3>
+              <p className="mt-1.5 text-[13.5px] text-white/70 leading-relaxed">{CONTACT_ADDRESS}</p>
+              <ExplorerButton
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT_ADDRESS)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                size="md"
+                className="mt-4"
+                style={{ outlineColor: '#ffffff' }}
+              >
+                Get directions <ArrowUpRight size={15} aria-hidden="true" />
+              </ExplorerButton>
             </div>
           </Reveal>
         </div>

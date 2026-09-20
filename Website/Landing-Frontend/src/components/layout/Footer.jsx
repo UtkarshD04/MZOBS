@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { Mail, MapPin, Phone } from 'lucide-react'
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6'
-import Reveal from '../ui/Reveal'
 import ExplorerButton from '../ui/ExplorerButton'
 import { FOOTER_DATA } from '../../lib/content'
 
@@ -12,105 +11,142 @@ const SOCIAL_ICONS = {
   'Twitter (X)': FaXTwitter,
 }
 
+const LINK_GROUPS = [
+  {
+    title: 'For job seekers',
+    links: [
+      { label: 'Find jobs', to: '/#job-search' },
+      { label: 'Companies hiring', to: '/#companies' },
+      { label: 'Create account', to: '/employees/signup' },
+      { label: 'Sign in', to: '/employees/signin' },
+    ],
+  },
+  {
+    title: 'For employers',
+    links: [
+      { label: 'Hire with Mzobs', to: '/employers' },
+      { label: 'Pricing', to: '/employers/pricing' },
+      { label: 'Post a requirement', to: '/employers/signup' },
+      { label: 'Employer sign in', to: '/employers/signin' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'Who we are', to: '/about' },
+      { label: 'Our story', to: '/our-story' },
+      { label: 'Contact us', to: '/contact' },
+    ],
+  },
+]
+
+const linkClass =
+  'relative w-fit inline-block hover:text-(--explorer-blue) transition-colors after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-(--explorer-blue) after:transition-all after:duration-300 hover:after:w-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)'
+
+// Socials whose profile isn't set up yet ("#") are left out instead of
+// rendering icons that go nowhere.
+const liveSocials = FOOTER_DATA.socialsItems.filter((item) => item.href && item.href !== '#')
+
 export default function Footer() {
   return (
-    <footer className="bg-(--explorer-blue-surface) pt-16 pb-8 px-6 md:px-12 border-t border-(--explorer-border)">
-      <div className="max-w-7xl mx-auto space-y-10">
-        {/* Main Footer Grid */}
-        <Reveal direction="up" duration={0.9} scale={0.96} className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          {/* Brand Column */}
-          <div className="md:col-span-5 space-y-5">
-            <Link to="/" className="flex items-center gap-2 group w-fit">
-              <motion.img
-                src="/images/logo.png"
-                alt="Mzobs"
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.92 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-                className="h-10 w-auto object-contain"
-              />
-              <span className="text-[8px] tracking-[0.18em] text-(--explorer-muted) uppercase font-bold">{FOOTER_DATA.logoSub}</span>
-            </Link>
+    <footer className="bg-white border-t border-(--explorer-border)">
+      <div className="h-1 bg-(image:--hero-cta-gradient)" aria-hidden="true" />
 
-            <p className="text-[13px] text-(--explorer-muted) leading-relaxed max-w-md font-medium">{FOOTER_DATA.desc}</p>
+      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-14 pb-8">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-4 space-y-5">
+            <Link to="/" className="block w-fit" aria-label="Mzobs home">
+              {/* The logo file carries a lot of empty padding; the negative
+                  margins trim it so the mark sits flush with the text below. */}
+              <img src="/images/logo.png" alt="Mzobs" className="h-24 w-auto object-contain -my-6 -ml-5" />
+            </Link>
+            <p className="text-[14px] text-(--explorer-muted) leading-relaxed max-w-sm">{FOOTER_DATA.desc}</p>
 
             <div className="flex flex-wrap gap-3">
-              <ExplorerButton to="/employees/signin" variant="secondary" size="md" className="rounded-full">
-                Employee Login
+              <ExplorerButton to="/employees/signin" variant="secondary" size="md">
+                Employee login
               </ExplorerButton>
-              <ExplorerButton to="/employers/signin" variant="primary" size="md" className="rounded-full">
-                Employer Login
+              <ExplorerButton to="/employers/signin" variant="primary" size="md">
+                Employer login
               </ExplorerButton>
             </div>
           </div>
 
-          {/* Menu Column */}
-          <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-(--explorer-navy)">{FOOTER_DATA.menuTitle}</h4>
-            <ul className="space-y-2.5 text-[13px] text-(--explorer-muted) font-medium">
-              {FOOTER_DATA.menuItems.map((item, idx) => (
-                <li key={idx}>
-                  <Link
-                    to={item.to}
-                    className="relative w-fit inline-block hover:text-(--explorer-blue) transition-colors after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-(--explorer-blue) after:transition-all after:duration-300 hover:after:w-full"
-                  >
-                    {item.label}
+          {/* Link groups */}
+          {LINK_GROUPS.map((group) => (
+            <nav key={group.title} aria-label={group.title} className="md:col-span-2 space-y-4">
+              <h4 className="text-[13px] font-extrabold uppercase tracking-wider text-(--explorer-navy)">{group.title}</h4>
+              <ul className="space-y-2.5 text-[14px] text-(--explorer-muted) font-medium">
+                {group.links.map((item) => (
+                  <li key={item.label}>
+                    <Link to={item.to} className={linkClass}>
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+
+          {/* Contact */}
+          <div className="col-span-2 md:col-span-2 space-y-4">
+            <h4 className="text-[13px] font-extrabold uppercase tracking-wider text-(--explorer-navy)">{FOOTER_DATA.contactTitle}</h4>
+            <ul className="space-y-3 text-[14px] text-(--explorer-muted) font-medium">
+              <li className="flex items-start gap-2.5">
+                <Phone size={15} className="mt-1 shrink-0 text-(--explorer-blue)" aria-hidden="true" />
+                <a href={`tel:${FOOTER_DATA.phone.replace(/\s+/g, '')}`} className={linkClass}>
+                  {FOOTER_DATA.phone}
+                </a>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Mail size={15} className="mt-1 shrink-0 text-(--explorer-blue)" aria-hidden="true" />
+                <a href={`mailto:${FOOTER_DATA.email}`} className={`${linkClass} break-all`}>
+                  {FOOTER_DATA.email}
+                </a>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <MapPin size={15} className="mt-1 shrink-0 text-(--explorer-blue)" aria-hidden="true" />
+                <span className="leading-relaxed">{FOOTER_DATA.address}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-12 pt-6 border-t border-(--explorer-border) flex flex-col-reverse md:flex-row items-center justify-between gap-5 text-[12.5px] text-(--explorer-muted) font-medium">
+          <p>{FOOTER_DATA.copyright}</p>
+
+          <div className="flex flex-col sm:flex-row items-center gap-x-6 gap-y-3">
+            <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+              {FOOTER_DATA.rightLinks.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className="hover:text-(--explorer-blue) transition-colors">
+                    {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
 
-          {/* Contact Details Column */}
-          <div className="md:col-span-3 space-y-4">
-            <h4 className="text-sm font-bold text-(--explorer-navy)">{FOOTER_DATA.contactTitle}</h4>
-            <div className="space-y-2.5 text-[13px] text-(--explorer-muted) leading-relaxed font-medium">
-              <a href={`tel:${FOOTER_DATA.phone}`} className="block hover:text-(--explorer-blue) transition-colors w-fit">{FOOTER_DATA.phone}</a>
-              <a href={`mailto:${FOOTER_DATA.email}`} className="block hover:text-(--explorer-blue) transition-colors w-fit">{FOOTER_DATA.email}</a>
-              <p className="pt-1">{FOOTER_DATA.address}</p>
-            </div>
-          </div>
-
-          {/* Socials Column */}
-          <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-(--explorer-navy)">{FOOTER_DATA.socialsTitle}</h4>
-            <div className="flex flex-wrap gap-2.5">
-              {FOOTER_DATA.socialsItems.map((item, idx) => {
-                const Icon = SOCIAL_ICONS[item.label]
-                return (
-                  <motion.a
-                    key={idx}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={item.label}
-                    // Framer Motion animates this as a color value, so it needs a
-                    // literal hex rather than var(--explorer-blue).
-                    whileHover={{ scale: 1.15, rotate: -10, backgroundColor: '#2563EB', color: '#fff' }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: 'spring', stiffness: 350, damping: 15 }}
-                    className="w-9 h-9 rounded-full bg-white border border-(--explorer-border) flex items-center justify-center text-(--explorer-blue)"
-                  >
-                    {Icon && <Icon size={14} />}
-                  </motion.a>
-                )
-              })}
-            </div>
-          </div>
-        </Reveal>
-
-        {/* Bottom Sub-Footer Bar */}
-        <div className="pt-6 border-t border-(--explorer-border) flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-(--explorer-muted) font-medium">
-          <p>{FOOTER_DATA.copyright}</p>
-          <div className="flex items-center gap-4">
-            {FOOTER_DATA.rightLinks.map((link, i) => (
-              <span key={i} className="flex items-center gap-4">
-                <Link to={link.to} className="hover:text-(--explorer-blue) transition-colors">
-                  {link.label}
-                </Link>
-                {i < FOOTER_DATA.rightLinks.length - 1 && <span className="text-(--explorer-border)">|</span>}
-              </span>
-            ))}
+            {liveSocials.length > 0 && (
+              <div className="flex gap-2">
+                {liveSocials.map((item) => {
+                  const Icon = SOCIAL_ICONS[item.label]
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={item.label}
+                      className="w-9 h-9 rounded-full border border-(--explorer-border) bg-(--explorer-bg) flex items-center justify-center text-(--explorer-blue) transition-colors hover:bg-(--explorer-blue) hover:text-white hover:border-(--explorer-blue) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+                    >
+                      {Icon && <Icon size={14} />}
+                    </a>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
