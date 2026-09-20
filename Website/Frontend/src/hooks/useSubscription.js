@@ -18,7 +18,12 @@ export function useVerifySubscriptionPaymentMutation() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: subscriptionService.verifySubscriptionPayment,
-    onSuccess: (data) => queryClient.setQueryData(queryKeys.subscription, data),
+    // A paid account is sent to the mandatory profile setup (ProfileSetupGate reads
+    // profile.profileSetupPending), so the profile has to be refetched right away.
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKeys.subscription, data)
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile })
+    },
   })
 }
 
@@ -26,6 +31,9 @@ export function useConfirmMockSubscriptionPaymentMutation() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: subscriptionService.confirmMockSubscriptionPayment,
-    onSuccess: (data) => queryClient.setQueryData(queryKeys.subscription, data),
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKeys.subscription, data)
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile })
+    },
   })
 }
