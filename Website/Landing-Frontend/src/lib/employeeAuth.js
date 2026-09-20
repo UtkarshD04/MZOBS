@@ -19,8 +19,8 @@ export function loginEmployee({ email, password }) {
   return postJSON('/auth/login', { email, password })
 }
 
-export function signupEmployee({ name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken }) {
-  return postJSON('/auth/signup', { name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken })
+export function signupEmployee({ name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken, emailToken }) {
+  return postJSON('/auth/signup', { name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken, emailToken })
 }
 
 // Logs an *existing* account in using nothing but a verified phoneToken — no
@@ -28,6 +28,21 @@ export function signupEmployee({ name, email, phone, password, experience, gradu
 // phone-first auth flow reads as "show the signup details step".
 export function phoneLoginEmployee({ phone, phoneToken }) {
   return postJSON('/auth/phone-login', { phone, phoneToken })
+}
+
+// Email sign-in: send a 6-digit code, verify it (returns a short-lived emailToken), then
+// emailLoginEmployee opens the account for that address. A 404 means no account uses it
+// yet, which the auth form reads as "collect name + mobile number".
+export function sendEmployeeEmailOtp({ email }) {
+  return postJSON('/auth/send-email-otp', { email })
+}
+
+export function verifyEmployeeEmailOtp({ email, otp }) {
+  return postJSON('/auth/verify-email-otp', { email, otp })
+}
+
+export function emailLoginEmployee({ email, emailToken }) {
+  return postJSON('/auth/email-login', { email, emailToken })
 }
 
 export function loginEmployeeWithGoogle({ credential }) {
