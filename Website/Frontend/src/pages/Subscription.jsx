@@ -35,7 +35,7 @@ export default function Subscription() {
   if (subLoading || profileLoading) return <PageSkeleton />
   if (subError || profileError) return <ErrorState onRetry={() => (subError ? refetchSub() : refetchProfile())} />
 
-  const fee = subscription.amount ?? 299
+  const fee = subscription.status === 'paid' ? (subscription.amount ?? 99) : 99
 
   // Same order → Checkout → signature-verify flow as the onboarding wizard,
   // for anyone whose subscription is still unpaid (payment skipped/failed

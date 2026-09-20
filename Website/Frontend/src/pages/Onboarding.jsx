@@ -13,7 +13,7 @@ import { useProfileQuery, useUpdateProfileMutation } from '../hooks/useProfile'
 // resume queued) as soon as the profile steps are done. The one-time fee is
 // collected separately from the Subscription page inside the dashboard.
 const TOTAL = 16
-const PROGRAM_FEE = 299
+const PROGRAM_FEE = 99
 
 const INTERESTS = ['Software Development', 'Data & Analytics', 'Product Management', 'Design', 'Marketing', 'Sales', 'Finance', 'Operations', 'Customer Success', 'Human Resources']
 const ROLE_SUGGESTIONS = ['Business Analyst', 'Data Analyst', 'Product Analyst', 'Operations Analyst']
@@ -391,7 +391,7 @@ export default function Onboarding() {
                   <div className="flex items-start gap-2.5 p-[14px] rounded-xl bg-navy-tint">
                     <Lock size={15} className="text-navy mt-0.5 flex-shrink-0" />
                     <p className="text-[12.5px] text-ink-secondary">
-                      Resume upload unlocks after you activate placement support (₹299, one-time) from the Subscription page — that's also when
+                      Resume upload unlocks after you activate placement support (₹99, one-time) from the Subscription page — that's also when
                       it enters the Mzobs verification queue.
                     </p>
                   </div>
@@ -509,7 +509,7 @@ function CompleteStep({ name }) {
         <div className="relative pl-6">
           <div className="absolute left-[5px] top-1 bottom-1 w-px bg-border" />
           {[
-            ['Pay the one-time ₹299 fee', 'From the Subscription page in your dashboard', 'gold'],
+            ['Pay the one-time ₹99 fee', 'From the Subscription page in your dashboard', 'gold'],
             ['Upload your resume', 'From the Resume Center, right after payment', 'gray'],
             ['Resume verification by our team', 'Within 24–48 hours of upload', 'gray'],
             ['Mock interview with a Mzobs panel', 'Scheduled after verification', 'gray'],

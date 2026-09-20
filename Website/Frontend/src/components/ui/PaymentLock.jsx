@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Card from './Card'
 import Button from './Button'
 
-// Shown in place of a page/section that's gated behind the one-time ₹299
+// Shown in place of a page/section that's gated behind the one-time ₹99
 // placement-support payment — Resume Center, Mock Interview, and job
 // applications all route here instead of duplicating the same lock screen.
 export default function PaymentLock({ title, body }) {
@@ -16,7 +16,7 @@ export default function PaymentLock({ title, body }) {
       <div className="text-lg font-bold">{title}</div>
       <p className="text-sm text-ink-secondary mt-2">{body}</p>
       <Button variant="gold" className="mt-5" onClick={() => navigate('/app/subscription')}>
-        Pay ₹299 & activate
+        Pay ₹99 & activate
       </Button>
     </Card>
   )

@@ -33,7 +33,7 @@ export default function MockInterview() {
         <StaggerItem>
           <PaymentLock
             title="Activate placement support to unlock this round"
-            body="A one-time ₹299 payment unlocks resume upload and verification — once your resume clears, this is where your mock interview shows up."
+            body="A one-time ₹99 payment unlocks resume upload and verification — once your resume clears, this is where your mock interview shows up."
           />
         </StaggerItem>
       </StaggerGroup>
