@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, CheckCircle2, Lock, Link as LinkIcon, BadgeCheck, GraduationCap, Loader2, ArrowRight } from 'lucide-react'
+import { Sparkles, CheckCircle2, Link as LinkIcon, GraduationCap, Loader2, ArrowRight } from 'lucide-react'
 import { FaLinkedin, FaGithub } from 'react-icons/fa6'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
 import Chip from '../components/ui/Chip'
 import { Field, Input, Select, Textarea } from '../components/ui/Field'
-import { useProfileQuery, useUpdateProfileMutation } from '../hooks/useProfile'
+import { useProfileQuery, useCompleteProfileMutation } from '../hooks/useProfile'
 
-// Payment is no longer part of onboarding — an account is created (and its
-// resume queued) as soon as the profile steps are done. The one-time fee is
-// collected separately from the Subscription page inside the dashboard.
-const TOTAL = 16
-const PROGRAM_FEE = 99
+// Signup only collects name, mobile and email. This wizard is the mandatory
+// "complete your profile" step shown right after the one-time payment succeeds
+// (the gate in components/auth/ProfileSetupGate.jsx sends paid accounts here until
+// the backend has accepted the profile). Every required step is validated below,
+// and the server re-checks the same fields in POST /profile/complete.
+const TOTAL = 14
 
 const INTERESTS = ['Software Development', 'Data & Analytics', 'Product Management', 'Design', 'Marketing', 'Sales', 'Finance', 'Operations', 'Customer Success', 'Human Resources']
 const ROLE_SUGGESTIONS = ['Business Analyst', 'Data Analyst', 'Product Analyst', 'Operations Analyst']
@@ -58,14 +59,15 @@ export default function Onboarding() {
   const [submitError, setSubmitError] = useState('')
 
   const { data: profile } = useProfileQuery()
-  const updateProfile = useUpdateProfileMutation()
+  const updateProfile = useCompleteProfileMutation()
   const [profileSaved, setProfileSaved] = useState(false)
   const submitting = updateProfile.isPending
 
   const [employmentStatus, setEmploymentStatus] = useState('Fresher / Student')
-  const [interests, setInterests] = useState(INTERESTS.slice(0, 2))
-  const [locations, setLocations] = useState(LOCATIONS.slice(0, 1))
-  const [skills, setSkills] = useState(SKILLS.slice(0, 3))
+  const [stepError, setStepError] = useState('')
+  const [interests, setInterests] = useState([])
+  const [locations, setLocations] = useState([])
+  const [skills, setSkills] = useState([])
   const [salary, setSalary] = useState(8)
   const [willingToRelocate, setWillingToRelocate] = useState('Yes, open to relocating')
 
@@ -75,15 +77,17 @@ export default function Onboarding() {
   const [expMonths, setExpMonths] = useState(0)
   const [currentCtc, setCurrentCtc] = useState('')
   const [noticePeriod, setNoticePeriod] = useState('30 days')
-  const [preferredRole, setPreferredRole] = useState('Product Analyst')
+  const [preferredRole, setPreferredRole] = useState('')
   const [educationLevel, setEducationLevel] = useState('Graduate')
-  const [degree, setDegree] = useState('B.Tech, Computer Science')
-  const [institution, setInstitution] = useState('RV College of Engineering')
-  const [gradYear, setGradYear] = useState('2025')
+  const [degree, setDegree] = useState('')
+  const [institution, setInstitution] = useState('')
+  const [gradYear, setGradYear] = useState('')
   const [dob, setDob] = useState('')
-  const [gender, setGender] = useState('Female')
+  const [gender, setGender] = useState('')
   const [maritalStatus, setMaritalStatus] = useState('Single')
-  const [currentCity, setCurrentCity] = useState('Bengaluru')
+  const [currentCity, setCurrentCity] = useState('')
+  const [stateName, setStateName] = useState('')
+  const [pincode, setPincode] = useState('')
   const [resumeHeadline, setResumeHeadline] = useState('')
   const [portfolioLink, setPortfolioLink] = useState('')
   const [linkedin, setLinkedin] = useState('')
@@ -114,6 +118,8 @@ export default function Onboarding() {
       gender,
       maritalStatus,
       currentCity,
+      state: stateName,
+      pincode,
       relocationOk: willingToRelocate === 'Yes, open to relocating',
       resumeHeadline,
       portfolioLink,
@@ -136,7 +142,42 @@ export default function Onboarding() {
     }
   }
 
+  // What a step still needs before "Continue" works ('' when it's fine).
+  function validateStep(n) {
+    const filled = (v) => String(v ?? '').trim().length > 0
+    switch (n) {
+      case 2:
+        if (!isExperienced) return ''
+        if (!filled(currentCompany) || !filled(designation)) return 'Enter your current or latest company and designation.'
+        if (expYears + expMonths === 0) return 'Select your total experience.'
+        return ''
+      case 3:
+        return interests.length ? '' : 'Pick at least one area you are interested in.'
+      case 4:
+        return filled(preferredRole) ? '' : 'Enter the role you are targeting.'
+      case 6:
+        return locations.length ? '' : 'Choose at least one preferred location.'
+      case 7:
+        return skills.length ? '' : 'Add at least one skill.'
+      case 8:
+        return filled(degree) && filled(institution) && /^\d{4}$/.test(gradYear.trim()) ? '' : 'Enter your degree, institution and a 4-digit year of passing.'
+      case 9:
+        if (!filled(dob)) return 'Enter your date of birth.'
+        return gender ? '' : 'Select your gender.'
+      case 10:
+        if (!filled(currentCity) || !filled(stateName)) return 'Enter your current city and state.'
+        return /^\d{6}$/.test(pincode.trim()) ? '' : 'Enter a valid 6-digit pincode.'
+      case 11:
+        return filled(resumeHeadline) ? '' : 'Write a one-line resume headline.'
+      default:
+        return ''
+    }
+  }
+
   async function next() {
+    const problem = step < TOTAL - 1 ? validateStep(step) : ''
+    setStepError(problem)
+    if (problem) return
     if (step === TOTAL - 2) {
       const ok = await finishProfile()
       if (!ok) return
@@ -144,12 +185,13 @@ export default function Onboarding() {
       return
     }
     if (step === TOTAL - 1) {
-      navigate('/app/jobs')
+      navigate('/app/resume')
       return
     }
     setStep((s) => Math.min(s + 1, TOTAL - 1))
   }
   function back() {
+    setStepError('')
     setStep((s) => Math.max(s - 1, 0))
   }
 
@@ -161,9 +203,6 @@ export default function Onboarding() {
           <motion.div className="h-full bg-navy rounded-full" animate={{ width: `${((step + 1) / TOTAL) * 100}%` }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} />
         </div>
         <span className="text-xs text-ink-tertiary flex-shrink-0">{step === TOTAL - 1 ? 'Complete' : `Step ${step + 1} of ${TOTAL}`}</span>
-        <span className="text-sm text-navy font-semibold cursor-pointer hover:underline" onClick={() => navigate('/app/jobs')}>
-          Skip for now
-        </span>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-10">
@@ -175,8 +214,8 @@ export default function Onboarding() {
                   <div className="w-16 h-16 rounded-[20px] bg-navy-tint text-navy flex items-center justify-center mx-auto mb-5">
                     <Sparkles size={28} />
                   </div>
-                  <h1 className="text-[30px] font-bold tracking-tight text-balance">Let's build your career success profile</h1>
-                  <p className="text-sm text-ink-secondary mt-3 max-w-[420px] mx-auto">A few quick questions so our recruitment team and career experts can match you with the right opportunities.</p>
+                  <h1 className="text-[30px] font-bold tracking-tight text-balance">Payment successful. Let's complete your profile</h1>
+                  <p className="text-sm text-ink-secondary mt-3 max-w-[420px] mx-auto">Your placement support is active. Fill in your details once, and our recruitment team can start matching you with the right jobs. It takes about 5 minutes and every step marked with a message below is required.</p>
                 </div>
               )}
 
@@ -240,7 +279,7 @@ export default function Onboarding() {
                       <GraduationCap size={24} />
                     </div>
                     <h2 className="text-xl font-bold">No work experience yet? No problem.</h2>
-                    <p className="text-sm text-ink-secondary mt-2 max-w-[420px] mx-auto">We'll focus on your education, skills and potential instead. Add internships below if you've done any.</p>
+                    <p className="text-sm text-ink-secondary mt-2 max-w-[420px] mx-auto">We'll focus on your education, skills and potential instead. Add internships below if you've done any (optional).</p>
                     <Field label="Internship / training experience" optional className="mt-5 text-left">
                       <Textarea placeholder="e.g. 2-month Data Analytics internship at XYZ Pvt Ltd (optional)" value={currentCompany} onChange={(e) => setCurrentCompany(e.target.value)} />
                     </Field>
@@ -346,6 +385,7 @@ export default function Onboarding() {
                     </Field>
                     <Field label="Gender">
                       <Select value={gender} onChange={(e) => setGender(e.target.value)}>
+                        <option value="">Select</option>
                         <option>Female</option>
                         <option>Male</option>
                         <option>Other</option>
@@ -370,6 +410,14 @@ export default function Onboarding() {
                   <Field label="Current city">
                     <Input placeholder="e.g. Bengaluru" value={currentCity} onChange={(e) => setCurrentCity(e.target.value)} />
                   </Field>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="State">
+                      <Input placeholder="e.g. Karnataka" value={stateName} onChange={(e) => setStateName(e.target.value)} />
+                    </Field>
+                    <Field label="Pincode">
+                      <Input inputMode="numeric" maxLength={6} placeholder="6 digits" value={pincode} onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))} />
+                    </Field>
+                  </div>
                   <label className="text-[13px] font-semibold">Willing to relocate?</label>
                   <div className="mt-2">
                     <SingleChoiceGrid options={['Yes, open to relocating', 'No, only my current city']} value={willingToRelocate} onChange={setWillingToRelocate} />
@@ -388,34 +436,20 @@ export default function Onboarding() {
                       onChange={(e) => setResumeHeadline(e.target.value)}
                     />
                   </Field>
-                  <div className="flex items-start gap-2.5 p-[14px] rounded-xl bg-navy-tint">
-                    <Lock size={15} className="text-navy mt-0.5 flex-shrink-0" />
-                    <p className="text-[12.5px] text-ink-secondary">
-                      Resume upload unlocks after you activate placement support (₹99, one-time) from the Subscription page — that's also when
-                      it enters the Mzobs verification queue.
-                    </p>
-                  </div>
                 </div>
               )}
 
               {step === 12 && (
                 <div>
-                  <h2 className="text-xl font-bold">Portfolio link</h2>
-                  <p className="text-sm text-ink-secondary mt-2 mb-4">Optional — add a personal website or work samples.</p>
+                  <h2 className="text-xl font-bold">Portfolio and profiles</h2>
+                  <p className="text-sm text-ink-secondary mt-2 mb-4">Optional. Helps recruiters verify your work.</p>
                   <Field label="Portfolio URL" optional>
                     <div className="relative">
                       <LinkIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
                       <Input placeholder="https://yourportfolio.com" className="pl-[38px]" value={portfolioLink} onChange={(e) => setPortfolioLink(e.target.value)} />
                     </div>
                   </Field>
-                </div>
-              )}
-
-              {step === 13 && (
-                <div>
-                  <h2 className="text-xl font-bold">Connect your profiles</h2>
-                  <p className="text-sm text-ink-secondary mt-2 mb-4">Helps recruiters verify your work and code.</p>
-                  <Field label="LinkedIn">
+                  <Field label="LinkedIn" optional>
                     <div className="relative">
                       <FaLinkedin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
                       <Input placeholder="linkedin.com/in/username" className="pl-[38px]" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} />
@@ -430,24 +464,13 @@ export default function Onboarding() {
                 </div>
               )}
 
-              {step === 14 && (
-                <div>
-                  <h2 className="text-xl font-bold">Certificates</h2>
-                  <p className="text-sm text-ink-secondary mt-2 mb-4">Add any certifications that strengthen your profile.</p>
-                  <div className="border-[1.5px] border-dashed border-border-strong rounded-2xl p-6 text-center cursor-pointer bg-surface-sunken hover:border-navy hover:bg-navy-tint transition-all">
-                    <BadgeCheck size={26} className="mx-auto text-ink-secondary" />
-                    <p className="text-sm mt-2">Upload certificate files (optional)</p>
-                  </div>
-                </div>
-              )}
-
-              {step === 15 && <CompleteStep name={profile?.name} />}
+              {step === 13 && <CompleteStep name={profile?.name} />}
             </motion.div>
           </AnimatePresence>
         </div>
       </div>
 
-      {submitError && <p className="text-sm text-red text-center px-7 pt-3 flex-shrink-0">{submitError}</p>}
+      {(stepError || submitError) && <p className="text-sm text-red text-center px-7 pt-3 flex-shrink-0">{stepError || submitError}</p>}
 
       <div className="px-7 py-5 border-t border-border bg-surface flex justify-between items-center flex-shrink-0">
         <Button variant="ghost" onClick={back} className={step === 0 || submitting ? 'invisible' : ''}>
@@ -496,12 +519,11 @@ function CompleteStep({ name }) {
       </div>
       <h1 className="text-[30px] font-bold tracking-tight text-balance">You're all set{name ? `, ${name.split(' ')[0]}` : ''}</h1>
       <p className="text-sm text-ink-secondary mt-3 max-w-[420px] mx-auto">
-        Your profile is saved. Activate placement support with a one-time ₹{PROGRAM_FEE} payment to upload your resume, apply to jobs and unlock your
-        verification interview.
+        Your profile is complete and placement support is active. Upload your resume next so our team can verify it.
       </p>
 
-      <Button variant="gold" size="lg" className="mt-5" onClick={() => navigate('/app/subscription')}>
-        Pay ₹{PROGRAM_FEE} & activate <ArrowRight size={16} />
+      <Button variant="gold" size="lg" className="mt-5" onClick={() => navigate('/app/resume')}>
+        Upload your resume <ArrowRight size={16} />
       </Button>
 
       <div className="bg-surface border border-border rounded-2xl mt-6 max-w-[420px] mx-auto text-left p-[22px]">
@@ -509,15 +531,15 @@ function CompleteStep({ name }) {
         <div className="relative pl-6">
           <div className="absolute left-[5px] top-1 bottom-1 w-px bg-border" />
           {[
-            ['Pay the one-time ₹99 fee', 'From the Subscription page in your dashboard', 'gold'],
-            ['Upload your resume', 'From the Resume Center, right after payment', 'gray'],
+            ['Payment and profile done', 'Placement support is active', 'green'],
+            ['Upload your resume', 'From the Resume Center', 'gold'],
             ['Resume verification by our team', 'Within 24–48 hours of upload', 'gray'],
             ['Mock interview with a Mzobs panel', 'Scheduled after verification', 'gray'],
             ['Skill track assigned', 'Based on your panel score', 'gray'],
             ['Apply to live employer requirements', 'We shortlist and share your resume', 'gray'],
           ].map(([title, sub, tone], i, arr) => (
             <div key={title} className={`relative ${i < arr.length - 1 ? 'pb-5' : ''}`}>
-              <div className={`absolute -left-6 top-0.5 w-[11px] h-[11px] rounded-full bg-surface border-2 ${tone === 'gold' ? 'border-gold-dot' : 'border-border-strong'}`} />
+              <div className={`absolute -left-6 top-0.5 w-[11px] h-[11px] rounded-full bg-surface border-2 ${tone === 'gold' ? 'border-gold-dot' : tone === 'green' ? 'border-green-dot' : 'border-border-strong'}`} />
               <div className="text-sm font-semibold">{title}</div>
               <div className="text-xs text-ink-tertiary">{sub}</div>
             </div>

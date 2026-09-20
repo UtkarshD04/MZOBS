@@ -7,3 +7,7 @@ export function getProfile() {
 export function updateProfile(input) {
   return apiClient.put('/profile', input).then((r) => r.data)
 }
+
+export function completeProfile(input) {
+  return apiClient.post('/profile/complete', input).then((r) => r.data)
+}

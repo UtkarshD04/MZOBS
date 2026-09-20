@@ -13,3 +13,11 @@ export function useUpdateProfileMutation() {
     onSuccess: (data) => queryClient.setQueryData(queryKeys.profile, data),
   })
 }
+
+export function useCompleteProfileMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: profileService.completeProfile,
+    onSuccess: (data) => queryClient.setQueryData(queryKeys.profile, data),
+  })
+}

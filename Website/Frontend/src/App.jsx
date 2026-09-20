@@ -7,6 +7,7 @@ import ToastStack from './components/ui/ToastStack'
 import CommandPalette from './components/ui/CommandPalette'
 import AppShell from './components/layout/AppShell'
 import RequireAuth from './components/auth/RequireAuth'
+import { ProfileSetupGate, OnboardingGuard } from './components/auth/ProfileSetupGate'
 import { LANDING_URL } from './lib/config'
 
 import Onboarding from './pages/Onboarding'
@@ -41,29 +42,31 @@ export default function App() {
         <Route path="/" element={<RedirectToLanding />} />
 
         <Route element={<RequireAuth />}>
-          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/onboarding" element={<OnboardingGuard><Onboarding /></OnboardingGuard>} />
         </Route>
 
-        <Route path="/app" element={<AppShell />}>
-          {/* Public — browsing/searching/filtering openings needs no account,
-              matching the now-public /jobs API. Everything else here still
-              needs a session; RequireAuth bounces a guest to sign-in and
-              carries them back via ?redirect=. */}
-          <Route path="jobs" element={<JobMatching />} />
+        <Route element={<ProfileSetupGate />}>
+          <Route path="/app" element={<AppShell />}>
+            {/* Public — browsing/searching/filtering openings needs no account,
+                matching the now-public /jobs API. Everything else here still
+                needs a session; RequireAuth bounces a guest to sign-in and
+                carries them back via ?redirect=. */}
+            <Route path="jobs" element={<JobMatching />} />
 
-          <Route element={<RequireAuth />}>
-            <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="resume" element={<ResumeCenter />} />
-            <Route path="interview" element={<MockInterview />} />
-            <Route path="applications" element={<Applications />} />
-            <Route path="interview-center" element={<InterviewCenter />} />
-            <Route path="notifications" element={<Notifications />} />
-            <Route path="customer-support" element={<CustomerSupport />} />
-            <Route path="subscription" element={<Subscription />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="support" element={<Support />} />
+            <Route element={<RequireAuth />}>
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="resume" element={<ResumeCenter />} />
+              <Route path="interview" element={<MockInterview />} />
+              <Route path="applications" element={<Applications />} />
+              <Route path="interview-center" element={<InterviewCenter />} />
+              <Route path="notifications" element={<Notifications />} />
+              <Route path="customer-support" element={<CustomerSupport />} />
+              <Route path="subscription" element={<Subscription />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="support" element={<Support />} />
+            </Route>
           </Route>
         </Route>
 
