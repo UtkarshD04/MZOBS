@@ -12,23 +12,26 @@ export default function Navbar() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
-  const [hidden, setHidden] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [hoverLink, setHoverLink] = useState(null)
+  const progressRef = useRef(null)
   // Starts null (not read from localStorage here) so the server-rendered/
   // prerendered markup and the client's first paint match — localStorage
   // doesn't exist during SSR. The real value is picked up right after mount
   // in the effect below instead.
   const [session, setSession] = useState(null)
-  const lastY = useRef(0)
+  const floating = scrolled || open
 
   useEffect(() => {
     function onScroll() {
       const y = window.scrollY
-      setHidden(y > 140 && y > lastY.current)
       setScrolled(y > 8)
-      lastY.current = y
+      // Reading-progress hairline along the bottom of the floating bar.
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`
     }
     window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -62,24 +65,53 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Transparent at the top of the page; once you scroll it condenses into a
+          floating frosted "island" with a reading-progress hairline along its
+          bottom edge. */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-19 bg-white/90 backdrop-blur-md border-b border-(--jobs-border) transition-[transform,box-shadow] duration-300 ${
-          hidden ? '-translate-y-full' : 'translate-y-0'
-        } ${scrolled ? 'shadow-[0_1px_2px_rgba(16,42,67,0.04),0_8px_24px_-16px_rgba(16,42,67,0.18)]' : 'shadow-none'}`}
+        className="fixed top-0 left-0 right-0 z-50 h-19"
       >
-        <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between gap-6">
+        <div
+          className={`relative mx-auto flex items-center justify-between gap-6 border transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            floating
+              ? 'mt-2 h-[60px] w-[calc(100%-24px)] max-w-[1080px] rounded-full border-white/70 bg-white/55 px-5 shadow-[0_12px_32px_-14px_rgba(16,42,67,0.3)] backdrop-blur-xl backdrop-saturate-150 md:px-7'
+              : 'h-full w-full max-w-7xl border-transparent px-6 md:px-10'
+          }`}
+        >
+          <span
+            ref={progressRef}
+            className={`pointer-events-none absolute bottom-0 left-8 right-8 h-[2px] origin-left rounded-full transition-opacity duration-300 ${
+              floating ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ backgroundImage: 'var(--hero-cta-gradient)', transform: 'scaleX(0)' }}
+            aria-hidden="true"
+          />
           <Link to="/" className="flex items-center shrink-0">
-            <img src="/images/logo.png" alt="Mzobs" className="h-14 w-auto object-contain" />
+            <img
+              src="/images/logo.png"
+              alt="Mzobs"
+              className={`w-auto object-contain transition-[height] duration-500 ${floating ? 'h-11' : 'h-14'}`}
+            />
           </Link>
 
-          <nav aria-label="Primary" className="hidden lg:flex items-center gap-7">
+          <nav aria-label="Primary" className="hidden lg:flex items-center gap-1" onMouseLeave={() => setHoverLink(null)}>
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.label}
                 to={link.to}
-                className="text-[14px] font-semibold text-(--jobs-navy)/75 hover:text-(--jobs-teal-dark) transition-colors"
+                onMouseEnter={() => setHoverLink(link.label)}
+                onFocus={() => setHoverLink(link.label)}
+                onBlur={() => setHoverLink(null)}
+                className="relative rounded-full px-3.5 py-2 text-[14px] font-semibold text-(--jobs-navy)/75 transition-colors hover:text-(--jobs-navy)"
               >
-                {link.label}
+                {hoverLink === link.label && (
+                  <motion.span
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 rounded-full bg-(--jobs-navy)/[0.07] ring-1 ring-(--jobs-navy)/[0.05]"
+                    transition={{ type: 'spring', stiffness: 520, damping: 38 }}
+                  />
+                )}
+                <span className="relative">{link.label}</span>
               </Link>
             ))}
           </nav>

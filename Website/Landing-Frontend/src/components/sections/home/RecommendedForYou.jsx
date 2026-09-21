@@ -110,13 +110,13 @@ function LogoFrame({ job }) {
   return (
     <span
       data-logo
-      className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-[18px] border bg-white sm:h-[84px] sm:w-[84px] motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-[1.03]"
+      className="flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-[16px] border bg-white sm:h-[84px] sm:w-[84px] sm:rounded-[18px] motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-[1.03]"
       style={{ borderColor: theme.border }}
     >
       {job.logo ? (
         <img src={job.logo} alt="" aria-hidden="true" draggable={false} className="h-full w-full rounded-[18px] object-contain p-2.5" />
       ) : (
-        <span className="text-[26px] font-extrabold sm:text-[30px]" style={{ color: theme.markInk }} aria-hidden="true">
+        <span className="text-[22px] font-extrabold sm:text-[30px]" style={{ color: theme.markInk }} aria-hidden="true">
           {initialsOf(job.company || job.role)}
         </span>
       )}
@@ -132,14 +132,14 @@ function DeckCard({ job, index, total, isActive, cardRef }) {
       data-front={isActive ? '' : undefined}
       inert={!isActive}
       aria-hidden={!isActive}
-      className={`group absolute left-0 top-7 h-[430px] w-[calc(100%-44px)] max-w-[620px] select-none overflow-hidden rounded-[28px] border shadow-[0_18px_45px_rgba(22,43,58,0.07)] sm:top-[34px] sm:h-[390px] sm:w-[calc(100%-64px)] lg:h-[360px] ${
+      className={`group absolute left-0 top-7 h-[372px] w-[calc(100%-44px)] max-w-[620px] select-none overflow-hidden rounded-[28px] border shadow-[0_18px_45px_rgba(22,43,58,0.07)] sm:top-[34px] sm:h-[390px] sm:w-[calc(100%-64px)] lg:h-[360px] ${
         isActive ? 'motion-safe:transition-[translate] motion-safe:duration-300 motion-safe:hover:-translate-y-1' : ''
       }`}
       style={{ backgroundColor: theme.bg, borderColor: theme.border, touchAction: 'pan-y' }}
     >
       <span data-accent className="absolute inset-y-0 left-0 w-1" style={{ backgroundColor: theme.accent }} aria-hidden="true" />
 
-      <div data-content className="relative flex h-full flex-col p-6 pl-8 sm:p-8 sm:pl-10">
+      <div data-content className="relative flex h-full flex-col p-5 pl-7 sm:p-8 sm:pl-10">
         {/* Oversized, near-invisible watermark of the company mark */}
         {job.logo ? (
           <img
@@ -172,19 +172,19 @@ function DeckCard({ job, index, total, isActive, cardRef }) {
           </div>
         </div>
 
-        <h3 className="relative mt-5 text-[27px] font-extrabold leading-[1.06] tracking-tight sm:text-[33px]" style={{ color: INK }}>
+        <h3 className="relative mt-4 text-[24px] font-extrabold leading-[1.06] tracking-tight sm:mt-5 sm:text-[33px]" style={{ color: INK }}>
           {job.role}
         </h3>
         <p className="relative mt-1.5 text-[14.5px] sm:text-[15.5px]" style={{ color: MUTED }}>
           {[job.company, job.location, job.employmentType].filter(Boolean).join(' · ')}
         </p>
         {job.skills.length > 0 && (
-          <p className="relative mt-3 text-[15px] font-semibold sm:text-[16px]" style={{ color: INK }}>
+          <p className="relative mt-2 text-[14.5px] font-semibold sm:mt-3 sm:text-[16px]" style={{ color: INK }}>
             {job.skills.join(' · ')}
           </p>
         )}
 
-        <div className="relative mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-3 border-t pt-4" style={{ borderColor: RULE }}>
+        <div className="relative mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-3 border-t pt-3 sm:pt-4" style={{ borderColor: RULE }}>
           {job.matchReasons.length > 0 && (
             <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
               {job.matchReasons.map((reason) => (
@@ -445,7 +445,7 @@ function JobDeck({ jobs, isSample }) {
     >
       <div
         ref={stageRef}
-        className="relative h-[490px] sm:h-[458px] lg:h-[428px]"
+        className="relative h-[432px] sm:h-[458px] lg:h-[428px]"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerEnd}
@@ -508,7 +508,7 @@ function JobDeck({ jobs, isSample }) {
 
 function DeckSkeleton() {
   return (
-    <div className="relative h-[430px] w-[calc(100%-44px)] max-w-[620px] animate-pulse rounded-[28px] sm:w-[calc(100%-64px)] lg:h-[360px]" style={{ backgroundColor: '#FFF1EC' }} />
+    <div className="relative h-[372px] w-[calc(100%-44px)] max-w-[620px] animate-pulse rounded-[28px] sm:w-[calc(100%-64px)] lg:h-[360px]" style={{ backgroundColor: '#FFF1EC' }} />
   )
 }
 
