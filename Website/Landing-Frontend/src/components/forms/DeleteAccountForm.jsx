@@ -90,11 +90,11 @@ export default function DeleteAccountForm() {
         <div className="w-14 h-14 rounded-full bg-green-tint text-green flex items-center justify-center mb-4">
           <CheckCircle2 size={26} />
         </div>
-        <h3 className="text-lg font-black text-black">Account deleted</h3>
-        <p className="text-[13.5px] text-[#595959] mt-1.5 max-w-xs">
+        <h3 className="text-lg font-black text-(--explorer-navy)">Account deleted</h3>
+        <p className="text-[13.5px] text-(--explorer-muted) mt-1.5 max-w-xs">
           Your MZOBS account and associated personal data have been permanently deleted.
         </p>
-        <Link to="/" className="text-xs font-bold text-[#595959] hover:text-black transition-colors mt-6">
+        <Link to="/" className="text-xs font-bold text-(--explorer-muted) hover:text-(--explorer-navy) transition-colors mt-6">
           Back to home
         </Link>
       </div>
@@ -102,19 +102,19 @@ export default function DeleteAccountForm() {
   }
 
   if (!OTP_CONFIGURED) {
-    return <p className="text-[13.5px] text-[#595959]">Account deletion isn't available right now. Please contact support to request it.</p>
+    return <p className="text-[13.5px] text-(--explorer-muted)">Account deletion isn't available right now. Please contact support to request it.</p>
   }
 
   return (
     <div>
-      <div className="flex items-center gap-2 text-[#595959] mb-4">
+      <div className="flex items-center gap-2 text-(--explorer-muted) mb-4">
         <Phone size={16} />
         <p className="text-[13px] font-medium">Verify your mobile number to request deletion.</p>
       </div>
 
       <Field label="Mobile number">
         <div className="flex flex-wrap sm:flex-nowrap gap-2">
-          <div className="h-11 px-3.5 flex items-center rounded-xl border border-[#C9C9C9] bg-[#F7F7F7] text-[13.5px] font-bold text-black shrink-0">+91</div>
+          <div className="h-11 px-3.5 flex items-center rounded-lg border border-(--explorer-border) bg-(--explorer-bg) text-[13.5px] font-bold text-(--explorer-navy) shrink-0">+91</div>
           <div className="flex-1 min-w-40">
             <Input
               type="tel"
@@ -134,7 +134,7 @@ export default function DeleteAccountForm() {
               type="button"
               onClick={handleSendOtp}
               disabled={sendingOtp || phone.length !== 10}
-              className="shrink-0 whitespace-nowrap w-full sm:w-auto h-11 px-4 rounded-xl border border-[#C9C9C9] bg-white text-[13px] font-bold text-black hover:border-black transition-colors disabled:opacity-50"
+              className="shrink-0 whitespace-nowrap w-full sm:w-auto h-11 px-4 rounded-lg border border-(--explorer-border) bg-white text-[13px] font-bold text-(--explorer-navy) hover:border-(--explorer-blue) transition-colors disabled:opacity-50"
             >
               {sendingOtp ? 'Sending...' : 'Send OTP'}
             </button>
@@ -144,15 +144,15 @@ export default function DeleteAccountForm() {
       </Field>
 
       {phoneToken ? (
-        <div className="flex items-center gap-2 mb-4 px-3.5 py-2.5 rounded-xl bg-green-tint text-[13px] font-bold text-green">
+        <div className="flex items-center gap-2 mb-4 px-3.5 py-2.5 rounded-lg bg-green-tint text-[13px] font-bold text-green">
           <ShieldCheck size={16} className="shrink-0" />
           Mobile number verified
         </div>
       ) : otpSent ? (
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1.5">
-            <label className="text-[12.5px] font-bold text-black tracking-tight">Enter the 6-digit code</label>
-            <button type="button" onClick={handleChangePhoneNumber} className="text-[12px] font-bold text-[#595959] hover:text-black transition-colors">
+            <label className="text-[12.5px] font-bold text-(--explorer-navy) tracking-tight">Enter the 6-digit code</label>
+            <button type="button" onClick={handleChangePhoneNumber} className="text-[12px] font-bold text-(--explorer-muted) hover:text-(--explorer-navy) transition-colors">
               Change number
             </button>
           </div>
@@ -164,7 +164,7 @@ export default function DeleteAccountForm() {
               type="button"
               onClick={handleVerifyOtp}
               disabled={verifyingOtp || otp.length !== 6}
-              className="h-10 px-4 rounded-xl border border-[#C9C9C9] bg-white text-[13px] font-bold text-black hover:border-black transition-colors disabled:opacity-50"
+              className="h-10 px-4 rounded-lg border border-(--explorer-border) bg-white text-[13px] font-bold text-(--explorer-navy) hover:border-(--explorer-blue) transition-colors disabled:opacity-50"
             >
               {verifyingOtp ? 'Verifying...' : 'Verify code'}
             </button>
@@ -172,7 +172,7 @@ export default function DeleteAccountForm() {
               type="button"
               onClick={handleSendOtp}
               disabled={sendingOtp || resendIn > 0}
-              className="text-[12.5px] font-bold text-black hover:underline disabled:opacity-50 disabled:no-underline disabled:text-[#9E9E9E]"
+              className="text-[12.5px] font-bold text-(--explorer-navy) hover:underline disabled:opacity-50 disabled:no-underline disabled:text-[#9E9E9E]"
             >
               {sendingOtp ? 'Resending...' : resendIn > 0 ? `Resend in 0:${String(resendIn).padStart(2, '0')}` : 'Resend OTP'}
             </button>
@@ -182,9 +182,9 @@ export default function DeleteAccountForm() {
 
       {phoneToken && (
         <>
-          <div className="flex items-start gap-2.5 rounded-xl border border-red/25 bg-red/5 px-3.5 py-3 mb-4">
+          <div className="flex items-start gap-2.5 rounded-lg border border-red/25 bg-red/5 px-3.5 py-3 mb-4">
             <AlertTriangle size={16} className="text-red shrink-0 mt-0.5" />
-            <p className="text-[12.5px] text-[#595959]">
+            <p className="text-[12.5px] text-(--explorer-muted)">
               This permanently deletes your profile, resume, applications, and other personal data. Records an employer already holds
               because you were shared with them (or that we're required to keep for legal/tax reasons) are anonymized, not deleted. This
               cannot be undone.
@@ -196,9 +196,9 @@ export default function DeleteAccountForm() {
               type="checkbox"
               checked={confirmChecked}
               onChange={(e) => setConfirmChecked(e.target.checked)}
-              className="mt-0.5 accent-black"
+              className="mt-0.5 accent-(--explorer-blue)"
             />
-            <span className="text-[12.5px] text-[#595959]">I understand this is permanent and I want to delete my account.</span>
+            <span className="text-[12.5px] text-(--explorer-muted)">I understand this is permanent and I want to delete my account.</span>
           </label>
 
           {deleteError && <p className="text-xs text-red mb-4">{deleteError}</p>}
