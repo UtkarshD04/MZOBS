@@ -154,13 +154,25 @@ const MOBILE_BLOBS = [
   { size: 200, top: '96%', left: '-10%', tone: 'teal', dur: '32s', delay: '0.8s' },
   { size: 220, top: '100%', left: '105%', tone: 'pink', dur: '28s', delay: '2.2s' },
 ]
+// Vivid, unlabeled glass bubbles spread over the whole hero *behind* the
+// content (the root sits at z-0, content at z-10). Big ones hug the left/
+// right edges (a few are half-clipped), small ones fill the gaps; they
+// alternate sides top→bottom so no two are ever close, and each has room
+// to float without touching a neighbor.
 const MOBILE_ORBS = [
-  { size: 14, top: '4%', left: '6%', tone: 'blue', anim: 'bubble-anim-float-y', dur: '14s', delay: '0s' },
-  { size: 12, top: '3%', left: '90%', tone: 'orange', anim: 'bubble-anim-float-x', dur: '17s', delay: '0.6s' },
-  { size: 10, top: '10%', left: '94%', tone: 'pink', anim: 'bubble-anim-pulse', dur: '11s', delay: '1.2s' },
-  { size: 16, top: '95%', left: '8%', tone: 'purple', anim: 'bubble-anim-drift-slow', dur: '20s', delay: '0.4s' },
-  { size: 12, top: '97%', left: '92%', tone: 'teal', anim: 'bubble-anim-float-y', dur: '18s', delay: '1.6s' },
-  { size: 9, top: '90%', left: '4%', tone: 'blue', anim: 'bubble-anim-pulse', dur: '10s', delay: '2s' },
+  { size: 64, top: '15%', left: '90%', tone: 'purple', anim: 'bubble-anim-drift-slow', dur: '14s', delay: '0s' },
+  { size: 46, top: '25%', left: '1%', tone: 'blue', anim: 'bubble-anim-float-y', dur: '11s', delay: '0.6s' },
+  { size: 38, top: '36%', left: '95%', tone: 'pink', anim: 'bubble-anim-float-x', dur: '13s', delay: '1.1s' },
+  { size: 72, top: '47%', left: '5%', tone: 'orange', anim: 'bubble-anim-drift-slow', dur: '16s', delay: '0.3s' },
+  { size: 54, top: '58%', left: '94%', tone: 'teal', anim: 'bubble-anim-float-y', dur: '12s', delay: '1.5s' },
+  { size: 42, top: '68%', left: '3%', tone: 'purple', anim: 'bubble-anim-float-x', dur: '15s', delay: '0.9s' },
+  { size: 78, top: '79%', left: '91%', tone: 'blue', anim: 'bubble-anim-drift-slow', dur: '18s', delay: '0.4s' },
+  { size: 64, top: '90%', left: '10%', tone: 'pink', anim: 'bubble-anim-float-y', dur: '13s', delay: '1.2s' },
+  { size: 30, top: '92%', left: '46%', tone: 'teal', anim: 'bubble-anim-float-x', dur: '14s', delay: '0.7s' },
+  { size: 44, top: '96%', left: '68%', tone: 'orange', anim: 'bubble-anim-float-y', dur: '17s', delay: '1.8s' },
+  { size: 12, top: '41%', left: '50%', tone: 'blue', anim: 'bubble-anim-pulse', dur: '9s', delay: '0.5s' },
+  { size: 10, top: '63%', left: '52%', tone: 'pink', anim: 'bubble-anim-pulse', dur: '10s', delay: '1.3s' },
+  { size: 14, top: '84%', left: '30%', tone: 'purple', anim: 'bubble-anim-drift-slow', dur: '20s', delay: '0.2s' },
 ]
 
 function BubbleBlob({ b }) {
@@ -229,10 +241,10 @@ function MajorBubble({ bub }) {
 
 // Unlabeled orb — shared by the medium (midground) and micro (texture)
 // layers, sized and given a mouse-parallax reach by whoever renders it.
-function Orb({ orb, px, py }) {
+function Orb({ orb, px, py, vivid }) {
   return (
     <div className="bubble-parallax absolute" style={{ top: orb.top, left: orb.left, '--px': px, '--py': py }}>
-      <div className={`bubble-surface bubble-tone-${orb.tone} ${orb.anim}`} style={{ width: orb.size, height: orb.size, '--dur': orb.dur, '--delay': orb.delay }} />
+      <div className={`bubble-surface${vivid ? ' bubble-surface-vivid' : ''} bubble-tone-${orb.tone} ${orb.anim}`} style={{ width: orb.size, height: orb.size, '--dur': orb.dur, '--delay': orb.delay }} />
     </div>
   )
 }
@@ -315,7 +327,7 @@ export default function HeroBubbleField() {
           the centered text. */}
       <div className="md:hidden absolute inset-0">
         {MOBILE_BLOBS.map((b, i) => <BubbleBlob key={`m-blob-${i}`} b={b} />)}
-        {MOBILE_ORBS.map((orb, i) => <Orb key={`m-orb-${i}`} orb={orb} px="8px" py="6px" />)}
+        {MOBILE_ORBS.map((orb, i) => <Orb key={`m-orb-${i}`} orb={orb} px="8px" py="6px" vivid />)}
       </div>
     </div>
   )
