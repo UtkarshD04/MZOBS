@@ -368,7 +368,7 @@ export default function JobMarketplace() {
   }
 
   return (
-    <section id="latest-jobs" className="hero-afterglow-faint relative py-16 md:py-20 px-6 md:px-10 scroll-mt-20">
+    <section id="latest-jobs" className="hero-afterglow-faint relative pt-8 pb-14 md:py-20 px-6 md:px-10 scroll-mt-20">
       <div className="max-w-[1400px] mx-auto">
         {/* Heading — the hero's handoff into an actual marketplace */}
         <Reveal direction="up" duration={0.6} className="max-w-2xl">

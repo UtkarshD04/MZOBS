@@ -497,6 +497,21 @@
   backdrop-filter: blur(3px) saturate(1.1);
   -webkit-backdrop-filter: blur(3px) saturate(1.1);
 }
+/* Punchier variant for the mobile background bubbles — same glass shape,
+   but a much stronger tint, a bright specular highlight and a colored glow
+   so they read clearly behind the content instead of washing out. */
+.bubble-surface-vivid {
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 38%),
+    radial-gradient(circle at 70% 80%, rgba(var(--bubble-tone-rgb), 0.55), transparent 62%),
+    linear-gradient(155deg, rgba(var(--bubble-tone-rgb), 0.6), rgba(var(--bubble-tone-rgb), 0.22) 75%);
+  box-shadow:
+    0 14px 30px -10px rgba(var(--bubble-tone-rgb), 0.6),
+    0 0 22px rgba(var(--bubble-tone-rgb), 0.28),
+    inset 0 2px 3px rgba(255, 255, 255, 0.85),
+    inset 0 -10px 16px -8px rgba(var(--bubble-tone-rgb), 0.55);
+}
 .bubble-tone-teal {
   --bubble-tone-rgb: var(--bubble-teal-rgb);
 }
@@ -616,21 +631,21 @@
    begins the page has settled back to flat. */
 .hero-afterglow {
   background:
-    radial-gradient(ellipse 640px 260px at 14% 0%, rgba(var(--bubble-teal-rgb), 0.07), transparent 72%),
-    radial-gradient(ellipse 640px 260px at 86% 0%, rgba(var(--bubble-pink-rgb), 0.06), transparent 72%),
-    radial-gradient(ellipse 560px 240px at 50% 100%, rgba(var(--bubble-blue-rgb), 0.05), transparent 75%),
-    #ffffff;
+    radial-gradient(ellipse 420px 220px at 10% 20%, rgba(var(--bubble-teal-rgb), 0.16), transparent 72%),
+    radial-gradient(ellipse 420px 220px at 92% 30%, rgba(var(--bubble-pink-rgb), 0.16), transparent 72%),
+    radial-gradient(ellipse 520px 260px at 50% 100%, rgba(var(--bubble-purple-rgb), 0.14), transparent 75%),
+    linear-gradient(180deg, #f3f0ff 0%, #f0f6ff 60%, #eef7ff 100%);
 }
 
-/* One step fainter still, for Latest Jobs — a tall, content-heavy section
-   (job cards need to stay crisp/legible), so only its own top band picks
-   up a last, quiet trace of the Hero's blue/teal tones before settling
-   into --explorer-bg for the cards below. */
+/* Latest Jobs picks up the same light lavender/sky/mint washes (still quiet
+   enough for job cards to stay crisp) and settles into --explorer-bg by its
+   bottom edge. */
 .hero-afterglow-faint {
   background:
-    radial-gradient(ellipse 680px 300px at 20% 0%, rgba(var(--bubble-blue-rgb), 0.05), transparent 70%),
-    radial-gradient(ellipse 680px 300px at 80% 0%, rgba(var(--bubble-teal-rgb), 0.05), transparent 70%),
-    var(--explorer-bg);
+    radial-gradient(ellipse 480px 320px at 0% 4%, rgba(var(--bubble-blue-rgb), 0.12), transparent 70%),
+    radial-gradient(ellipse 480px 320px at 100% 10%, rgba(var(--bubble-purple-rgb), 0.12), transparent 70%),
+    radial-gradient(ellipse 520px 300px at 50% 0%, rgba(var(--bubble-teal-rgb), 0.1), transparent 72%),
+    linear-gradient(180deg, #eef7ff 0%, #f4f8ff 40%, var(--explorer-bg) 100%);
 }
 
 .bubble-parallax {
