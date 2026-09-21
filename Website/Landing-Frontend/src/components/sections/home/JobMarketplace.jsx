@@ -8,6 +8,7 @@ import { CompanyMark } from './jobCardPrimitives'
 import LocationConsentDialog from '../../ui/LocationConsentDialog'
 import MarketplaceFilters from './MarketplaceFilters'
 import { fetchLatestJobs, fetchJobFacets } from '../../../lib/publicJobs'
+import { useAutoRail } from '../../../lib/useAutoRail'
 import {
   MARKETPLACE_DEFAULTS,
   SORT_CHOICES,
@@ -215,6 +216,8 @@ function FeaturedJobTileSkeleton() {
 }
 
 export default function JobMarketplace() {
+  const sectionRef = useRef(null)
+  useAutoRail(sectionRef)
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
 
@@ -368,7 +371,7 @@ export default function JobMarketplace() {
   }
 
   return (
-    <section id="latest-jobs" className="hero-afterglow-faint relative pt-8 pb-14 md:py-20 px-6 md:px-10 scroll-mt-20">
+    <section ref={sectionRef} id="latest-jobs" className="hero-afterglow-faint relative pt-8 pb-14 md:py-20 px-6 md:px-10 scroll-mt-20">
       <div className="max-w-[1400px] mx-auto">
         {/* Heading — the hero's handoff into an actual marketplace */}
         <Reveal direction="up" duration={0.6} className="max-w-2xl">
@@ -546,10 +549,14 @@ export default function JobMarketplace() {
                 </button>
               </div>
             ) : showInitialLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                <FeaturedJobTileSkeleton />
+              <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-6 -mx-6 px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4">
+                <div className="w-[82%] shrink-0 snap-start sm:w-auto sm:col-span-2 sm:row-span-2">
+                  <FeaturedJobTileSkeleton />
+                </div>
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <JobCardSkeleton key={i} />
+                  <div key={i} className="w-[82%] shrink-0 snap-start sm:w-auto">
+                    <JobCardSkeleton />
+                  </div>
                 ))}
               </div>
             ) : showEmpty ? (
@@ -575,14 +582,14 @@ export default function JobMarketplace() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <StaggerGroup className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" staggerDelay={0.08}>
+                  <StaggerGroup data-auto-rail className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-6 -mx-6 px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4" staggerDelay={0.08}>
                     {featured && (
-                      <StaggerItem y={20} scale={1} duration={0.5} className="sm:col-span-2 sm:row-span-2">
+                      <StaggerItem y={20} scale={1} duration={0.5} className="w-[82%] shrink-0 snap-start sm:w-auto sm:col-span-2 sm:row-span-2">
                         <FeaturedJobTile job={featured} tone={CARD_TONES[0]} onOpen={() => openJob(featured)} />
                       </StaggerItem>
                     )}
                     {restJobs.map((job, i) => (
-                      <StaggerItem key={job.id ?? `${job.title}-${job.company}`} y={20} scale={1} duration={0.45}>
+                      <StaggerItem key={job.id ?? `${job.title}-${job.company}`} y={20} scale={1} duration={0.45} className="w-[82%] shrink-0 snap-start sm:w-auto">
                         <JobCard job={job} tone={CARD_TONES[(i + 1) % CARD_TONES.length]} onOpen={() => openJob(job)} />
                       </StaggerItem>
                     ))}
