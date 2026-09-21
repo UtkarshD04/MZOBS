@@ -15,7 +15,7 @@ export default function QuickDiscoveryStrip({ onSelect }) {
   return (
     <section ref={sectionRef} className="hero-afterglow pt-5 pb-6 md:pt-6 md:pb-10 px-6 md:px-10">
       <Reveal direction="up" duration={0.5} className="max-w-7xl mx-auto">
-        <StaggerGroup data-auto-rail="2200" className="flex flex-nowrap items-center gap-x-1 overflow-x-auto -mx-6 px-6 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-y-2 sm:overflow-visible sm:px-0 sm:pb-0">
+        <StaggerGroup data-auto-rail="1400" className="flex flex-nowrap items-center gap-x-1 overflow-x-auto -mx-6 px-6 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-y-2 sm:overflow-visible sm:px-0 sm:pb-0">
           {QUICK_DISCOVERY_DATA.map((item, i) => (
             <StaggerItem key={item.label} className="flex shrink-0 items-center whitespace-nowrap">
               <button
