@@ -2,15 +2,16 @@ import { useEffect } from 'react'
 
 // Auto-slides the horizontal swipe rails (mobile card rows) inside `rootRef`.
 // Mark a rail with `data-auto-rail` (optionally `data-auto-rail="2500"` for a
-// custom pause in ms; default 3500). Every so often the rail scrolls to its
+// custom pause in ms; default 2200). Every so often the rail scrolls to its
 // next card, and loops back to the start after the last one.
 //
 // It only runs while the rail is actually scrollable (i.e. on phones, where the
 // grid becomes a rail), on screen, and the tab is visible — and it backs off
-// for a few seconds after the visitor touches, drags, scrolls or hovers it so
-// it never fights them.
-const DEFAULT_MS = 3500
-const IDLE_AFTER_USER_MS = 6000
+// for a few seconds after the visitor presses / touches / drags it so it never
+// fights them. Mouse *hover* deliberately does not pause it: on phones (and in
+// browser mobile emulation) the pointer just rests over the page.
+const DEFAULT_MS = 2200
+const IDLE_AFTER_USER_MS = 3000
 
 export function useAutoRail(rootRef) {
   useEffect(() => {
@@ -21,16 +22,8 @@ export function useAutoRail(rootRef) {
     const touch = () => {
       lastUser = Date.now()
     }
-    let hovering = false
-    const enter = () => (hovering = true)
-    const leave = () => {
-      hovering = false
-      touch()
-    }
-    const events = ['pointerdown', 'touchstart', 'wheel', 'keydown']
+    const events = ['pointerdown', 'touchstart']
     events.forEach((e) => root.addEventListener(e, touch, { passive: true, capture: true }))
-    root.addEventListener('pointerenter', enter)
-    root.addEventListener('pointerleave', leave)
 
     const nextAt = new WeakMap()
 
@@ -54,7 +47,7 @@ export function useAutoRail(rootRef) {
     }
 
     const tick = () => {
-      if (document.hidden || hovering || Date.now() - lastUser < IDLE_AFTER_USER_MS) return
+      if (document.hidden || Date.now() - lastUser < IDLE_AFTER_USER_MS) return
       const now = Date.now()
       root.querySelectorAll('[data-auto-rail]').forEach((rail) => {
         const rect = rail.getBoundingClientRect()
@@ -75,8 +68,6 @@ export function useAutoRail(rootRef) {
     return () => {
       clearInterval(id)
       events.forEach((e) => root.removeEventListener(e, touch, { capture: true }))
-      root.removeEventListener('pointerenter', enter)
-      root.removeEventListener('pointerleave', leave)
     }
   }, [rootRef])
 }

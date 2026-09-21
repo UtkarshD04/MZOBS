@@ -14,7 +14,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const RESULT_LIMIT = 5
 // How long each card stays in front before the deck turns on its own.
-const AUTOPLAY_MS = 4500
+const AUTOPLAY_MS = 3000
 
 // Section-local palette, built from the home page's own blue / lavender / teal
 // tones (same family as the Hero's blue→purple gradient); not added to the
