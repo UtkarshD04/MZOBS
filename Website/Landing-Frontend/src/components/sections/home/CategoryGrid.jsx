@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowUpRight, Sparkles } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import { CATEGORY_DATA } from '../../../lib/content'
 import { fetchCategoryCounts } from '../../../lib/publicJobs'
+import { useAutoRail } from '../../../lib/useAutoRail'
 
 function liveCount(cat, counts) {
   if (!counts) return null
@@ -63,6 +64,8 @@ function CategoryCardSkeleton({ tone }) {
 }
 
 export default function CategoryGrid({ onSelect }) {
+  const sectionRef = useRef(null)
+  useAutoRail(sectionRef)
   const reduceMotion = useReducedMotion()
   const [counts, setCounts] = useState(null)
   const [countsFailed, setCountsFailed] = useState(false)
@@ -91,7 +94,7 @@ export default function CategoryGrid({ onSelect }) {
   }
 
   return (
-    <section id="categories" className="hero-afterglow-faint py-16 md:py-20 px-6 md:px-10">
+    <section ref={sectionRef} id="categories" className="hero-afterglow-faint py-16 md:py-20 px-6 md:px-10">
       <div className="max-w-7xl mx-auto">
 
         {/* Header — mirrors JobMarketplace's editorial header style */}
@@ -129,7 +132,8 @@ export default function CategoryGrid({ onSelect }) {
 
         {/* Card grid */}
         <motion.div
-          className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5"
+          data-auto-rail
+          className="flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-px-6 -mx-6 px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 xl:grid-cols-5"
           initial={reduceMotion ? false : 'hidden'}
           whileInView="show"
           viewport={{ once: true, amount: 0.15 }}
@@ -139,7 +143,8 @@ export default function CategoryGrid({ onSelect }) {
             ? SKELETON_TONES.map((tone, i) => (
                 <motion.div
                   key={i}
-                  variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                  className="w-[64%] shrink-0 snap-start sm:w-auto"
+                                    variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <CategoryCardSkeleton tone={tone} />
@@ -155,7 +160,8 @@ export default function CategoryGrid({ onSelect }) {
                 return (
                   <motion.div
                     key={cat.title}
-                    variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                    className="w-[64%] shrink-0 snap-start sm:w-auto"
+                                        variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
                     transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <button
