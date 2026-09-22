@@ -12,6 +12,8 @@ import About from './pages/About'
 import OurStory from './pages/OurStory'
 import Contact from './pages/Contact'
 import Employee from './pages/Employee'
+import EmployeeProfile from './pages/EmployeeProfile'
+import EmployeeSubscription from './pages/EmployeeSubscription'
 import EmployeeSignup from './pages/EmployeeSignup'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
@@ -55,6 +57,8 @@ export default function App() {
             <Route path="/our-story" element={<OurStory />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/employees" element={<Employee />} />
+            <Route path="/employees/profile" element={<EmployeeProfile />} />
+            <Route path="/employees/subscription" element={<EmployeeSubscription />} />
             <Route path="/employees/signup" element={<EmployeeSignup />} />
             <Route path="/employees/signin" element={<EmployeeSignin />} />
             <Route path="/employees/forgot-password" element={<EmployeeForgotPassword />} />

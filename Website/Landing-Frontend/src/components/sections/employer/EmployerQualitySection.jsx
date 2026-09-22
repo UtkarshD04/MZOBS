@@ -26,26 +26,26 @@ const POINTS = [
 
 export default function EmployerQualitySection() {
   return (
-    <section className="relative overflow-hidden bg-[#FAF7F1] py-20 md:py-28 px-6 md:px-12">
-      <div aria-hidden="true" className="absolute -left-28 bottom-10 h-72 w-72 rounded-full bg-[#DDE6DF]/60 blur-[90px]" />
+    <section className="relative overflow-hidden bg-[#e8f8f5] py-20 md:py-28 px-6 md:px-12">
+      <div aria-hidden="true" className="absolute -left-28 bottom-10 h-72 w-72 rounded-full bg-[#bfdbfe]/60 blur-[90px]" />
       <div className="relative max-w-7xl mx-auto">
         <FadeInView className="max-w-2xl">
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-[48px] font-bold text-[#20251F] tracking-tight leading-[1.04]">
+          <h2 className="font-sans text-3xl sm:text-4xl md:text-[48px] font-bold text-[#102a43] tracking-tight leading-[1.04]">
             Built to make every step feel more certain.
           </h2>
-          <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-[#526051]">The details that usually create delay and doubt are handled before they ever reach your desk.</p>
+          <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-[#51697e]">The details that usually create delay and doubt are handled before they ever reach your desk.</p>
         </FadeInView>
 
         <div className="mt-12 grid sm:grid-cols-2 gap-4 lg:grid-cols-4">
           {POINTS.map((point, i) => (
             <FadeInView key={point.title} delay={i * 0.06} className="h-full">
-              <article className="group relative h-full overflow-hidden rounded-[24px] border border-[#20251F]/15 bg-[#F5F6F4] p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_18px_35px_-24px_rgba(32,37,31,0.38)]">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#DDE6DF] text-[#246B5A] transition-transform duration-300 group-hover:scale-105">
+              <article className="group relative h-full overflow-hidden rounded-[24px] border border-[#102a43]/15 bg-[#f7f9fb] p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_18px_35px_-24px_rgba(32,37,31,0.38)]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#bfdbfe] text-[#0a6f64] transition-transform duration-300 group-hover:scale-105">
                   <point.icon size={20} strokeWidth={1.8} />
                 </span>
-                <span className="absolute right-5 top-5 font-serif text-4xl italic text-[#20251F]/12 transition-colors group-hover:text-white/10">0{i + 1}</span>
-                <h3 className="mt-12 text-lg font-bold text-[#20251F] leading-snug">{point.title}</h3>
-                <p className="mt-3 text-[14px] text-[#526051] leading-relaxed">{point.desc}</p>
+                <span className="absolute right-5 top-5 font-sans text-4xl italic text-[#102a43]/12 transition-colors group-hover:text-white/10">0{i + 1}</span>
+                <h3 className="mt-12 text-lg font-bold text-[#102a43] leading-snug">{point.title}</h3>
+                <p className="mt-3 text-[14px] text-[#51697e] leading-relaxed">{point.desc}</p>
               </article>
             </FadeInView>
           ))}

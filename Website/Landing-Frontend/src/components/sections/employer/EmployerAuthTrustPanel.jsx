@@ -9,19 +9,19 @@ const STATS = [WHO_WE_ARE_DATA.stats[1], WHO_WE_ARE_DATA.stats[2]]
 export default function EmployerAuthTrustPanel({ delay = 0.34 }) {
   return (
     <FadeInLoad delay={delay} className="mt-10">
-      <div className="grid grid-cols-2 gap-5 pb-8 border-b border-[#20251F]/10">
+      <div className="grid grid-cols-2 gap-5 pb-8 border-b border-[#102a43]/10">
         {STATS.map((s) => (
           <div key={s.number}>
-            <div className="font-serif text-[26px] font-bold text-[#20251F] leading-none">{s.number}</div>
-            <div className="text-[12px] text-[#526051] mt-1.5 leading-snug">{s.label}</div>
+            <div className="font-sans text-[26px] font-bold text-[#102a43] leading-none">{s.number}</div>
+            <div className="text-[12px] text-[#51697e] mt-1.5 leading-snug">{s.label}</div>
           </div>
         ))}
       </div>
 
-      <blockquote className="mt-8 pl-4 border-l-2 border-[#246B5A]">
-        <p className="text-[14px] text-[#20251F] italic leading-relaxed">&ldquo;{EMPLOYER_TESTIMONIAL.quote}&rdquo;</p>
-        <footer className="mt-2.5 text-[12.5px] text-[#526051]">
-          <span className="font-bold text-[#20251F] not-italic">{EMPLOYER_TESTIMONIAL.name}</span> · {EMPLOYER_TESTIMONIAL.title}
+      <blockquote className="mt-8 pl-4 border-l-2 border-[#0a6f64]">
+        <p className="text-[14px] text-[#102a43] italic leading-relaxed">&ldquo;{EMPLOYER_TESTIMONIAL.quote}&rdquo;</p>
+        <footer className="mt-2.5 text-[12.5px] text-[#51697e]">
+          <span className="font-bold text-[#102a43] not-italic">{EMPLOYER_TESTIMONIAL.name}</span> · {EMPLOYER_TESTIMONIAL.title}
         </footer>
       </blockquote>
 

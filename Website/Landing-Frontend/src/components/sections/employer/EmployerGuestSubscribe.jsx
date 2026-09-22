@@ -6,7 +6,7 @@ import { openRazorpayCheckout } from '../../../lib/razorpay'
 import { EMPLOYER_APP_URL } from '../../../lib/config'
 
 const inputClass =
-  'w-full h-11 px-3.5 rounded-xl border border-[#20251F]/15 bg-white text-[13.5px] text-[#20251F] outline-none transition-colors placeholder:text-[#20251F]/35 focus:border-[#246B5A] focus:ring-[3px] focus:ring-[#246B5A]/15'
+  'w-full h-11 px-3.5 rounded-xl border border-[#102a43]/15 bg-white text-[13.5px] text-[#102a43] outline-none transition-colors placeholder:text-[#102a43]/35 focus:border-[#0a6f64] focus:ring-[3px] focus:ring-[#0a6f64]/15'
 
 // The pricing page's "no signup form" path: take the phone number, pay the
 // plan price, and the account (Company + Admin user + an already-active
@@ -83,7 +83,7 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#20251F]/50 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] bg-[#102a43]/50 backdrop-blur-sm"
             onClick={handleClose}
             aria-hidden="true"
           />
@@ -94,14 +94,14 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             role="dialog"
             aria-modal="true"
-            className="fixed inset-x-0 bottom-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[101] w-full sm:max-w-md sm:rounded-[28px] rounded-t-[28px] bg-white border border-[#20251F]/10 shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
+            className="fixed inset-x-0 bottom-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[101] w-full sm:max-w-md sm:rounded-[28px] rounded-t-[28px] bg-white border border-[#102a43]/10 shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
           >
             {step !== 'paying' && (
               <button
                 type="button"
                 onClick={handleClose}
                 aria-label="Close"
-                className="absolute right-5 top-5 w-8 h-8 rounded-full flex items-center justify-center text-[#20251F]/50 hover:text-[#20251F] hover:bg-[#F1EDE5] transition-colors"
+                className="absolute right-5 top-5 w-8 h-8 rounded-full flex items-center justify-center text-[#102a43]/50 hover:text-[#102a43] hover:bg-[#F1EDE5] transition-colors"
               >
                 <X size={18} />
               </button>
@@ -109,20 +109,20 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
 
             {step === 'phone' && (
               <>
-                <h3 className="font-serif text-2xl font-bold text-[#20251F]">Add your mobile number</h3>
-                <p className="text-[13px] text-[#526051] mt-1.5 mb-6">
+                <h3 className="font-sans text-2xl font-bold text-[#102a43]">Add your mobile number</h3>
+                <p className="text-[13px] text-[#51697e] mt-1.5 mb-6">
                   We'll use this to reach you about your account — then take you straight to payment, no signup form to fill in.
                 </p>
 
                 {payError && <p className="text-[12.5px] text-red-600 mb-4 -mt-2">{payError}</p>}
 
-                <label className="block text-[12.5px] font-bold text-[#20251F] mb-1.5">Mobile number</label>
+                <label className="block text-[12.5px] font-bold text-[#102a43] mb-1.5">Mobile number</label>
                 <div className="flex gap-2">
-                  <div className="h-11 px-3.5 flex items-center rounded-xl border border-[#20251F]/15 bg-[#F1EDE5] text-[13.5px] font-bold text-[#20251F] shrink-0">
+                  <div className="h-11 px-3.5 flex items-center rounded-xl border border-[#102a43]/15 bg-[#F1EDE5] text-[13.5px] font-bold text-[#102a43] shrink-0">
                     +91
                   </div>
                   <div className="relative flex-1">
-                    <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#20251F]/40" />
+                    <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#102a43]/40" />
                     <input
                       type="tel"
                       inputMode="numeric"
@@ -138,7 +138,7 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                   type="button"
                   onClick={handleContinue}
                   disabled={phone.length !== 10}
-                  className="mt-3 w-full h-11 rounded-xl bg-[#20251F] text-[#FAF7F1] text-[13.5px] font-bold hover:bg-[#246B5A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="mt-3 w-full h-11 rounded-xl bg-[#102a43] text-[#e8f8f5] text-[13.5px] font-bold hover:bg-[#0a6f64] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Continue to payment
                 </button>
@@ -147,29 +147,29 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
 
             {step === 'paying' && (
               <div className="py-8 flex flex-col items-center text-center gap-3">
-                <Loader2 size={28} className="animate-spin text-[#246B5A]" />
-                <p className="text-[14px] font-bold text-[#20251F]">Setting up your subscription…</p>
-                <p className="text-[12.5px] text-[#526051]">Complete the payment in the window that opens.</p>
+                <Loader2 size={28} className="animate-spin text-[#0a6f64]" />
+                <p className="text-[14px] font-bold text-[#102a43]">Setting up your subscription…</p>
+                <p className="text-[12.5px] text-[#51697e]">Complete the payment in the window that opens.</p>
               </div>
             )}
 
             {step === 'success' && result && (
               <div className="text-center">
-                <div className="w-14 h-14 rounded-full bg-[#DDE6DF] flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 size={28} className="text-[#246B5A]" />
+                <div className="w-14 h-14 rounded-full bg-[#bfdbfe] flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 size={28} className="text-[#0a6f64]" />
                 </div>
-                <h3 className="font-serif text-2xl font-bold text-[#20251F]">You're subscribed.</h3>
-                <p className="text-[13px] text-[#526051] mt-1.5">Your MZOBS Employer Annual plan is active. Save these details to sign in later:</p>
+                <h3 className="font-sans text-2xl font-bold text-[#102a43]">You're subscribed.</h3>
+                <p className="text-[13px] text-[#51697e] mt-1.5">Your MZOBS Employer Annual plan is active. Save these details to sign in later:</p>
 
-                <div className="mt-5 rounded-2xl border border-[#20251F]/12 bg-[#FAF7F1] p-4 text-left">
-                  <div className="text-[11px] font-semibold uppercase tracking-wide text-[#526051]">Login email</div>
-                  <div className="text-[13.5px] font-bold text-[#20251F] break-all mt-0.5">{result.placeholderEmail}</div>
-                  <div className="text-[11px] font-semibold uppercase tracking-wide text-[#526051] mt-3">Temporary password</div>
-                  <div className="text-[13.5px] font-bold text-[#20251F] font-mono mt-0.5">{result.tempPassword}</div>
+                <div className="mt-5 rounded-2xl border border-[#102a43]/12 bg-[#e8f8f5] p-4 text-left">
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-[#51697e]">Login email</div>
+                  <div className="text-[13.5px] font-bold text-[#102a43] break-all mt-0.5">{result.placeholderEmail}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-[#51697e] mt-3">Temporary password</div>
+                  <div className="text-[13.5px] font-bold text-[#102a43] font-mono mt-0.5">{result.tempPassword}</div>
                   <button
                     type="button"
                     onClick={copyCredentials}
-                    className="mt-3 inline-flex items-center gap-1.5 text-[12px] font-bold text-[#246B5A] hover:underline"
+                    className="mt-3 inline-flex items-center gap-1.5 text-[12px] font-bold text-[#0a6f64] hover:underline"
                   >
                     {copied ? <Check size={13} /> : <Copy size={13} />} {copied ? 'Copied' : 'Copy details'}
                   </button>
@@ -178,7 +178,7 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                 <button
                   type="button"
                   onClick={goToDashboard}
-                  className="mt-5 w-full inline-flex items-center justify-center gap-2 h-12 rounded-full bg-[#20251F] text-[#FAF7F1] text-sm font-bold hover:bg-[#246B5A] transition-colors"
+                  className="mt-5 w-full inline-flex items-center justify-center gap-2 h-12 rounded-full bg-[#102a43] text-[#e8f8f5] text-sm font-bold hover:bg-[#0a6f64] transition-colors"
                 >
                   Go to your dashboard <ArrowRight size={16} />
                 </button>

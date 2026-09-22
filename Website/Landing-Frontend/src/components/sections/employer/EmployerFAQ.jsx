@@ -29,22 +29,22 @@ const FAQ_ITEMS = [
 
 function FAQItem({ item, isOpen, onToggle }) {
   return (
-    <div className="border-b border-[#20251F]/10 last:border-0">
+    <div className="border-b border-[#102a43]/10 last:border-0">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
-        className="group w-full flex items-center justify-between gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#246B5A]"
+        className="group w-full flex items-center justify-between gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0a6f64]"
       >
-        <span className="text-[15px] font-bold text-[#20251F] group-hover:text-[#246B5A] transition-colors">{item.q}</span>
+        <span className="text-[15px] font-bold text-[#102a43] group-hover:text-[#0a6f64] transition-colors">{item.q}</span>
         <ChevronDown
           size={18}
-          className={`shrink-0 text-[#246B5A] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+          className={`shrink-0 text-[#0a6f64] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
       <div className={`grid transition-[grid-template-rows] duration-200 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden">
-          <p className="pb-5 text-[14px] text-[#526051] leading-relaxed max-w-2xl">{item.a}</p>
+          <p className="pb-5 text-[14px] text-[#51697e] leading-relaxed max-w-2xl">{item.a}</p>
         </div>
       </div>
     </div>
@@ -58,17 +58,17 @@ export default function EmployerFAQ() {
     <section id="faq" className="bg-[#F1EDE5] py-20 md:py-28 px-6 md:px-12">
       <div className="max-w-7xl mx-auto grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
         <FadeInView className="lg:sticky lg:top-28 self-start">
-          <h2 className="font-serif text-4xl sm:text-5xl font-bold text-[#20251F] tracking-tight leading-[0.98]">Answers before you begin.</h2>
-          <p className="mt-5 text-[15px] text-[#526051] leading-relaxed">
+          <h2 className="font-sans text-4xl sm:text-5xl font-bold text-[#102a43] tracking-tight leading-[0.98]">Answers before you begin.</h2>
+          <p className="mt-5 text-[15px] text-[#51697e] leading-relaxed">
             Everything you need to know about hiring on MZOBS. Still have questions?{' '}
-            <Link to="/contact" className="font-bold text-[#1F5A43] underline decoration-[#246B5A] decoration-2 underline-offset-4 hover:text-[#246B5A] transition-colors">
+            <Link to="/contact" className="font-bold text-[#0a6f64] underline decoration-[#0a6f64] decoration-2 underline-offset-4 hover:text-[#0a6f64] transition-colors">
               Contact our team
             </Link>
             .
           </p>
         </FadeInView>
 
-        <FadeInView delay={0.08} className="rounded-[26px] border border-[#20251F]/15 bg-white px-6 shadow-[0_18px_35px_-24px_rgba(32,37,31,0.38)] sm:px-8">
+        <FadeInView delay={0.08} className="rounded-[26px] border border-[#102a43]/15 bg-white px-6 shadow-[0_18px_35px_-24px_rgba(32,37,31,0.38)] sm:px-8">
           {FAQ_ITEMS.map((item, i) => (
             <FAQItem key={item.q} item={item} isOpen={openIndex === i} onToggle={() => setOpenIndex(openIndex === i ? -1 : i)} />
           ))}

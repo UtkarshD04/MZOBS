@@ -37,13 +37,13 @@ export default function EmployerSegments() {
     <section className="bg-[#F1EDE5] py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-5xl mx-auto">
         <FadeInView className="text-center">
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-[46px] font-bold text-[#20251F] tracking-tight leading-tight">
+          <h2 className="font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#102a43] tracking-tight leading-tight">
             Hiring made simpler for your business
           </h2>
         </FadeInView>
 
         <FadeInView delay={0.08} className="mt-9 flex justify-center">
-          <div className="inline-flex items-center gap-1 rounded-full bg-[#FAF7F1] border border-[#20251F]/15 p-1" role="tablist" aria-label="Hiring by business type">
+          <div className="inline-flex items-center gap-1 rounded-full bg-[#e8f8f5] border border-[#102a43]/15 p-1" role="tablist" aria-label="Hiring by business type">
             {SEGMENTS.map((s) => (
               <button
                 key={s.key}
@@ -52,7 +52,7 @@ export default function EmployerSegments() {
                 aria-selected={active === s.key}
                 onClick={() => setActive(s.key)}
                 className={`px-4 sm:px-5 h-10 rounded-md text-[13.5px] font-bold transition-colors duration-150 ${
-                  active === s.key ? 'bg-[#20251F] text-[#FAF7F1] shadow-sm' : 'text-[#526051] hover:text-[#20251F]'
+                  active === s.key ? 'bg-[#102a43] text-[#e8f8f5] shadow-sm' : 'text-[#51697e] hover:text-[#102a43]'
                 }`}
               >
                 {s.label}
@@ -61,12 +61,12 @@ export default function EmployerSegments() {
           </div>
         </FadeInView>
 
-        <FadeInView delay={0.14} className="mt-10 rounded-[28px] border border-[#20251F]/15 bg-[#FAF7F1] p-7 sm:p-10">
+        <FadeInView delay={0.14} className="mt-10 rounded-[28px] border border-[#102a43]/15 bg-[#e8f8f5] p-7 sm:p-10">
           <ul className="grid sm:grid-cols-3 gap-6 sm:gap-8">
             {segment.benefits.map((b) => (
               <li key={b} className="flex flex-col gap-3">
                 <CheckCircle2 size={18} strokeWidth={1.8} className="text-[#F36D4C]" />
-                <p className="text-[14px] text-[#526051] leading-relaxed">{b}</p>
+                <p className="text-[14px] text-[#51697e] leading-relaxed">{b}</p>
               </li>
             ))}
           </ul>
@@ -75,14 +75,14 @@ export default function EmployerSegments() {
             {isExternal ? (
               <Link
                 to={segment.to}
-                className="inline-flex items-center gap-2 text-sm font-bold text-[#1F5A43] hover:text-[#F36D4C] transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#0a6f64] hover:text-[#F36D4C] transition-colors"
               >
                 {segment.cta} <ArrowRight size={15} />
               </Link>
             ) : (
               <a
                 href={segment.to}
-                className="inline-flex items-center gap-2 text-sm font-bold text-[#1F5A43] hover:text-[#F36D4C] transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#0a6f64] hover:text-[#F36D4C] transition-colors"
               >
                 {segment.cta} <ArrowRight size={15} />
               </a>
