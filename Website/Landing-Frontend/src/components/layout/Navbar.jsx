@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X, LogOut, User } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
 import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange } from '../../lib/employeeSession'
+import { subscribeToWebPush, unsubscribeFromWebPush } from '../../lib/webPush'
 import EmployeeAuthModal from '../forms/EmployeeAuthModal'
 
 // Sitewide header — same on every route, including Home, so it never
@@ -43,7 +44,16 @@ export default function Navbar() {
     return onEmployeeSessionChange(() => setSession(getEmployeeSession()))
   }, [])
 
+  // Registers this browser for push notifications once there's an account to
+  // attach them to — covers both a fresh sign-in/up and an already-signed-in
+  // return visit. subscribeToWebPush no-ops quietly if permission is denied
+  // or push isn't supported, so this is safe to fire on every session change.
+  useEffect(() => {
+    if (session?.token) subscribeToWebPush(session.token)
+  }, [session?.token])
+
   function handleSignOut() {
+    unsubscribeFromWebPush(session?.token)
     clearEmployeeSession()
     setOpen(false)
     navigate('/')
