@@ -9,6 +9,7 @@ import {
   FileCheck,
   CreditCard,
   Sparkles,
+  Telescope,
   Wallet,
   Building2,
   Users2,
@@ -29,6 +30,9 @@ const recruitment = [
   { to: '/jobs', label: 'Requirements', icon: Briefcase },
   { to: '/batches', label: 'Resume Batches', icon: Package },
   { to: '/candidates', label: 'Applicants', icon: Users },
+  // Proactive candidate discovery across the wider Mzobs talent pool — distinct
+  // from "Applicants" above, which is only people who applied to a posting.
+  { to: '/talent-lens', label: 'Talent Lens', icon: Telescope },
   { to: '/interviews', label: 'Interviews', icon: CalendarCheck },
   { to: '/offers', label: 'Offers', icon: FileCheck },
 ]
