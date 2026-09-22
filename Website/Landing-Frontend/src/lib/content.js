@@ -31,7 +31,7 @@ import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 // React Router does a client-side transition to Home and ScrollToTop.jsx
 // then scrolls to the matching id once it mounts, instead of a full reload.
 export const NAV_LINKS = [
-  { label: 'Find Jobs', to: '/#job-search' },
+  { label: 'Find Jobs', to: '/#latest-jobs' },
   { label: 'Companies', to: '/#companies' },
 ]
 
