@@ -55,7 +55,7 @@ export default function EmployerFAQ() {
   const [openIndex, setOpenIndex] = useState(0)
 
   return (
-    <section id="faq" className="bg-[#F1EDE5] py-20 md:py-28 px-6 md:px-12">
+    <section id="faq" className="bg-[#f7f9fb] py-20 md:py-28 px-6 md:px-12">
       <div className="max-w-7xl mx-auto grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
         <FadeInView className="lg:sticky lg:top-28 self-start">
           <h2 className="font-sans text-4xl sm:text-5xl font-bold text-[#102a43] tracking-tight leading-[0.98]">Answers before you begin.</h2>
@@ -68,7 +68,7 @@ export default function EmployerFAQ() {
           </p>
         </FadeInView>
 
-        <FadeInView delay={0.08} className="rounded-[26px] border border-[#102a43]/15 bg-white px-6 shadow-[0_18px_35px_-24px_rgba(32,37,31,0.38)] sm:px-8">
+        <FadeInView delay={0.08} className="rounded-[26px] border border-[#102a43]/15 bg-white px-6 shadow-[0_18px_35px_-24px_rgba(16,42,67,0.38)] sm:px-8">
           {FAQ_ITEMS.map((item, i) => (
             <FAQItem key={item.q} item={item} isOpen={openIndex === i} onToggle={() => setOpenIndex(openIndex === i ? -1 : i)} />
           ))}

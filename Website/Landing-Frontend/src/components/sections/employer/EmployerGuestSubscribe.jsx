@@ -101,7 +101,7 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                 type="button"
                 onClick={handleClose}
                 aria-label="Close"
-                className="absolute right-5 top-5 w-8 h-8 rounded-full flex items-center justify-center text-[#102a43]/50 hover:text-[#102a43] hover:bg-[#F1EDE5] transition-colors"
+                className="absolute right-5 top-5 w-8 h-8 rounded-full flex items-center justify-center text-[#102a43]/50 hover:text-[#102a43] hover:bg-[#f7f9fb] transition-colors"
               >
                 <X size={18} />
               </button>
@@ -118,7 +118,7 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
 
                 <label className="block text-[12.5px] font-bold text-[#102a43] mb-1.5">Mobile number</label>
                 <div className="flex gap-2">
-                  <div className="h-11 px-3.5 flex items-center rounded-xl border border-[#102a43]/15 bg-[#F1EDE5] text-[13.5px] font-bold text-[#102a43] shrink-0">
+                  <div className="h-11 px-3.5 flex items-center rounded-xl border border-[#102a43]/15 bg-[#f7f9fb] text-[13.5px] font-bold text-[#102a43] shrink-0">
                     +91
                   </div>
                   <div className="relative flex-1">

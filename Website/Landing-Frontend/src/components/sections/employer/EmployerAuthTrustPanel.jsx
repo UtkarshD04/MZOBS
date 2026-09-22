@@ -26,7 +26,7 @@ export default function EmployerAuthTrustPanel({ delay = 0.34 }) {
       </blockquote>
 
       <div className="mt-8">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#7a8f79] mb-4">Companies hiring on Mzobs</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#51697e] mb-4">Companies hiring on Mzobs</p>
         <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
           {TRUSTED_LOGOS_DATA.logos.map((logo) => (
             <img
