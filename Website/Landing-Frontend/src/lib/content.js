@@ -674,6 +674,26 @@ export const EMPLOYEE_FEATURES = [
   }
 ]
 
+export const EMPLOYEE_PRICING_DATA = {
+  badge: "One-Time Fee",
+  titlePrefix: "Unlock Every Premium Feature For ",
+  titleHighlight: "₹99",
+  titleSuffix: ", Once",
+  desc: "No monthly fee, no renewal, no surprise charges. Pay ₹99 one time and keep lifetime access to everything below.",
+  price: "₹99",
+  priceNote: "Paid once, valid for life",
+  perks: [
+    "Lifetime access to profile matching & placement tools",
+    "Expert resume verification by our recruitment team",
+    "Mock interview practice with real feedback",
+    "Smart skill categorisation to match you to relevant roles",
+    "Your resume placed in front of verified hiring employers"
+  ],
+  reassurance: "You're never charged again — not to apply, not to get shortlisted, not to get placed.",
+  ctaText: "Get Premium Access",
+  ctaHref: "/employees/signup"
+}
+
 export const EMPLOYER_FEATURES = [
   {
     icon: ShieldCheck,

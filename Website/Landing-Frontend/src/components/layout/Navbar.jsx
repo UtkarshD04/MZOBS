@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X, LogOut, User } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
-import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange, buildAppRedirectUrl } from '../../lib/employeeSession'
+import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange } from '../../lib/employeeSession'
 import EmployeeAuthModal from '../forms/EmployeeAuthModal'
 
 // Sitewide header — same on every route, including Home, so it never
@@ -46,18 +46,8 @@ export default function Navbar() {
     navigate('/')
   }
 
-  // The dashboard app (Frontend) lives on a separate origin, so its profile
-  // page can't just be linked to directly — the session's token has to be
-  // handed off via ?token= the same way sign-in does (see employeeSession.js).
-  // A stored session with no token (shouldn't normally happen, but session
-  // state can go stale) falls back to sign-in instead of silently doing
-  // nothing — signing in again picks the redirect back up automatically.
   function goToProfile() {
-    if (session?.token) {
-      window.location.href = buildAppRedirectUrl('/app/profile', session.token)
-    } else {
-      navigate('/employees/signin?redirect=%2Fapp%2Fprofile')
-    }
+    navigate('/employees/profile')
   }
 
   return (

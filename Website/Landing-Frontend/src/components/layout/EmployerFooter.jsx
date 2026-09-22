@@ -15,8 +15,8 @@ const SOCIAL_ICONS = {
 // headline) rather than the site-wide cream/navy Footer.
 export default function EmployerFooter() {
   return (
-    <footer className="relative overflow-hidden bg-[#20251F] pt-16 pb-8 px-6 md:px-12">
-      <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#1F5A43] blur-[100px] opacity-60" />
+    <footer className="relative overflow-hidden bg-[#102a43] pt-16 pb-8 px-6 md:px-12">
+      <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#0a6f64] blur-[100px] opacity-60" />
       <div aria-hidden="true" className="absolute -right-16 bottom-0 h-56 w-56 rounded-full bg-[#F36D4C] blur-[110px] opacity-20" />
 
       <div className="relative max-w-7xl mx-auto space-y-10">
@@ -41,7 +41,7 @@ export default function EmployerFooter() {
               </Link>
               <Link
                 to="/employers/signin"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#F36D4C] text-[#20251F] text-[12px] font-bold hover:bg-[#F6C16E] transition-colors"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#F36D4C] text-[#102a43] text-[12px] font-bold hover:bg-[#F6C16E] transition-colors"
               >
                 Employer sign in
               </Link>
@@ -50,7 +50,7 @@ export default function EmployerFooter() {
 
           {/* Menu column */}
           <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-[#FAF7F1]">{FOOTER_DATA.menuTitle}</h4>
+            <h4 className="text-sm font-bold text-[#e8f8f5]">{FOOTER_DATA.menuTitle}</h4>
             <ul className="space-y-2.5 text-[13px] text-white/55 font-medium">
               {FOOTER_DATA.menuItems.map((item, idx) => (
                 <li key={idx}>
@@ -64,7 +64,7 @@ export default function EmployerFooter() {
 
           {/* Contact column */}
           <div className="md:col-span-3 space-y-4">
-            <h4 className="text-sm font-bold text-[#FAF7F1]">{FOOTER_DATA.contactTitle}</h4>
+            <h4 className="text-sm font-bold text-[#e8f8f5]">{FOOTER_DATA.contactTitle}</h4>
             <div className="space-y-2.5 text-[13px] text-white/55 leading-relaxed font-medium">
               <a href={`tel:${FOOTER_DATA.phone}`} className="block hover:text-[#F6C16E] transition-colors w-fit">
                 {FOOTER_DATA.phone}
@@ -78,7 +78,7 @@ export default function EmployerFooter() {
 
           {/* Socials column */}
           <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-[#FAF7F1]">{FOOTER_DATA.socialsTitle}</h4>
+            <h4 className="text-sm font-bold text-[#e8f8f5]">{FOOTER_DATA.socialsTitle}</h4>
             <div className="flex flex-wrap gap-2.5">
               {FOOTER_DATA.socialsItems.map((item, idx) => {
                 const Icon = SOCIAL_ICONS[item.label]

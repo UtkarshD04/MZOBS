@@ -19,7 +19,7 @@ export default function Employer() {
   const pageRef = useRef(null)
   useEdgeBounce(pageRef)
   return (
-    <div ref={pageRef} className="min-h-screen bg-[#F5F6F4] text-[#20251F] font-sans antialiased selection:bg-[#DDE6DF]">
+    <div ref={pageRef} className="min-h-screen bg-white text-[#102a43] font-sans antialiased selection:bg-blue-200">
       <Seo path="/employers" {...STATIC_PAGE_SEO['/employers']} />
       <EmployerNavbar />
 
