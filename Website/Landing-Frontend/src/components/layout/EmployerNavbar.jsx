@@ -31,7 +31,7 @@ export default function EmployerNavbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-19 bg-[#F1EDE5]/95 backdrop-blur-md border-b border-[#102a43]/10 transition-[transform,box-shadow] duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 h-19 bg-[#f7f9fb]/95 backdrop-blur-md border-b border-[#102a43]/10 transition-[transform,box-shadow] duration-300 ${
           hidden ? '-translate-y-full' : 'translate-y-0'
         } ${scrolled ? 'shadow-[0_1px_2px_rgba(16,42,67,0.04),0_8px_24px_-16px_rgba(16,42,67,0.4)]' : 'shadow-none'}`}
       >
@@ -58,9 +58,9 @@ export default function EmployerNavbar() {
           <div className="hidden lg:flex items-center gap-3 shrink-0">
             <Link
               to="/employers/pricing"
-              className="flex items-center gap-1.5 text-[13px] font-bold text-[#102a43] border border-[#F6C16E] bg-gradient-to-b from-[#FBE3AE] to-[#F6C16E] shadow-[0_2px_10px_-2px_rgba(246,193,110,0.65)] hover:shadow-[0_4px_16px_-2px_rgba(246,193,110,0.85)] hover:-translate-y-px transition-all duration-200 px-4 py-2 rounded-full"
+              className="flex items-center gap-1.5 text-[13px] font-bold text-white bg-[#0a6f64] hover:bg-[#102a43] transition-colors duration-200 px-4 py-2 rounded-full"
             >
-              <Crown size={14} className="fill-[#102a43]/15" />
+              <Crown size={14} className="fill-white/15" />
               Subscription
             </Link>
             <Link
@@ -104,7 +104,7 @@ export default function EmployerNavbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="lg:hidden fixed top-19 left-0 right-0 bg-[#F1EDE5] border-b border-[#102a43]/10 shadow-lg z-40"
+              className="lg:hidden fixed top-19 left-0 right-0 bg-[#f7f9fb] border-b border-[#102a43]/10 shadow-lg z-40"
             >
               <div className="p-5 flex flex-col gap-1">
                 {EMPLOYER_NAV_LINKS.map((link) => (
@@ -121,9 +121,9 @@ export default function EmployerNavbar() {
                   <Link
                     to="/employers/pricing"
                     onClick={() => setOpen(false)}
-                    className="h-10 flex items-center justify-center gap-1.5 rounded-full border border-[#F6C16E] bg-gradient-to-b from-[#FBE3AE] to-[#F6C16E] text-[#102a43] text-[13.5px] font-bold shadow-[0_2px_10px_-2px_rgba(246,193,110,0.65)]"
+                    className="h-10 flex items-center justify-center gap-1.5 rounded-full bg-[#0a6f64] text-white text-[13.5px] font-bold"
                   >
-                    <Crown size={14} className="fill-[#102a43]/15" /> Subscription
+                    <Crown size={14} className="fill-white/15" /> Subscription
                   </Link>
                   <Link
                     to="/employers/signin"

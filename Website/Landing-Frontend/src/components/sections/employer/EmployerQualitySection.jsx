@@ -39,7 +39,7 @@ export default function EmployerQualitySection() {
         <div className="mt-12 grid sm:grid-cols-2 gap-4 lg:grid-cols-4">
           {POINTS.map((point, i) => (
             <FadeInView key={point.title} delay={i * 0.06} className="h-full">
-              <article className="group relative h-full overflow-hidden rounded-[24px] border border-[#102a43]/15 bg-[#f7f9fb] p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_18px_35px_-24px_rgba(32,37,31,0.38)]">
+              <article className="group relative h-full overflow-hidden rounded-[24px] border border-[#102a43]/15 bg-[#f7f9fb] p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_18px_35px_-24px_rgba(16,42,67,0.38)]">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#bfdbfe] text-[#0a6f64] transition-transform duration-300 group-hover:scale-105">
                   <point.icon size={20} strokeWidth={1.8} />
                 </span>

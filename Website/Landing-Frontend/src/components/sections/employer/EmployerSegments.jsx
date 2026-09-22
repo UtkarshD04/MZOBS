@@ -34,7 +34,7 @@ export default function EmployerSegments() {
   const isExternal = segment.to.startsWith('/')
 
   return (
-    <section className="bg-[#F1EDE5] py-16 md:py-24 px-6 md:px-12">
+    <section className="bg-[#f7f9fb] py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-5xl mx-auto">
         <FadeInView className="text-center">
           <h2 className="font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#102a43] tracking-tight leading-tight">
@@ -65,7 +65,7 @@ export default function EmployerSegments() {
           <ul className="grid sm:grid-cols-3 gap-6 sm:gap-8">
             {segment.benefits.map((b) => (
               <li key={b} className="flex flex-col gap-3">
-                <CheckCircle2 size={18} strokeWidth={1.8} className="text-[#F36D4C]" />
+                <CheckCircle2 size={18} strokeWidth={1.8} className="text-[#0a6f64]" />
                 <p className="text-[14px] text-[#51697e] leading-relaxed">{b}</p>
               </li>
             ))}
@@ -75,14 +75,14 @@ export default function EmployerSegments() {
             {isExternal ? (
               <Link
                 to={segment.to}
-                className="inline-flex items-center gap-2 text-sm font-bold text-[#0a6f64] hover:text-[#F36D4C] transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#0a6f64] hover:text-[#0a6f64] transition-colors"
               >
                 {segment.cta} <ArrowRight size={15} />
               </Link>
             ) : (
               <a
                 href={segment.to}
-                className="inline-flex items-center gap-2 text-sm font-bold text-[#0a6f64] hover:text-[#F36D4C] transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#0a6f64] hover:text-[#0a6f64] transition-colors"
               >
                 {segment.cta} <ArrowRight size={15} />
               </a>

@@ -105,7 +105,7 @@ export default function EmployerPricing() {
       {/* Pricing card */}
       <section className="px-6 md:px-12 pb-20 md:pb-28">
         <FadeInView className="relative max-w-lg mx-auto">
-          <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#102a43] text-[#F6C16E] text-[11px] font-bold uppercase tracking-[0.1em] shadow-sm">
+          <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#102a43] text-[#12a594] text-[11px] font-bold uppercase tracking-[0.1em] shadow-sm">
             Best value
           </span>
           <div className="rounded-[28px] border border-[#102a43]/15 bg-white shadow-[10px_12px_0_#102a43] p-8 sm:p-10">
@@ -156,13 +156,13 @@ export default function EmployerPricing() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-[#F1EDE5] py-20 md:py-24 px-6 md:px-12">
+      <section className="bg-[#f7f9fb] py-20 md:py-24 px-6 md:px-12">
         <div className="max-w-2xl mx-auto">
           <FadeInView className="text-center mb-10">
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#0a6f64]">Good questions</span>
             <h2 className="mt-3 font-sans text-3xl sm:text-4xl font-bold text-[#102a43] tracking-tight">Pricing, answered.</h2>
           </FadeInView>
-          <FadeInView delay={0.08} className="rounded-[26px] border border-[#102a43]/15 bg-white px-6 shadow-[0_18px_35px_-24px_rgba(32,37,31,0.38)] sm:px-8">
+          <FadeInView delay={0.08} className="rounded-[26px] border border-[#102a43]/15 bg-white px-6 shadow-[0_18px_35px_-24px_rgba(16,42,67,0.38)] sm:px-8">
             {FAQS.map((item, i) => (
               <FaqItem key={item.q} item={item} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? -1 : i)} />
             ))}

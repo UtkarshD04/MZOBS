@@ -4,7 +4,7 @@ import { FadeInView } from './employerMotion'
 
 export default function EmployerCTABand() {
   return (
-    <section id="contact" className="bg-[#bfdbfe] py-20 md:py-28 px-6 md:px-12">
+    <section id="contact" className="bg-[#e8f8f5] py-20 md:py-28 px-6 md:px-12">
       <FadeInView className="max-w-2xl mx-auto text-center">
         <h2 className="font-sans text-4xl sm:text-5xl font-bold text-[#102a43] tracking-tight leading-tight">
           Ready to start hiring with more clarity?

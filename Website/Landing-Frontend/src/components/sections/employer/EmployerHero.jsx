@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 import { FadeInLoad, useHeroScene } from './employerMotion'
 const candidates = [
   { initials: 'AS', name: 'Aditi Sharma', role: 'Product designer', score: '96% match', tone: 'bg-[#bfdbfe]' },
-  { initials: 'RK', name: 'Rohit Kumar', role: 'Backend engineer', score: '92% match', tone: 'bg-[#B4D5CA]' },
-  { initials: 'NM', name: 'Nisha Mehta', role: 'Growth lead', score: '89% match', tone: 'bg-[#E9B0A4]' },
+  { initials: 'RK', name: 'Rohit Kumar', role: 'Backend engineer', score: '92% match', tone: 'bg-[#e8f8f5]' },
+  { initials: 'NM', name: 'Nisha Mehta', role: 'Growth lead', score: '89% match', tone: 'bg-[#eef6ff]' },
 ]
 
 function CandidateBoard() {
@@ -14,7 +14,7 @@ function CandidateBoard() {
     <div className="absolute -bottom-8 -left-6 h-28 w-28 rounded-full bg-[#bfdbfe]" />
     <div data-hero-board className="relative rotate-[2deg] rounded-[30px] border border-[#102a43] bg-[#e8f8f5] p-4 shadow-[10px_12px_0_#102a43] sm:p-6">
       <div className="flex items-center justify-between border-b border-[#102a43]/12 pb-5"><h2 className="text-xl font-bold text-[#102a43]">Your shortlist, ready.</h2><span className="grid h-10 w-10 place-items-center rounded-full bg-[#102a43] text-[#e8f8f5]"><Sparkles size={17} /></span></div>
-      <div className="mt-4 space-y-3">{candidates.map((candidate, index) => <div key={candidate.name} className="flex items-center gap-3 rounded-2xl border border-[#102a43]/10 bg-white px-3 py-3 transition-transform duration-300 hover:-translate-x-1" style={{ transform: `translateX(${index * 8}px)` }}><span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${candidate.tone} text-xs font-extrabold text-[#102a43]`}>{candidate.initials}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-[#102a43]">{candidate.name}</p><p className="text-xs text-[#51697e]">{candidate.role}</p></div><span className="rounded-full bg-[#DCECE3] px-2.5 py-1 text-[10px] font-extrabold text-[#0a6f64]">{candidate.score}</span></div>)}</div>
+      <div className="mt-4 space-y-3">{candidates.map((candidate, index) => <div key={candidate.name} className="flex items-center gap-3 rounded-2xl border border-[#102a43]/10 bg-white px-3 py-3 transition-transform duration-300 hover:-translate-x-1" style={{ transform: `translateX(${index * 8}px)` }}><span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${candidate.tone} text-xs font-extrabold text-[#102a43]`}>{candidate.initials}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-[#102a43]">{candidate.name}</p><p className="text-xs text-[#51697e]">{candidate.role}</p></div><span className="rounded-full bg-[#e8f8f5] px-2.5 py-1 text-[10px] font-extrabold text-[#0a6f64]">{candidate.score}</span></div>)}</div>
       <div className="mt-5 flex items-center justify-between rounded-2xl bg-[#102a43] px-4 py-3 text-[#e8f8f5]"><span className="text-xs font-semibold">Verified profiles only</span><Check size={16} className="text-[#bfdbfe]" /></div>
     </div>
   </div>
