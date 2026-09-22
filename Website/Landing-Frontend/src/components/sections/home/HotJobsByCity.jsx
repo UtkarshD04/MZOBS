@@ -356,8 +356,7 @@ export default function HotJobsByCity() {
       <div className="max-w-7xl mx-auto">
         <Reveal direction="up" duration={0.7} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div className="max-w-xl">
-            <p className="text-[11.5px] font-black uppercase tracking-wide text-(--explorer-teal)">{HOT_CITIES_DATA.eyebrow}</p>
-            <h2 className="mt-1.5 text-2xl sm:text-[34px] font-black text-(--explorer-navy) tracking-tight text-balance">{HOT_CITIES_DATA.title}</h2>
+            <h2 className="text-2xl sm:text-[34px] font-black text-(--explorer-navy) tracking-tight text-balance">{HOT_CITIES_DATA.title}</h2>
             <p className="mt-2 text-[15px] text-(--explorer-muted)">{HOT_CITIES_DATA.subtitle}</p>
           </div>
           {destinations.length > 0 && (
