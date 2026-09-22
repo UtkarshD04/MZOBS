@@ -8,7 +8,13 @@ import EmployerHero from '../components/sections/employer/EmployerHero'
 import EmployerTrustStrip from '../components/sections/employer/EmployerTrustStrip'
 import EmployerWhySection from '../components/sections/employer/EmployerWhySection'
 import EmployerSegments from '../components/sections/employer/EmployerSegments'
+import EmployerTalentLensSection from '../components/sections/employer/EmployerTalentLensSection'
+import EmployerMatchIntelligenceSection from '../components/sections/employer/EmployerMatchIntelligenceSection'
+import EmployerTrustSignalsSection from '../components/sections/employer/EmployerTrustSignalsSection'
+import EmployerTalentRadarSection from '../components/sections/employer/EmployerTalentRadarSection'
+import EmployerCopilotSection from '../components/sections/employer/EmployerCopilotSection'
 import EmployerProcessSteps from '../components/sections/employer/EmployerProcessSteps'
+import EmployerTalentPoolsSection from '../components/sections/employer/EmployerTalentPoolsSection'
 import EmployerQualitySection from '../components/sections/employer/EmployerQualitySection'
 import EmployerFAQ from '../components/sections/employer/EmployerFAQ'
 import EmployerCTABand from '../components/sections/employer/EmployerCTABand'
@@ -35,16 +41,34 @@ export default function Employer() {
       {/* 4. Hiring made simpler for your business */}
       <EmployerSegments />
 
-      {/* 5. How MZOBS works */}
+      {/* 5. Talent Lens — describe who you need, see a focused search */}
+      <EmployerTalentLensSection />
+
+      {/* 6. Match Intelligence — why a recommendation appears */}
+      <EmployerMatchIntelligenceSection />
+
+      {/* 7. Trust Signals — verification, kept separate from Match Score */}
+      <EmployerTrustSignalsSection />
+
+      {/* 8. Talent Radar — proactive discovery for roles you may open next */}
+      <EmployerTalentRadarSection />
+
+      {/* 9. Mzobs Copilot — a contextual assistant over your own results */}
+      <EmployerCopilotSection />
+
+      {/* 10. How MZOBS works — the full requirement-to-hire journey */}
       <EmployerProcessSteps />
 
-      {/* 6. Why employers choose MZOBS */}
+      {/* 11. Talent Pools — keep promising people close */}
+      <EmployerTalentPoolsSection />
+
+      {/* 12. Why employers choose MZOBS */}
       <EmployerQualitySection />
 
-      {/* 7 & 8. Employer FAQs (doubles as recruiter resources — no blog exists) */}
+      {/* 13. Employer FAQs (doubles as recruiter resources — no blog exists) */}
       <EmployerFAQ />
 
-      {/* 9. Closing CTA */}
+      {/* 14. Closing CTA */}
       <EmployerCTABand />
 
       <EmployerFooter />
