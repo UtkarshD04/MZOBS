@@ -1,10 +1,8 @@
-import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import ScrollToTop from './components/layout/ScrollToTop'
 import CursorDot from './components/ui/CursorDot'
 import ScrollToTopButton from './components/ui/ScrollToTopButton'
-import { requestNotificationPermission } from './lib/webPush'
 import Home from './pages/Home'
 import JobDetail from './pages/JobDetail'
 import CityJobs from './pages/CityJobs'
@@ -31,10 +29,6 @@ import NotFound from './pages/NotFound'
 
 export default function App() {
   const location = useLocation()
-
-  useEffect(() => {
-    requestNotificationPermission()
-  }, [])
 
   return (
     <>

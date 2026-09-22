@@ -37,6 +37,11 @@ export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''
 export const MSG91_WIDGET_ID = import.meta.env.VITE_MSG91_WIDGET_ID ?? ''
 export const MSG91_TOKEN_AUTH = import.meta.env.VITE_MSG91_TOKEN_AUTH ?? ''
 
+// Web push (VAPID) public key — must match VAPID_PUBLIC_KEY on the backend.
+// Public by design (paired with the private key, which stays server-only);
+// see lib/webPush.js.
+export const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY ?? ''
+
 export const CONTACT_EMAIL = 'mzobs999@gmail.com'
 export const CONTACT_PHONE = '+91 8756992444'
 export const CONTACT_ADDRESS = 'Yogiraj Tower, near Madhurima Sweets, Vibhuti Khand, Gomti Nagar, Lucknow'
