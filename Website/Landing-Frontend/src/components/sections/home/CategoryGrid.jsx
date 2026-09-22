@@ -108,16 +108,7 @@ export default function CategoryGrid({ onSelect }) {
             style={{ backgroundImage: 'linear-gradient(180deg, transparent, var(--explorer-blue-border))' }}
             aria-hidden="true"
           />
-          <span className="inline-flex items-center gap-1.5 text-[11.5px] font-black uppercase tracking-wide text-(--explorer-teal)">
-            <span className="relative flex items-center justify-center w-1.5 h-1.5">
-              {!reduceMotion && (
-                <span className="absolute inset-0 rounded-full bg-(--explorer-teal) animate-ping opacity-60" aria-hidden="true" />
-              )}
-              <span className="relative w-1.5 h-1.5 rounded-full bg-(--explorer-teal)" aria-hidden="true" />
-            </span>
-            Browse by field
-          </span>
-          <h2 className="mt-2.5 text-[32px] sm:text-[40px] font-black leading-[1.08] tracking-tight text-balance text-(--explorer-navy)">
+          <h2 className="text-[32px] sm:text-[40px] font-black leading-[1.08] tracking-tight text-balance text-(--explorer-navy)">
             {CATEGORY_DATA.title}
           </h2>
           <p className="mt-3 text-[15px] text-(--explorer-navy)/70 leading-relaxed">

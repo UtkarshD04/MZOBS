@@ -638,11 +638,7 @@ export default function RecommendedForYou() {
       <div className="mx-auto max-w-[1240px]">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
           <div ref={headRef}>
-            <span className="inline-flex items-center gap-2 text-[11.5px] font-black uppercase tracking-[0.16em]" style={{ color: INK }}>
-              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: BLUE }} aria-hidden="true" />
-              For you
-            </span>
-            <h2 className="mt-4 text-[40px] font-extrabold leading-[1.04] tracking-tight sm:text-[52px] lg:text-[56px]" style={{ color: INK }}>
+            <h2 className="text-[40px] font-extrabold leading-[1.04] tracking-tight sm:text-[52px] lg:text-[56px]" style={{ color: INK }}>
               The right job <br />
               is <span style={gradientText}>closer than you think.</span>
             </h2>
