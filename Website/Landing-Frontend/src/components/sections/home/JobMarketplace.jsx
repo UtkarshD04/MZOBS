@@ -8,6 +8,7 @@ import { CompanyMark } from './jobCardPrimitives'
 import LocationConsentDialog from '../../ui/LocationConsentDialog'
 import MarketplaceFilters from './MarketplaceFilters'
 import { fetchLatestJobs, fetchJobFacets } from '../../../lib/publicJobs'
+import { useAutoRail } from '../../../lib/useAutoRail'
 import {
   MARKETPLACE_DEFAULTS,
   SORT_CHOICES,
@@ -81,7 +82,7 @@ function JobCard({ job, tone, onOpen }) {
     <button
       type="button"
       onClick={onOpen}
-      className="job-card-sheen group relative w-full h-full min-w-0 text-left flex flex-col rounded-2xl border p-5 motion-safe:transition-[transform,box-shadow,filter] motion-safe:duration-300 motion-safe:hover:-translate-y-1 hover:shadow-[0_20px_38px_-20px_rgba(22,50,79,0.32),inset_0_0_0_1px_rgba(22,50,79,0.14)] motion-safe:hover:brightness-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+      className="job-card-sheen group relative w-full h-full min-w-0 text-left flex flex-col rounded-2xl border p-4 sm:p-5 motion-safe:transition-[transform,box-shadow,filter] motion-safe:duration-300 motion-safe:hover:-translate-y-1 hover:shadow-[0_20px_38px_-20px_rgba(22,50,79,0.32),inset_0_0_0_1px_rgba(22,50,79,0.14)] motion-safe:hover:brightness-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
       style={{ backgroundColor: tone.bg, borderColor: tone.border }}
     >
       <div className="flex items-start justify-between gap-3">
@@ -91,23 +92,23 @@ function JobCard({ job, tone, onOpen }) {
         <StatusTag job={job} />
       </div>
 
-      <p className="mt-3 text-[12px] font-bold text-(--explorer-navy)/70 truncate">{job.company}</p>
+      <p className="mt-2 sm:mt-3 text-[12px] font-bold text-(--explorer-navy)/70 truncate">{job.company}</p>
       <h3 className="mt-0.5 text-[16px] font-extrabold text-(--explorer-navy) leading-snug text-balance">{job.title}</h3>
 
-      <p className="mt-2 flex items-center gap-1 text-[12.5px] text-(--explorer-navy)/70">
+      <p className="mt-1 sm:mt-2 flex items-center gap-1 text-[12.5px] text-(--explorer-navy)/70">
         <MapPin size={12} className="shrink-0" aria-hidden="true" />
         <span className="truncate">{job.location}</span>
       </p>
 
-      <p className="mt-2 text-[15px] font-black text-(--explorer-navy)">{job.salary || 'Not disclosed'}</p>
+      <p className="mt-1.5 sm:mt-2 text-[15px] font-black text-(--explorer-navy)">{job.salary || 'Not disclosed'}</p>
 
-      <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
+      <div className="mt-2 sm:mt-2.5 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
         {job.employmentType && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.employmentType}</span>}
         {job.workMode && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.workMode}</span>}
         {job.experience && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.experience}</span>}
       </div>
 
-      <div className="mt-auto pt-4 flex items-center justify-end">
+      <div className="mt-auto pt-2.5 sm:pt-4 flex items-center justify-end">
         <span className="inline-flex items-center gap-1 text-[12.5px] font-black text-(--explorer-navy) opacity-70 group-hover:opacity-100 motion-safe:transition-[opacity,transform] motion-safe:duration-300">
           View details
           <ArrowRight size={13} className="motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1" aria-hidden="true" />
@@ -123,7 +124,7 @@ function FeaturedJobTile({ job, tone, onOpen }) {
     <button
       type="button"
       onClick={onOpen}
-      className="job-card-sheen group relative w-full h-full min-w-0 text-left flex flex-col justify-between rounded-2xl border p-6 sm:p-7 motion-safe:transition-[transform,box-shadow,filter] motion-safe:duration-300 motion-safe:hover:-translate-y-1.5 hover:shadow-[0_26px_52px_-22px_rgba(22,50,79,0.36),inset_0_0_0_1px_rgba(22,50,79,0.16)] motion-safe:hover:brightness-[1.025] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+      className="job-card-sheen group relative w-full h-full min-w-0 text-left flex flex-col justify-between rounded-2xl border p-4 sm:p-7 motion-safe:transition-[transform,box-shadow,filter] motion-safe:duration-300 motion-safe:hover:-translate-y-1.5 hover:shadow-[0_26px_52px_-22px_rgba(22,50,79,0.36),inset_0_0_0_1px_rgba(22,50,79,0.16)] motion-safe:hover:brightness-[1.025] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
       style={{ backgroundColor: tone.bg, borderColor: tone.border }}
     >
       {/* One-time highlight sweep, fired once as the card settles into
@@ -147,32 +148,32 @@ function FeaturedJobTile({ job, tone, onOpen }) {
           <StatusTag job={job} />
         </div>
 
-        <div className="mt-4 flex items-center gap-3">
+        <div className="mt-3 sm:mt-4 flex items-center gap-3">
           <span className="motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-[1.05]">
             <CompanyMark company={job.company} logo={job.logo} size="lg" tone="bg-white text-(--explorer-navy)" />
           </span>
           <div className="min-w-0">
             <p className="text-[12.5px] font-bold text-(--explorer-navy)/70 truncate">{job.company}</p>
-            <h3 className="text-[21px] sm:text-[24px] font-black text-(--explorer-navy) leading-snug text-balance">{job.title}</h3>
+            <h3 className="text-[19px] sm:text-[24px] font-black text-(--explorer-navy) leading-snug text-balance">{job.title}</h3>
           </div>
         </div>
 
-        <p className="mt-3 flex items-center gap-1 text-[13px] text-(--explorer-navy)/70">
+        <p className="mt-2 sm:mt-3 flex items-center gap-1 text-[13px] text-(--explorer-navy)/70">
           <MapPin size={13} className="shrink-0" aria-hidden="true" />
           {job.location}
         </p>
-        <p className="mt-1.5 text-[22px] font-black text-(--explorer-navy)">{job.salary || 'Not disclosed'}</p>
+        <p className="mt-1 sm:mt-1.5 text-[20px] sm:text-[22px] font-black text-(--explorer-navy)">{job.salary || 'Not disclosed'}</p>
 
-        {job.description && <p className="mt-3 text-[13.5px] text-(--explorer-navy)/75 leading-relaxed max-w-md">{job.description}</p>}
+        {job.description && <p className="mt-2 sm:mt-3 line-clamp-2 sm:line-clamp-none text-[13.5px] text-(--explorer-navy)/75 leading-relaxed max-w-md">{job.description}</p>}
 
-        <div className="mt-4 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
+        <div className="mt-3 sm:mt-4 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
           {job.employmentType && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.employmentType}</span>}
           {job.workMode && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.workMode}</span>}
           {job.experience && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.experience}</span>}
         </div>
       </div>
 
-      <div className="mt-6 pt-5 border-t border-white/50 flex items-center justify-between">
+      <div className="mt-3 pt-3 sm:mt-6 sm:pt-5 border-t border-white/50 flex items-center justify-between">
         <span className="inline-flex items-center gap-1.5 text-[13.5px] font-black text-(--explorer-navy)">
           View opportunity
           <ArrowUpRight size={15} className="motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5" aria-hidden="true" />
@@ -215,6 +216,8 @@ function FeaturedJobTileSkeleton() {
 }
 
 export default function JobMarketplace() {
+  const sectionRef = useRef(null)
+  useAutoRail(sectionRef)
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
 
@@ -368,7 +371,7 @@ export default function JobMarketplace() {
   }
 
   return (
-    <section id="latest-jobs" className="hero-afterglow-faint relative pt-8 pb-14 md:py-20 px-6 md:px-10 scroll-mt-20">
+    <section ref={sectionRef} id="latest-jobs" className="hero-afterglow-faint relative pt-8 pb-14 md:py-20 px-6 md:px-10 scroll-mt-20">
       <div className="max-w-[1400px] mx-auto">
         {/* Heading — the hero's handoff into an actual marketplace */}
         <Reveal direction="up" duration={0.6} className="max-w-2xl">
@@ -546,10 +549,14 @@ export default function JobMarketplace() {
                 </button>
               </div>
             ) : showInitialLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                <FeaturedJobTileSkeleton />
+              <div className="flex snap-x snap-mandatory items-start gap-4 overflow-x-auto scroll-px-6 -mx-6 px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:items-stretch sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4">
+                <div className="w-[82%] shrink-0 snap-start sm:w-auto sm:col-span-2 sm:row-span-2">
+                  <FeaturedJobTileSkeleton />
+                </div>
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <JobCardSkeleton key={i} />
+                  <div key={i} className="w-[82%] shrink-0 snap-start sm:w-auto">
+                    <JobCardSkeleton />
+                  </div>
                 ))}
               </div>
             ) : showEmpty ? (
@@ -575,14 +582,14 @@ export default function JobMarketplace() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <StaggerGroup className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" staggerDelay={0.08}>
+                  <StaggerGroup data-auto-rail className="flex snap-x snap-mandatory items-start gap-4 overflow-x-auto scroll-px-6 -mx-6 px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:items-stretch sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4" staggerDelay={0.08}>
                     {featured && (
-                      <StaggerItem y={20} scale={1} duration={0.5} className="sm:col-span-2 sm:row-span-2">
+                      <StaggerItem y={20} scale={1} duration={0.5} className="w-[82%] shrink-0 snap-start sm:w-auto sm:col-span-2 sm:row-span-2">
                         <FeaturedJobTile job={featured} tone={CARD_TONES[0]} onOpen={() => openJob(featured)} />
                       </StaggerItem>
                     )}
                     {restJobs.map((job, i) => (
-                      <StaggerItem key={job.id ?? `${job.title}-${job.company}`} y={20} scale={1} duration={0.45}>
+                      <StaggerItem key={job.id ?? `${job.title}-${job.company}`} y={20} scale={1} duration={0.45} className="w-[82%] shrink-0 snap-start sm:w-auto">
                         <JobCard job={job} tone={CARD_TONES[(i + 1) % CARD_TONES.length]} onOpen={() => openJob(job)} />
                       </StaggerItem>
                     ))}

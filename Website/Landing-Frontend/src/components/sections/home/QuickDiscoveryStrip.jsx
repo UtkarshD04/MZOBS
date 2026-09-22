@@ -1,6 +1,8 @@
+import { useRef } from 'react'
 import Reveal from '../../ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 import { QUICK_DISCOVERY_DATA } from '../../../lib/content'
+import { useAutoRail } from '../../../lib/useAutoRail'
 
 // `onSelect` filters the Latest jobs section further down this same page
 // (see Home.jsx) instead of sending the visitor off to the dashboard app.
@@ -8,12 +10,14 @@ import { QUICK_DISCOVERY_DATA } from '../../../lib/content'
 // link with a muted tinted backdrop, so this reads as "quick filters" not a
 // second row of marketing badges competing with the search bar above it.
 export default function QuickDiscoveryStrip({ onSelect }) {
+  const sectionRef = useRef(null)
+  useAutoRail(sectionRef)
   return (
-    <section className="hero-afterglow pt-5 pb-6 md:pt-6 md:pb-10 px-6 md:px-10">
+    <section ref={sectionRef} className="hero-afterglow pt-5 pb-6 md:pt-6 md:pb-10 px-6 md:px-10">
       <Reveal direction="up" duration={0.5} className="max-w-7xl mx-auto">
-        <StaggerGroup className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2">
+        <StaggerGroup data-auto-rail="1100" className="flex flex-nowrap items-center gap-x-1 overflow-x-auto -mx-6 px-6 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:justify-center sm:gap-y-2 sm:overflow-visible sm:px-0 sm:pb-0">
           {QUICK_DISCOVERY_DATA.map((item, i) => (
-            <StaggerItem key={item.label} className="flex items-center">
+            <StaggerItem key={item.label} className="flex shrink-0 items-center whitespace-nowrap">
               <button
                 type="button"
                 onClick={() => onSelect?.({ q: '', location: '', experience: '', ...item.params })}
