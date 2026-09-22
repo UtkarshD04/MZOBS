@@ -37,14 +37,6 @@ function DiscoverFragment() {
   ]
   return (
     <div className="rounded-xl border border-[#102a43]/10 bg-[#e8f8f5] p-4 space-y-2">
-<<<<<<< Updated upstream
-      {['RK', 'SP', 'AM'].map((initials) => (
-        <div key={initials} className="flex items-center gap-2.5">
-          <span className="w-6 h-6 rounded-full bg-[#12a594]/60 text-[#102a43] text-[10px] font-bold flex items-center justify-center shrink-0">
-            {initials}
-          </span>
-          <span className="h-1.5 flex-1 rounded-full bg-[#f7f9fb]" />
-=======
       {rows.map((r) => (
         <div key={r.initials} className="flex items-center gap-2.5">
           <span className="w-6 h-6 rounded-full bg-[#bfdbfe] text-[#102a43] text-[9.5px] font-bold flex items-center justify-center shrink-0">{r.initials}</span>
@@ -72,7 +64,6 @@ function UnderstandFragment() {
           <div className="h-1.5 w-full rounded-full bg-white overflow-hidden">
             <div className="h-full rounded-full bg-[#0a6f64]" style={{ width: `${r.value}%` }} />
           </div>
->>>>>>> Stashed changes
         </div>
       ))}
     </div>
@@ -84,9 +75,9 @@ function ShortlistFragment() {
   return (
     <div className="rounded-xl border border-[#102a43]/10 bg-[#e8f8f5] p-4 grid grid-cols-3 gap-2">
       {cols.map((c, i) => (
-        <div key={c} className="rounded-lg bg-[#f7f9fb] p-2">
+        <div key={c} className="rounded-lg bg-[#F1EDE5] p-2">
           <span className="text-[9px] font-bold text-[#51697e] uppercase tracking-wide">{c}</span>
-          <div className={`mt-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-[#0a6f64]/25' : i === 1 ? 'bg-[#0a6f64]/55' : 'bg-[#0a6f64]'}`} />
+          <div className={`mt-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-[#F36D4C]/25' : i === 1 ? 'bg-[#F36D4C]/55' : 'bg-[#F36D4C]'}`} />
         </div>
       ))}
     </div>
@@ -130,17 +121,6 @@ export default function EmployerProcessSteps() {
           <p className="mt-3 text-[15px] text-white/60 leading-relaxed">From requirement to right person — one continuous Mzobs experience.</p>
         </FadeInView>
 
-<<<<<<< Updated upstream
-        <div className="mt-14 relative grid sm:grid-cols-3 gap-10 sm:gap-8">
-          <span className="hidden sm:block absolute top-[22px] left-[8%] right-[8%] h-px bg-white/20" aria-hidden="true" />
-          <span data-story-line className="hidden sm:block absolute origin-left top-[22px] left-[8%] right-[8%] h-px scale-x-0 bg-[#12a594]" aria-hidden="true" />
-          {STEPS.map((step, i) => (
-            <div data-story-card key={step.num} className="relative">
-              <span className="text-[15px] font-bold text-[#12a594] bg-[#102a43] pr-3">{step.num}</span>
-              <h3 className="mt-4 text-lg font-bold text-[#e8f8f5] leading-snug">{step.title}</h3>
-              <p className="mt-2.5 text-sm text-white/60 leading-relaxed">{step.desc}</p>
-              <div className="mt-5">
-=======
         <div className="mt-14 relative grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-x-6 gap-y-10">
           <span className="hidden xl:block absolute top-[22px] left-[4%] right-[4%] h-px bg-white/20" aria-hidden="true" />
           <span data-story-line className="hidden xl:block absolute origin-left top-[22px] left-[4%] right-[4%] h-px scale-x-0 bg-[#B9D6CC]" aria-hidden="true" />
@@ -151,7 +131,6 @@ export default function EmployerProcessSteps() {
               <h3 className="mt-3 text-[15px] font-bold text-[#e8f8f5] leading-snug">{step.title}</h3>
               <p className="mt-2 text-[12.5px] text-white/60 leading-relaxed">{step.desc}</p>
               <div className="mt-4">
->>>>>>> Stashed changes
                 <step.Fragment />
               </div>
             </div>
