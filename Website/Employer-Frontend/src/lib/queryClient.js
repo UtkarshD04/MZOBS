@@ -16,6 +16,8 @@ export const queryKeys = {
   job: (id) => ['jobs', id],
   candidates: (filters) => ['candidates', filters],
   candidate: (id) => ['candidates', id],
+  resumeSearch: (filters) => ['resume-search', filters],
+  resumeSearchCandidate: (id) => ['resume-search', id],
   batches: ['batches'],
   interviews: ['interviews'],
   offers: ['offers'],
