@@ -19,9 +19,10 @@ const APPLIES_TO_TABS = [
   { label: 'All', value: 'all' },
   { label: 'Employee subscription', value: 'employee_subscription' },
   { label: 'Employer CV credits', value: 'employer_cv_credit' },
+  { label: 'Employer plan', value: 'employer_subscription' },
 ]
-const appliesToLabel = { employee_subscription: 'Employee subscription', employer_cv_credit: 'Employer CV credits' }
-const appliesToTone = { employee_subscription: 'navy', employer_cv_credit: 'gold' }
+const appliesToLabel = { employee_subscription: 'Employee subscription', employer_cv_credit: 'Employer CV credits', employer_subscription: 'Employer plan' }
+const appliesToTone = { employee_subscription: 'navy', employer_cv_credit: 'gold', employer_subscription: 'teal' }
 
 const EMPTY_FORM = {
   code: '',
@@ -106,6 +107,7 @@ function CouponFormModal({ app, coupon, onDone }) {
           <Select value={form.appliesTo} onChange={(e) => set('appliesTo', e.target.value)}>
             <option value="employee_subscription">Employee subscription (₹99 placement fee)</option>
             <option value="employer_cv_credit">Employer CV credits</option>
+            <option value="employer_subscription">Employer plan (annual subscription)</option>
           </Select>
         </Field>
         <div className="grid grid-cols-2 gap-3">
