@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -15,29 +16,18 @@ import {
   Building2,
   Users2,
   Bell,
+  MessageSquare,
   Settings,
   LifeBuoy,
   PanelLeft,
+  MoreHorizontal,
+  ChevronDown,
 } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import { cn } from '../../lib/utils'
 import { useNotificationsQuery } from '../../hooks/useNotifications'
-import { useAccessStatusQuery } from '../../hooks/useSubscription'
-import { useCreditBalanceQuery } from '../../hooks/useCvCredits'
-
-const main = [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }]
-
-const recruitment = [
-  { to: '/jobs', label: 'Requirements', icon: Briefcase },
-  { to: '/batches', label: 'Resume Batches', icon: Package },
-  { to: '/candidates', label: 'Applicants', icon: Users },
-  // Proactive candidate discovery across the wider Mzobs talent pool — distinct
-  // from "Applicants" above, which is only people who applied to a posting.
-  { to: '/talent-lens', label: 'Talent Lens', icon: Telescope },
-  { to: '/resume-search', label: 'Search Resumes', icon: Search },
-  { to: '/interviews', label: 'Interviews', icon: CalendarCheck },
-  { to: '/offers', label: 'Offers', icon: FileCheck },
-]
+import { useJobsQuery } from '../../hooks/useJobs'
+import { useCandidatesQuery } from '../../hooks/useCandidates'
 
 function NavItem({ to, label, icon: Icon, badge, collapsed }) {
   return (
@@ -45,47 +35,50 @@ function NavItem({ to, label, icon: Icon, badge, collapsed }) {
       to={to}
       className={({ isActive }) =>
         cn(
-          'group relative flex items-center gap-[11px] px-2.5 py-[9px] rounded-[9px] cursor-pointer mb-0.5 text-[13.5px] font-medium whitespace-nowrap overflow-hidden transition-all duration-200 ease-out-premium',
-          isActive ? 'bg-navy-tint text-navy font-semibold' : 'text-ink-secondary hover:bg-surface-hover hover:text-ink hover:translate-x-0.5'
+          'group relative flex items-center gap-[11px] px-2.5 py-[9px] rounded-[7px] cursor-pointer mb-0.5 text-[13.5px] font-medium whitespace-nowrap overflow-hidden transition-colors duration-150',
+          isActive ? 'bg-navy-tint text-navy font-semibold' : 'text-ink-secondary hover:bg-surface-hover hover:text-ink'
         )
       }
     >
       {({ isActive }) => (
         <>
-          {isActive && <motion.div layoutId="employer-nav-pill" className="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-[3px] bg-gradient-to-b from-navy to-gold-dot" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
-          <Icon size={18} className="flex-shrink-0 transition-transform duration-200 ease-out-premium group-hover:scale-110" />
+          {isActive && <motion.div layoutId="employer-nav-pill" className="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-[3px] bg-navy" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
+          <Icon size={18} className="flex-shrink-0" />
           {!collapsed && <span className="flex-1 overflow-hidden text-ellipsis">{label}</span>}
-          {!collapsed && !!badge && <span className="ml-auto text-[11px] font-bold bg-gold-tint text-gold-strong rounded-full px-[7px] py-px">{badge}</span>}
+          {!collapsed && !!badge && <span className="ml-auto text-[11px] font-bold bg-navy text-white rounded-full px-[7px] py-px">{badge}</span>}
         </>
       )}
     </NavLink>
   )
 }
 
-function Group({ label, items, collapsed }) {
-  return (
-    <nav className="mb-[18px]">
-      {label && !collapsed && <div className="text-[11px] font-semibold tracking-wider uppercase text-ink-tertiary px-2.5 mb-1.5">{label}</div>}
-      {items.map((it) => (
-        <NavItem key={it.to} {...it} collapsed={collapsed} />
-      ))}
-    </nav>
-  )
-}
-
 export default function Sidebar() {
   const { sidebarCollapsed, setSidebarCollapsed, mobileSidebarOpen } = useApp()
+  const [moreOpen, setMoreOpen] = useState(false)
   const { data: notifications } = useNotificationsQuery()
-  const { data: access } = useAccessStatusQuery()
-  const { data: creditBalance } = useCreditBalanceQuery()
+  const { data: jobs } = useJobsQuery()
+  const { data: candidates } = useCandidatesQuery()
   const unreadCount = (notifications ?? []).filter((n) => n.unread).length
-  const remainingCredits = creditBalance?.wallet?.remainingCredits
+  const openJobsCount = (jobs ?? []).filter((j) => j.status === 'sourcing' || j.status === 'delivered').length
+  const newCandidatesCount = (candidates ?? []).filter((c) => c.stage === 'shared').length
 
-  const workspace = [
-    { to: '/subscription', label: 'Plans & Billing', icon: Sparkles, badge: access && !access.active ? '!' : 0 },
-    { to: '/cv-credits', label: 'CV Credits', icon: Wallet, badge: remainingCredits !== undefined ? remainingCredits : 0 },
+  const primary = [
+    { to: '/dashboard', label: 'Home', icon: LayoutDashboard },
+    { to: '/jobs', label: 'Jobs', icon: Briefcase, badge: openJobsCount },
+    { to: '/candidates', label: 'Applications', icon: Users, badge: newCandidatesCount },
+    { to: '/resume-search', label: 'Resume Database', icon: Search },
+    { to: '/messages', label: 'Messages', icon: MessageSquare },
+    { to: '/interviews', label: 'Interviews', icon: CalendarCheck },
+    { to: '/cv-credits', label: 'Subscription & Credits', icon: Wallet },
+    { to: '/company', label: 'Company Settings', icon: Building2 },
+  ]
+
+  const more = [
+    { to: '/batches', label: 'Resume Batches', icon: Package },
+    { to: '/talent-lens', label: 'Talent Lens', icon: Telescope },
+    { to: '/offers', label: 'Offers', icon: FileCheck },
+    { to: '/subscription', label: 'Subscription Plan', icon: Sparkles },
     { to: '/billing', label: 'Job Billing', icon: CreditCard },
-    { to: '/company', label: 'Company Profile', icon: Building2 },
     { to: '/team', label: 'Team Members', icon: Users2 },
     { to: '/notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
     { to: '/settings', label: 'Settings', icon: Settings },
@@ -94,15 +87,35 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        'flex-shrink-0 border-r border-border bg-bg-secondary sticky top-16 h-[calc(100vh-64px)] overflow-y-auto flex flex-col p-3 transition-[width] duration-200 z-40',
-        sidebarCollapsed ? 'w-[76px]' : 'w-[264px]',
+        'flex-shrink-0 border-r border-border bg-surface sticky top-16 h-[calc(100vh-64px)] overflow-y-auto flex flex-col p-3 transition-[width] duration-200 z-40',
+        sidebarCollapsed ? 'w-[76px]' : 'w-[224px]',
         'max-lg:fixed max-lg:left-0 max-lg:top-16 max-lg:shadow-lg max-lg:transition-transform',
         mobileSidebarOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'
       )}
     >
-      <Group items={main} collapsed={sidebarCollapsed} />
-      <Group label="Recruitment" items={recruitment} collapsed={sidebarCollapsed} />
-      <Group label="Workspace" items={workspace} collapsed={sidebarCollapsed} />
+      <nav className="mb-1">
+        {primary.map((it) => (
+          <NavItem key={it.to} {...it} collapsed={sidebarCollapsed} />
+        ))}
+      </nav>
+
+      <div className="mb-1">
+        <button
+          onClick={() => setMoreOpen((v) => !v)}
+          className="w-full flex items-center gap-[11px] px-2.5 py-[9px] rounded-[7px] cursor-pointer text-[13.5px] font-medium text-ink-secondary hover:bg-surface-hover hover:text-ink transition-colors duration-150"
+        >
+          <MoreHorizontal size={18} className="flex-shrink-0" />
+          {!sidebarCollapsed && <span className="flex-1 text-left">More</span>}
+          {!sidebarCollapsed && <ChevronDown size={14} className={cn('transition-transform duration-150', moreOpen && 'rotate-180')} />}
+        </button>
+        {moreOpen && (
+          <nav className="mt-0.5">
+            {more.map((it) => (
+              <NavItem key={it.to} {...it} collapsed={sidebarCollapsed} />
+            ))}
+          </nav>
+        )}
+      </div>
 
       <div className="mt-auto pt-3 border-t border-border">
         <NavItem to="/support" label="Help & Support" icon={LifeBuoy} collapsed={sidebarCollapsed} />

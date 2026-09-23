@@ -3,18 +3,18 @@ import Badge from './Badge'
 const jobMap = {
   draft: { label: 'Draft', tone: 'gray' },
   pending_review: { label: 'Pending Mzobs review', tone: 'amber' },
-  awaiting_payment: { label: 'Awaiting payment', tone: 'gold' },
-  sourcing: { label: 'Mzobs sourcing', tone: 'violet' },
+  awaiting_payment: { label: 'Awaiting payment', tone: 'amber' },
+  sourcing: { label: 'Mzobs sourcing', tone: 'green' },
   delivered: { label: 'Resumes delivered', tone: 'green' },
-  closed: { label: 'Closed', tone: 'navy' },
+  closed: { label: 'Closed', tone: 'gray' },
   archived: { label: 'Archived', tone: 'gray' },
 }
 
 const candidateMap = {
-  shared: { label: 'Shared', tone: 'navy' },
-  shortlisted: { label: 'Shortlisted', tone: 'violet' },
-  interviewing: { label: 'Interviewing', tone: 'gold' },
-  offered: { label: 'Offered', tone: 'teal' },
+  shared: { label: 'New', tone: 'navy' },
+  shortlisted: { label: 'Shortlisted', tone: 'green' },
+  interviewing: { label: 'Interviewing', tone: 'navy' },
+  offered: { label: 'Offered', tone: 'navy' },
   hired: { label: 'Hired', tone: 'green' },
   rejected: { label: 'Rejected', tone: 'red' },
 }

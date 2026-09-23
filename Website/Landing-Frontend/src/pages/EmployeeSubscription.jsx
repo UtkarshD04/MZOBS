@@ -11,9 +11,15 @@ import Reveal from '../components/ui/Reveal'
 import { StaggerGroup, StaggerItem } from '../components/ui/Stagger'
 import { getEmployeeSession } from '../lib/employeeSession'
 import { getEmployeeProfile } from '../lib/employeeProfile'
-import { createSubscriptionOrder, verifySubscriptionPayment, confirmMockSubscriptionPayment } from '../lib/employeeSubscription'
+import {
+  createSubscriptionOrder,
+  verifySubscriptionPayment,
+  confirmMockSubscriptionPayment,
+  previewSubscriptionCoupon,
+} from '../lib/employeeSubscription'
 import { openRazorpayCheckout } from '../lib/razorpay'
 import { EMPLOYEE_PRICING_DATA } from '../lib/content'
+import CouponBox from '../components/ui/CouponBox'
 
 const NEVER_CHARGED = [
   ['Applying to a job', 'Every requirement on your portal is free to apply to.'],
@@ -61,6 +67,7 @@ export default function EmployeeSubscription() {
 
   const [paying, setPaying] = useState(false)
   const [payError, setPayError] = useState('')
+  const [couponResult, setCouponResult] = useState(null)
 
   function reload(tok) {
     return getEmployeeProfile(tok).then(setProfile)
@@ -83,7 +90,7 @@ export default function EmployeeSubscription() {
     setPayError('')
     setPaying(true)
     try {
-      const order = await createSubscriptionOrder(token)
+      const order = await createSubscriptionOrder(token, couponResult?.code)
       if (order.mock) {
         await confirmMockSubscriptionPayment(token, order.orderId)
       } else {
@@ -165,19 +172,36 @@ export default function EmployeeSubscription() {
                     </p>
                   </div>
 
-                  <div className="text-left sm:text-right shrink-0">
-                    <div className="text-5xl font-black tracking-tight">₹{fee}</div>
+                  <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
+                    {couponResult ? (
+                      <>
+                        <div className="text-[15px] text-white/50 line-through">₹{fee}</div>
+                        <div className="text-5xl font-black tracking-tight">₹{couponResult.finalAmount}</div>
+                      </>
+                    ) : (
+                      <div className="text-5xl font-black tracking-tight">₹{fee}</div>
+                    )}
                     <div className="text-[12.5px] text-white/60 mt-1">{isPaid ? 'Paid once, valid for life' : 'one-time payment'}</div>
                     {!isPaid && (
-                      <button
-                        type="button"
-                        onClick={handlePay}
-                        disabled={paying}
-                        className="mt-4 inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-(--jobs-teal) text-(--jobs-navy-deep) text-[14px] font-bold hover:bg-white transition-colors disabled:opacity-60 w-full sm:w-auto"
-                      >
-                        {paying ? <Loader2 size={16} className="animate-spin" /> : null}
-                        {paying ? 'Processing...' : 'Unlock premium now'}
-                      </button>
+                      <>
+                        <button
+                          type="button"
+                          onClick={handlePay}
+                          disabled={paying}
+                          className="mt-4 inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-(--jobs-teal) text-(--jobs-navy-deep) text-[14px] font-bold hover:bg-white transition-colors disabled:opacity-60 w-full sm:w-auto"
+                        >
+                          {paying ? <Loader2 size={16} className="animate-spin" /> : null}
+                          {paying ? 'Processing...' : `Pay ₹${couponResult?.finalAmount ?? fee} now`}
+                        </button>
+                        <div className="mt-3 sm:w-72">
+                          <CouponBox
+                            onPreview={previewSubscriptionCoupon}
+                            applied={couponResult}
+                            onApply={setCouponResult}
+                            onRemove={() => setCouponResult(null)}
+                          />
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>

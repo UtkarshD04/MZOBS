@@ -58,26 +58,24 @@ export default function CvCredits() {
     <div>
       <PageHeader title="CV Credits" subtitle={`Unlock a candidate's contact details & resume for ${fmtINR(rupeesPerCredit)}/CV — pay once per candidate, view unlimited times after.`} />
 
-      <section className="mb-7 overflow-hidden rounded-2xl border border-navy/15 bg-gradient-to-br from-navy to-navy-900 text-white shadow-md">
+      <section className="mb-7 overflow-hidden rounded-xl border border-border bg-surface shadow-xs">
         <div className="grid grid-cols-[1.25fr_.75fr] max-lg:grid-cols-1">
-          <div className="relative p-7 sm:p-8 overflow-hidden">
-            <div aria-hidden="true" className="absolute -right-10 -top-10 h-48 w-48 rounded-full border border-white/10" />
-            <div aria-hidden="true" className="absolute right-24 -bottom-20 h-48 w-48 rounded-full bg-teal/20 blur-3xl" />
-            <div className="relative">
-              <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.14em] uppercase text-white/60"><Wallet size={14} /> CV access wallet</div>
-              <div className="mt-5 flex items-end gap-3">
-                <span className="text-6xl font-bold tracking-tight leading-none tabular-nums">{wallet.remainingCredits}</span>
-                <span className="pb-1.5 text-sm font-medium text-white/70">CV credits available</span>
-              </div>
-              <div className="mt-6 max-w-md">
-                <div className="flex justify-between text-[11.5px] text-white/60"><span>{wallet.usedCredits} profiles unlocked</span><span>{wallet.totalCredits} credits purchased</span></div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-teal" style={{ width: `${useRate}%` }} /></div>
-              </div>
-              <p className="mt-5 text-[12.5px] text-white/65">One credit unlocks one candidate's phone, email and CV forever. No renewal or repeat deduction.</p>
+          <div className="p-7 sm:p-8">
+            <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.1em] uppercase text-ink-tertiary"><Wallet size={14} /> CV access wallet</div>
+            <div className="mt-5 flex items-end gap-3">
+              <span className="text-6xl font-bold tracking-tight leading-none tabular-nums text-ink">{wallet.remainingCredits}</span>
+              <span className="pb-1.5 text-sm font-medium text-ink-secondary">CV credits available</span>
             </div>
+            <div className="mt-6 max-w-md">
+              <div className="flex justify-between text-[11.5px] text-ink-tertiary"><span>{wallet.usedCredits} profiles unlocked</span><span>{wallet.totalCredits} credits purchased</span></div>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-sunken" role="progressbar" aria-valuenow={useRate} aria-valuemin={0} aria-valuemax={100} aria-label="Credits used">
+                <div className="h-full rounded-full bg-navy" style={{ width: `${useRate}%` }} />
+              </div>
+            </div>
+            <p className="mt-5 text-[12.5px] text-ink-secondary">One credit unlocks one candidate's phone, email and CV forever. No renewal or repeat deduction.</p>
           </div>
-          <div className="border-l border-white/10 bg-black/10 p-6 max-lg:border-l-0 max-lg:border-t max-lg:border-white/10 sm:p-8">
-            <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-white/55">Recruiter activity</p>
+          <div className="border-l border-border bg-surface-sunken p-6 max-lg:border-l-0 max-lg:border-t sm:p-8">
+            <p className="text-[11px] font-bold tracking-[0.1em] uppercase text-ink-tertiary">Recruiter activity</p>
             <div className="mt-5 space-y-4">
               <WalletStat icon={UsersRound} label="Profiles unlocked" value={wallet.usedCredits} />
               <WalletStat icon={Wallet} label="Total credits purchased" value={wallet.totalCredits} />
@@ -208,7 +206,7 @@ export default function CvCredits() {
 }
 
 function WalletStat({ icon: Icon, label, value }) {
-  return <div className="flex items-center gap-3"><span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-teal"><Icon size={15} /></span><div><p className="text-[11px] text-white/50">{label}</p><p className="text-[13px] font-semibold text-white">{value}</p></div></div>
+  return <div className="flex items-center gap-3"><span className="w-8 h-8 rounded-lg bg-navy-tint flex items-center justify-center text-navy"><Icon size={15} /></span><div><p className="text-[11px] text-ink-tertiary">{label}</p><p className="text-[13px] font-semibold text-ink">{value}</p></div></div>
 }
 
 function CreditStep({ number, title, text }) {

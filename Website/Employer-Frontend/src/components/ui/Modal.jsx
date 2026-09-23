@@ -7,7 +7,7 @@ const widths = { sm: 'max-w-[420px]', md: 'max-w-[520px]', lg: 'max-w-[680px]', 
 export default function Modal({ open, onClose, title, subtitle, children, footer, size = 'md' }) {
   return (
     <Dialog open={open} onClose={onClose} className="relative z-[100]">
-      <DialogBackdrop transition className="fixed inset-0 bg-navy-950/45 backdrop-blur-[2px] transition duration-200 ease-out data-[closed]:opacity-0" />
+      <DialogBackdrop transition className="fixed inset-0 bg-navy-950/50 transition duration-200 ease-out data-[closed]:opacity-0" />
       <div className="fixed inset-0 flex items-center justify-center p-4 overflow-y-auto">
         <DialogPanel
           transition

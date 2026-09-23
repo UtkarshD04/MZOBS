@@ -1,17 +1,19 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions, Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
-import { Briefcase, CalendarCheck, FileCheck, LayoutDashboard, Search, Users } from 'lucide-react'
+import { Briefcase, CalendarCheck, FileCheck, LayoutDashboard, Search, Users, Wallet } from 'lucide-react'
 import { useJobsQuery } from '../../hooks/useJobs'
 import { useCandidatesQuery } from '../../hooks/useCandidates'
 import { cn } from '../../lib/utils'
 
 const staticPages = [
-  { id: 'p-dash', label: 'Dashboard', sub: 'Hiring overview', to: '/dashboard', icon: LayoutDashboard },
+  { id: 'p-dash', label: 'Overview', sub: 'Hiring overview', to: '/dashboard', icon: LayoutDashboard },
   { id: 'p-jobs', label: 'Jobs', sub: 'Manage job openings', to: '/jobs', icon: Briefcase },
-  { id: 'p-candidates', label: 'Candidates', sub: 'People who applied', to: '/candidates', icon: Users },
+  { id: 'p-candidates', label: 'Candidates', sub: 'Resumes shared with you', to: '/candidates', icon: Users },
+  { id: 'p-resumedb', label: 'Resume Database', sub: 'Search the verified talent pool', to: '/resume-search', icon: Search },
   { id: 'p-interviews', label: 'Interviews', sub: 'Schedule & calendar', to: '/interviews', icon: CalendarCheck },
   { id: 'p-offers', label: 'Offers', sub: 'Track offer letters', to: '/offers', icon: FileCheck },
+  { id: 'p-credits', label: 'Resume Credits', sub: 'Balance & purchase history', to: '/cv-credits', icon: Wallet },
 ]
 
 export default function CommandPalette({ open, onClose }) {
@@ -37,7 +39,7 @@ export default function CommandPalette({ open, onClose }) {
 
   return (
     <Dialog open={open} onClose={onClose} className="relative z-[110]">
-      <DialogBackdrop transition className="fixed inset-0 bg-navy-950/45 backdrop-blur-[2px] transition duration-150 data-[closed]:opacity-0" />
+      <DialogBackdrop transition className="fixed inset-0 bg-navy-950/50 transition duration-150 data-[closed]:opacity-0" />
       <div className="fixed inset-0 flex items-start justify-center pt-[14vh] p-4">
         <DialogPanel transition className="w-full max-w-[560px] bg-surface border border-border rounded-2xl shadow-lg overflow-hidden transition duration-150 ease-out data-[closed]:opacity-0 data-[closed]:scale-95">
           <Combobox onChange={(item) => item && go(item)}>
