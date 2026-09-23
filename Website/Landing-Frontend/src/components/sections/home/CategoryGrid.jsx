@@ -5,6 +5,7 @@ import Reveal from '../../ui/Reveal'
 import { CATEGORY_DATA } from '../../../lib/content'
 import { fetchCategoryCounts } from '../../../lib/publicJobs'
 import { useAutoRail } from '../../../lib/useAutoRail'
+import { useInitialHomeData } from '../../../lib/initialHomeDataContext'
 
 function liveCount(cat, counts) {
   if (!counts) return null
@@ -67,7 +68,11 @@ export default function CategoryGrid({ onSelect }) {
   const sectionRef = useRef(null)
   useAutoRail(sectionRef)
   const reduceMotion = useReducedMotion()
-  const [counts, setCounts] = useState(null)
+  // Seeded from the build-time prerender fetch (see initialHomeDataContext.js)
+  // so the category grid never ships frozen on its loading skeleton — the
+  // effect below still re-fetches live counts right after mount regardless.
+  const initialHomeData = useInitialHomeData()
+  const [counts, setCounts] = useState(initialHomeData?.categories ?? null)
   const [countsFailed, setCountsFailed] = useState(false)
 
   useEffect(() => {

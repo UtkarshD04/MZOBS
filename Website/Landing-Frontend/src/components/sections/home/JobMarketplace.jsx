@@ -9,6 +9,7 @@ import LocationConsentDialog from '../../ui/LocationConsentDialog'
 import MarketplaceFilters from './MarketplaceFilters'
 import { fetchLatestJobs, fetchJobFacets } from '../../../lib/publicJobs'
 import { useAutoRail } from '../../../lib/useAutoRail'
+import { useInitialHomeData } from '../../../lib/initialHomeDataContext'
 import {
   MARKETPLACE_DEFAULTS,
   SORT_CHOICES,
@@ -233,10 +234,14 @@ export default function JobMarketplace() {
   const [locating, setLocating] = useState(false)
   const [locationNotice, setLocationNotice] = useState('')
 
-  const [jobs, setJobs] = useState([])
-  const [total, setTotal] = useState(0)
+  // Seeded from the build-time prerender fetch (see initialHomeDataContext.js)
+  // so the default, unfiltered view never ships as "0 opportunities" — the
+  // effect below still re-fetches live data right after mount regardless.
+  const initialHomeData = useInitialHomeData()
+  const [jobs, setJobs] = useState(initialHomeData?.jobs ?? [])
+  const [total, setTotal] = useState(initialHomeData?.total ?? 0)
   const [page, setPage] = useState(1)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!initialHomeData)
   const [loadingMore, setLoadingMore] = useState(false)
   const [loadMoreError, setLoadMoreError] = useState(false)
   const [loadError, setLoadError] = useState(false)

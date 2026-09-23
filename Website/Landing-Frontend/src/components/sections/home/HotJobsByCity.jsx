@@ -7,6 +7,7 @@ import ExplorerButton from '../../ui/ExplorerButton'
 import { HOT_CITIES_DATA } from '../../../lib/content'
 import { fetchHotCities } from '../../../lib/publicJobs'
 import { buildJobsUrl } from '../../../lib/jobsUrl'
+import { useInitialHomeData } from '../../../lib/initialHomeDataContext'
 
 function hashOf(str) {
   return [...str].reduce((sum, ch) => sum + ch.charCodeAt(0), 0)
@@ -236,8 +237,12 @@ function CityDestination({ meta, stats, categories, isActive, isMobile, onSelect
 export default function HotJobsByCity() {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
+  // Seeded from the build-time prerender fetch (see initialHomeDataContext.js)
+  // so this section never ships frozen on its loading skeleton — the effect
+  // below still re-fetches live data right after mount regardless.
+  const initialHomeData = useInitialHomeData()
   const [activeSlug, setActiveSlug] = useState(null)
-  const [liveCities, setLiveCities] = useState(null) // null = still loading
+  const [liveCities, setLiveCities] = useState(initialHomeData?.hotCities ?? null) // null = still loading
   const [loadError, setLoadError] = useState(false)
   const [retryToken, setRetryToken] = useState(0)
 
