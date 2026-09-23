@@ -6,7 +6,9 @@ import EmployerFooter from '../components/layout/EmployerFooter'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
 import EmployerHero from '../components/sections/employer/EmployerHero'
 import EmployerTrustStrip from '../components/sections/employer/EmployerTrustStrip'
+import EmployerLogosSection from '../components/sections/employer/EmployerLogosSection'
 import EmployerWhySection from '../components/sections/employer/EmployerWhySection'
+import EmployerResdexSection from '../components/sections/employer/EmployerResdexSection'
 import EmployerSegments from '../components/sections/employer/EmployerSegments'
 import EmployerTalentLensSection from '../components/sections/employer/EmployerTalentLensSection'
 import EmployerMatchIntelligenceSection from '../components/sections/employer/EmployerMatchIntelligenceSection'
@@ -16,6 +18,7 @@ import EmployerCopilotSection from '../components/sections/employer/EmployerCopi
 import EmployerProcessSteps from '../components/sections/employer/EmployerProcessSteps'
 import EmployerTalentPoolsSection from '../components/sections/employer/EmployerTalentPoolsSection'
 import EmployerQualitySection from '../components/sections/employer/EmployerQualitySection'
+import EmployerTestimonialSection from '../components/sections/employer/EmployerTestimonialSection'
 import EmployerFAQ from '../components/sections/employer/EmployerFAQ'
 import EmployerCTABand from '../components/sections/employer/EmployerCTABand'
 import { useEmployerSmoothScroll, useEdgeBounce } from '../components/sections/employer/employerMotion'
@@ -35,8 +38,14 @@ export default function Employer() {
       {/* 2. Thin real-data trust strip */}
       <EmployerTrustStrip />
 
+      {/* 2.5. Companies already hiring on Mzobs */}
+      <EmployerLogosSection />
+
       {/* 3. One platform for every stage of hiring */}
       <EmployerWhySection />
+
+      {/* 3.5. Resume database search (Resdex-style proactive sourcing) */}
+      <EmployerResdexSection />
 
       {/* 4. Hiring made simpler for your business */}
       <EmployerSegments />
@@ -65,10 +74,13 @@ export default function Employer() {
       {/* 12. Why employers choose MZOBS */}
       <EmployerQualitySection />
 
-      {/* 13. Employer FAQs (doubles as recruiter resources — no blog exists) */}
+      {/* 13. Social proof */}
+      <EmployerTestimonialSection />
+
+      {/* 14. Employer FAQs (doubles as recruiter resources — no blog exists) */}
       <EmployerFAQ />
 
-      {/* 14. Closing CTA */}
+      {/* 15. Closing CTA */}
       <EmployerCTABand />
 
       <EmployerFooter />

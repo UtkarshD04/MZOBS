@@ -9,6 +9,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Jobs = lazy(() => import('./pages/Jobs'))
 const JobForm = lazy(() => import('./pages/JobForm'))
 const Candidates = lazy(() => import('./pages/Candidates'))
+const ResumeSearch = lazy(() => import('./pages/ResumeSearch'))
 const Batches = lazy(() => import('./pages/Batches'))
 const CandidateProfile = lazy(() => import('./pages/CandidateProfile'))
 const TalentLens = lazy(() => import('./pages/TalentLens'))
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="/jobs/:id/edit" element={<JobForm />} />
             <Route path="/batches" element={<Batches />} />
             <Route path="/candidates" element={<Candidates />} />
+            <Route path="/resume-search" element={<ResumeSearch />} />
             <Route path="/candidates/:id" element={<CandidateProfile />} />
             <Route path="/talent-lens" element={<TalentLens />} />
             <Route path="/talent-lens/candidates/:id" element={<TalentLensCandidate />} />

@@ -5,6 +5,7 @@ import {
   Briefcase,
   Package,
   Users,
+  Search,
   CalendarCheck,
   FileCheck,
   CreditCard,
@@ -33,6 +34,7 @@ const recruitment = [
   // Proactive candidate discovery across the wider Mzobs talent pool — distinct
   // from "Applicants" above, which is only people who applied to a posting.
   { to: '/talent-lens', label: 'Talent Lens', icon: Telescope },
+  { to: '/resume-search', label: 'Search Resumes', icon: Search },
   { to: '/interviews', label: 'Interviews', icon: CalendarCheck },
   { to: '/offers', label: 'Offers', icon: FileCheck },
 ]

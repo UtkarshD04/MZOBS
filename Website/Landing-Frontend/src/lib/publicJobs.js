@@ -91,3 +91,12 @@ export async function fetchHotCities({ signal } = {}) {
   if (!res.ok) throw new Error('Failed to load hot cities')
   return res.json()
 }
+
+// Real, live platform-scale numbers for the employer landing page's stats
+// strip — { verifiedCandidates, verifiedEmployers, liveJobs }, never a
+// fixed/illustrative figure. See Backend's getPublicPlatformStats.
+export async function fetchPlatformStats({ signal } = {}) {
+  const res = await fetch(`${PUBLIC_JOBS_API_URL}/platform-stats`, { signal })
+  if (!res.ok) throw new Error('Failed to load platform stats')
+  return res.json()
+}
