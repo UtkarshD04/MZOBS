@@ -14,8 +14,26 @@ async function authedJSON(path, token, options = {}) {
   return data
 }
 
-export function createSubscriptionOrder(token) {
-  return authedJSON('/subscription/order', token, { method: 'POST', body: JSON.stringify({}) })
+export function createSubscriptionOrder(token, couponCode) {
+  return authedJSON('/subscription/order', token, { method: 'POST', body: JSON.stringify({ couponCode: couponCode || undefined }) })
+}
+
+// No auth required (see Backend's employeeSubscriptionRoutes.js) — previews
+// the discount a coupon would apply before an order is created, so the
+// price can update as soon as the code is typed in.
+export async function previewSubscriptionCoupon(code) {
+  const res = await fetch(`${EMPLOYEE_API_URL}/subscription/coupon/preview`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok || !data.valid) {
+    const error = new Error(data.message ?? 'Invalid coupon code')
+    error.status = res.status
+    throw error
+  }
+  return data
 }
 
 export function verifySubscriptionPayment(token, payload) {

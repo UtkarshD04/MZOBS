@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { Bell, CalendarPlus, Download, GraduationCap, Lock, Mail, MapPin, Phone, Search, ThumbsDown, ThumbsUp, Unlock, Users, Wallet } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
@@ -36,9 +36,11 @@ const PAGE_SIZE = 6
 
 export default function Candidates() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const initialStageIndex = Math.max(0, STAGE_TABS.findIndex((t) => t.value === searchParams.get('stage')))
   const [search, setSearch] = useState('')
-  const [tab, setTab] = useState(0)
-  const [jobId, setJobId] = useState('all')
+  const [tab, setTab] = useState(initialStageIndex)
+  const [jobId, setJobId] = useState(searchParams.get('job') ?? 'all')
   const [page, setPage] = useState(1)
   const [rejectTarget, setRejectTarget] = useState(null)
   const [rejectReason, setRejectReason] = useState('')

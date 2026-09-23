@@ -61,11 +61,11 @@ import { Search, GraduationCap, ShieldCheck, Building2, TrendingUp, MessageCircl
 // accounted for above, not layered on as an afterthought.
 const MAJOR_BUBBLES = [
   { label: 'Find What Fits.', sub: 'Real roles. Real growth.', icon: Search, tone: 'blue', size: 220, top: '31%', left: '11%', anim: 'bubble-anim-float-y', ampY: '-8px', dur: '9s', delay: '0s' },
-  { label: 'Keep Growing.', sub: 'Feedback that moves you forward.', icon: GraduationCap, tone: 'orange', size: 180, top: '64%', left: '10%', anim: 'bubble-anim-float-diagonal', ampX: '10px', ampY: '-10px', dur: '11s', delay: '0.6s' },
+  { label: 'Keep Growing.', sub: 'Feedback that moves you forward.', icon: GraduationCap, tone: 'gold', size: 180, top: '64%', left: '10%', anim: 'bubble-anim-float-diagonal', ampX: '10px', ampY: '-10px', dur: '11s', delay: '0.6s' },
   { label: 'Be Verified.', sub: 'Build trust. Get noticed.', icon: ShieldCheck, tone: 'teal', size: 170, top: '85%', left: '12%', anim: 'bubble-anim-float-y', ampY: '-12px', dur: '13s', delay: '1.2s' },
-  { label: 'Hire With Trust.', sub: 'Verified talent, ready to grow.', icon: Building2, tone: 'purple', size: 220, top: '31%', left: '89%', anim: 'bubble-anim-float-x', ampX: '8px', dur: '15s', delay: '0.3s' },
+  { label: 'Hire With Trust.', sub: 'Verified talent, ready to grow.', icon: Building2, tone: 'teal', size: 220, top: '31%', left: '89%', anim: 'bubble-anim-float-x', ampX: '8px', dur: '15s', delay: '0.3s' },
   { label: 'Make Your Move.', sub: 'Discover. Apply. Grow.', icon: TrendingUp, tone: 'blue', size: 180, top: '64%', left: '90%', anim: 'bubble-anim-float-diagonal', ampX: '-10px', ampY: '-10px', dur: '17s', delay: '0.9s' },
-  { label: 'Get The Signal.', sub: 'Know what employers value.', icon: MessageCircle, tone: 'pink', size: 170, top: '85%', left: '88%', anim: 'bubble-anim-float-y', ampY: '-12px', dur: '19s', delay: '1.6s' },
+  { label: 'Get The Signal.', sub: 'Know what employers value.', icon: MessageCircle, tone: 'gold', size: 170, top: '85%', left: '88%', anim: 'bubble-anim-float-y', ampY: '-12px', dur: '19s', delay: '1.6s' },
 ]
 
 // Midground: 10 unlabeled medium orbs (28–70px) filling the gaps between
@@ -73,15 +73,15 @@ const MAJOR_BUBBLES = [
 // missing before and made the Hero read as empty.
 const MEDIUM_ORBS = [
   { size: 50, top: '6%', left: '17%', tone: 'blue', anim: 'bubble-anim-medium-drift', dur: '18s', delay: '0s' },
-  { size: 40, top: '17%', left: '3%', tone: 'purple', anim: 'bubble-anim-medium-drift', dur: '21s', delay: '1s' },
-  { size: 62, top: '52%', left: '18%', tone: 'orange', anim: 'bubble-anim-medium-drift', dur: '24s', delay: '2s' },
+  { size: 40, top: '17%', left: '3%', tone: 'blue', anim: 'bubble-anim-medium-drift', dur: '21s', delay: '1s' },
+  { size: 62, top: '52%', left: '18%', tone: 'teal', anim: 'bubble-anim-medium-drift', dur: '24s', delay: '2s' },
   { size: 32, top: '97%', left: '20%', tone: 'teal', anim: 'bubble-anim-medium-drift', dur: '19s', delay: '0.5s' },
   { size: 28, top: '4%', left: '35%', tone: 'teal', anim: 'bubble-anim-medium-drift', dur: '20s', delay: '1.5s' },
-  { size: 34, top: '4%', left: '65%', tone: 'pink', anim: 'bubble-anim-medium-drift', dur: '22s', delay: '0.8s' },
-  { size: 44, top: '9%', left: '83%', tone: 'purple', anim: 'bubble-anim-medium-drift', dur: '23s', delay: '1.2s' },
+  { size: 34, top: '4%', left: '65%', tone: 'gold', anim: 'bubble-anim-medium-drift', dur: '22s', delay: '0.8s' },
+  { size: 44, top: '9%', left: '83%', tone: 'blue', anim: 'bubble-anim-medium-drift', dur: '23s', delay: '1.2s' },
   { size: 70, top: '15%', left: '98%', tone: 'blue', anim: 'bubble-anim-medium-drift', dur: '26s', delay: '0.3s' },
-  { size: 36, top: '56%', left: '82%', tone: 'pink', anim: 'bubble-anim-medium-drift', dur: '20s', delay: '1.8s' },
-  { size: 52, top: '97%', left: '80%', tone: 'orange', anim: 'bubble-anim-medium-drift', dur: '25s', delay: '0.6s' },
+  { size: 36, top: '56%', left: '82%', tone: 'gold', anim: 'bubble-anim-medium-drift', dur: '20s', delay: '1.8s' },
+  { size: 52, top: '97%', left: '80%', tone: 'teal', anim: 'bubble-anim-medium-drift', dur: '25s', delay: '0.6s' },
 ]
 
 // Micro layer: 15 tiny drifting dots (6–20px) scattered for texture — kept
@@ -89,19 +89,19 @@ const MEDIUM_ORBS = [
 // none of them sit in front of actual glyphs' whitespace.
 const MICRO_ORBS = [
   { size: 8, top: '3%', left: '45%', tone: 'blue', anim: 'bubble-anim-drift-slow', dur: '22s', delay: '0s' },
-  { size: 10, top: '9%', left: '60%', tone: 'orange', anim: 'bubble-anim-pulse', dur: '9s', delay: '1s' },
-  { size: 14, top: '21%', left: '11%', tone: 'purple', anim: 'bubble-anim-drift-slow', dur: '24s', delay: '0.4s' },
-  { size: 8, top: '15%', left: '91%', tone: 'pink', anim: 'bubble-anim-float-y', dur: '19s', delay: '1.6s' },
+  { size: 10, top: '9%', left: '60%', tone: 'teal', anim: 'bubble-anim-pulse', dur: '9s', delay: '1s' },
+  { size: 14, top: '21%', left: '11%', tone: 'blue', anim: 'bubble-anim-drift-slow', dur: '24s', delay: '0.4s' },
+  { size: 8, top: '15%', left: '91%', tone: 'gold', anim: 'bubble-anim-float-y', dur: '19s', delay: '1.6s' },
   { size: 16, top: '33%', left: '5%', tone: 'teal', anim: 'bubble-anim-float-x', dur: '20s', delay: '0.8s' },
   { size: 10, top: '46%', left: '94%', tone: 'blue', anim: 'bubble-anim-drift-slow', dur: '21s', delay: '1.2s' },
-  { size: 12, top: '58%', left: '23%', tone: 'orange', anim: 'bubble-anim-pulse', dur: '11s', delay: '0.3s' },
-  { size: 14, top: '62%', left: '77%', tone: 'purple', anim: 'bubble-anim-float-x', dur: '18s', delay: '2s' },
-  { size: 8, top: '75%', left: '39%', tone: 'pink', anim: 'bubble-anim-drift-slow', dur: '23s', delay: '0.6s' },
+  { size: 12, top: '58%', left: '23%', tone: 'teal', anim: 'bubble-anim-pulse', dur: '11s', delay: '0.3s' },
+  { size: 14, top: '62%', left: '77%', tone: 'blue', anim: 'bubble-anim-float-x', dur: '18s', delay: '2s' },
+  { size: 8, top: '75%', left: '39%', tone: 'gold', anim: 'bubble-anim-drift-slow', dur: '23s', delay: '0.6s' },
   { size: 10, top: '79%', left: '61%', tone: 'teal', anim: 'bubble-anim-float-y', dur: '17s', delay: '1.4s' },
   { size: 16, top: '90%', left: '26%', tone: 'blue', anim: 'bubble-anim-pulse', dur: '10s', delay: '0.2s' },
-  { size: 12, top: '92%', left: '73%', tone: 'orange', anim: 'bubble-anim-float-x', dur: '19s', delay: '1.8s' },
-  { size: 6, top: '5%', left: '25%', tone: 'pink', anim: 'bubble-anim-drift-slow', dur: '25s', delay: '1s' },
-  { size: 10, top: '96%', left: '50%', tone: 'purple', anim: 'bubble-anim-float-y', dur: '20s', delay: '0.5s' },
+  { size: 12, top: '92%', left: '73%', tone: 'teal', anim: 'bubble-anim-float-x', dur: '19s', delay: '1.8s' },
+  { size: 6, top: '5%', left: '25%', tone: 'gold', anim: 'bubble-anim-drift-slow', dur: '25s', delay: '1s' },
+  { size: 10, top: '96%', left: '50%', tone: 'blue', anim: 'bubble-anim-float-y', dur: '20s', delay: '0.5s' },
   { size: 6, top: '40%', left: '2%', tone: 'teal', anim: 'bubble-anim-pulse', dur: '12s', delay: '2.2s' },
 ]
 
@@ -109,9 +109,9 @@ const MICRO_ORBS = [
 // edges — the reference's "abstract shape" layer, kept subtle.
 const ABSTRACT_SHAPES = [
   { w: 100, h: 64, top: '-4%', left: '42%', tone: 'blue', rotate: 8, radius: '38%', dur: '30s', delay: '0s' },
-  { w: 76, h: 110, top: '48%', left: '-6%', tone: 'purple', rotate: -7, radius: '42%', dur: '34s', delay: '2s' },
+  { w: 76, h: 110, top: '48%', left: '-6%', tone: 'blue', rotate: -7, radius: '42%', dur: '34s', delay: '2s' },
   { w: 86, h: 118, top: '42%', left: '103%', tone: 'teal', rotate: 10, radius: '40%', dur: '32s', delay: '1s' },
-  { w: 110, h: 64, top: '99%', left: '58%', tone: 'pink', rotate: -6, radius: '36%', dur: '28s', delay: '2.6s' },
+  { w: 110, h: 64, top: '99%', left: '58%', tone: 'gold', rotate: -6, radius: '36%', dur: '28s', delay: '2.6s' },
 ]
 
 // Background layer: large blurred gradient washes, softest/most out-of-
@@ -120,8 +120,8 @@ const ABSTRACT_SHAPES = [
 // a soft ambient glow the way the reference's backdrop reads.
 const BG_BLOBS = [
   { size: 380, top: '92%', left: '10%', tone: 'teal', dur: '30s', delay: '0s' },
-  { size: 340, top: '90%', left: '90%', tone: 'pink', dur: '34s', delay: '3s' },
-  { size: 260, top: '96%', left: '50%', tone: 'orange', dur: '28s', delay: '1.5s' },
+  { size: 340, top: '90%', left: '90%', tone: 'gold', dur: '34s', delay: '3s' },
+  { size: 260, top: '96%', left: '50%', tone: 'teal', dur: '28s', delay: '1.5s' },
   { size: 520, top: '-18%', left: '50%', tone: 'blue', dur: '36s', delay: '2s' },
 ]
 
@@ -131,12 +131,12 @@ const BG_BLOBS = [
 // copy) — at 56–60px there's no room for anything longer.
 const TABLET_MAJORS = [
   { label: 'Find Jobs', icon: Search, tone: 'blue', size: 60, top: '6%', left: '3%', anim: 'bubble-anim-float-y', dur: '13s', delay: '0s' },
-  { label: 'Hire Talent', icon: Building2, tone: 'purple', size: 56, top: '68%', left: '97%', anim: 'bubble-anim-breathe', dur: '15s', delay: '0.8s' },
+  { label: 'Hire Talent', icon: Building2, tone: 'blue', size: 56, top: '68%', left: '97%', anim: 'bubble-anim-breathe', dur: '15s', delay: '0.8s' },
 ]
 const TABLET_ORBS = [
-  { size: 9, top: '30%', left: '2%', tone: 'orange', anim: 'bubble-anim-drift-slow', dur: '20s', delay: '0.4s' },
+  { size: 9, top: '30%', left: '2%', tone: 'teal', anim: 'bubble-anim-drift-slow', dur: '20s', delay: '0.4s' },
   { size: 8, top: '48%', left: '98%', tone: 'teal', anim: 'bubble-anim-float-x', dur: '18s', delay: '1.2s' },
-  { size: 11, top: '88%', left: '4%', tone: 'pink', anim: 'bubble-anim-float-y', dur: '22s', delay: '0.6s' },
+  { size: 11, top: '88%', left: '4%', tone: 'gold', anim: 'bubble-anim-float-y', dur: '22s', delay: '0.6s' },
 ]
 
 // Mobile (<md): the centered column has almost no side margin to work
@@ -150,9 +150,9 @@ const TABLET_ORBS = [
 // rule but makes the layer actually visible.
 const MOBILE_BLOBS = [
   { size: 220, top: '-8%', left: '-12%', tone: 'blue', dur: '30s', delay: '0s' },
-  { size: 180, top: '8%', left: '108%', tone: 'purple', dur: '34s', delay: '1.5s' },
+  { size: 180, top: '8%', left: '108%', tone: 'blue', dur: '34s', delay: '1.5s' },
   { size: 200, top: '96%', left: '-10%', tone: 'teal', dur: '32s', delay: '0.8s' },
-  { size: 220, top: '100%', left: '105%', tone: 'pink', dur: '28s', delay: '2.2s' },
+  { size: 220, top: '100%', left: '105%', tone: 'gold', dur: '28s', delay: '2.2s' },
 ]
 // Vivid, unlabeled glass bubbles spread over the whole hero *behind* the
 // content (the root sits at z-0, content at z-10). Big ones hug the left/
@@ -160,19 +160,19 @@ const MOBILE_BLOBS = [
 // alternate sides top→bottom so no two are ever close, and each has room
 // to float without touching a neighbor.
 const MOBILE_ORBS = [
-  { size: 64, top: '15%', left: '90%', tone: 'purple', anim: 'bubble-anim-drift-slow', dur: '14s', delay: '0s' },
+  { size: 64, top: '15%', left: '90%', tone: 'blue', anim: 'bubble-anim-drift-slow', dur: '14s', delay: '0s' },
   { size: 46, top: '25%', left: '1%', tone: 'blue', anim: 'bubble-anim-float-y', dur: '11s', delay: '0.6s' },
-  { size: 38, top: '36%', left: '95%', tone: 'pink', anim: 'bubble-anim-float-x', dur: '13s', delay: '1.1s' },
-  { size: 72, top: '47%', left: '5%', tone: 'orange', anim: 'bubble-anim-drift-slow', dur: '16s', delay: '0.3s' },
+  { size: 38, top: '36%', left: '95%', tone: 'gold', anim: 'bubble-anim-float-x', dur: '13s', delay: '1.1s' },
+  { size: 72, top: '47%', left: '5%', tone: 'teal', anim: 'bubble-anim-drift-slow', dur: '16s', delay: '0.3s' },
   { size: 54, top: '58%', left: '94%', tone: 'teal', anim: 'bubble-anim-float-y', dur: '12s', delay: '1.5s' },
-  { size: 42, top: '68%', left: '3%', tone: 'purple', anim: 'bubble-anim-float-x', dur: '15s', delay: '0.9s' },
+  { size: 42, top: '68%', left: '3%', tone: 'blue', anim: 'bubble-anim-float-x', dur: '15s', delay: '0.9s' },
   { size: 78, top: '79%', left: '91%', tone: 'blue', anim: 'bubble-anim-drift-slow', dur: '18s', delay: '0.4s' },
-  { size: 64, top: '90%', left: '10%', tone: 'pink', anim: 'bubble-anim-float-y', dur: '13s', delay: '1.2s' },
+  { size: 64, top: '90%', left: '10%', tone: 'gold', anim: 'bubble-anim-float-y', dur: '13s', delay: '1.2s' },
   { size: 30, top: '92%', left: '46%', tone: 'teal', anim: 'bubble-anim-float-x', dur: '14s', delay: '0.7s' },
-  { size: 44, top: '96%', left: '68%', tone: 'orange', anim: 'bubble-anim-float-y', dur: '17s', delay: '1.8s' },
+  { size: 44, top: '96%', left: '68%', tone: 'teal', anim: 'bubble-anim-float-y', dur: '17s', delay: '1.8s' },
   { size: 12, top: '41%', left: '50%', tone: 'blue', anim: 'bubble-anim-pulse', dur: '9s', delay: '0.5s' },
-  { size: 10, top: '63%', left: '52%', tone: 'pink', anim: 'bubble-anim-pulse', dur: '10s', delay: '1.3s' },
-  { size: 14, top: '84%', left: '30%', tone: 'purple', anim: 'bubble-anim-drift-slow', dur: '20s', delay: '0.2s' },
+  { size: 10, top: '63%', left: '52%', tone: 'gold', anim: 'bubble-anim-pulse', dur: '10s', delay: '1.3s' },
+  { size: 14, top: '84%', left: '30%', tone: 'blue', anim: 'bubble-anim-drift-slow', dur: '20s', delay: '0.2s' },
 ]
 
 function BubbleBlob({ b }) {

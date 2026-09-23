@@ -9,7 +9,7 @@ const sizes = {
 
 export default function Avatar({ initials, size = 'default', gold, className }) {
   return (
-    <div className={cn('rounded-full flex items-center justify-center flex-shrink-0 font-bold text-white', gold ? 'bg-gold-dot' : 'bg-gradient-to-br from-navy-700 to-navy', sizes[size], className)}>
+    <div className={cn('rounded-full flex items-center justify-center flex-shrink-0 font-bold text-white', gold ? 'bg-gold-dot' : 'bg-navy', sizes[size], className)}>
       {initials}
     </div>
   )

@@ -22,6 +22,7 @@ const CvCredits = lazy(() => import('./pages/CvCredits'))
 const CompanyProfile = lazy(() => import('./pages/CompanyProfile'))
 const TeamMembers = lazy(() => import('./pages/TeamMembers'))
 const Notifications = lazy(() => import('./pages/Notifications'))
+const Messages = lazy(() => import('./pages/Messages'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Support = lazy(() => import('./pages/Support'))
 
@@ -61,6 +62,7 @@ export default function App() {
             <Route path="/company" element={<CompanyProfile />} />
             <Route path="/team" element={<TeamMembers />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/messages" element={<Messages />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/support" element={<Support />} />
           </Route>
