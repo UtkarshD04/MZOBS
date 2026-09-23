@@ -2,27 +2,27 @@ import { useState } from 'react'
 import { X, Loader2, CheckCircle2 } from 'lucide-react'
 import { Input } from './Field'
 import Button from './Button'
-import { usePreviewCvCreditCoupon } from '../../hooks/useCvCredits'
 
-// Coupon apply/remove widget for the CV-credits purchase modal. Previews
-// the discount for one specific plan (planId) before an order is created —
-// the server re-validates the code again for real at order-creation time.
-export default function CouponBox({ planId, applied, onApply, onRemove }) {
+// Generic coupon apply/remove widget, shared by the CV-credits purchase
+// modal (see CvCredits.jsx, usePreviewCvCreditCoupon) and the employer Plans
+// page (see Subscription.jsx, usePreviewSubscriptionCoupon). `preview` is a
+// react-query mutation whose mutationFn takes the code string alone and
+// resolves to `{ code, discountAmount, finalAmount, ... }` — the caller
+// binds whatever else it needs (a planId, etc.) as a closure. Previews the
+// discount before an order is created; the server re-validates the code
+// again for real at order-creation time.
+export default function CouponBox({ preview, applied, onApply, onRemove }) {
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
-  const preview = usePreviewCvCreditCoupon()
 
   function apply() {
     const trimmed = code.trim()
     if (!trimmed) return
     setError('')
-    preview.mutate(
-      { planId, code: trimmed },
-      {
-        onSuccess: (data) => onApply(data),
-        onError: (err) => setError(err.response?.data?.message ?? 'Invalid coupon code'),
-      }
-    )
+    preview.mutate(trimmed, {
+      onSuccess: (data) => onApply(data),
+      onError: (err) => setError(err.response?.data?.message ?? 'Invalid coupon code'),
+    })
   }
 
   if (applied) {

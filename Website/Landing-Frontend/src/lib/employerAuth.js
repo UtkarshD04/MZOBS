@@ -15,16 +15,16 @@ export function loginEmployer({ email, password }) {
   return postJSON('/auth/login', { email, password })
 }
 
-export function signupEmployer({ companyName, name, email, phone, password, industry, size, website, hq }) {
-  return postJSON('/auth/signup', { companyName, name, email, phone, password, industry, size, website, hq })
+export function signupEmployer({ companyName, name, email, phone, password, industry, size, website, hq, phoneToken }) {
+  return postJSON('/auth/signup', { companyName, name, email, phone, password, industry, size, website, hq, phoneToken })
 }
 
 export function loginEmployerWithGoogle({ credential }) {
   return postJSON('/auth/google-login', { credential })
 }
 
-export function signupEmployerWithGoogle({ credential, companyName, phone, industry, size, website, hq }) {
-  return postJSON('/auth/google-signup', { credential, companyName, phone, industry, size, website, hq })
+export function signupEmployerWithGoogle({ credential, companyName, phone, industry, size, website, hq, phoneToken }) {
+  return postJSON('/auth/google-signup', { credential, companyName, phone, industry, size, website, hq, phoneToken })
 }
 
 export function forgotPasswordEmployer({ email }) {

@@ -4,14 +4,16 @@ import PageHeader from '../components/layout/PageHeader'
 import Card, { CardBody, CardHead, CardTitle } from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
+import Modal from '../components/ui/Modal'
+import CouponBox from '../components/ui/CouponBox'
 import { Table, TableWrap, Td, Tr } from '../components/ui/Table'
 import EmptyState from '../components/ui/EmptyState'
 import ErrorState from '../components/ui/ErrorState'
 import { PageSkeleton } from '../components/ui/Skeleton'
-import { useSubscriptionQuery, useSubscriptionPaymentsQuery, useSubscribeToPlan } from '../hooks/useSubscription'
+import { useSubscriptionQuery, useSubscriptionPaymentsQuery, useSubscribeToPlan, usePreviewSubscriptionCoupon } from '../hooks/useSubscription'
 import { fmtDate, fmtINR } from '../lib/utils'
 
-const BENEFITS = [
+const BASE_BENEFITS = [
   'Unlimited job postings while your plan is active',
   'Unlimited viewing & downloading of resumes for candidates who applied to your jobs',
   'Full applicant details — contact info, resume, profile — for your own applicants only',
@@ -21,11 +23,15 @@ const BENEFITS = [
 const FAQS = [
   {
     q: 'Can I post unlimited jobs?',
-    a: 'Yes — once your MZOBS Employer Annual plan is active, you can create and publish as many job postings as you need for the full year, with no per-job fee.',
+    a: 'Yes — once your MZOBS Employer plan is active, you can create and publish as many job postings as you need for the full year, with no per-job fee.',
   },
   {
     q: 'Which resumes can I access?',
     a: "Only resumes of candidates who have applied to one of your own job postings. MZOBS never gives employers access to a general candidate database — a candidate's resume and contact details are only visible to the specific employer they applied to.",
+  },
+  {
+    q: 'What does "Enhanced candidate CVs" mean on the Plus/Pro plans?',
+    a: "Applicant CVs on these plans are presented in an enhanced, easier-to-review format when you view them, on top of everything the base plan already gives you.",
   },
   {
     q: 'Does the subscription renew automatically?',
@@ -57,22 +63,84 @@ function FaqItem({ q, a }) {
   )
 }
 
+// One selectable plan tile — the base plan (no extra `benefits` from the
+// server) shows just BASE_BENEFITS; Plus/Pro append their own on top (e.g.
+// "Enhanced candidate CVs") so every tier still reads as a superset of the
+// one below it, never a different unrelated plan.
+function PlanCard({ plan, popular, onSubscribe }) {
+  return (
+    <Card pad hover className="relative flex flex-col overflow-hidden border-border-strong">
+      {popular && <span className="absolute right-0 top-0 rounded-bl-xl bg-navy px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">Most popular</span>}
+      <div className="flex items-center gap-2 mb-1">
+        <Sparkles size={15} className="text-navy" />
+        <span className="text-[11.5px] font-semibold tracking-wide uppercase text-ink-tertiary">{plan.planName}</span>
+      </div>
+      <div className="flex items-baseline gap-2">
+        <span className="text-[26px] font-bold tracking-tight">{fmtINR(plan.baseAmountPaise / 100)}</span>
+        <span className="text-[12.5px] text-ink-secondary">+ {plan.gstRatePercent}% GST / year</span>
+      </div>
+      <div className="text-[11.5px] text-ink-tertiary mt-1">Total {paisePriceLabel(plan.totalAmountPaise)}</div>
+
+      <ul className="mt-4 flex flex-col gap-2 flex-1">
+        {BASE_BENEFITS.map((b) => (
+          <li key={b} className="flex items-start gap-2 text-[12.5px]">
+            <CheckCircle2 size={15} className="text-navy mt-0.5 flex-shrink-0" /> {b}
+          </li>
+        ))}
+        {plan.benefits.map((b) => (
+          <li key={b} className="flex items-start gap-2 text-[12.5px] font-semibold text-navy">
+            <CheckCircle2 size={15} className="text-navy mt-0.5 flex-shrink-0" /> {b}
+          </li>
+        ))}
+      </ul>
+
+      <Button variant="primary" size="md" className="w-full mt-4" onClick={() => onSubscribe(plan)}>
+        <IndianRupee size={15} /> Subscribe — {paisePriceLabel(plan.totalAmountPaise)}
+      </Button>
+    </Card>
+  )
+}
+
 export default function Subscription() {
   const { data, isLoading, isError, refetch } = useSubscriptionQuery()
   const { data: payments = [] } = useSubscriptionPaymentsQuery()
   const subscribe = useSubscribeToPlan()
+  const [buyTarget, setBuyTarget] = useState(null)
+  const [couponResult, setCouponResult] = useState(null)
+  const couponPreview = usePreviewSubscriptionCoupon(buyTarget?.planCode)
 
   if (isLoading) return <PageSkeleton />
   if (isError || !data) return <ErrorState onRetry={() => refetch()} />
 
-  const { subscription, isActive, pricing } = data
+  const { subscription, isActive, plans } = data
   const expiringSoon = isActive && subscription?.expiresAt && new Date(subscription.expiresAt) - Date.now() < 30 * 24 * 60 * 60 * 1000
+  // Renew always re-buys whatever plan is currently active; falls back to the
+  // base tier if that plan code has since been retired.
+  const currentPlan = plans.find((p) => p.planCode === subscription?.planCode) ?? plans[0]
+  const popularPlanCode = plans[1]?.planCode // the middle ("Plus") tier
+
+  function openBuyModal(plan) {
+    setCouponResult(null)
+    setBuyTarget(plan)
+  }
+
+  function closeBuyModal() {
+    setBuyTarget(null)
+    setCouponResult(null)
+  }
+
+  function confirmPurchase() {
+    if (!buyTarget) return
+    subscribe.mutate({ planCode: buyTarget.planCode, couponCode: couponResult?.code }, { onSuccess: closeBuyModal })
+  }
+
+  const payableAmount = couponResult?.finalAmount ?? (buyTarget ? buyTarget.totalAmountPaise / 100 : 0)
 
   return (
     <div>
-      <PageHeader title="Plans & Billing" subtitle="One plan. Everything you need to hire on MZOBS." />
+      <PageHeader title="Plans & Billing" subtitle="Pick the plan that fits how you hire on MZOBS." />
 
-      {isActive ? (
+      {isActive && (
         <Card className="mb-5">
           <CardBody className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex items-start gap-3.5">
@@ -89,8 +157,13 @@ export default function Subscription() {
                   {subscription.razorpayPaymentId && <span className="text-ink-tertiary"> · Ref: {subscription.razorpayPaymentId}</span>}
                 </div>
                 <ul className="mt-3 flex flex-col gap-1.5">
-                  {BENEFITS.map((b) => (
+                  {BASE_BENEFITS.map((b) => (
                     <li key={b} className="flex items-start gap-2 text-[12.5px] text-ink-secondary">
+                      <CheckCircle2 size={14} className="text-green mt-0.5 flex-shrink-0" /> {b}
+                    </li>
+                  ))}
+                  {currentPlan.benefits.map((b) => (
+                    <li key={b} className="flex items-start gap-2 text-[12.5px] font-semibold text-ink">
                       <CheckCircle2 size={14} className="text-green mt-0.5 flex-shrink-0" /> {b}
                     </li>
                   ))}
@@ -98,55 +171,41 @@ export default function Subscription() {
               </div>
             </div>
             {expiringSoon && (
-              <Button variant="primary" loading={subscribe.isPending} onClick={() => subscribe.mutate()}>
-                <CalendarClock size={16} /> Renew for {paisePriceLabel(pricing.totalAmountPaise)}
+              <Button variant="primary" onClick={() => openBuyModal(currentPlan)}>
+                <CalendarClock size={16} /> Renew for {paisePriceLabel(currentPlan.totalAmountPaise)}
               </Button>
             )}
           </CardBody>
         </Card>
-      ) : (
-        <div className="grid grid-cols-3 gap-5 mb-5 max-xl:grid-cols-1">
-          <Card className="col-span-2 max-xl:col-span-1" pad>
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles size={16} className="text-navy" />
-              <span className="text-[11.5px] font-semibold tracking-wide uppercase text-ink-tertiary">MZOBS Employer Annual</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-[30px] font-bold tracking-tight">{fmtINR(pricing.baseAmountPaise / 100)}</span>
-              <span className="text-[13px] text-ink-secondary">+ {pricing.gstRatePercent}% GST / year</span>
-            </div>
-            <div className="text-[12px] text-ink-tertiary mt-1">
-              Total {paisePriceLabel(pricing.totalAmountPaise)} — final amount shown is exactly what you pay
-            </div>
+      )}
 
-            <ul className="mt-5 flex flex-col gap-2.5">
-              {BENEFITS.map((b) => (
-                <li key={b} className="flex items-start gap-2.5 text-[13px]">
-                  <CheckCircle2 size={16} className="text-navy mt-0.5 flex-shrink-0" /> {b}
-                </li>
-              ))}
-            </ul>
+      {!isActive && (
+        <>
+          <div className="grid grid-cols-3 gap-5 mb-3 max-xl:grid-cols-1">
+            {plans.map((plan) => (
+              <PlanCard key={plan.planCode} plan={plan} popular={plan.planCode === popularPlanCode} onSubscribe={openBuyModal} />
+            ))}
+          </div>
 
-            <div className="mt-5 pt-5 border-t border-border flex items-center gap-2 text-[12px] text-ink-tertiary">
+          <Card className="mb-5">
+            <CardBody className="flex items-center gap-2 text-[12px] text-ink-tertiary">
               <ShieldCheck size={14} /> Secure payment via Razorpay. One-time annual charge — never auto-renewed.
-            </div>
-
-            <Button variant="primary" size="lg" className="w-full mt-5" loading={subscribe.isPending} onClick={() => subscribe.mutate()}>
-              <IndianRupee size={16} /> Subscribe now — {paisePriceLabel(pricing.totalAmountPaise)}
-            </Button>
-
-            {subscription?.status === 'payment_failed' && (
-              <p className="text-[12px] text-red mt-2.5 text-center">Your last payment attempt didn't go through. You can try again above.</p>
-            )}
-          </Card>
-
-          <Card>
-            <CardHead><CardTitle>What you don't get access to</CardTitle></CardHead>
-            <CardBody className="text-[12.5px] text-ink-secondary leading-relaxed">
-              This plan does not open up MZOBS's general candidate database. You only ever see the resume and contact details of a candidate after they've applied to one of your own job postings — we never sell or expose candidate data outside of that.
             </CardBody>
           </Card>
-        </div>
+
+          {subscription?.status === 'payment_failed' && (
+            <Card className="mb-5">
+              <CardBody className="text-[12.5px] text-red">Your last payment attempt didn't go through. You can try again above.</CardBody>
+            </Card>
+          )}
+
+          <Card className="mb-5">
+            <CardHead><CardTitle>What you don't get access to</CardTitle></CardHead>
+            <CardBody className="text-[12.5px] text-ink-secondary leading-relaxed">
+              No plan opens up MZOBS's general candidate database. You only ever see the resume and contact details of a candidate after they've applied to one of your own job postings — we never sell or expose candidate data outside of that.
+            </CardBody>
+          </Card>
+        </>
       )}
 
       <Card className="mb-5">
@@ -177,6 +236,32 @@ export default function Subscription() {
           </TableWrap>
         )}
       </Card>
+
+      <Modal
+        open={!!buyTarget}
+        onClose={closeBuyModal}
+        title={buyTarget ? buyTarget.planName : ''}
+        subtitle={buyTarget ? '1 year · ' + BASE_BENEFITS.length + ' core benefits' + (buyTarget.benefits.length ? ` + ${buyTarget.benefits.join(', ')}` : '') : ''}
+        size="sm"
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={closeBuyModal}>Cancel</Button>
+            <Button variant="primary" size="sm" loading={subscribe.isPending} onClick={confirmPurchase}>
+              <IndianRupee size={14} /> Pay {fmtINR(payableAmount)}
+            </Button>
+          </>
+        }
+      >
+        {buyTarget && (
+          <>
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-[26px] font-bold tracking-tight">{fmtINR(payableAmount)}</span>
+              {couponResult && <span className="text-[13px] text-ink-tertiary line-through">{paisePriceLabel(buyTarget.totalAmountPaise)}</span>}
+            </div>
+            <CouponBox preview={couponPreview} applied={couponResult} onApply={setCouponResult} onRemove={() => setCouponResult(null)} />
+          </>
+        )}
+      </Modal>
     </div>
   )
 }

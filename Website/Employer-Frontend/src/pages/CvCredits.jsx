@@ -10,7 +10,7 @@ import { Table, TableWrap, Td, Tr } from '../components/ui/Table'
 import EmptyState from '../components/ui/EmptyState'
 import ErrorState from '../components/ui/ErrorState'
 import { PageSkeleton } from '../components/ui/Skeleton'
-import { useCreditBalanceQuery, useCreditPlansQuery, useCreditPurchasesQuery, useUnlocksQuery, useBuyCreditPlan } from '../hooks/useCvCredits'
+import { useCreditBalanceQuery, useCreditPlansQuery, useCreditPurchasesQuery, useUnlocksQuery, useBuyCreditPlan, usePreviewCvCreditCoupon } from '../hooks/useCvCredits'
 import { fmtDate, fmtINR } from '../lib/utils'
 
 const paymentStatusTone = { paid: 'green', created: 'amber', failed: 'red' }
@@ -24,6 +24,7 @@ export default function CvCredits() {
   const buyPlan = useBuyCreditPlan()
   const [buyTarget, setBuyTarget] = useState(null)
   const [couponResult, setCouponResult] = useState(null)
+  const couponPreview = usePreviewCvCreditCoupon(buyTarget?.id)
 
   if (isLoading) return <PageSkeleton />
   if (isError || !balanceData) return <ErrorState onRetry={() => refetch()} />
@@ -198,7 +199,7 @@ export default function CvCredits() {
               <span className="text-[26px] font-bold tracking-tight">{fmtINR(couponResult?.finalAmount ?? buyTarget.amountRupees)}</span>
               {couponResult && <span className="text-[13px] text-ink-tertiary line-through">{fmtINR(buyTarget.amountRupees)}</span>}
             </div>
-            <CouponBox planId={buyTarget.id} applied={couponResult} onApply={setCouponResult} onRemove={() => setCouponResult(null)} />
+            <CouponBox preview={couponPreview} applied={couponResult} onApply={setCouponResult} onRemove={() => setCouponResult(null)} />
           </>
         )}
       </Modal>

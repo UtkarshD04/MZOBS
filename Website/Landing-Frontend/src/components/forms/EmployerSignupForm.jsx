@@ -1,13 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users, Globe, MapPin } from 'lucide-react'
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
+import OtpInput from '../ui/OtpInput'
 import TermsConsent from '../ui/TermsConsent'
 import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
 import { EMPLOYER_APP_URL } from '../../lib/config'
-import { signupEmployer, signupEmployerWithGoogle } from '../../lib/employerAuth'
+import { signupEmployer, signupEmployerWithGoogle, verifyEmployerPhoneWidget } from '../../lib/employerAuth'
+import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 
 const COMPANY_SIZES = ['1–50 employees', '51–200 employees', '201–500 employees', '501–1000 employees', '1000+ employees']
+const RESEND_COOLDOWN = 30
 
 const initialForm = {
   name: '',
@@ -21,7 +24,7 @@ const initialForm = {
   hq: '',
 }
 
-function validate(form, hasGoogle, acceptedTerms) {
+function validate(form, hasGoogle, acceptedTerms, phoneVerified) {
   const errors = {}
   if (!hasGoogle) {
     if (!form.name.trim()) errors.name = 'Please enter your full name.'
@@ -32,6 +35,7 @@ function validate(form, hasGoogle, acceptedTerms) {
   }
   if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
   else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
+  else if (!phoneVerified) errors.phone = 'Please verify your phone number via OTP.'
   if (!form.companyName.trim()) errors.companyName = 'Please enter your company name.'
   if (!form.industry.trim()) errors.industry = 'Please enter your industry.'
   if (!form.size) errors.size = 'Please select a company size.'
@@ -54,8 +58,90 @@ export default function EmployerSignupForm() {
   const [googleCredential, setGoogleCredential] = useState(null)
   const [acceptedTerms, setAcceptedTerms] = useState(false)
 
+  // Phone OTP verification (MSG91 widget — same flow as the employee side,
+  // see EmployeePhoneAuthForm.jsx). `phoneToken`/`verifiedPhone` only count
+  // as a valid verification while `verifiedPhone` still matches the phone
+  // currently typed — editing the number after verifying resets it.
+  const [otpStep, setOtpStep] = useState('idle') // idle | sent
+  const [otp, setOtp] = useState('')
+  const [sendingOtp, setSendingOtp] = useState(false)
+  const [verifyingOtp, setVerifyingOtp] = useState(false)
+  const [otpError, setOtpError] = useState('')
+  const [phoneToken, setPhoneToken] = useState(null)
+  const [verifiedPhone, setVerifiedPhone] = useState(null)
+  const [resendIn, setResendIn] = useState(0)
+  const phoneVerified = Boolean(phoneToken) && verifiedPhone === form.phone
+
+  const resendTimerRef = useRef(null)
+  useEffect(() => {
+    if (resendIn <= 0) return
+    resendTimerRef.current = setTimeout(() => setResendIn((s) => s - 1), 1000)
+    return () => clearTimeout(resendTimerRef.current)
+  }, [resendIn])
+
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }))
+  }
+
+  function updatePhone(value) {
+    update('phone', value)
+    // A changed number invalidates whatever was verified before, and
+    // collapses back to the "enter number" state rather than leaving a
+    // stale OTP box open for the old number.
+    if (value !== verifiedPhone) {
+      setOtpStep('idle')
+      setOtp('')
+      setOtpError('')
+    }
+  }
+
+  async function handleSendOtp() {
+    setErrors((e) => ({ ...e, phone: undefined }))
+    setOtpError('')
+    setSendingOtp(true)
+    try {
+      await sendWidgetOtp(form.phone)
+      setOtpStep('sent')
+      setOtp('')
+      setResendIn(RESEND_COOLDOWN)
+    } catch (err) {
+      setOtpError(err.message)
+    } finally {
+      setSendingOtp(false)
+    }
+  }
+
+  async function handleResendOtp() {
+    setOtpError('')
+    setSendingOtp(true)
+    try {
+      await retryWidgetOtp('SMS')
+      setOtp('')
+      setResendIn(RESEND_COOLDOWN)
+    } catch (err) {
+      setOtpError(err.message)
+    } finally {
+      setSendingOtp(false)
+    }
+  }
+
+  async function handleVerifyOtp() {
+    setOtpError('')
+    setVerifyingOtp(true)
+    try {
+      // MSG91's widget verifies the code itself and hands back a signed
+      // access-token — that still has to be confirmed server-to-server
+      // before it's trusted (see verifyEmployerPhoneWidget).
+      const widgetResult = await verifyWidgetOtp(otp)
+      const { phoneToken: token } = await verifyEmployerPhoneWidget({ phone: form.phone, accessToken: widgetResult.message })
+      setPhoneToken(token)
+      setVerifiedPhone(form.phone)
+      setOtpStep('idle')
+    } catch (err) {
+      setOtpError(err.message)
+    } finally {
+      setVerifyingOtp(false)
+    }
   }
 
   function handleGoogleCredential(credential) {
@@ -67,7 +153,7 @@ export default function EmployerSignupForm() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const nextErrors = validate(form, Boolean(googleCredential), acceptedTerms)
+    const nextErrors = validate(form, Boolean(googleCredential), acceptedTerms, phoneVerified)
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
@@ -82,8 +168,9 @@ export default function EmployerSignupForm() {
             size: form.size,
             website: form.website,
             hq: form.hq,
+            phoneToken,
           })
-        : await signupEmployer(form)
+        : await signupEmployer({ ...form, phoneToken })
       window.location.href = `${EMPLOYER_APP_URL}/dashboard?token=${encodeURIComponent(token)}`
     } catch (err) {
       setStatus('idle')
@@ -118,15 +205,59 @@ export default function EmployerSignupForm() {
       )}
 
       <Field label="Phone number">
-        <Input
-          icon={Phone}
-          type="tel"
-          value={form.phone}
-          onChange={(e) => update('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
-          placeholder="98765 43210"
-        />
+        <div className="flex gap-2">
+          <div className="flex-1 min-w-0">
+            <Input
+              icon={Phone}
+              type="tel"
+              value={form.phone}
+              onChange={(e) => updatePhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              placeholder="98765 43210"
+              disabled={phoneVerified}
+            />
+          </div>
+          {!phoneVerified && (
+            <button
+              type="button"
+              onClick={handleSendOtp}
+              disabled={sendingOtp || form.phone.replace(/\D/g, '').length !== 10}
+              className="shrink-0 h-11 px-4 rounded-xl text-[13px] font-bold text-white bg-[var(--careers-accent)] hover:bg-[var(--careers-accent-hover)] disabled:opacity-50 transition-colors"
+            >
+              {sendingOtp ? 'Sending...' : otpStep === 'sent' ? 'Resend' : 'Send OTP'}
+            </button>
+          )}
+        </div>
+        {phoneVerified && (
+          <div className="flex items-center gap-1.5 mt-1.5 text-xs font-semibold text-[var(--careers-tint-sage-ink)]">
+            <CheckCircle2 size={13} /> Phone verified
+          </div>
+        )}
         {errors.phone && <span className="text-xs text-red mt-1 block">{errors.phone}</span>}
       </Field>
+
+      {otpStep === 'sent' && !phoneVerified && (
+        <Field label={`Enter the 6-digit code sent to +91 ${form.phone}`}>
+          <OtpInput value={otp} onChange={setOtp} error={otpError} disabled={verifyingOtp} autoFocus />
+          <div className="flex items-center gap-4 mt-3">
+            <button
+              type="button"
+              onClick={handleVerifyOtp}
+              disabled={verifyingOtp || otp.length !== 6}
+              className="h-9 px-4 rounded-lg text-[13px] font-bold text-white bg-[var(--careers-accent)] hover:bg-[var(--careers-accent-hover)] disabled:opacity-50 transition-colors"
+            >
+              {verifyingOtp ? 'Verifying...' : 'Verify'}
+            </button>
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={sendingOtp || resendIn > 0}
+              className="text-[12.5px] font-bold text-[var(--careers-accent)] hover:underline disabled:opacity-50 disabled:no-underline"
+            >
+              {resendIn > 0 ? `Resend in 0:${String(resendIn).padStart(2, '0')}` : 'Resend OTP'}
+            </button>
+          </div>
+        </Field>
+      )}
 
       {!googleCredential && (
         <Field label="Password">

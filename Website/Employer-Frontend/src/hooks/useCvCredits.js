@@ -21,9 +21,12 @@ export function useUnlocksQuery() {
 }
 
 // Prices a coupon against a specific plan without creating an order — so
-// the price can update as soon as the employer types a code.
-export function usePreviewCvCreditCoupon() {
-  return useMutation({ mutationFn: ({ planId, code }) => cvCreditsService.previewCvCreditCoupon(planId, code) })
+// the price can update as soon as the employer types a code. Takes `code`
+// alone (planId is bound by the caller) so this matches CouponBox's generic
+// `preview.mutate(code)` contract — see useSubscription.js's
+// usePreviewSubscriptionCoupon for the same shape on the employer-plan side.
+export function usePreviewCvCreditCoupon(planId) {
+  return useMutation({ mutationFn: (code) => cvCreditsService.previewCvCreditCoupon(planId, code) })
 }
 
 // Same order -> Checkout -> verify shape as useSubscribeToPlan: the price is
