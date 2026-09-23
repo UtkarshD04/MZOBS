@@ -109,10 +109,15 @@ export default function Subscription() {
   const [couponResult, setCouponResult] = useState(null)
   const couponPreview = usePreviewSubscriptionCoupon(buyTarget?.planCode)
 
+  // `plans` is only missing/empty if this frontend build has shipped ahead of
+  // the backend deploy that adds it (see employerSubscriptionController.js)
+  // — treat that the same as a load failure rather than rendering a picker
+  // with no plans in it.
+  const plans = data?.plans ?? []
   if (isLoading) return <PageSkeleton />
-  if (isError || !data) return <ErrorState onRetry={() => refetch()} />
+  if (isError || !data || plans.length === 0) return <ErrorState onRetry={() => refetch()} />
 
-  const { subscription, isActive, plans } = data
+  const { subscription, isActive } = data
   const expiringSoon = isActive && subscription?.expiresAt && new Date(subscription.expiresAt) - Date.now() < 30 * 24 * 60 * 60 * 1000
   // Renew always re-buys whatever plan is currently active; falls back to the
   // base tier if that plan code has since been retired.
