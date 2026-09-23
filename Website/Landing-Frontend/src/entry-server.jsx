@@ -3,6 +3,7 @@ import { StaticRouter } from 'react-router'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { GOOGLE_CLIENT_ID } from './lib/config.js'
 import { InitialJobContext } from './lib/initialJobContext.js'
+import { InitialHomeDataContext } from './lib/initialHomeDataContext.js'
 import App from './App.jsx'
 
 // Node-only entry, built by `vite build --ssr` into dist/server/entry-server.js
@@ -12,12 +13,14 @@ import App from './App.jsx'
 // placeholder, and build the <head> tags separately (renderHead.js) rather
 // than relying on React's title/meta hoisting inside a partial (non-<html>)
 // renderToString tree.
-export function render(url, initialJob = null) {
+export function render(url, { initialJob = null, initialHomeData = null } = {}) {
   return renderToString(
     <StaticRouter location={url}>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <InitialJobContext.Provider value={initialJob}>
-          <App />
+          <InitialHomeDataContext.Provider value={initialHomeData}>
+            <App />
+          </InitialHomeDataContext.Provider>
         </InitialJobContext.Provider>
       </GoogleOAuthProvider>
     </StaticRouter>

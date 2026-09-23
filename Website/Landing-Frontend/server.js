@@ -96,13 +96,13 @@ app.get('/jobs/:id', async (req, res) => {
       canonical: `${SITE_URL}${url}`,
       noindex: true,
     })
-    res.status(404).send(renderShell({ headHtml, appHtml: render(url, null) }))
+    res.status(404).send(renderShell({ headHtml, appHtml: render(url, {}) }))
     return
   }
 
   const seo = buildJobSeo(job, url)
   const headHtml = buildHeadHtml({ title: seo.title, description: seo.description, canonical: seo.canonical, jsonLd: seo.jsonLd })
-  const appHtml = render(url, job)
+  const appHtml = render(url, { initialJob: job })
   // Hands the same job back to the client for hydration so JobDetail.jsx
   // doesn't re-fetch it (see src/lib/initialJobContext.js) — escape "<" so a
   // job field containing "</script>" can't break out of the tag.

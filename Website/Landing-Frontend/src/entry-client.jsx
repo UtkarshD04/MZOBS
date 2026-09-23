@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { GOOGLE_CLIENT_ID } from './lib/config'
 import { InitialJobContext } from './lib/initialJobContext'
+import { InitialHomeDataContext } from './lib/initialHomeDataContext'
 import '@fontsource/inter/400.css'
 import '@fontsource/inter/500.css'
 import '@fontsource/inter/600.css'
@@ -20,14 +21,22 @@ import App from './App.jsx'
 // buildJobSeo's caller) so JobDetail.jsx can reuse it on hydration instead
 // of re-fetching. Every other route leaves this undefined.
 const initialJob = typeof window !== 'undefined' ? (window.__INITIAL_JOB__ ?? null) : null
+// scripts/prerender.js embeds the home page's default job/category/city data
+// it already fetched at build time here (see initialHomeDataContext.js) so
+// JobMarketplace/CategoryGrid/HotJobsByCity render real numbers on first
+// paint instead of their loading/zero state; every other route leaves this
+// undefined.
+const initialHomeData = typeof window !== 'undefined' ? (window.__INITIAL_HOME_DATA__ ?? null) : null
 
 const app = (
   <StrictMode>
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <InitialJobContext.Provider value={initialJob}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <InitialHomeDataContext.Provider value={initialHomeData}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </InitialHomeDataContext.Provider>
       </InitialJobContext.Provider>
     </GoogleOAuthProvider>
   </StrictMode>
