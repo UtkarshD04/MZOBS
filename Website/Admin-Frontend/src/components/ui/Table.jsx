@@ -21,8 +21,12 @@ export function Table({ columns, children }) {
   )
 }
 
-export function Tr({ children }) {
-  return <tr className="transition-colors duration-150 hover:bg-surface-hover [&>td]:border-b [&>td]:border-border last:[&>td]:border-b-0">{children}</tr>
+export function Tr({ children, className, onClick }) {
+  return (
+    <tr onClick={onClick} className={cn('transition-colors duration-150 hover:bg-surface-hover [&>td]:border-b [&>td]:border-border last:[&>td]:border-b-0', onClick && 'cursor-pointer', className)}>
+      {children}
+    </tr>
+  )
 }
 
 export function Td({ children, className }) {
