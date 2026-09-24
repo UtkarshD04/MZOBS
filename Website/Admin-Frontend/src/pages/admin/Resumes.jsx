@@ -8,9 +8,10 @@ import { TableWrap, Table, Tr, Td } from '../../components/ui/Table'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { useResumeQueueQuery } from '../../hooks/useResumes'
-import { openResumeViewer, downloadFile } from '../../components/ResumeViewerModal'
+import { openResumeViewer } from '../../lib/resumeViewer'
+import { downloadFile } from '../../components/ResumeViewerModal'
 import { FILE_BASE_URL } from '../../lib/config'
 
 export default function Resumes() {

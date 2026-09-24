@@ -1,6 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-
-const AppContext = createContext(null)
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { AppContext } from '../lib/appContext'
 
 let toastId = 0
 
@@ -58,10 +57,4 @@ export function AppProvider({ children }) {
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
-}
-
-export function useApp() {
-  const ctx = useContext(AppContext)
-  if (!ctx) throw new Error('useApp must be used within AppProvider')
-  return ctx
 }

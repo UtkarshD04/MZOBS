@@ -5,7 +5,7 @@ import Card, { CardHead, CardBody } from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import { Field, Input, Select, Textarea } from '../../components/ui/Field'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { useCompaniesQuery } from '../../hooks/useCompanies'
 import { useCreateJobMutation } from '../../hooks/useJobs'
 

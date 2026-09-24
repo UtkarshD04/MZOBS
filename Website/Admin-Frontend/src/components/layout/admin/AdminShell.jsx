@@ -5,7 +5,7 @@ import AdminTopNav from './AdminTopNav'
 import AdminSidebar from './AdminSidebar'
 import AdminFooter from './AdminFooter'
 import RouteProgress from '../RouteProgress'
-import { useApp } from '../../../context/AppContext'
+import { useApp } from '../../../lib/appContext'
 
 export default function AdminShell() {
   const location = useLocation()

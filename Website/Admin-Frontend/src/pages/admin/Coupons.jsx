@@ -12,7 +12,7 @@ import ErrorState from '../../components/ui/ErrorState'
 import EmptyState from '../../components/ui/EmptyState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Input, Select, Textarea } from '../../components/ui/Field'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { useCouponsQuery, useCreateCouponMutation, useUpdateCouponMutation, useDeleteCouponMutation } from '../../hooks/useCoupons'
 
 const APPLIES_TO_TABS = [
