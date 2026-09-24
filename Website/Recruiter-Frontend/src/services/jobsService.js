@@ -7,7 +7,7 @@
 
 import axios from 'axios'
 import { apiClient } from '../lib/api'
-import { IS_DEMO, LANDING_APP_URL } from '../lib/config'
+import { IS_DEMO, LANDING_APP_URL, API_URL } from '../lib/config'
 import { readLocalJobs, writeLocalJobs } from '../lib/localJobs'
 import { invalidatePool } from './talentService'
 
@@ -188,12 +188,15 @@ export function jobError(e) {
  * app and marketing site list from, so this confirms a posting really is live
  * there rather than assuming it.
  */
+// The public feed lives beside the employer API (…/api/employer → …/api), so this works behind the dev proxy and against an absolute production URL alike.
+const PUBLIC_API = API_URL.replace(/\/employer\/?$/, '')
+
 export async function listPublicJobIds() {
   if (IS_DEMO) return new Set()
   const ids = new Set()
   // The public feed caps page size (currently 20), so page by the server's own headers.
   for (let page = 1; page <= 50; page++) {
-    const r = await axios.get('/api/jobs', { params: { page, limit: 100 }, timeout: 15000 })
+    const r = await axios.get(`${PUBLIC_API}/jobs`, { params: { page, limit: 100 }, timeout: 15000 })
     const rows = Array.isArray(r.data) ? r.data : r.data.jobs ?? []
     rows.forEach((j) => ids.add(j.id))
     if (!rows.length || ids.size >= Number(r.headers['x-total-count'] ?? 0)) break
