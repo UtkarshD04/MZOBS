@@ -11,9 +11,6 @@ export default function ExpertiseGrid({
   title,
   subtitle,
   items,
-  photoIcon,
-  ctaLabel,
-  ctaHref,
   reverse
 }) {
   const servicesList = items || SERVICES_DATA.services

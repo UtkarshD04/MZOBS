@@ -8,9 +8,9 @@
 // per-request by server.js instead, since job data changes and expires.
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { buildHeadHtml } from '../src/lib/renderHead.js'
-import { STATIC_PAGE_SEO } from '../src/lib/seoData.js'
+import { canonicalPath, SITE_URL, STATIC_PAGE_SEO } from '../src/lib/seoData.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
@@ -26,7 +26,9 @@ const template = fs.readFileSync(path.join(CLIENT_DIR, 'index.html'), 'utf-8')
 // dist/client/index.html itself with the prerendered homepage below.
 fs.writeFileSync(path.join(CLIENT_DIR, '.shell.html'), template)
 
-const { render } = await import(SERVER_ENTRY)
+// import() needs a file:// URL, not a raw filesystem path — a plain "C:\..."
+// path throws ERR_UNSUPPORTED_ESM_URL_SCHEME on Windows.
+const { render } = await import(pathToFileURL(SERVER_ENTRY).href)
 
 // The home page's job-count/city/category sections (JobMarketplace.jsx,
 // HotJobsByCity.jsx, CategoryGrid.jsx) each fetch their own default,
@@ -59,7 +61,7 @@ const initialHomeData = await fetchInitialHomeData()
 for (const [route, seo] of Object.entries(STATIC_PAGE_SEO)) {
   const isHome = route === '/'
   const appHtml = render(route, isHome ? { initialHomeData } : {})
-  const headHtml = buildHeadHtml({ title: seo.title, description: seo.description, canonical: `https://mzobs.com${route}` })
+  const headHtml = buildHeadHtml({ title: seo.title, description: seo.description, canonical: `${SITE_URL}${canonicalPath(route)}` })
   // Hands the same data back to the client for hydration so JobMarketplace/
   // CategoryGrid/HotJobsByCity don't show a redundant loading flash before
   // their own useEffect re-fetches live data (see initialHomeDataContext.js).

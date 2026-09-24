@@ -17,7 +17,7 @@ import {
   confirmMockSubscriptionPayment,
   previewSubscriptionCoupon,
 } from '../lib/employeeSubscription'
-import { openRazorpayCheckout } from '../lib/razorpay'
+import { openRazorpayCheckout, loadRazorpay } from '../lib/razorpay'
 import { EMPLOYEE_PRICING_DATA } from '../lib/content'
 import CouponBox from '../components/ui/CouponBox'
 
@@ -85,6 +85,17 @@ export default function EmployeeSubscription() {
       .finally(() => setLoading(false))
   }, [navigate])
 
+  // Head start on the checkout script so it's likely already loaded by the
+  // time the user actually clicks "Unlock premium now" — loadRazorpay()
+  // caches this, so it's a no-op there if it already resolved (or already
+  // in flight).
+  useEffect(() => {
+    loadRazorpay().catch(() => {
+      // Silent here — handlePay awaits it again and surfaces the same error
+      // through the usual payError UI when it's actually needed.
+    })
+  }, [])
+
   async function handlePay() {
     if (!token) return
     setPayError('')
@@ -94,6 +105,7 @@ export default function EmployeeSubscription() {
       if (order.mock) {
         await confirmMockSubscriptionPayment(token, order.orderId)
       } else {
+        await loadRazorpay()
         const result = await openRazorpayCheckout(order)
         await verifySubscriptionPayment(token, {
           razorpay_order_id: result.razorpay_order_id,

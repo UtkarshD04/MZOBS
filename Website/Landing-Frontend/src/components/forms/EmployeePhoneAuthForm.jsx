@@ -3,7 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, ArrowLeft, CheckCircle2, User, Mail, Phone, UploadCloud, FileText, Trash2, ShieldCheck, ArrowUpRight } from 'lucide-react'
 import { Field, Input, PrimaryButton, SecondaryButton } from '../ui/JobsAuthField'
-import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
+import { GoogleAuthButton, OrDivider } from '../ui/GoogleAuthButton'
+import { decodeGoogleCredential } from '../../lib/googleCredential'
 import OtpInput from '../ui/OtpInput'
 import TermsConsent from '../ui/TermsConsent'
 import {
@@ -97,9 +98,9 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
   // Arrived via the dashboard app's `?redirect=` handoff (e.g. from "Apply"
   // on a job) — send them back there with the token instead of landing on
   // this site's own home page.
-  function completeAuth(token, employee) {
+  async function completeAuth(token, employee) {
     if (redirect) {
-      window.location.href = buildAppRedirectUrl(redirect, token)
+      window.location.href = await buildAppRedirectUrl(redirect, token)
       return
     }
     saveEmployeeSession({ token, employee })
@@ -158,7 +159,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
     setCheckingAccount(true)
     try {
       const { token: sessionToken, employee } = await phoneLoginEmployee({ phone, phoneToken: token })
-      completeAuth(sessionToken, employee)
+      await completeAuth(sessionToken, employee)
     } catch (err) {
       if (err.status === 404) {
         // Google and email paths already know name + email, so the account can be
@@ -195,7 +196,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
     setError('')
     try {
       const { token, employee } = await loginEmployeeWithGoogle({ credential })
-      completeAuth(token, employee)
+      await completeAuth(token, employee)
       return
     } catch (err) {
       if (err.status !== 404) {
@@ -292,7 +293,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
       setEmailToken(verified)
       try {
         const { token, employee } = await emailLoginEmployee({ email: email.trim(), emailToken: verified })
-        completeAuth(token, employee)
+        await completeAuth(token, employee)
       } catch (err) {
         if (err.status === 404) setStep('emailProfile')
         else throw err
@@ -348,8 +349,12 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
     }
   }
 
-  function handleFinish() {
-    completeAuth(authToken, authEmployee)
+  async function handleFinish() {
+    try {
+      await completeAuth(authToken, authEmployee)
+    } catch (err) {
+      setResumeError(err.message)
+    }
   }
 
   if (step === 'resume') {

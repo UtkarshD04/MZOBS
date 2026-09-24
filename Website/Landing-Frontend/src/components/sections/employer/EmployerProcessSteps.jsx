@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { CalendarCheck, Sparkles } from 'lucide-react'
-import { FadeInView, useStoryProgress } from './employerMotion'
+import { FadeInView } from './employerMotion'
+import { useStoryProgress } from '../../../lib/employerMotionHooks'
 
 // The full Mzobs hiring journey — from describing a role to making the hire.
 // Each stage keeps the same small "product state" fragment style the

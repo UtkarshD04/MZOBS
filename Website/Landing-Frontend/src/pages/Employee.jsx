@@ -8,9 +8,7 @@ import StatsTimeline from '../components/sections/home/StatsTimeline'
 import CandidateJourneySection from '../components/sections/CandidateJourneySection'
 import EmployeeWhySection from '../components/sections/employee/EmployeeWhySection'
 import EmployeePricingSection from '../components/sections/employee/EmployeePricingSection'
-import TestimonialsCarousel from '../components/sections/home/TestimonialsCarousel'
 import EmployeeCTABand from '../components/sections/employee/EmployeeCTABand'
-import { EMPLOYEE_TESTIMONIALS } from '../lib/content'
 
 export default function Employee() {
   return (

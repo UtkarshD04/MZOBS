@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, Phone, CheckCircle2, Loader2, Copy, Check, ArrowRight } from 'lucide-react'
-import { createGuestSubscriptionOrder, guestSubscribeSignup } from '../../../lib/employerAuth'
-import { openRazorpayCheckout } from '../../../lib/razorpay'
-import { EMPLOYER_APP_URL } from '../../../lib/config'
+import { createGuestSubscriptionOrder, guestSubscribeSignup, redirectToEmployerDashboard } from '../../../lib/employerAuth'
+import { openRazorpayCheckout, loadRazorpay } from '../../../lib/razorpay'
 
 const inputClass =
   'w-full h-11 px-3.5 rounded-xl border border-[#102a43]/15 bg-white text-[13.5px] text-[#102a43] outline-none transition-colors placeholder:text-[#102a43]/35 focus:border-[#0a6f64] focus:ring-[3px] focus:ring-[#0a6f64]/15'
@@ -21,6 +20,18 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
   const [payError, setPayError] = useState('')
   const [result, setResult] = useState(null)
   const [copied, setCopied] = useState(false)
+
+  // This modal is mounted (just not visible) alongside the pricing page
+  // itself, so this doubles as "preload on mount of the pricing page" — a
+  // head start on the checkout script before the user even opens the modal.
+  // loadRazorpay() caches the result, so startPayment's own await below is a
+  // no-op if this already finished (or is still in flight).
+  useEffect(() => {
+    loadRazorpay().catch(() => {
+      // Silent here — startPayment awaits it again and surfaces the same
+      // error through the usual payError UI when it's actually needed.
+    })
+  }, [])
 
   function reset() {
     setStep('phone')
@@ -48,6 +59,7 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
       const signupResult = order.mock
         ? await guestSubscribeSignup({ phone, mockOrderId: order.orderId })
         : await (async () => {
+            await loadRazorpay()
             const paid = await openRazorpayCheckout(order)
             return guestSubscribeSignup({
               phone,
@@ -71,8 +83,12 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  function goToDashboard() {
-    window.location.href = `${EMPLOYER_APP_URL}/dashboard?token=${encodeURIComponent(result.token)}`
+  async function goToDashboard() {
+    try {
+      await redirectToEmployerDashboard(result.token)
+    } catch (err) {
+      setPayError(err.message)
+    }
   }
 
   return (
@@ -175,6 +191,7 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                   </button>
                 </div>
 
+                {payError && <p className="text-[12.5px] text-red-600 mt-3 mb-0">{payError}</p>}
                 <button
                   type="button"
                   onClick={goToDashboard}

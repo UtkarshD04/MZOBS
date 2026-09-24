@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
 
 // Auth pages (signup/signin/etc.) use a focused white/blue/navy job-portal
 // look — this olive custom-cursor dot is a sitewide decorative touch for
@@ -10,6 +10,7 @@ const HIDDEN_ON_PREFIXES = ['/employees/signup', '/employees/signin', '/employee
 
 export default function CursorDot() {
   const location = useLocation()
+  const prefersReducedMotion = useReducedMotion()
   const x = useMotionValue(-100)
   const y = useMotionValue(-100)
   const springX = useSpring(x, { stiffness: 500, damping: 40, mass: 0.5 })
@@ -23,18 +24,28 @@ export default function CursorDot() {
   // CategoryGrid's, that had already fired). Skipping the render until after
   // mount keeps the server and first client paint identical.
   const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  // matchMedia doesn't exist during SSR either, and there's no cursor to
+  // track on a touch device anyway — a phone/tablet gets no benefit from a
+  // custom cursor dot that just sits at (-100,-100) forever. Checked once,
+  // after mount, same reasoning as `mounted` above.
+  const [hasFinePointer, setHasFinePointer] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+    setHasFinePointer(window.matchMedia('(hover: hover) and (pointer: fine)').matches)
+  }, [])
+
+  useEffect(() => {
+    if (!hasFinePointer) return
     function handleMove(e) {
       x.set(e.clientX)
       y.set(e.clientY)
     }
     window.addEventListener('mousemove', handleMove)
     return () => window.removeEventListener('mousemove', handleMove)
-  }, [x, y])
+  }, [x, y, hasFinePointer])
 
-  if (!mounted) return null
+  if (!mounted || !hasFinePointer || prefersReducedMotion) return null
   if (HIDDEN_ON_PREFIXES.some((prefix) => location.pathname.startsWith(prefix))) return null
 
   return (

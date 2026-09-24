@@ -1,9 +1,11 @@
-import { EMPLOYER_API_URL } from './config'
+import { EMPLOYER_API_URL, EMPLOYER_APP_URL } from './config'
 
-async function postJSON(path, body) {
+async function postJSON(path, body, token) {
+  const headers = { 'Content-Type': 'application/json' }
+  if (token) headers.Authorization = `Bearer ${token}`
   const res = await fetch(`${EMPLOYER_API_URL}${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(body),
   })
   const data = await res.json().catch(() => ({}))
@@ -54,4 +56,14 @@ export function createGuestSubscriptionOrder() {
 // is their only way back in without the token).
 export function guestSubscribeSignup({ phone, phoneToken, razorpay_order_id, razorpay_payment_id, razorpay_signature, mockOrderId }) {
   return postJSON('/subscription/guest-verify', { phone, phoneToken, razorpay_order_id, razorpay_payment_id, razorpay_signature, mockOrderId })
+}
+
+// A long-lived JWT in a redirect URL leaks into browser history, server
+// access logs, Referer headers and analytics — so instead of handing the
+// dashboard app the real token via `?token=`, trade it for a one-time,
+// 60-second code via `?code=`. The dashboard exchanges that for the real
+// token itself right after load.
+export async function redirectToEmployerDashboard(token) {
+  const { code } = await postJSON('/auth/handoff', {}, token)
+  window.location.href = `${EMPLOYER_APP_URL}/dashboard?code=${encodeURIComponent(code)}`
 }

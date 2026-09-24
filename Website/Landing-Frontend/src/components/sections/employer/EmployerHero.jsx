@@ -1,7 +1,8 @@
 import { useRef } from 'react'
 import { ArrowUpRight, Check, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { FadeInLoad, useHeroScene } from './employerMotion'
+import { FadeInLoad } from './employerMotion'
+import { useHeroScene } from '../../../lib/employerMotionHooks'
 const candidates = [
   { initials: 'AS', name: 'Aditi Sharma', role: 'Product designer', score: '96% match', tone: 'bg-[#bfdbfe]' },
   { initials: 'RK', name: 'Rohit Kumar', role: 'Backend engineer', score: '92% match', tone: 'bg-[#e8f8f5]' },

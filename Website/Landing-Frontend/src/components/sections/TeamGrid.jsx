@@ -1,4 +1,3 @@
-import Card from '../ui/Card'
 import Avatar from '../ui/Avatar'
 import TiltCard from '../ui/TiltCard'
 import SectionHeading from './SectionHeading'

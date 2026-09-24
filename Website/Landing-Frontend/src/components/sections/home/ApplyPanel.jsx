@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeft, CheckCircle2, Clock3, FileUp, Loader2, User, Mail, Phone, Lock, Hash, Eye, EyeOff } from 'lucide-react'
-import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../../ui/GoogleAuthButton'
+import { GoogleAuthButton, OrDivider } from '../../ui/GoogleAuthButton'
+import { decodeGoogleCredential } from '../../../lib/googleCredential'
 import { loginEmployee, loginEmployeeWithGoogle, signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../../lib/employeeAuth'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../../lib/msg91Widget'
 import { fetchEmployeeProfile, uploadEmployeeResume, applyToJob } from '../../../lib/employeeApi'
 import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../../lib/config'
+import { getEmployeeSession, saveEmployeeSession, onEmployeeSessionChange } from '../../../lib/employeeSession'
 
 // Same reasoning as EmployeeSignupForm: don't offer a "Send OTP" button
 // that's guaranteed to fail when this deployment has no widget credentials.
 const OTP_CONFIGURED = Boolean(MSG91_WIDGET_ID && MSG91_TOKEN_AUTH)
 
-const TOKEN_KEY = 'mzobs-employee-token'
 const inputClass =
   'w-full h-11 px-3.5 rounded-xl border border-(--jobs-border) bg-white text-[13.5px] text-(--jobs-navy) outline-none transition-all duration-150 placeholder:text-(--jobs-ink-soft)/60 hover:border-(--jobs-navy)/25 focus:border-(--jobs-blue) focus:ring-[3px] focus:ring-(--jobs-blue)/15'
 const primaryButtonClass =
@@ -79,8 +80,8 @@ function InlineLoginForm({ onSuccess }) {
     setError('')
     setSubmitting(true)
     try {
-      const { token } = await loginEmployee(form)
-      onSuccess(token)
+      const { token, employee } = await loginEmployee(form)
+      onSuccess(token, employee)
     } catch (err) {
       setError(err.message)
       setSubmitting(false)
@@ -91,8 +92,8 @@ function InlineLoginForm({ onSuccess }) {
     setError('')
     setSubmitting(true)
     try {
-      const { token } = await loginEmployeeWithGoogle({ credential })
-      onSuccess(token)
+      const { token, employee } = await loginEmployeeWithGoogle({ credential })
+      onSuccess(token, employee)
     } catch (err) {
       setError(err.message)
       setSubmitting(false)
@@ -229,8 +230,8 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
     // If an account already exists for this Google email, log straight in
     // instead of walking them through the signup wizard again.
     try {
-      const { token } = await loginEmployeeWithGoogle({ credential })
-      onSuccess(token)
+      const { token, employee } = await loginEmployeeWithGoogle({ credential })
+      onSuccess(token, employee)
       return
     } catch (err) {
       if (err.status !== 404) {
@@ -253,10 +254,10 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
     setStatus('submitting')
     try {
       const shared = { phone: form.phone, phoneToken }
-      const { token } = googleCredential
+      const { token, employee } = googleCredential
         ? await signupEmployeeWithGoogle({ credential: googleCredential, ...shared })
         : await signupEmployee({ ...form, ...shared })
-      onSuccess(token)
+      onSuccess(token, employee)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
@@ -378,7 +379,10 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
 }
 
 export default function ApplyPanel({ job, onClose }) {
-  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY))
+  // SSR-safe: JobDetailPanel (and this panel with it) can render on the
+  // server for /jobs/:id, where `getEmployeeSession` (and localStorage)
+  // don't exist yet — the real value is picked up on mount below instead.
+  const [token, setToken] = useState(() => (typeof window === 'undefined' ? null : getEmployeeSession()?.token ?? null))
   const [authMode, setAuthMode] = useState('login') // 'login' | 'signup'
   const [profile, setProfile] = useState(null)
   const [profileLoading, setProfileLoading] = useState(false)
@@ -401,8 +405,13 @@ export default function ApplyPanel({ job, onClose }) {
     if (token) loadProfile(token)
   }, [token])
 
-  function handleLoggedIn(newToken) {
-    localStorage.setItem(TOKEN_KEY, newToken)
+  // Picks up sign-in/sign-out that happens elsewhere on the page (e.g. the
+  // navbar) so this panel doesn't keep showing a stale login form, or a
+  // stale profile after logout.
+  useEffect(() => onEmployeeSessionChange(() => setToken(getEmployeeSession()?.token ?? null)), [])
+
+  function handleLoggedIn(newToken, employee) {
+    saveEmployeeSession({ token: newToken, employee })
     setToken(newToken)
   }
 

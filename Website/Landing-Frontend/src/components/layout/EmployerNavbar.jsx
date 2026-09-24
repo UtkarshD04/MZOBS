@@ -68,13 +68,7 @@ export default function EmployerNavbar() {
               className="text-[13px] font-bold text-[#102a43]/75 hover:text-[#0a6f64] transition-colors px-3 py-2"
             >
               Sign in
-            </Link>
-            <Link
-              to="/employers/signup"
-              className="text-[13px] font-bold text-[#e8f8f5] bg-[#102a43] hover:bg-[#0a6f64] transition-colors px-5 py-2.5 rounded-full"
-            >
-              Post a Job
-            </Link>
+            </Link>
           </div>
 
           <button
@@ -131,13 +125,6 @@ export default function EmployerNavbar() {
                     className="h-10 flex items-center justify-center rounded-full border border-[#102a43]/20 text-[#102a43] text-[13.5px] font-bold"
                   >
                     Sign in
-                  </Link>
-                  <Link
-                    to="/employers/signup"
-                    onClick={() => setOpen(false)}
-                    className="h-10 flex items-center justify-center rounded-full bg-[#102a43] text-[#e8f8f5] text-[13.5px] font-bold"
-                  >
-                    Post a Job
                   </Link>
                 </div>
               </div>

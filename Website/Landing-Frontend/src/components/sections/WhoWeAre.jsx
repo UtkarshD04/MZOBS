@@ -1,6 +1,5 @@
 import Reveal from '../ui/Reveal'
 import TiltCard from '../ui/TiltCard'
-import ImageReveal from '../ui/ImageReveal'
 import { StaggerGroup, StaggerItem } from '../ui/Stagger'
 import { WHO_WE_ARE_DATA } from '../../lib/content'
 
