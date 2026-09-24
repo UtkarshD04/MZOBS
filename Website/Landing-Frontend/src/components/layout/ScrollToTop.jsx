@@ -6,7 +6,10 @@ import { useLocation } from 'react-router-dom'
 // scrolling (see index.css's `scroll-behavior: smooth`) handles the actual
 // animation — this just decides where to send it.
 export default function ScrollToTop() {
-  const { pathname, hash } = useLocation()
+  // `key` is new on every navigation — even a click on a link to the URL
+  // we're already on (e.g. the navbar's "Companies" while at /#companies,
+  // after scrolling away) — so every such click scrolls to its section again.
+  const { pathname, hash, key } = useLocation()
 
   useEffect(() => {
     if (!hash) {
@@ -40,7 +43,7 @@ export default function ScrollToTop() {
     return () => {
       cancelled = true
     }
-  }, [pathname, hash])
+  }, [pathname, hash, key])
 
   return null
 }
