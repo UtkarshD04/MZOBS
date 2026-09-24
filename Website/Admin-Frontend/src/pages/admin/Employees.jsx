@@ -11,7 +11,7 @@ import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Input, Select } from '../../components/ui/Field'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { useEmployeesQuery, useCreateEmployeeMutation, useSetEmployeeStatusMutation, useDeleteEmployeeMutation } from '../../hooks/useEmployees'
 
 const TABS = ['All', 'Active', 'Suspended']

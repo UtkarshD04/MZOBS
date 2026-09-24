@@ -11,9 +11,14 @@ import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
 import { useMockInterviewStatsQuery } from '../../hooks/useMockInterviews'
 
+// Stable reference for the "no data yet" case — `stats?.perStaff ?? []`
+// would mint a new array every render, which defeats the useMemo below
+// (its dependency would never be referentially equal across renders).
+const EMPTY_PER_STAFF = []
+
 export default function MockInterviews() {
   const { data: stats, isLoading, isError, refetch } = useMockInterviewStatsQuery()
-  const perStaff = stats?.perStaff ?? []
+  const perStaff = stats?.perStaff ?? EMPTY_PER_STAFF
 
   const totals = useMemo(
     () =>

@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 
 export default function ToastStack() {
   const { toasts } = useApp()

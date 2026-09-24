@@ -18,9 +18,14 @@ const RESUME_STAGES = [
   { key: 'rejected', label: 'Rejected', tone: 'red' },
 ]
 
+// Stable reference for the "no data yet" case — `stats?.perStaff ?? []`
+// would mint a new array every render, which defeats the useMemo below
+// (its dependency would never be referentially equal across renders).
+const EMPTY_PER_STAFF = []
+
 export default function ResumeStats() {
   const { data: stats, isLoading, isError, refetch } = useResumeStatsQuery()
-  const perStaff = stats?.perStaff ?? []
+  const perStaff = stats?.perStaff ?? EMPTY_PER_STAFF
 
   const totalAssigned = useMemo(() => perStaff.reduce((n, s) => n + s.total, 0), [perStaff])
 
