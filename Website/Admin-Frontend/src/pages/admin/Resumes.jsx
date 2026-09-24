@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Inbox, FileText, Eye, Star } from 'lucide-react'
+import { Inbox, FileText, Eye, Download, Star } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Avatar from '../../components/ui/Avatar'
 import EmptyState from '../../components/ui/EmptyState'
@@ -10,7 +10,7 @@ import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
 import { useApp } from '../../context/AppContext'
 import { useResumeQueueQuery } from '../../hooks/useResumes'
-import { openResumeViewer } from '../../components/ResumeViewerModal'
+import { openResumeViewer, downloadFile } from '../../components/ResumeViewerModal'
 import { FILE_BASE_URL } from '../../lib/config'
 
 export default function Resumes() {
@@ -69,6 +69,11 @@ export default function Resumes() {
                       {c.resume.url && (
                         <button onClick={() => openResumeViewer(app, `${FILE_BASE_URL}${c.resume.url}`, c.resume.file)} title="View" className="text-ink-tertiary hover:text-navy flex-shrink-0">
                           <Eye size={14} />
+                        </button>
+                      )}
+                      {c.resume.url && (
+                        <button onClick={() => downloadFile(`${FILE_BASE_URL}${c.resume.url}`, c.resume.file)} title="Download" className="text-ink-tertiary hover:text-navy flex-shrink-0">
+                          <Download size={14} />
                         </button>
                       )}
                     </div>
