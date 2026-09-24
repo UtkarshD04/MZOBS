@@ -21,7 +21,9 @@ import {
   Megaphone,
   PenTool,
   Headset,
-  Globe
+  Globe,
+  CalendarCheck,
+  Send
 } from 'lucide-react'
 import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 
@@ -817,6 +819,23 @@ export const COMPANIES_HIRING_DATA = [
   { name: "Sunsource Energy", logo: "/industry-logos/sunsource.svg", industry: "Solar Energy" },
   { name: "Sunsure Energy", logo: "/industry-logos/sunsure.svg", industry: "Renewable Energy" }
 ]
+
+// "Campus Network" band on the home page (see CampusNetwork.jsx). `count`
+// drives both the big count-up figure and the 10×10 campus mosaic beside it.
+export const CAMPUS_NETWORK_DATA = {
+  eyebrow: "Campus Network",
+  count: 100,
+  title: "College campuses integrated with MZOBS",
+  subtitle: "Students from our partner campuses discover internships and fresher roles, apply directly and move into their first job — all on one platform.",
+  highlights: [
+    { icon: CalendarCheck, title: "Campus placement drives", text: "Employers reach final-year batches straight through their college." },
+    { icon: Send, title: "Direct student applications", text: "Students apply from their own MZOBS profile — no middlemen." },
+    { icon: Briefcase, title: "Internships & fresher roles", text: "Openings picked for students just starting out." }
+  ],
+  mosaicCaption: "Each square is one partner campus.",
+  ctaText: "Bring your campus on board",
+  ctaTo: "/contact"
+}
 
 export const HOME_EMPLOYER_CTA_DATA = {
   title: "Hiring for your team?",
