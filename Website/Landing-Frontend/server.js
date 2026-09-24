@@ -139,6 +139,13 @@ app.use(
     },
     hsts: { maxAge: 31536000, includeSubDomains: true },
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    // helmet's default (`same-origin`) severs the link between this page and
+    // any popup it opens. "Continue with Google" opens accounts.google.com in
+    // a popup that reports the result back via window.postMessage, so with
+    // `same-origin` that popup stays blank (accounts.google.com/gsi/transform)
+    // and nothing happens. `same-origin-allow-popups` keeps the isolation for
+    // everything else while letting our own popups talk back to us.
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
     // Legacy fallback for browsers that don't support frame-ancestors.
     frameguard: { action: 'deny' },
     // X-Content-Type-Options: nosniff is on by helmet's own default.
