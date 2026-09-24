@@ -9,7 +9,6 @@ export default function CTABand({
   title,
   subtitle,
   actions,
-  photoIcon: PhotoIcon
 }) {
   return (
     <section id="contact" className="bg-[#EEF3F8] py-16 px-6 md:px-12">

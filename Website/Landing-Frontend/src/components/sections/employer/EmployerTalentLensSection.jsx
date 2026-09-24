@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
-import { ArrowUpRight, Check, ShieldCheck, Sparkles } from 'lucide-react'
+import { Check, ShieldCheck, Sparkles } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { FadeInView } from './employerMotion'
@@ -43,7 +43,7 @@ function QueryCard() {
       <p data-tl-query className="mt-3 text-[15px] sm:text-[16px] leading-relaxed text-[#102a43]">
         "Python developer with 2–4 years of experience, strong FastAPI and AWS skills, based in Bengaluru and available within 30 days."
       </p>
-      <button className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#102a43] px-5 h-11 text-[13.5px] font-bold text-[#e8f8f5] transition-transform duration-200 hover:-translate-y-0.5">
+      <button type="button" className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#102a43] px-5 h-11 text-[13.5px] font-bold text-[#e8f8f5] transition-transform duration-200 hover:-translate-y-1">
         <Sparkles size={15} /> Find Talent
       </button>
 
@@ -61,7 +61,7 @@ function QueryCard() {
 function CandidateRow({ candidate, expanded, onToggle }) {
   return (
     <div className="rounded-2xl border border-[#102a43]/12 bg-white overflow-hidden">
-      <button onClick={onToggle} className="w-full flex items-center gap-3.5 p-4 text-left">
+      <button type="button" onClick={onToggle} aria-expanded={expanded} className="w-full flex items-center gap-3.5 p-4 text-left">
         <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#bfdbfe] text-[12px] font-extrabold text-[#102a43]">{candidate.initials}</span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">

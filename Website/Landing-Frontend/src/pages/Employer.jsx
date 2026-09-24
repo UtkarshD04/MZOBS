@@ -21,7 +21,7 @@ import EmployerQualitySection from '../components/sections/employer/EmployerQual
 import EmployerTestimonialSection from '../components/sections/employer/EmployerTestimonialSection'
 import EmployerFAQ from '../components/sections/employer/EmployerFAQ'
 import EmployerCTABand from '../components/sections/employer/EmployerCTABand'
-import { useEmployerSmoothScroll, useEdgeBounce } from '../components/sections/employer/employerMotion'
+import { useEmployerSmoothScroll, useEdgeBounce } from '../lib/employerMotionHooks'
 
 export default function Employer() {
   useEmployerSmoothScroll()

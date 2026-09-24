@@ -14,12 +14,12 @@ export default function ScrollToTop() {
       return
     }
 
-    // App.jsx wraps routes in <AnimatePresence mode="wait">, so on a
-    // cross-page hash link (e.g. the navbar's "Browse Categories" from
-    // another route) the target page's DOM hasn't mounted yet on this
-    // first effect run — it only appears once the old page's ~0.35s exit
-    // transition finishes. Retry briefly instead of failing over to the
-    // top immediately.
+    // On a cross-page hash link (e.g. the navbar's "Browse Categories" from
+    // another route), the target page's DOM may not exist yet on this first
+    // effect run — the new route mounts synchronously now (App.jsx no
+    // longer waits on an exit animation), but a lazy-loaded page's chunk
+    // still needs a moment to fetch. Retry briefly instead of failing over
+    // to the top immediately.
     let cancelled = false
     let attempts = 0
     const id = hash.slice(1)

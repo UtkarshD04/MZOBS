@@ -226,7 +226,7 @@ export default function SectionSeam({ variant }) {
       return () => tl.kill()
     })
     return () => mm.revert()
-  }, [cfg, variant])
+  }, [cfg, variant, isBlend])
 
   if (!cfg) return null
   const Motif = cfg.Motif

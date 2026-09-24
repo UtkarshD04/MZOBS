@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { SITE_URL, DEFAULT_OG_IMAGE } from '../lib/seoData'
+import { SITE_URL, DEFAULT_OG_IMAGE, canonicalPath } from '../lib/seoData'
 
 // Page-level SEO tags for client-side (SPA) navigation, applied imperatively
 // in an effect rather than declaratively in JSX. The *initial* HTML sent to
@@ -44,7 +44,7 @@ function upsertJsonLd(data) {
 
 export default function Seo({ path, title, description, noindex = false, jsonLd = null, ogImage = DEFAULT_OG_IMAGE, type = 'website' }) {
   useEffect(() => {
-    const canonical = `${SITE_URL}${path}`
+    const canonical = `${SITE_URL}${canonicalPath(path)}`
     document.title = title
     upsertMeta('name', 'description', description)
     upsertLink('canonical', canonical)

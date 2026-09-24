@@ -4,9 +4,9 @@ import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Buildin
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
 import OtpInput from '../ui/OtpInput'
 import TermsConsent from '../ui/TermsConsent'
-import { GoogleAuthButton, OrDivider, decodeGoogleCredential } from '../ui/GoogleAuthButton'
-import { EMPLOYER_APP_URL } from '../../lib/config'
-import { signupEmployer, signupEmployerWithGoogle, verifyEmployerPhoneWidget } from '../../lib/employerAuth'
+import { GoogleAuthButton, OrDivider } from '../ui/GoogleAuthButton'
+import { decodeGoogleCredential } from '../../lib/googleCredential'
+import { signupEmployer, signupEmployerWithGoogle, verifyEmployerPhoneWidget, redirectToEmployerDashboard } from '../../lib/employerAuth'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 
 const COMPANY_SIZES = ['1–50 employees', '51–200 employees', '201–500 employees', '501–1000 employees', '1000+ employees']
@@ -171,7 +171,7 @@ export default function EmployerSignupForm() {
             phoneToken,
           })
         : await signupEmployer({ ...form, phoneToken })
-      window.location.href = `${EMPLOYER_APP_URL}/dashboard?token=${encodeURIComponent(token)}`
+      await redirectToEmployerDashboard(token)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })

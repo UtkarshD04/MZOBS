@@ -1,9 +1,11 @@
 import { EMPLOYEE_API_URL } from './config'
 
-async function postJSON(path, body) {
+async function postJSON(path, body, token) {
+  const headers = { 'Content-Type': 'application/json' }
+  if (token) headers.Authorization = `Bearer ${token}`
   const res = await fetch(`${EMPLOYEE_API_URL}${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(body),
   })
   const data = await res.json().catch(() => ({}))
@@ -13,6 +15,16 @@ async function postJSON(path, body) {
     throw error
   }
   return data
+}
+
+// A long-lived JWT in a redirect URL leaks into browser history, server
+// access logs, Referer headers and analytics — so instead of handing the
+// dashboard app the real token via `?token=`, trade it for a one-time,
+// 60-second code via `?code=`. The dashboard exchanges that for the real
+// token itself right after load.
+export async function createEmployeeHandoffCode(token) {
+  const { code } = await postJSON('/auth/handoff', {}, token)
+  return code
 }
 
 export function loginEmployee({ email, password }) {

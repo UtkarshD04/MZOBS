@@ -6,6 +6,18 @@
 export const SITE_URL = 'https://mzobs.com'
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/images/logo.png`
 
+// Normalizes a path before it becomes a canonical URL: drops any query
+// string/hash (a tracking link like ?utm_source=... must not mint its own
+// canonical), lowercases it, and drops a trailing slash (except the root
+// itself) so /About/ and /about resolve to the exact same canonical. Used
+// everywhere a canonical gets built — server.js, scripts/prerender.js,
+// buildJobSeo below, and the client-side <Seo> component — so all four
+// agree on the same URL for the same page.
+export function canonicalPath(path) {
+  const bare = path.split('?')[0].split('#')[0].toLowerCase()
+  return bare.length > 1 && bare.endsWith('/') ? bare.slice(0, -1) : bare
+}
+
 // Title/description for every prerendered public static route — kept in
 // sync with the routes registered in App.jsx and prerendered by
 // scripts/prerender.js.
@@ -133,7 +145,7 @@ export function buildJobSeo(job, path) {
   const description = descSource
     ? truncate(descSource, 160)
     : `${job.title} job opening at ${job.company}${job.location ? `, ${job.location}` : ''}. Apply on Mzobs.`
-  const canonical = `${SITE_URL}${path}`
+  const canonical = `${SITE_URL}${canonicalPath(path)}`
 
   const jsonLd = {
     '@context': 'https://schema.org/',

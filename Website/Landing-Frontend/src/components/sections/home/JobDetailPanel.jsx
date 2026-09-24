@@ -3,19 +3,8 @@ import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, ArrowRight, Users,
 import ApplyPanel from './ApplyPanel'
 import ExplorerButton from '../../ui/ExplorerButton'
 import { isJobSaved, toggleJobSaved } from '../../../lib/savedJobs'
-import {
-  Avatar,
-  NewBadge,
-  jobHref,
-  BulletList,
-  TagList,
-  FactTile,
-  SectionHeading,
-  Divider,
-  IconButton,
-  TrustRow,
-  initialsOf,
-} from './jobCardPrimitives'
+import { Avatar, NewBadge, BulletList, TagList, FactTile, SectionHeading, Divider, IconButton, TrustRow } from './jobCardPrimitives'
+import { jobHref, initialsOf } from '../../../lib/jobCardHelpers'
 
 const DESCRIPTION_PREVIEW_CHARS = 320
 

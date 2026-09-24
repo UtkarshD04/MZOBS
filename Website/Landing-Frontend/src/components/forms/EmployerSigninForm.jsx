@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { Field, Input, SubmitButton } from '../ui/AuthField'
 import { GoogleAuthButton, OrDivider } from '../ui/GoogleAuthButton'
-import { EMPLOYER_APP_URL } from '../../lib/config'
-import { loginEmployer, loginEmployerWithGoogle } from '../../lib/employerAuth'
+import { loginEmployer, loginEmployerWithGoogle, redirectToEmployerDashboard } from '../../lib/employerAuth'
 
 const initialForm = { email: '', password: '' }
 
@@ -35,7 +34,7 @@ export default function EmployerSigninForm() {
     setStatus('submitting')
     try {
       const { token } = await loginEmployer(form)
-      window.location.href = `${EMPLOYER_APP_URL}/dashboard?token=${encodeURIComponent(token)}`
+      await redirectToEmployerDashboard(token)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })
@@ -47,7 +46,7 @@ export default function EmployerSigninForm() {
     setStatus('submitting')
     try {
       const { token } = await loginEmployerWithGoogle({ credential })
-      window.location.href = `${EMPLOYER_APP_URL}/dashboard?token=${encodeURIComponent(token)}`
+      await redirectToEmployerDashboard(token)
     } catch (err) {
       setStatus('idle')
       setErrors({ form: err.message })

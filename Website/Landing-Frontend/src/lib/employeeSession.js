@@ -1,4 +1,5 @@
 import { EMPLOYEE_APP_URL } from './config'
+import { createEmployeeHandoffCode } from './employeeAuth'
 
 // Minimal logged-in-state tracking for this site's own navbar. Only used
 // when signin/signup happen with no `?redirect=` (a direct visit to this
@@ -10,14 +11,30 @@ const STORAGE_KEY = 'mzobs-employee-session'
 // tab too, right after a successful login/signup/logout.
 const CHANGE_EVENT = 'mzobs-employee-session-changed'
 
+// ApplyPanel used to keep its own token under this key instead of going
+// through this module, so it never got cleared on logout — a signed-out
+// visitor could still load the previous user's profile/resume there. One-time
+// cleanup for anyone who still has it: drop it rather than trust it.
+const LEGACY_TOKEN_KEY = 'mzobs-employee-token'
+if (typeof window !== 'undefined') {
+  try {
+    if (localStorage.getItem(LEGACY_TOKEN_KEY)) localStorage.removeItem(LEGACY_TOKEN_KEY)
+  } catch {
+    // Storage unavailable — nothing to migrate.
+  }
+}
+
 // The dashboard app (Frontend) sends employees here via `?redirect=<path>`
 // when it needs them signed in (see Website/Frontend/src/lib/auth.js
 // signInUrl()) — since localStorage isn't shared across origins/ports, the
-// token has to be handed off as a `?token=` query param instead. Frontend's
-// main.jsx reads it once on load and stores it there.
-export function buildAppRedirectUrl(redirectPath, token) {
+// token has to be handed off some other way. A long-lived JWT sitting in the
+// URL would leak into browser history, server logs, Referer headers and
+// analytics, so this trades it for a one-time, 60-second `?code=` instead —
+// Frontend's main.jsx exchanges that for the real token on load.
+export async function buildAppRedirectUrl(redirectPath, token) {
+  const code = await createEmployeeHandoffCode(token)
   const url = new URL(redirectPath, EMPLOYEE_APP_URL)
-  url.searchParams.set('token', token)
+  url.searchParams.set('code', code)
   return url.toString()
 }
 
