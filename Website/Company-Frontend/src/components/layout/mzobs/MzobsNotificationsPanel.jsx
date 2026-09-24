@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import * as Icons from 'lucide-react'
 import { CATEGORY_META, NOTIFICATION_TONE_CLASS } from '../../../lib/notificationMeta'
 import { useNotificationsQuery, useMarkNotificationReadMutation, useMarkAllNotificationsReadMutation } from '../../../hooks/useNotifications'
-import { useApp } from '../../../context/AppContext'
+import { useApp } from '../../../lib/appContext'
 
 const ROUTE_BY_CAT = {
   resumes: '/app/resumes',

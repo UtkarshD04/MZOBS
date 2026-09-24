@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { cn } from '../../lib/utils'
 
 export function ModalHead({ title, onClose }) {

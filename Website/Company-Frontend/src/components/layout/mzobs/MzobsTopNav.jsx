@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Menu, Search, Sun, Moon, Bell, ChevronDown, Settings, LifeBuoy, LogOut } from 'lucide-react'
-import { useApp } from '../../../context/AppContext'
+import { useApp } from '../../../lib/appContext'
 import Avatar from '../../ui/Avatar'
 import FloatingPanel from '../../ui/FloatingPanel'
 import Badge from '../../ui/Badge'

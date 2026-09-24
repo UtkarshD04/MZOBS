@@ -10,7 +10,7 @@ import {
   LogOut,
   PanelLeft,
 } from 'lucide-react'
-import { useApp } from '../../../context/AppContext'
+import { useApp } from '../../../lib/appContext'
 import { cn } from '../../../lib/utils'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
 import { logout as clearAuth } from '../../../hooks/useAuth'

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
@@ -10,7 +10,7 @@ import {
   Sun,
   LogOut,
 } from 'lucide-react'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { cn } from '../../lib/utils'
 import { logout as clearAuth } from '../../hooks/useAuth'
 
@@ -41,6 +41,15 @@ export default function CommandPalette() {
   }, [navigate, toggleTheme])
 
   const filtered = useMemo(() => commands.filter((c) => c.label.toLowerCase().includes(query.toLowerCase())), [commands, query])
+
+  const run = useCallback(
+    (cmd) => {
+      if (!cmd) return
+      setCmdkOpen(false)
+      cmd.act()
+    },
+    [setCmdkOpen]
+  )
 
   useEffect(() => {
     if (cmdkOpen) {
@@ -74,13 +83,7 @@ export default function CommandPalette() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [cmdkOpen, filtered, sel, setCmdkOpen])
-
-  function run(cmd) {
-    if (!cmd) return
-    setCmdkOpen(false)
-    cmd.act()
-  }
+  }, [cmdkOpen, filtered, sel, setCmdkOpen, run])
 
   const groups = filtered.reduce((acc, c) => {
     ;(acc[c.grp] = acc[c.grp] || []).push(c)
