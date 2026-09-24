@@ -5,7 +5,7 @@ import OpsTopNav from './OpsTopNav'
 import OpsSidebar from './OpsSidebar'
 import OpsFooter from './OpsFooter'
 import RouteProgress from '../RouteProgress'
-import { useApp } from '../../../context/AppContext'
+import { useApp } from '../../../lib/appContext'
 
 export default function OpsShell() {
   const location = useLocation()

@@ -7,7 +7,7 @@ import Badge from '../../components/ui/Badge'
 import { PillTabs } from '../../components/ui/Tabs'
 import { Field, Input, Textarea } from '../../components/ui/Field'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { useRecipientsQuery, useSendNotificationMutation } from '../../hooks/useSendNotification'
 
 const AUDIENCES = [

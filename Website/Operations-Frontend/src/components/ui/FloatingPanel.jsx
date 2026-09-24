@@ -2,7 +2,7 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { cn } from '../../lib/utils'
 
-export default function FloatingPanel({ open, onClose, align = 'right', width = 380, panelRef, children }) {
+export default function FloatingPanel({ open, align = 'right', width = 380, panelRef, children }) {
   return createPortal(
     <AnimatePresence>
       {open && (

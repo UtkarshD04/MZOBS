@@ -11,7 +11,7 @@ import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Select, Textarea } from '../../components/ui/Field'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { useTicketsQuery, useRespondTicketMutation } from '../../hooks/useSupport'
 
 const TABS = ['Open', 'In Progress', 'Resolved', 'All']
