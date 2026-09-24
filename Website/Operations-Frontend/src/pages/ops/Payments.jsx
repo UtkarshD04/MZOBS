@@ -10,7 +10,7 @@ import { TableWrap, Table, Tr, Td } from '../../components/ui/Table'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { usePaymentsQuery, useRecordSubscriptionPaymentMutation } from '../../hooks/usePayments'
 import { fmtINR } from '../../lib/utils'
 

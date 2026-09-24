@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, IndianRupee, UserCog, Send } from 'lucide-react'
-import { useApp } from '../../../context/AppContext'
+import { useApp } from '../../../lib/appContext'
 import { cn } from '../../../lib/utils'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
 import { useMeQuery, logout as clearAuth } from '../../../hooks/useAuth'

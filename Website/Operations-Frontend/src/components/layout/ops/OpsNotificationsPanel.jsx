@@ -1,7 +1,7 @@
 import * as Icons from 'lucide-react'
 import { CATEGORY_META, NOTIFICATION_TONE_CLASS as toneClass } from '../../../lib/notificationMeta'
 import { useNotificationsQuery, useMarkNotificationReadMutation, useMarkAllNotificationsReadMutation } from '../../../hooks/useNotifications'
-import { useApp } from '../../../context/AppContext'
+import { useApp } from '../../../lib/appContext'
 
 export default function OpsNotificationsPanel() {
   const app = useApp()

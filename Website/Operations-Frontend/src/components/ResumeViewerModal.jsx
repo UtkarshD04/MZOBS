@@ -16,7 +16,3 @@ export function ResumeViewerModal({ url, fileName, onClose }) {
     </>
   )
 }
-
-export function openResumeViewer(app, url, fileName) {
-  app.openModal(<ResumeViewerModal url={url} fileName={fileName} onClose={app.closeModal} />, true)
-}
