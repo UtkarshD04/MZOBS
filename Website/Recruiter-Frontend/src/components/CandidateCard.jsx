@@ -1,9 +1,9 @@
 import { memo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
-import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, Download, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin } from 'lucide-react'
+import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin } from 'lucide-react'
 import { Avatar, Button, Chip, Highlight, MatchBadge, TrustScore, VerifiedBadge, IconButton } from './ui'
-import { lpa, years, notice, ago } from '../lib/format'
+import { lpa, years, notice, ago, agoDate } from '../lib/format'
 import { STAGE_LABELS } from '../lib/talent/criteria'
 import { IS_DEMO } from '../lib/config'
 import { useWorkspace } from '../store/workspace'
@@ -17,7 +17,7 @@ const MORE_ACTIONS = [
   { id: 'interview', label: 'Schedule interview', icon: CalendarPlus },
   { id: 'reminder', label: 'Set reminder', icon: BellRing },
   { id: 'note', label: 'Add note', icon: StickyNote },
-  { id: 'resume', label: 'Download resume', icon: Download },
+  { id: 'resume', label: 'View CV', icon: FileText },
   { id: 'share', label: 'Share profile', icon: Share2 },
 ]
 
@@ -41,7 +41,7 @@ function ShortlistButton({ candidate, onAction }) {
 
 function CandidateCard({ row, terms, compact, onAction }) {
   const { candidate: c, match, trust } = row
-  const { selected, toggleSelect, compare, toggleCompare, savedIds, toggleSaved } = useWorkspace()
+  const { selected, toggleSelect, compare, toggleCompare, savedIds, toggleSaved, viewed } = useWorkspace()
   const [menu, setMenu] = useState(false)
   const isSel = selected.includes(c.id)
   const inCompare = compare.includes(c.id)
@@ -67,6 +67,8 @@ function CandidateCard({ row, terms, compact, onAction }) {
               <div className="flex flex-wrap items-center gap-2">
                 <Link to={`/candidate/${c.id}`} className="truncate text-[16px] font-semibold text-ink hover:text-accent"><Highlight text={c.name} terms={terms} /></Link>
                 <VerifiedBadge candidate={c} />
+                {c._live?.unlocked && <span className="inline-flex items-center gap-1 rounded-md bg-ok-soft px-1.5 py-0.5 text-[11px] font-semibold text-[#1a8f5a]" title="Your company has unlocked this CV"><Unlock size={11} /> CV unlocked</span>}
+                {viewed[c.id] && <span className="inline-flex items-center gap-1 rounded-md bg-line-2 px-1.5 py-0.5 text-[11px] font-medium text-muted" title={`You opened this profile ${agoDate(viewed[c.id])}`}><Eye size={11} /> Viewed</span>}
                 <button onClick={() => toggleSaved(c.id)} aria-label={bookmarked ? 'Unsave candidate' : 'Save candidate'} className={clsx('opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100', bookmarked && 'opacity-100')}>
                   <Pin size={14} className={bookmarked ? 'fill-accent text-accent' : 'text-muted'} />
                 </button>
@@ -81,6 +83,7 @@ function CandidateCard({ row, terms, compact, onAction }) {
             {c.expectedSalaryLPA != null && <Meta icon={IndianRupee} title="Current → expected salary">{c.currentSalaryLPA != null ? `${lpa(c.currentSalaryLPA)} → ` : 'Expects '}{lpa(c.expectedSalaryLPA)}</Meta>}
             <Meta icon={MapPin}>{c.location || '—'}</Meta>
             {c.noticePeriodDays != null && <Meta icon={Clock} title="Notice period">{notice(c.noticePeriodDays)} notice</Meta>}
+            {c.contact?.phone && <Meta icon={Phone} title="Unlocked contact">{c.contact.phone}</Meta>}
             {!compact && c.education[0] && <Meta icon={GraduationCap}>{c.education[0].degree}{c.education[0].institute ? `, ${c.education[0].institute}` : ''}</Meta>}
           </div>
 
@@ -104,6 +107,7 @@ function CandidateCard({ row, terms, compact, onAction }) {
             </div>
             <div className="flex items-center gap-1.5">
               <Button size="sm" onClick={() => onAction('open', c)} className="hidden sm:inline-flex">View profile</Button>
+              <Button size="sm" icon={FileText} onClick={() => onAction('resume', c)} className="hidden md:inline-flex">CV</Button>
               <ShortlistButton candidate={c} onAction={onAction} />
               <Button size="sm" variant="primary" onClick={() => onAction('contact', c)}>Contact</Button>
               <div className="relative">

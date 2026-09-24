@@ -7,7 +7,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 // to localStorage on this device. Each mutation below is a plain function, so
 // pointing them at real endpoints later only touches this file.
 
-const KEYS = { shortlists: 'mzt-shortlists', saved: 'mzt-saved-searches', recent: 'mzt-recent-searches', notes: 'mzt-notes', saved_ids: 'mzt-saved-candidates', messages: 'mzt-messages', interviews: 'mzt-interviews' }
+const KEYS = { shortlists: 'mzt-shortlists', saved: 'mzt-saved-searches', recent: 'mzt-recent-searches', notes: 'mzt-notes', saved_ids: 'mzt-saved-candidates', messages: 'mzt-messages', interviews: 'mzt-interviews', viewed: 'mzt-viewed' }
 const Ctx = createContext(null)
 
 function read(key, fallback) {
@@ -29,6 +29,7 @@ function usePersisted(key, initial) {
   }, [key, value])
   return [value, setValue]
 }
+const MAX_VIEWED = 1000
 const uid = (p) => `${p}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
 
 export function WorkspaceProvider({ children }) {
@@ -39,6 +40,7 @@ export function WorkspaceProvider({ children }) {
   const [savedIds, setSavedIds] = usePersisted(KEYS.saved_ids, [])
   const [messages, setMessages] = usePersisted(KEYS.messages, [])
   const [interviews, setInterviews] = usePersisted(KEYS.interviews, [])
+  const [viewed, setViewed] = usePersisted(KEYS.viewed, {}) // candidate id → ISO time the profile was last opened
   const [selected, setSelected] = useState([])
   const [compare, setCompare] = useState([])
   const [toasts, setToasts] = useState([])
@@ -68,6 +70,7 @@ export function WorkspaceProvider({ children }) {
       savedIds,
       messages,
       interviews,
+      viewed,
       selected,
       compare,
       toasts,
@@ -138,10 +141,19 @@ export function WorkspaceProvider({ children }) {
       addMessage: (m) => setMessages((x) => [{ id: uid('m'), at: new Date().toISOString(), ...m }, ...x]),
       addInterview: (i) => setInterviews((x) => [{ id: uid('iv'), createdAt: new Date().toISOString(), status: 'planned', ...i }, ...x]),
 
+      // profiles opened on this device, newest last, capped so storage can't grow without bound
+      markViewed: (id) =>
+        setViewed((v) => {
+          const { [id]: _prev, ...rest } = v
+          const keys = Object.keys(rest)
+          const kept = keys.length >= MAX_VIEWED ? Object.fromEntries(keys.slice(keys.length - MAX_VIEWED + 1).map((k) => [k, rest[k]])) : rest
+          return { ...kept, [id]: new Date().toISOString() }
+        }),
+
       // notes
       addNote: (candidateId, text) => setNotes((n) => ({ ...n, [candidateId]: [{ id: uid('n'), text, at: new Date().toISOString() }, ...(n[candidateId] ?? [])] })),
     }
-  }, [shortlists, saved, recent, notes, savedIds, messages, interviews, selected, compare, toasts, toast, dismissToast, setShortlists, setSaved, setRecent, setNotes, setSavedIds, setMessages, setInterviews])
+  }, [shortlists, saved, recent, notes, savedIds, messages, interviews, viewed, selected, compare, toasts, toast, dismissToast, setShortlists, setSaved, setRecent, setNotes, setSavedIds, setMessages, setInterviews, setViewed])
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>
 }

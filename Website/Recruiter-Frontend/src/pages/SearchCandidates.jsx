@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
 import { Sparkles, SlidersHorizontal, LayoutList, Rows3, Search, History, ArrowDownUp, FlaskConical, RefreshCw, Radio } from 'lucide-react'
 import SearchComposer from '../components/SearchComposer'
@@ -15,6 +15,7 @@ import { useWorkspace } from '../store/workspace'
 import { IS_DEMO } from '../lib/config'
 import { agoDate } from '../lib/format'
 import { saveLastCriteria } from '../lib/lastCriteria'
+import { saveLastResults } from '../lib/lastResults'
 
 const PAGE = 20
 
@@ -29,7 +30,7 @@ function useDebounced(value, ms) {
 
 export default function SearchCandidates() {
   const location = useLocation()
-  const { recent, pushRecent, clearRecent, saveSearch, selected, selectMany, clearSelection, toast, messages, shortlists } = useWorkspace()
+  const { recent, pushRecent, clearRecent, saveSearch, selected, selectMany, clearSelection, toast, messages, shortlists, viewed } = useWorkspace()
   const [criteria, setCriteria] = useState(() => makeCriteria(location.state?.criteria ?? {}))
   const [sort, setSort] = useState('relevance')
   const [view, setView] = useState('list')
@@ -48,7 +49,8 @@ export default function SearchCandidates() {
   const req = useRef(0)
   const sentinel = useRef(null)
 
-  const { onAction, host } = useActions(criteria)
+  // An unlock changes contact/pipeline fields, so re-run the search against the refreshed pool.
+  const { onAction, host } = useActions(criteria, { onUnlocked: () => setCriteria((c) => ({ ...c })) })
 
   useEffect(() => {
     getPoolMeta().then(setMeta).catch(() => setMeta(null))
@@ -58,7 +60,7 @@ export default function SearchCandidates() {
     try {
       setMeta(await refreshPool())
       setCriteria((c) => ({ ...c }))
-      toast('Candidates refreshed from your account')
+      toast('Candidates refreshed')
     } catch {
       toast('Could not refresh — check your connection', { tone: 'warn' })
     } finally {
@@ -73,12 +75,14 @@ export default function SearchCandidates() {
 
   const debounced = useDebounced(criteria, 280)
   // Candidates the recruiter has already acted on, for the "Already actioned" filters. Kept out of the criteria so saved searches stay portable.
+  const hiddenViewed = debounced.hideViewed ? viewed : null
   const exclude = useMemo(() => {
     const ids = new Set()
     if (debounced.hideContacted) messages.forEach((x) => ids.add(x.candidateId))
     if (debounced.hideShortlisted) shortlists.forEach((l) => l.candidateIds.forEach((id) => ids.add(id)))
+    if (hiddenViewed) Object.keys(hiddenViewed).forEach((id) => ids.add(id))
     return ids.size ? ids : null
-  }, [debounced.hideContacted, debounced.hideShortlisted, messages, shortlists])
+  }, [debounced.hideContacted, debounced.hideShortlisted, messages, shortlists, hiddenViewed])
   useEffect(() => saveLastCriteria(debounced), [debounced])
   useEffect(() => {
     const id = ++req.current
@@ -88,6 +92,7 @@ export default function SearchCandidates() {
       .then((r) => {
         if (id !== req.current) return
         setRows(r.items)
+        saveLastResults(r.ids)
         setTotal(r.total)
         setPage(1)
         setHasMore(r.hasMore)
@@ -148,13 +153,14 @@ export default function SearchCandidates() {
           <p className="mt-1 text-[14px] text-muted">Discover verified talent matched to your hiring requirements.</p>
         </div>
         {!IS_DEMO && (
-          <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-2.5 py-1 text-[12px] font-medium text-ink-2" title="Candidates Mzobs has shared with your company">
+          <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-2.5 py-1 text-[12px] font-medium text-ink-2" title={meta ? `Every verified candidate in the Mzobs resume database · ${meta.shared} in your pipeline` : undefined}>
             <Radio size={13} className="text-ok" /> Live · {meta ? `${meta.total} candidates` : 'connecting…'}
             <button onClick={resync} disabled={syncing} aria-label="Refresh candidates" className="grid h-5 w-5 place-items-center rounded text-muted hover:bg-line-2 hover:text-ink"><RefreshCw size={12} className={syncing ? 'animate-spin' : ''} /></button>
+            <Link to="/unlocked" className="border-l border-line pl-2 text-accent hover:underline">Unlocked CVs</Link>
           </span>
         )}
         {IS_DEMO && (
-          <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#f3dfb8] bg-warn-soft px-2.5 py-1 text-[12px] font-medium text-warn" title="The backend has no talent-search endpoint yet, so this screen searches a generated sample pool.">
+          <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#f3dfb8] bg-warn-soft px-2.5 py-1 text-[12px] font-medium text-warn" title="VITE_TALENT_SOURCE=demo: this screen searches a generated sample pool, not the Mzobs resume database.">
             <FlaskConical size={13} /> Demo data — sample candidates
           </span>
         )}
@@ -229,8 +235,8 @@ export default function SearchCandidates() {
           ) : rows.length === 0 ? (
             <EmptyState
               icon={Search}
-              title={!IS_DEMO && chips.length === 0 ? 'No candidates shared with you yet' : 'No candidates match these filters'}
-              body={!IS_DEMO && chips.length === 0 ? 'Candidates appear here once Mzobs shares verified profiles for your jobs.' : 'Try removing a filter or widening your experience range.'}
+              title={!IS_DEMO && chips.length === 0 ? 'No candidates in the resume database yet' : 'No candidates match these filters'}
+              body={!IS_DEMO && chips.length === 0 ? 'Candidates appear here once job seekers with a verified CV join Mzobs.' : 'Try removing a filter or widening your experience range.'}
               action={chips.length > 0 && <div className="flex flex-wrap justify-center gap-1.5">{chips.slice(0, 6).map((c) => <Chip key={c.key} tone="accent" onRemove={() => setCriteria(removeChip(criteria, c.key))}>{c.label}</Chip>)}</div>}
             />
           ) : (

@@ -49,6 +49,8 @@ export const EMPTY_CRITERIA = {
   verifiedEmployment: false,
   hideContacted: false,
   hideShortlisted: false,
+  hideViewed: false,
+  cvAccess: '', // live: '' | 'unlocked' | 'locked' — whether this company has spent a CV credit on them
   verifiedOnly: false,
   contactVerified: false,
   resumeFreshDays: null,
@@ -136,6 +138,8 @@ export function criteriaToChips(c) {
   if (c.verifiedEmployment) chips.push({ key: 'verifiedEmployment', label: 'Employment verified', group: 'Quality' })
   if (c.hideContacted) chips.push({ key: 'hideContacted', label: 'Hide contacted', group: 'Hide' })
   if (c.hideShortlisted) chips.push({ key: 'hideShortlisted', label: 'Hide shortlisted', group: 'Hide' })
+  if (c.hideViewed) chips.push({ key: 'hideViewed', label: 'Hide viewed', group: 'Hide' })
+  if (c.cvAccess) chips.push({ key: 'cvAccess', label: c.cvAccess === 'unlocked' ? 'CV unlocked' : 'CV not unlocked', group: 'CV access' })
   if (c.industry) chips.push({ key: 'industry', label: c.industry, group: 'Industry' })
   if (c.companyType) chips.push({ key: 'companyType', label: c.companyType, group: 'Company' })
   if (c.workMode) chips.push({ key: 'workMode', label: c.workMode, group: 'Work mode' })

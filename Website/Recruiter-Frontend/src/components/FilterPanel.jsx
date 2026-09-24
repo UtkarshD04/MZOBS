@@ -135,6 +135,7 @@ const ACTIVE_OPTIONS = [['Any time', null], ['Last 1 day', 1], ['Last 7 days', 7
 const FRESH_OPTIONS = [['Any time', null], ['Last 7 days', 7], ['Last 30 days', 30], ['Last 90 days', 90], ['Last 6 months', 180]]
 const PROFILE_OPTIONS = [['Any', null], ['≥ 50%', 50], ['≥ 70%', 70], ['≥ 90%', 90]]
 const TRUST_OPTIONS = [['Any', null], ['≥ 40', 40], ['≥ 60', 60], ['≥ 80', 80]]
+const CV_ACCESS_OPTIONS = [['Any', ''], ['CV unlocked', 'unlocked'], ['Not unlocked yet', 'locked']]
 
 function Choice({ name, value, options, onChange }) {
   return options.map(([label, v]) => (
@@ -295,9 +296,16 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
           </Section>
         )}
 
-        <Section title="Already actioned" count={n(c.hideContacted, c.hideShortlisted)}>
+        <Section title="Already actioned" count={n(c.hideContacted, c.hideShortlisted, c.hideViewed, c.cvAccess)}>
           <Check checked={c.hideContacted} onChange={(hideContacted) => set({ hideContacted })}>Hide candidates I’ve contacted</Check>
           <Check checked={c.hideShortlisted} onChange={(hideShortlisted) => set({ hideShortlisted })}>Hide shortlisted candidates</Check>
+          <Check checked={c.hideViewed} onChange={(hideViewed) => set({ hideViewed })}>Hide profiles I’ve viewed</Check>
+          {m.pipeline && (
+            <>
+              <Label>CV access</Label>
+              <Choice name="cv" value={c.cvAccess} options={CV_ACCESS_OPTIONS} onChange={(cvAccess) => set({ cvAccess })} />
+            </>
+          )}
         </Section>
       </div>
     </div>

@@ -178,7 +178,7 @@ function passes(c, crit, trust, exclude) {
   if (crit.curSalaryMax != null && c.currentSalaryLPA > crit.curSalaryMax) return false
   if (crit.designation && !norm(c.designation).includes(norm(crit.designation))) return false
   if (crit.department && norm(c.department) !== norm(crit.department)) return false
-  if (crit.employmentType && c.employmentType !== crit.employmentType) return false
+  if (crit.employmentType && !(c.employmentTypes ?? [c.employmentType]).includes(crit.employmentType)) return false
   if (crit.gender && c.gender !== crit.gender) return false
   if (crit.prevCompany && !c.workHistory.slice(1).some((w) => norm(w.company).includes(norm(crit.prevCompany)))) return false
   if (crit.degree && !c.education.some((e) => norm(e.degree).includes(norm(crit.degree)))) return false
@@ -198,11 +198,12 @@ function passes(c, crit, trust, exclude) {
   if (crit.noticeMax != null && (c.noticePeriodDays == null || c.noticePeriodDays > crit.noticeMax)) return false
   if (crit.industry && norm(c.industry) !== norm(crit.industry)) return false
   if (crit.companyType && c.companyType !== crit.companyType) return false
-  if (crit.workMode && c.workMode !== crit.workMode) return false
+  if (crit.workMode && !(c.workModes ?? [c.workMode]).includes(crit.workMode)) return false
   if (crit.education && !norm(c.education.map((e) => `${e.degree} ${e.institute}`).join(' ')).includes(norm(crit.education))) return false
   if (crit.company && !norm(c.currentCompany).includes(norm(crit.company))) return false
   if (crit.forJobId && c.jobId !== crit.forJobId) return false
   if (crit.stage && c.stage !== crit.stage) return false
+  if (crit.cvAccess && !!c._live?.unlocked !== (crit.cvAccess === 'unlocked')) return false
   if (crit.hasPortfolio && !c.hasPortfolio) return false
   if (crit.hasVideo && !c.hasVideo) return false
   if (crit.verifiedOnly && c.verification.identity !== 'verified') return false
