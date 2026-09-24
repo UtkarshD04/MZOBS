@@ -10,8 +10,8 @@ npm run dev      # http://localhost:5175
 
 ## Data source
 
-`VITE_TALENT_SOURCE=demo` (default) searches a generated, clearly-labelled sample pool.
-`VITE_TALENT_SOURCE=live` reads `GET /api/employer/candidates` (needs an employer session token from the marketing-site sign-in).
+`VITE_TALENT_SOURCE=demo` searches a generated, clearly-labelled sample pool.
+`VITE_TALENT_SOURCE=live` (default) reads `GET /api/employer/candidates` (needs an employer session token from the marketing-site sign-in).
 
 The backend has no cross-company talent search endpoint yet, so live mode ranks the candidates shared with the signed-in company.
 Replace `loadPool()` / `searchTalent()` in `src/services/talentService.js` when `GET /talent/search` exists — the UI depends only on that service.
