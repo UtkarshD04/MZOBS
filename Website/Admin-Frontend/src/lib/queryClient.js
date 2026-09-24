@@ -29,6 +29,7 @@ export const queryKeys = {
   employerRevenueTrend: (range) => ['employerRevenueTrend', range],
   coupons: ['coupons'],
   employees: (filters) => ['employees', filters],
+  employee: (id) => ['employees', 'detail', id],
   notifications: ['notifications'],
   cvCreditSummary: ['cvCreditSummary'],
   cvCreditPurchases: (filters) => ['cvCreditPurchases', filters],

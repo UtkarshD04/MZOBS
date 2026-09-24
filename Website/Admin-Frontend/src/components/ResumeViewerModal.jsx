@@ -7,6 +7,12 @@ import Button from './ui/Button'
 // through Google's viewer to still show inline instead of downloading.
 const OFFICE_DOC_RE = /\.(docx?|rtf|odt)(\?|$)/i
 
+// Token links (/files/resume/:token) carry no extension, so the stored file
+// name decides when there is one.
+export function resumeViewerSrc(url, fileName) {
+  return OFFICE_DOC_RE.test(fileName || url) ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}` : url
+}
+
 // `download` attr is ignored for cross-origin URLs, so pull the file as a blob;
 // fall back to opening it in a new tab if the fetch is blocked.
 export async function downloadFile(url, fileName) {
@@ -28,7 +34,7 @@ export async function downloadFile(url, fileName) {
 
 export function ResumeViewerModal({ url, fileName, onClose }) {
   const [downloading, setDownloading] = useState(false)
-  const viewerSrc = OFFICE_DOC_RE.test(url) ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}` : url
+  const viewerSrc = resumeViewerSrc(url, fileName)
 
   return (
     <>
