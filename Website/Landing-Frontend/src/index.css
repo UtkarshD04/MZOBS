@@ -708,3 +708,60 @@
     transition: none !important;
   }
 }
+
+/* ============================================================
+   CAMPUS NETWORK (home page) — see sections/home/CampusNetwork.jsx.
+   Same --bubble-*-rgb glass language as the Hero. Orbit rings spin via
+   CSS (transform only, GPU-friendly); each campus node inside a ring
+   counter-spins at the ring's own --dur so its icon stays upright. All
+   continuous motion is dropped under prefers-reduced-motion.
+============================================================ */
+.campus-atmosphere {
+  background:
+    radial-gradient(ellipse 720px 520px at 78% 50%, rgba(var(--bubble-blue-rgb), 0.1), transparent 70%),
+    radial-gradient(ellipse 520px 380px at 6% 12%, rgba(var(--bubble-teal-rgb), 0.09), transparent 72%),
+    radial-gradient(ellipse 560px 340px at 45% 108%, rgba(var(--bubble-gold-rgb), 0.08), transparent 72%),
+    linear-gradient(180deg, var(--explorer-bg) 0%, #ffffff 38%, #f5f8fe 100%);
+}
+
+.campus-count {
+  background-image: linear-gradient(90deg, #3b6df0 0%, #2f8f7f 25%, #3b6df0 50%, #2f8f7f 75%, #3b6df0 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.campus-ring {
+  border: 1.5px dashed rgba(var(--bubble-blue-rgb), 0.22);
+}
+
+.campus-spoke {
+  stroke: rgba(var(--bubble-blue-rgb), 0.28);
+  stroke-linecap: round;
+}
+
+@keyframes campusOrbit {
+  to { transform: rotate(360deg); }
+}
+@keyframes campusRipple {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(2.3); opacity: 0; }
+}
+@keyframes campusSpokeFlow {
+  to { stroke-dashoffset: var(--flow, -12); }
+}
+@keyframes campusShimmer {
+  to { background-position: -100% center; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .campus-orbit { animation: campusOrbit var(--dur, 60s) linear infinite var(--dir, normal); }
+  .campus-counter { animation: campusOrbit var(--dur, 60s) linear infinite var(--counter, reverse); }
+  .campus-ripple { animation: campusRipple 3.6s cubic-bezier(0.16, 1, 0.3, 1) infinite; animation-delay: var(--delay, 0s); }
+  .campus-spoke { animation: campusSpokeFlow 1.4s linear infinite; }
+  .campus-count { animation: campusShimmer 7s linear infinite; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .campus-ripple { display: none; }
+}
