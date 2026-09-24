@@ -5,7 +5,7 @@ import Button from '../../components/ui/Button'
 import Avatar from '../../components/ui/Avatar'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { PageSkeleton } from '../../components/ui/Skeleton'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { useMeQuery } from '../../hooks/useAuth'
 
 export default function Settings() {

@@ -5,7 +5,7 @@ import MzobsTopNav from './MzobsTopNav'
 import MzobsSidebar from './MzobsSidebar'
 import MzobsFooter from './MzobsFooter'
 import RouteProgress from '../RouteProgress'
-import { useApp } from '../../../context/AppContext'
+import { useApp } from '../../../lib/appContext'
 import { subscribeToPush } from '../../../lib/webPush'
 
 export default function MzobsShell() {

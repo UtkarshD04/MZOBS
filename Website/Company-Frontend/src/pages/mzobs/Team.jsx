@@ -10,7 +10,7 @@ import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Input, Select } from '../../components/ui/Field'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../lib/appContext'
 import { useTeamQuery, useCreateTeammateMutation, useUpdateTeammateMutation } from '../../hooks/useTeam'
 
 const ROLES = ['Operations Manager', 'Resume Verification Lead', 'Interview Panel', 'Employer Success', 'Compliance & KYC']

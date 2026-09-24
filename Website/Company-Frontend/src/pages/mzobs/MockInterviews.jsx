@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Video, Clock, Link2, Plus, CheckCircle2 } from 'lucide-react'
+import { Video, Clock, Link2, CheckCircle2 } from 'lucide-react'
 import Card, { CardHead } from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -13,8 +13,8 @@ import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
-import { Field, Input, Select, Textarea } from '../../components/ui/Field'
-import { useApp } from '../../context/AppContext'
+import { Field, Input, Textarea } from '../../components/ui/Field'
+import { useApp } from '../../lib/appContext'
 import { useResumeQueueQuery } from '../../hooks/useResumes'
 import {
   useMockInterviewsQuery,
