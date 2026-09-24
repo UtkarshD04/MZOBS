@@ -1,3 +1,13 @@
 node_modules/
 Backend/
 Mobile-App/
+
+# OS/editor junk
+.DS_Store
+
+# Ad-hoc local backup files (e.g. foo.js.bak) — never meant to be committed
+*.bak
+
+# Scratch/manual-QA artifacts (screen recordings, etc.) — not build output,
+# not meant to be committed
+tmp-proof/
