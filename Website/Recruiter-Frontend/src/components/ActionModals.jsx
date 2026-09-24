@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import clsx from 'clsx'
-import { Plus, Check, Sparkles, Copy, Mail, MessageSquare, Smartphone, Video, Phone, Users, Building, Code } from 'lucide-react'
+import { Plus, Check, Sparkles, Copy, Mail, MessageSquare, Smartphone, Video, Phone, Users, Building, Code, FileText } from 'lucide-react'
 import { Modal, Button } from './ui'
 import { useWorkspace } from '../store/workspace'
-import { IS_DEMO, FILE_BASE_URL } from '../lib/config'
+import { IS_DEMO } from '../lib/config'
 import { Link } from 'react-router-dom'
 import { refreshPlan } from '../services/planService'
 import { getCredits, unlockCandidate, scheduleInterview, setCandidateStage } from '../services/liveApi'
@@ -20,7 +20,7 @@ export function ShortlistModal({ ids, onClose }) {
   const open = ids.length > 0
   const done = (list, added) => {
     // Live: mirror the shortlist into the backend pipeline, but only lift candidates that are still at 'shared' so nobody already interviewing is moved backwards.
-    if (!IS_DEMO) getTalentMany(ids).then((rows) => rows.filter((r) => r._live?.stage === 'shared').forEach((r) => setCandidateStage(r.id, 'shortlisted').catch(() => {})))
+    if (!IS_DEMO) getTalentMany(ids).then((rows) => rows.filter((r) => r._live?.stage === 'shared').forEach((r) => setCandidateStage(r._live.candidateId, 'shortlisted').catch(() => {})))
     toast(added ? `${added} candidate${added === 1 ? '' : 's'} added to “${list.name}”` : `Already in “${list.name}”`)
     onClose(true)
   }
@@ -178,7 +178,7 @@ export function InterviewModal({ candidate, onClose }) {
       setBusy(true)
       try {
         await scheduleInterview({
-          candidateId: candidate.id,
+          candidateId: candidate._live?.candidateId ?? candidate.id,
           role: candidate.designation || 'Interview',
           round: f.type,
           startsAt: new Date(`${f.date}T${f.time}`).toISOString(),
@@ -274,19 +274,33 @@ export function NotesList({ notes }) {
 
 // ---- unlock (live) ----------------------------------------------------------
 
-export function UnlockModal({ candidate, onClose, onCompose }) {
+export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewResume }) {
   const { toast } = useWorkspace()
   const [wallet, setWallet] = useState(null)
   const [result, setResult] = useState(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
+  const [jobs, setJobs] = useState(null)
+  const [jobId, setJobId] = useState('')
+  // A resume-database profile joins one of the company's jobs when it is first unlocked.
+  const needsJob = candidate?._live?.kind === 'resdex' && !candidate._live.candidateId
   useEffect(() => {
     setResult(null)
     setErr('')
+    setJobs(null)
+    setJobId('')
     if (!candidate) return
     getCredits().then((r) => setWallet(r.wallet)).catch(() => setWallet(null))
     // Already unlocked earlier → the backend returns the details again without charging.
-    if (candidate._live?.unlocked) unlockCandidate(candidate.id).then(setResult).catch(() => {})
+    if (candidate._live?.unlocked) unlockCandidate(candidate).then(setResult).catch(() => {})
+    else if (candidate._live?.kind === 'resdex' && !candidate._live.candidateId) {
+      listJobs()
+        .then((list) => {
+          setJobs(list)
+          setJobId(list[0]?.id ?? '')
+        })
+        .catch(() => setJobs([]))
+    }
   }, [candidate])
 
   const preview = candidate?._live?.contactPreview
@@ -294,11 +308,12 @@ export function UnlockModal({ candidate, onClose, onCompose }) {
     setBusy(true)
     setErr('')
     try {
-      const r = await unlockCandidate(candidate.id)
+      const r = await unlockCandidate(candidate, { jobId: needsJob ? jobId : undefined })
       setResult(r)
       setWallet(r.wallet)
       refreshPlan()
-      toast(r.alreadyUnlocked ? 'Already unlocked — no credit used' : 'Contact details unlocked (1 CV credit)')
+      onUnlocked?.(r)
+      toast(r.alreadyUnlocked ? 'Already unlocked — no credit used' : 'CV and contact details unlocked (1 CV credit)')
     } catch (e) {
       setErr(e.response?.status === 402 ? 'No CV credits left. Buy more in the employer portal.' : e.response?.data?.message ?? 'Could not unlock this candidate.')
     } finally {
@@ -308,18 +323,35 @@ export function UnlockModal({ candidate, onClose, onCompose }) {
   const c = result?.candidate
   const credits = wallet?.remainingCredits
   return (
-    <Modal open={!!candidate} onClose={onClose} title={c ? 'Contact details' : 'Unlock contact details'} subtitle={candidate?.name} width={460}
-      footer={c ? <><Button onClick={onClose}>Done</Button>{onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, { email: c.email, phone: c.phone })}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || credits === 0} onClick={unlock}>{busy ? 'Unlocking…' : 'Unlock for 1 credit'}</Button></>}>
+    <Modal open={!!candidate} onClose={onClose} title={c ? 'Contact details' : 'Unlock CV & contact details'} subtitle={candidate?.name} width={460}
+      footer={c ? <><Button onClick={onClose}>Done</Button>{onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, { email: c.email, phone: c.phone })}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || credits === 0 || (needsJob && !jobId)} onClick={unlock}>{busy ? 'Unlocking…' : 'Unlock for 1 credit'}</Button></>}>
       {c ? (
         <dl className="space-y-3 text-[14px]">
           <div><dt className="text-[12px] text-muted">Email</dt><dd className="font-medium">{c.email || '—'}</dd></div>
           <div><dt className="text-[12px] text-muted">Phone</dt><dd className="font-medium">{c.phone || '—'}</dd></div>
-          {c.resumeUrl && <a className="inline-block rounded-lg border border-line px-3 py-1.5 text-[13px] font-medium text-blue hover:bg-line-2" href={`${FILE_BASE_URL}${c.resumeUrl}`} target="_blank" rel="noreferrer">Open resume</a>}
+          {c.resumeUrl ? (
+            <Button icon={FileText} onClick={() => onViewResume?.(candidate, { url: c.resumeUrl, fileName: c.resumeFileName })}>View CV</Button>
+          ) : (
+            <p className="text-[12.5px] text-muted">No verified CV on this profile yet.</p>
+          )}
         </dl>
       ) : (
         <div className="space-y-3 text-[13.5px]">
-          <p>Contact details and the resume stay masked until you spend one CV credit. This is permanent for this candidate.</p>
+          <p>The CV, email and phone stay hidden until you spend one CV credit. The unlock is permanent for this candidate.</p>
           <p className="rounded-lg bg-line-2 px-3 py-2 text-ink-2">Email {preview?.email ?? '—'} · Phone {preview?.phone ?? '—'}</p>
+          {needsJob && jobs === null && <p className="text-muted">Loading your jobs…</p>}
+          {needsJob && jobs?.length === 0 && (
+            <p className="rounded-lg bg-warn-soft px-3 py-2 text-warn">Unlocking adds the candidate to one of your jobs, and you don't have one yet. <Link to="/jobs/new" onClick={onClose} className="font-medium underline">Post a job</Link></p>
+          )}
+          {needsJob && jobs?.length > 0 && (
+            <label className="block text-[12px] text-muted">
+              Add to job
+              <select value={jobId} onChange={(e) => setJobId(e.target.value)} className={clsx(field, 'mt-1')}>
+                {jobs.map((j) => <option key={j.id} value={j.id}>{j.title}</option>)}
+              </select>
+              <span className="mt-1 block">{candidate.name.split(' ')[0]} joins this job's pipeline, so you can shortlist and schedule interviews.</span>
+            </label>
+          )}
           {credits != null && <p className="text-muted">Credits available: <b className="text-ink">{credits}</b>{credits === 0 && <> · <Link to="/credits" onClick={onClose} className="font-medium text-accent hover:underline">Buy credits</Link></>}</p>}
         </div>
       )}

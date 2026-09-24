@@ -1,12 +1,12 @@
 // The one seam between the recruiter UI and its data.
 //
 // demo  → searches the generated pool in lib/talent/demoPool.js.
-// live  → reads the existing employer API (no backend changes): every page of
-//         `GET /candidates` (people Mzobs shared with THIS company), and
-//         `GET /jobs` for job-based search and the Job filter. There is no
-//         cross-company talent index in the backend, so live search covers the
-//         company's shared candidates; when a `GET /talent/search` exists,
-//         replace `loadPool()` here — nothing else in the UI changes.
+// live  → reads the employer API: every page of `GET /resume-search` (the
+//         Resdex-style database of every verified candidate on Mzobs), every
+//         page of `GET /candidates` (people already in THIS company's
+//         pipeline), and `GET /jobs` for job-based search and the Job filter.
+//         A person in both lists is one row: the database profile, carrying
+//         the company's pipeline state for them.
 
 import { apiClient } from '../lib/api'
 import { IS_DEMO } from '../lib/config'
@@ -46,12 +46,16 @@ export function toNoticeDays(s) {
 
 const daysSince = (iso) => (iso ? Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86400000)) : null)
 
-/** Maps an API `Candidate` (Backend/src/models/Candidate.js) to the UI shape. Unknown → null/empty, never invented. */
-export function mapApiCandidate(c, jobTitles = {}) {
-  const hist = (c.workHistory ?? []).map((w) => {
+function mapHistory(workHistory) {
+  return (workHistory ?? []).map((w) => {
     const yrs = String(w.duration ?? '').match(/(\d{4})\D+(\d{4}|present|current|now)/i)
     return { role: w.role, company: w.company, startYear: yrs ? Number(yrs[1]) : null, endYear: yrs && /\d/.test(yrs[2]) ? Number(yrs[2]) : null, duration: w.duration, skills: [], location: '' }
   })
+}
+
+/** Maps an API `Candidate` (Backend/src/models/Candidate.js) to the UI shape. Unknown → null/empty, never invented. */
+export function mapApiCandidate(c, jobTitles = {}) {
+  const hist = mapHistory(c.workHistory)
   const filled = [c.headline, c.location, c.skills?.length, c.education?.length, c.workHistory?.length, c.projects?.length, c.expectedSalary, c.portfolioLink, c.hasVideoIntro]
   return {
     id: c.id,
@@ -99,8 +103,102 @@ export function mapApiCandidate(c, jobTitles = {}) {
     stage: c.stage ?? 'shared',
     rejectionReason: c.rejectionReason ?? null,
     contact: c.unlocked ? { email: c.email, phone: c.phone } : null,
-    _live: { stage: c.stage, unlocked: !!c.unlocked, contactPreview: c.contactPreview },
+    links: [],
+    _live: { kind: 'applicant', candidateId: c.id, employeeId: c.employeeId ?? null, stage: c.stage, unlocked: !!c.unlocked, contactPreview: c.contactPreview },
   }
+}
+
+/** Maps a `GET /resume-search` profile (employerResumeSearchController.redactEmployee) to the UI shape. */
+export function mapResdexCandidate(e) {
+  const hist = mapHistory(e.workHistory)
+  const workModes = e.workModePreference ?? []
+  const employmentTypes = e.jobTypePreference ?? []
+  const links = [['Portfolio', e.portfolioLink], ['LinkedIn', e.linkedin], ['GitHub', e.github]].filter(([, url]) => url).map(([label, url]) => ({ label, url }))
+  const filled = [e.headline, e.location, e.skills?.length, e.education?.length, e.workHistory?.length, e.projects?.length, e.expectedSalary, e.currentCtc, e.noticePeriod, links.length]
+  return {
+    id: e.id,
+    name: e.name,
+    initials: e.initials,
+    designation: e.designation || e.preferredRole || e.headline || '',
+    appliedFor: '',
+    currentCompany: e.currentCompany || hist[0]?.company || '',
+    experienceYears: e.experienceYears ?? 0,
+    currentSalaryLPA: toLpa(e.currentCtc),
+    expectedSalaryLPA: toLpa(e.expectedSalary),
+    location: e.location ?? '',
+    preferredLocations: e.preferredLocations?.length ? e.preferredLocations : e.location ? [e.location] : [],
+    relocationOk: e.relocationOk,
+    noticePeriodDays: toNoticeDays(e.noticePeriod),
+    skills: e.skills ?? [],
+    industry: '',
+    companyType: '',
+    workMode: workModes.join(' / '),
+    workModes,
+    employmentType: employmentTypes.join(' / '),
+    employmentTypes,
+    education: (e.education ?? []).map((x) => ({ degree: x.degree, institute: x.institute, year: Number(x.year) || null })),
+    workHistory: hist,
+    projects: (e.projects ?? []).map((p) => ({ name: p.name, description: p.description, tech: p.tech ?? [] })),
+    certifications: [],
+    languages: [],
+    summary: e.headline || '',
+    hasPortfolio: !!e.portfolioLink,
+    portfolioLink: e.portfolioLink || '',
+    hasVideo: false,
+    lastActiveDaysAgo: daysSince(e.lastActiveAt),
+    resumeUpdatedDaysAgo: daysSince(e.resumeUpdatedOn),
+    sharedDaysAgo: null,
+    profileCompleteness: Math.round((filled.filter(Boolean).length / filled.length) * 100),
+    verification: {
+      identity: 'none',
+      phone: e.phoneVerified ? 'verified' : 'none',
+      email: e.emailVerified ? 'verified' : 'none',
+      education: 'none',
+      employment: 'none',
+      resumeConsistency: e.resumeVerified ? 'verified' : 'none',
+    },
+    source: 'Mzobs resume database',
+    premium: !!e.premium,
+    jobId: null,
+    jobTitle: '',
+    stage: null,
+    rejectionReason: null,
+    contact: e.unlocked ? { email: e.email, phone: e.phone } : null,
+    links,
+    _live: { kind: 'resdex', candidateId: e.candidateId ?? null, employeeId: e.employeeId, stage: null, unlocked: !!e.unlocked, contactPreview: e.contactPreview },
+  }
+}
+
+/**
+ * One row per person. A database profile that is also in the company's
+ * pipeline keeps the profile's id and richer fields and takes the pipeline
+ * state (job, stage, unlock) from the Candidate row, so its id doesn't change
+ * when the recruiter unlocks or shortlists them.
+ */
+function mergePool(applicants, resdex) {
+  const byEmployee = new Map(resdex.map((r) => [r._live.employeeId, r]))
+  const used = new Set()
+  const merged = applicants.map((a) => {
+    const r = a._live.employeeId ? byEmployee.get(a._live.employeeId) : null
+    if (!r || used.has(r.id)) return a
+    used.add(r.id)
+    return {
+      ...r,
+      appliedFor: a.appliedFor,
+      jobId: a.jobId,
+      jobTitle: a.jobTitle,
+      stage: a.stage,
+      rejectionReason: a.rejectionReason,
+      sharedDaysAgo: a.sharedDaysAgo,
+      source: a.source,
+      hasVideo: a.hasVideo,
+      certifications: a.certifications,
+      verification: { ...r.verification, identity: a.verification.identity },
+      contact: a.contact ?? r.contact,
+      _live: { ...r._live, kind: 'applicant', candidateId: a._live.candidateId, stage: a._live.stage, unlocked: a._live.unlocked || r._live.unlocked, contactPreview: a._live.contactPreview ?? r._live.contactPreview },
+    }
+  })
+  return [...merged, ...resdex.filter((r) => !used.has(r.id))]
 }
 
 // ---- pool ----------------------------------------------------------------
@@ -111,6 +209,7 @@ export function poolMeta(pool, jobs = []) {
   const jobIds = new Set(pool.map((c) => c.jobId).filter(Boolean))
   return {
     total: pool.length,
+    shared: pool.filter((c) => c._live?.kind === 'applicant').length,
     notice: any((c) => c.noticePeriodDays != null),
     salary: any((c) => c.expectedSalaryLPA != null),
     industry: any((c) => c.industry),
@@ -146,24 +245,14 @@ let poolPromise = null
 const cache = new Map()
 const POOL_TTL = 5 * 60_000
 
-async function fetchAllCandidates() {
+/** Every page of a list endpoint (pagination rides on X-Total-Count), capped at maxPages × 200 rows. */
+export async function fetchAll(path, maxPages) {
   const limit = 200
   const rows = []
-  for (let page = 1; page <= 25; page++) {
-    const r = await apiClient.get('/candidates', { params: { page, limit } })
+  for (let page = 1; page <= maxPages; page++) {
+    const r = await apiClient.get(path, { params: { page, limit } })
     rows.push(...r.data)
-    const total = Number(r.headers['x-total-count'] ?? rows.length)
-    if (rows.length >= total || r.data.length < limit) break
-  }
-  return rows
-}
-
-async function fetchJobs() {
-  const rows = []
-  for (let page = 1; page <= 10; page++) {
-    const r = await apiClient.get('/jobs', { params: { page, limit: 200 } })
-    rows.push(...r.data)
-    if (rows.length >= Number(r.headers['x-total-count'] ?? rows.length) || r.data.length < 200) break
+    if (rows.length >= Number(r.headers['x-total-count'] ?? rows.length) || r.data.length < limit) break
   }
   return rows
 }
@@ -172,10 +261,13 @@ function loadPool(force = false) {
   if (IS_DEMO) return wait(DEMO_LATENCY).then(() => ({ rows: DEMO_POOL, jobs: [], at: Date.now() }))
   if (!force && pool && Date.now() - pool.at < POOL_TTL) return Promise.resolve(pool)
   if (!force && poolPromise) return poolPromise
-  poolPromise = Promise.all([fetchAllCandidates(), fetchJobs().catch(() => [])])
-    .then(([cands, jobs]) => {
+  poolPromise = Promise.all([fetchAll('/candidates', 25), fetchAll('/resume-search', 25), fetchAll('/jobs', 10).catch(() => [])])
+    .then(([cands, profiles, jobs]) => {
       const titles = Object.fromEntries(jobs.map((j) => [j.id, j.title]))
-      const rows = cands.map((c) => mapApiCandidate(c, titles))
+      const rows = mergePool(
+        cands.map((c) => mapApiCandidate(c, titles)),
+        profiles.map(mapResdexCandidate)
+      )
       setVocabularyFrom(rows)
       pool = { rows, jobs, at: Date.now() }
       cache.clear()
@@ -209,7 +301,8 @@ export async function getPoolMeta(force = false) {
 const CACHE_TTL = 60_000
 
 /**
- * @returns {Promise<{items: {candidate, match, trust}[], total:number, page:number, hasMore:boolean}>}
+ * `ids` is every hit in ranked order (not just this page), for Previous / Next on the profile.
+ * @returns {Promise<{items: {candidate, match, trust}[], ids:string[], total:number, page:number, hasMore:boolean}>}
  */
 export async function searchTalent(criteria, { sort = 'relevance', page = 1, pageSize = 20, exclude = null } = {}) {
   const k = JSON.stringify([criteria, sort, exclude ? [...exclude].sort() : null])
@@ -221,18 +314,29 @@ export async function searchTalent(criteria, { sort = 'relevance', page = 1, pag
     if (cache.size > 40) cache.delete(cache.keys().next().value)
   }
   const start = (page - 1) * pageSize
-  return { items: hit.rows.slice(start, start + pageSize), total: hit.rows.length, page, hasMore: start + pageSize < hit.rows.length }
+  hit.ids ??= hit.rows.map((r) => r.candidate.id)
+  return { items: hit.rows.slice(start, start + pageSize), ids: hit.ids, total: hit.rows.length, page, hasMore: start + pageSize < hit.rows.length }
 }
+
+// Links and shortlists saved before a person's Candidate row was merged into
+// their database profile still carry the Candidate id, so both ids resolve.
+const hasId = (c, id) => c.id === id || c._live?.candidateId === id
 
 export async function getTalent(id) {
   const p = await loadPool()
-  return p.rows.find((c) => c.id === id) ?? null
+  const hit = p.rows.find((c) => hasId(c, id))
+  if (hit || IS_DEMO) return hit ?? null
+  // Past the loaded pool's cap (or joined since it loaded): ask the database directly.
+  try {
+    return mapResdexCandidate((await apiClient.get(`/resume-search/${id}`)).data)
+  } catch {
+    return null
+  }
 }
 
 export async function getTalentMany(ids) {
   const p = await loadPool()
-  const byId = new Map(p.rows.map((c) => [c.id, c]))
-  return ids.map((id) => byId.get(id)).filter(Boolean)
+  return ids.map((id) => p.rows.find((c) => hasId(c, id))).filter(Boolean)
 }
 
 export async function findSimilar(id, limit = 6) {
