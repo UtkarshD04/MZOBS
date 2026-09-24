@@ -2,8 +2,8 @@
   "name": "mzobs",
   "private": true,
   "scripts": {
-    "dev": "concurrently -n backend,landing,employee,company,ops,admin -c blue,magenta,yellow,red,white,cyan \"npm --prefix Backend run dev\" \"npm --prefix Website/Landing-Frontend run dev\" \"npm --prefix Website/Frontend run dev\" \"npm --prefix Website/Company-Frontend run dev\" \"npm --prefix Website/Operations-Frontend run dev\" \"npm --prefix Website/Admin-Frontend run dev\"",
-    "install:all": "npm install && npm install --prefix Backend && npm install --prefix Website/Landing-Frontend && npm install --prefix Website/Frontend && npm install --prefix Website/Admin-Frontend && npm install --prefix Website/Company-Frontend && npm install --prefix Website/Operations-Frontend"
+    "dev": "concurrently -n backend,landing,recruiter,employee,company,ops,admin -c blue,magenta,green,yellow,red,white,cyan \"npm --prefix Backend run dev\" \"npm --prefix Website/Landing-Frontend run dev\" \"npm --prefix Website/Recruiter-Frontend run dev\" \"npm --prefix Website/Frontend run dev\" \"npm --prefix Website/Company-Frontend run dev\" \"npm --prefix Website/Operations-Frontend run dev\" \"npm --prefix Website/Admin-Frontend run dev\"",
+    "install:all": "npm install && npm install --prefix Backend && npm install --prefix Website/Landing-Frontend && npm install --prefix Website/Recruiter-Frontend && npm install --prefix Website/Frontend && npm install --prefix Website/Admin-Frontend && npm install --prefix Website/Company-Frontend && npm install --prefix Website/Operations-Frontend"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
