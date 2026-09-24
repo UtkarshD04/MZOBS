@@ -3,8 +3,8 @@ const ENV = import.meta.env ?? {}
 
 // 'live' calls the Mzobs employer API; 'demo' searches a clearly-labelled
 // sample pool bundled with the app. The backend has no cross-company talent
-// search endpoint yet (see services/talentService.js), so demo is the default.
-export const TALENT_SOURCE = ENV.VITE_TALENT_SOURCE ?? 'demo'
+// search endpoint yet (see services/talentService.js), so live ranks the company's shared candidates; set VITE_TALENT_SOURCE=demo for sample data.
+export const TALENT_SOURCE = ENV.VITE_TALENT_SOURCE ?? 'live'
 export const IS_DEMO = TALENT_SOURCE !== 'live'
 export const API_URL = ENV.VITE_API_URL ?? '/api/employer'
 export const FILE_BASE_URL = ENV.VITE_FILE_BASE_URL ?? ''
