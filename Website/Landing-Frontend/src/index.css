@@ -313,7 +313,7 @@
   -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
 }
 .company-marquee-track {
-  animation: careersMarquee 40s linear infinite;
+  animation: careersMarquee 20s linear infinite;
 }
 .company-marquee:hover .company-marquee-track,
 .company-marquee:focus-within .company-marquee-track {
