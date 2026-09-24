@@ -11,6 +11,7 @@ import HotJobsByCity from '../components/sections/home/HotJobsByCity'
 import CategoryGrid from '../components/sections/home/CategoryGrid'
 import RecommendedForYou from '../components/sections/home/RecommendedForYou'
 import CompaniesHiring from '../components/sections/home/CompaniesHiring'
+import CampusNetwork from '../components/sections/home/CampusNetwork'
 import HomeEmployerCTA from '../components/sections/home/HomeEmployerCTA'
 
 // q and location are each a *list* of terms — the hero search box lets a
@@ -95,7 +96,10 @@ export default function Home() {
       {/* 8. Companies hiring through MZOBS (single, consolidated company section) */}
       <CompaniesHiring onSelect={applyJobFilters} />
 
-      {/* 9. Employer CTA band */}
+      {/* 9. Campus Network — 100+ college campuses integrated with MZOBS */}
+      <CampusNetwork />
+
+      {/* 10. Employer CTA band */}
       <HomeEmployerCTA />
 
       <Footer />
