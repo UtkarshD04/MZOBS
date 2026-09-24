@@ -822,7 +822,8 @@ export const COMPANIES_HIRING_DATA = [
 ]
 
 // "Campus Network" band on the home page (see CampusNetwork.jsx). `count`
-// drives both the big count-up figure and the 10×10 campus mosaic beside it.
+// is the big count-up figure; `orbitChips` are the two floating cards on the
+// campus orbit visual beside it.
 export const CAMPUS_NETWORK_DATA = {
   eyebrow: "Campus Network",
   count: 100,
@@ -833,7 +834,10 @@ export const CAMPUS_NETWORK_DATA = {
     { icon: Send, title: "Direct student applications", text: "Students apply from their own MZOBS profile — no middlemen." },
     { icon: Briefcase, title: "Internships & fresher roles", text: "Openings picked for students just starting out." }
   ],
-  mosaicCaption: "Each square is one partner campus.",
+  orbitChips: [
+    { icon: GraduationCap, title: "100+ campuses", text: "On one hiring network" },
+    { icon: Briefcase, title: "Campus to career", text: "Internships & fresher roles" }
+  ],
   ctaText: "Bring your campus on board",
   ctaTo: "/contact"
 }
