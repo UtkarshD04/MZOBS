@@ -5,7 +5,7 @@ import { Button, EmptyState, Skeleton } from '../components/ui'
 import { useWorkspace } from '../store/workspace'
 import { IS_DEMO } from '../lib/config'
 import { agoDate } from '../lib/format'
-import { getSubscription, getWallet, getPlans, listPurchases, listUnlocks, listPlanPayments, previewCoupon, purchaseSubscription, purchaseCredits, paymentError } from '../services/planService'
+import { getSubscription, getWallet, getPlans, listPurchases, listUnlocks, listPlanPayments, previewCoupon, previewSubscriptionCoupon, purchaseSubscription, purchaseCredits, paymentError } from '../services/planService'
 
 const rupees = (paise) => `₹${(paise / 100).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 const dateOf = (iso) => (iso ? new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—')
@@ -21,36 +21,67 @@ function Card({ title, icon: Icon, children, className }) {
 }
 
 function SubscriptionCard({ data, onBuy, busy }) {
-  const { subscription: s, isActive, pricing: p } = data
+  const { subscription: s, isActive } = data
   const left = daysLeft(s?.expiresAt)
   return (
     <Card title="Employer plan" icon={ShieldCheck}>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[20px] font-bold">{s?.planName ?? p.planName}</span>
-            {isActive ? (
-              <span className="inline-flex items-center gap-1 rounded-md bg-ok-soft px-2 py-0.5 text-[12px] font-semibold text-[#1a8f5a]"><CheckCircle2 size={12} /> Active</span>
-            ) : (
-              <span className="inline-flex items-center gap-1 rounded-md bg-warn-soft px-2 py-0.5 text-[12px] font-semibold text-warn"><XCircle size={12} /> {s?.status === 'expired' ? 'Expired' : 'Not subscribed'}</span>
-            )}
-          </div>
-          {isActive ? (
-            <p className="mt-1 text-[13.5px] text-ink-2">Valid until <b>{dateOf(s.expiresAt)}</b>{left != null && <span className={clsx('ml-1.5', left <= 30 ? 'text-warn' : 'text-muted')}>({left} day{left === 1 ? '' : 's'} left)</span>}</p>
-          ) : (
-            <p className="mt-1 max-w-md text-[13.5px] text-ink-2">Needed to <b>post jobs</b> and <b>open candidate resumes</b>. Contact details are unlocked separately with CV credits.</p>
-          )}
-        </div>
-        {!isActive && (
-          <div className="min-w-[230px] rounded-lg bg-line-2 p-3.5 text-[13px]">
-            <div className="flex justify-between"><span className="text-muted">Annual plan</span><span>{rupees(p.baseAmountPaise)}</span></div>
-            <div className="flex justify-between"><span className="text-muted">GST {p.gstRatePercent}%</span><span>{rupees(p.gstAmountPaise)}</span></div>
-            <div className="mt-1.5 flex justify-between border-t border-line pt-1.5 text-[15px] font-bold"><span>Total</span><span>{rupees(p.totalAmountPaise)}</span></div>
-            <Button variant="primary" className="mt-3 w-full" disabled={busy} onClick={onBuy}>{busy ? 'Processing…' : 'Subscribe'}</Button>
-          </div>
+      <div className="flex items-center gap-2">
+        <span className="text-[20px] font-bold">{s?.planName ?? 'No plan'}</span>
+        {isActive ? (
+          <span className="inline-flex items-center gap-1 rounded-md bg-ok-soft px-2 py-0.5 text-[12px] font-semibold text-[#1a8f5a]"><CheckCircle2 size={12} /> Active</span>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-md bg-warn-soft px-2 py-0.5 text-[12px] font-semibold text-warn"><XCircle size={12} /> {s?.status === 'expired' ? 'Expired' : 'Not subscribed'}</span>
         )}
       </div>
+      {isActive ? (
+        <p className="mt-1 text-[13.5px] text-ink-2">Valid until <b>{dateOf(s.expiresAt)}</b>{left != null && <span className={clsx('ml-1.5', left <= 30 ? 'text-warn' : 'text-muted')}>({left} day{left === 1 ? '' : 's'} left)</span>}</p>
+      ) : (
+        <p className="mt-1 max-w-xl text-[13.5px] text-ink-2">Needed to <b>post jobs</b> and <b>open candidate resumes</b>. Contact details are unlocked separately with CV credits. Choose a plan below.</p>
+      )}
+      {!isActive && (
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          {data.plans.map((p) => <TierCard key={p.planCode} plan={p} busy={busy === p.planCode} onBuy={onBuy} />)}
+        </div>
+      )}
     </Card>
+  )
+}
+
+function TierCard({ plan: p, onBuy, busy }) {
+  const [code, setCode] = useState('')
+  const [preview, setPreview] = useState(null)
+  const [err, setErr] = useState('')
+  const apply = async () => {
+    setErr('')
+    setPreview(null)
+    if (!code.trim()) return
+    try {
+      setPreview(await previewSubscriptionCoupon(p.planCode, code.trim()))
+    } catch (e) {
+      setErr(e.response?.data?.message ?? 'Invalid coupon')
+    }
+  }
+  return (
+    <div className="flex flex-col rounded-xl border border-line bg-white p-4">
+      <p className="text-[13px] font-semibold uppercase tracking-wide text-muted">{p.planName}</p>
+      <p className="mt-2 text-[26px] font-bold tabular-nums">
+        {rupees(preview ? preview.finalAmount * 100 : p.totalAmountPaise)}
+        {preview && <span className="ml-2 text-[14px] font-medium text-muted line-through">{rupees(p.totalAmountPaise)}</span>}
+      </p>
+      <p className="text-[12px] text-muted">{rupees(p.baseAmountPaise)} + GST {p.gstRatePercent}% ({rupees(p.gstAmountPaise)}) · 1 year</p>
+      {p.benefits?.length > 0 && (
+        <ul className="mt-2 space-y-1 text-[13px] text-ink-2">
+          {p.benefits.map((b) => <li key={b} className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-[#1a8f5a]" /> {b}</li>)}
+        </ul>
+      )}
+      <div className="mt-3 flex gap-1.5">
+        <input value={code} onChange={(e) => { setCode(e.target.value); setPreview(null) }} onKeyDown={(e) => e.key === 'Enter' && apply()} placeholder="Coupon code" aria-label={`Coupon for ${p.planName}`} className="h-9 min-w-0 flex-1 rounded-lg border border-line px-2.5 text-[13px] uppercase outline-none focus:border-accent" />
+        <Button size="sm" onClick={apply} icon={Tag} disabled={!code.trim()}>Apply</Button>
+      </div>
+      {preview && <p className="mt-1.5 text-[12px] font-medium text-[#1a8f5a]">{preview.code} applied — you save ₹{preview.discountAmount.toLocaleString('en-IN')}</p>}
+      {err && <p role="alert" className="mt-1.5 text-[12px] text-bad">{err}</p>}
+      <Button variant="primary" className="mt-auto" style={{ marginTop: 14 }} disabled={busy} onClick={() => onBuy(p, preview?.code)}>{busy ? 'Processing…' : `Subscribe · ${rupees(preview ? preview.finalAmount * 100 : p.totalAmountPaise)}`}</Button>
+    </div>
   )
 }
 
@@ -199,7 +230,7 @@ export default function PlanCredits() {
         <><Skeleton className="h-32 w-full" /><Skeleton className="h-32 w-full" /></>
       ) : (
         <>
-          <SubscriptionCard data={data.sub} busy={busy === 'sub'} onBuy={() => run('sub', purchaseSubscription, 'Employer plan activated')} />
+          <SubscriptionCard data={data.sub} busy={busy} onBuy={(plan, code) => run(plan.planCode, () => purchaseSubscription(plan.planCode, code), `${plan.planName} activated`)} />
           <CreditsCard wallet={data.wallet} rate={data.rate} />
           <section>
             <h2 className="mb-3 flex items-center gap-2 text-[15px] font-semibold"><Ticket size={16} className="text-muted" /> Buy CV credits</h2>

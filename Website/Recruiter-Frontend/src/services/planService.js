@@ -19,6 +19,7 @@ export const listUnlocks = () => get('/unlocks', { limit: 50 })
 export const listPlanPayments = () => get('/payments', { limit: 50 })
 
 export const previewCoupon = (planId, code) => apiClient.post('/payments/coupon/preview', { planId, code }).then((r) => r.data)
+export const previewSubscriptionCoupon = (planCode, code) => apiClient.post('/subscription/coupon/preview', { planCode, code }).then((r) => r.data)
 
 // ---- live plan snapshot, shared by the nav pill, job form and unlock modal ----
 
@@ -87,11 +88,11 @@ async function openCheckout(order) {
 }
 
 /**
- * Subscribes the company to the employer plan. `order.mock` is only true on a
+ * Subscribes the company to the chosen employer plan tier (server prices it from planCode). `order.mock` is only true on a
  * dev backend without Razorpay keys, where the backend confirms a simulated payment.
  */
-export async function purchaseSubscription() {
-  const order = await apiClient.post('/subscription/order').then((r) => r.data)
+export async function purchaseSubscription(planCode, couponCode) {
+  const order = await apiClient.post('/subscription/order', { planCode, couponCode: couponCode || undefined }).then((r) => r.data)
   if (order.mock) await apiClient.post('/subscription/mock-confirm', { orderId: order.orderId })
   else {
     const res = await openCheckout(order)
