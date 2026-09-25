@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
-import { Sparkles, SlidersHorizontal, LayoutList, Rows3, Search, History, ArrowDownUp, FlaskConical, RefreshCw, Radio } from 'lucide-react'
+import { Sparkles, SlidersHorizontal, LayoutList, Rows3, Search, History, ArrowDownUp, FlaskConical, RefreshCw, Radio, X } from 'lucide-react'
 import SearchComposer from '../components/SearchComposer'
 import FilterPanel from '../components/FilterPanel'
 import CandidateCard from '../components/CandidateCard'
@@ -141,7 +141,15 @@ export default function SearchCandidates() {
     setSaveName(criteriaTitle(criteria))
     setSaveOpen(true)
   }
-  const clearAll = () => setCriteria({ ...EMPTY_CRITERIA, scope: criteria.scope })
+  // Keeps the recruiter's search mode and scope, drops everything they searched for.
+  const clearAll = () => setCriteria({ ...EMPTY_CRITERIA, scope: criteria.scope, mode: criteria.mode })
+  // Taking off the last filter also empties the search box — otherwise the old
+  // text stays there and the search still looks applied.
+  const dropChip = (key) => {
+    const next = removeChip(criteria, key)
+    if (criteriaToChips(next).length === 0) next.q = ''
+    setCriteria(next)
+  }
 
   const filterPanel = <FilterPanel criteria={criteria} onChange={setCriteria} onSave={openSave} onClear={clearAll} meta={meta} />
 
@@ -166,13 +174,20 @@ export default function SearchCandidates() {
         )}
       </div>
 
-      <SearchComposer criteria={criteria} onSearch={runQuery} loading={loading} />
+      <SearchComposer criteria={criteria} onSearch={runQuery} onClear={clearAll} canClear={active} loading={loading} />
 
-      {aiUnderstood && (
-        <div className="fade-up mt-3 flex flex-wrap items-center gap-2 rounded-2xl border border-[#bfe6df] bg-[#f2fbf9] px-3.5 py-2.5">
-          <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-[#0a6f64]"><Sparkles size={13} /> Mzobs understood your search</span>
-          {chips.map((c) => <Chip key={c.key} tone="ai" onRemove={() => setCriteria(removeChip(criteria, c.key))}>{c.label}</Chip>)}
-          <span className="ml-auto text-[11.5px] text-muted">Rule-based parser · edit anything in Filters</span>
+      {chips.length > 0 && (
+        <div className={clsx('fade-up mt-3 flex flex-wrap items-center gap-2 rounded-2xl border px-3.5 py-2.5', aiUnderstood ? 'border-[#bfe6df] bg-[#f2fbf9]' : 'border-line bg-white')}>
+          {aiUnderstood ? (
+            <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-[#0a6f64]"><Sparkles size={13} /> Mzobs understood your search</span>
+          ) : (
+            <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink-2"><SlidersHorizontal size={13} /> Active filters</span>
+          )}
+          {chips.map((c) => <Chip key={c.key} tone={aiUnderstood ? 'ai' : 'accent'} onRemove={() => dropChip(c.key)}>{c.label}</Chip>)}
+          <span className="ml-auto flex items-center gap-3">
+            {aiUnderstood && <span className="hidden text-[11.5px] text-muted sm:inline">Rule-based parser · edit anything in Filters</span>}
+            <button onClick={clearAll} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12.5px] font-semibold text-accent hover:bg-accent-soft"><X size={12} /> Clear all</button>
+          </span>
         </div>
       )}
 
@@ -237,7 +252,7 @@ export default function SearchCandidates() {
               icon={Search}
               title={!IS_DEMO && chips.length === 0 ? 'No candidates in the resume database yet' : 'No candidates match these filters'}
               body={!IS_DEMO && chips.length === 0 ? 'Candidates appear here once job seekers with a verified CV join Mzobs.' : 'Try removing a filter or widening your experience range.'}
-              action={chips.length > 0 && <div className="flex flex-wrap justify-center gap-1.5">{chips.slice(0, 6).map((c) => <Chip key={c.key} tone="accent" onRemove={() => setCriteria(removeChip(criteria, c.key))}>{c.label}</Chip>)}</div>}
+              action={chips.length > 0 && <div className="flex flex-wrap justify-center gap-1.5">{chips.slice(0, 6).map((c) => <Chip key={c.key} tone="accent" onRemove={() => dropChip(c.key)}>{c.label}</Chip>)}</div>}
             />
           ) : (
             <div className={clsx('fade-up', view === 'compact' ? 'space-y-2' : 'space-y-3')}>
