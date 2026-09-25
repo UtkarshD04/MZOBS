@@ -9,6 +9,9 @@ import { refreshPlan } from '../services/planService'
 import { getCredits, unlockCandidate, scheduleInterview, setCandidateStage } from '../services/liveApi'
 import { listJobs, getTalentMany } from '../services/talentService'
 import { agoDate } from '../lib/format'
+import { PARTS, PART_LABEL, isRevealed, creditSpent } from '../lib/reveal'
+
+const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1)
 
 const field = 'h-9 w-full rounded-lg border border-line bg-white px-3 text-[13px] outline-none focus:border-accent'
 
@@ -274,7 +277,7 @@ export function NotesList({ notes }) {
 
 // ---- unlock (live) ----------------------------------------------------------
 
-export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewResume }) {
+export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompose, onUnlocked, onViewResume }) {
   const { toast } = useWorkspace()
   const [wallet, setWallet] = useState(null)
   const [result, setResult] = useState(null)
@@ -282,6 +285,11 @@ export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewR
   const [err, setErr] = useState('')
   const [jobs, setJobs] = useState(null)
   const [jobId, setJobId] = useState('')
+  // One CV credit buys a candidate once; email, phone and CV are then opened
+  // one at a time. `paid` = that credit is already spent (opening another part is free).
+  const label = PART_LABEL[part] ?? 'details'
+  const paid = creditSpent(candidate)
+  const first = candidate?.name?.split(' ')[0]
   // A resume-database profile can join one of the company's jobs when it is first
   // unlocked — optional: with no job (or "No specific job") it is simply unlocked.
   const needsJob = candidate?._live?.kind === 'resdex' && !candidate._live.candidateId
@@ -292,8 +300,8 @@ export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewR
     setJobId('')
     if (!candidate) return
     getCredits().then((r) => setWallet(r.wallet)).catch(() => setWallet(null))
-    // Already unlocked earlier → the backend returns the details again without charging.
-    if (candidate._live?.unlocked) unlockCandidate(candidate).then(setResult).catch(() => {})
+    // This part is already open → the backend returns it again without charging.
+    if (isRevealed(candidate, part)) unlockCandidate(candidate, { field: part }).then(setResult).catch(() => {})
     else if (candidate._live?.kind === 'resdex' && !candidate._live.candidateId) {
       listJobs()
         .then((list) => {
@@ -302,47 +310,54 @@ export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewR
         })
         .catch(() => setJobs([]))
     }
-  }, [candidate])
+  }, [candidate, part])
 
   const preview = candidate?._live?.contactPreview
+  const previewLine = part === 'email' ? `Email ${preview?.email ?? '—'}` : part === 'phone' ? `Phone ${preview?.phone ?? '—'}` : 'The CV stays hidden until you view it'
   const unlock = async () => {
     setBusy(true)
     setErr('')
     try {
-      const r = await unlockCandidate(candidate, { jobId: needsJob ? jobId : undefined })
+      const r = await unlockCandidate(candidate, { field: part, jobId: needsJob ? jobId : undefined })
       setResult(r)
       setWallet(r.wallet)
       refreshPlan()
       onUnlocked?.(r)
-      toast(r.alreadyUnlocked ? 'Already unlocked — no credit used' : 'CV and contact details unlocked (1 CV credit)')
+      toast(r.alreadyUnlocked ? `${cap(label)} opened — no credit used` : `${cap(label)} opened (1 CV credit)`)
     } catch (e) {
-      setErr(e.response?.status === 402 ? 'No CV credits left. Buy more in the employer portal.' : e.response?.data?.message ?? 'Could not unlock this candidate.')
+      setErr(e.response?.status === 402 ? 'No CV credits left. Buy more in the employer portal.' : e.response?.data?.message ?? 'Could not open this. Try again.')
     } finally {
       setBusy(false)
     }
   }
   const c = result?.candidate
   const credits = wallet?.remainingCredits
+  const stillHidden = c ? PARTS.filter((p) => c.revealed && !c.revealed.includes(p)).map((p) => PART_LABEL[p]) : []
   return (
-    <Modal open={!!candidate} onClose={onClose} title={c ? 'Contact details' : 'View contact details & CV'} subtitle={candidate?.name} width={460}
-      footer={c ? <><Button onClick={onClose}>Done</Button>{onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, { email: c.email, phone: c.phone })}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || credits === 0 || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Opening…' : 'View · uses 1 credit'}</Button></>}>
+    <Modal open={!!candidate} onClose={onClose} title={c ? cap(label) : `View ${label}`} subtitle={candidate?.name} width={460}
+      footer={c ? <><Button onClick={onClose}>Done</Button>{part === 'email' && c.email && onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, { email: c.email, phone: c.phone })}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || (!paid && credits === 0) || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Opening…' : paid ? `View ${label} · free` : `View ${label} · uses 1 credit`}</Button></>}>
       {c ? (
-        <dl className="space-y-3 text-[14px]">
-          <div><dt className="text-[12px] text-muted">Email</dt><dd className="font-medium">{c.email || '—'}</dd></div>
-          <div><dt className="text-[12px] text-muted">Phone</dt><dd className="font-medium">{c.phone || '—'}</dd></div>
-          {c.resumeUrl ? (
-            <Button icon={FileText} onClick={() => onViewResume?.(candidate, { url: c.resumeUrl, fileName: c.resumeFileName })}>View CV</Button>
+        <div className="space-y-3 text-[14px]">
+          {part === 'email' && <div><p className="text-[12px] text-muted">Email</p><p className="font-medium">{c.email || '—'}</p></div>}
+          {part === 'phone' && <div><p className="text-[12px] text-muted">Phone</p><p className="font-medium">{c.phone || '—'}</p></div>}
+          {part === 'resume' && (c.resumeUrl ? (
+            <Button icon={FileText} onClick={() => onViewResume?.(candidate, { url: c.resumeUrl, fileName: c.resumeFileName })}>Open CV</Button>
           ) : (
             <p className="text-[12.5px] text-muted">No verified CV on this profile yet.</p>
-          )}
-        </dl>
+          ))}
+          <p className="text-[12.5px] text-muted">{stillHidden.length ? `${cap(stillHidden.join(' and '))} stay hidden — view ${stillHidden.length === 1 ? 'it' : 'them'} any time, no more credits.` : `Everything for ${first} is open.`}</p>
+        </div>
       ) : (
         <div className="space-y-3 text-[13.5px]">
-          <p>Email, phone and CV stay hidden. Viewing any of them uses <b>1 CV credit</b> — only once for this candidate. After that all three stay open and you are never charged again for {candidate?.name?.split(' ')[0]}.</p>
-          <p className="rounded-lg bg-line-2 px-3 py-2 text-ink-2">Email {preview?.email ?? '—'} · Phone {preview?.phone ?? '—'}</p>
+          {paid ? (
+            <p>You have already used the credit for {first}. Viewing the {label} is <b>free</b>.</p>
+          ) : (
+            <p>Viewing the {label} uses <b>1 CV credit</b> — once for this candidate. Email, phone number and CV then each open with their own click, and you are never charged again for {first}.</p>
+          )}
+          <p className="rounded-lg bg-line-2 px-3 py-2 text-ink-2">{previewLine}</p>
           {needsJob && jobs === null && <p className="text-muted">Loading your jobs…</p>}
           {needsJob && jobs?.length === 0 && (
-            <p className="text-[12.5px] text-muted">You have no jobs yet, so this CV is unlocked on its own. <Link to="/jobs/new" onClick={onClose} className="font-medium text-accent hover:underline">Post a job</Link> to build a pipeline.</p>
+            <p className="text-[12.5px] text-muted">You have no jobs yet, so this is opened on its own. <Link to="/jobs/new" onClick={onClose} className="font-medium text-accent hover:underline">Post a job</Link> to build a pipeline.</p>
           )}
           {needsJob && jobs?.length > 0 && (
             <label className="block text-[12px] text-muted">
@@ -351,10 +366,10 @@ export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewR
                 {jobs.map((j) => <option key={j.id} value={j.id}>{j.title}</option>)}
                 <option value="">No specific job</option>
               </select>
-              <span className="mt-1 block">{jobId ? `${candidate.name.split(' ')[0]} joins this job's pipeline, so you can shortlist and schedule interviews.` : 'Unlocked on its own, not added to any job pipeline.'}</span>
+              <span className="mt-1 block">{jobId ? `${first} joins this job's pipeline, so you can shortlist and schedule interviews.` : 'Not added to any job pipeline.'}</span>
             </label>
           )}
-          {credits != null && <p className="text-muted">Credits available: <b className="text-ink">{credits}</b>{credits === 0 && <> · <Link to="/credits" onClick={onClose} className="font-medium text-accent hover:underline">Buy credits</Link></>}</p>}
+          {credits != null && <p className="text-muted">Credits available: <b className="text-ink">{credits}</b>{credits === 0 && !paid && <> · <Link to="/credits" onClick={onClose} className="font-medium text-accent hover:underline">Buy credits</Link></>}</p>}
         </div>
       )}
       {err && <p role="alert" className="mt-3 rounded-lg bg-[#fdecec] px-3 py-2 text-[13px] text-bad">{err}</p>}

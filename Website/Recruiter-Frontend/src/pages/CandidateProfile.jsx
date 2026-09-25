@@ -14,22 +14,29 @@ import { loadLastResults } from '../lib/lastResults'
 import { useWorkspace } from '../store/workspace'
 import { lpa, years, notice, ago } from '../lib/format'
 import { IS_DEMO } from '../lib/config'
+import { isRevealed, creditSpent } from '../lib/reveal'
 
-// Email and phone stay masked until the company views them: the button opens
-// the confirm step, and one credit then opens email, phone and CV together —
-// never charged again for the same candidate.
+// Email and phone are opened one at a time: each has its own View button. The
+// first one opens costs 1 credit for the candidate; the other is then free.
 function ContactFact({ candidate: c, onView }) {
-  if (c.contact) return <>{c.contact.email || '—'}<br />{c.contact.phone || '—'}</>
   const preview = c._live?.contactPreview
+  const paid = creditSpent(c)
+  const line = (part, value, masked) =>
+    isRevealed(c, part) ? (
+      <span className="block">{value || '—'}</span>
+    ) : (
+      <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span className="text-ink-2">{masked ?? '—'}</span>
+        <button onClick={() => onView(part)} className="flex items-center gap-1 rounded-md border border-line px-2 py-0.5 text-[12px] font-semibold text-accent transition-colors hover:bg-accent-soft">
+          <Eye size={12} /> {paid ? 'View · free' : 'View · 1 credit'}
+        </button>
+      </span>
+    )
   return (
-    <>
-      <span className="text-ink-2">{preview?.email ?? '—'}</span>
-      <br />
-      <span className="text-ink-2">{preview?.phone ?? '—'}</span>
-      <button onClick={onView} className="mt-1.5 flex items-center gap-1 rounded-md border border-line px-2 py-1 text-[12px] font-semibold text-accent transition-colors hover:bg-accent-soft">
-        <Eye size={12} /> View · 1 credit
-      </button>
-    </>
+    <span className="block space-y-1.5">
+      {line('email', c.contact?.email, preview?.email)}
+      {line('phone', c.contact?.phone, preview?.phone)}
+    </span>
   )
 }
 
@@ -65,8 +72,8 @@ function CvSection({ candidate: c, onUnlock }) {
   const [cv, setCv] = useState({ status: 'loading' })
   useEffect(() => {
     if (IS_DEMO) return setCv({ status: 'demo' })
-    // A database profile nobody at this company unlocked can't have a CV link — skip the request.
-    if (c._live?.kind === 'resdex' && !c._live.unlocked) return setCv({ status: 'locked' })
+    // A database profile whose CV this company hasn't opened can't have a CV link — skip the request.
+    if (c._live?.kind === 'resdex' && !isRevealed(c, 'resume')) return setCv({ status: 'locked' })
     let live = true
     setCv({ status: 'loading' })
     getResumeLink(c)
@@ -89,8 +96,8 @@ function CvSection({ candidate: c, onUnlock }) {
           <div className="absolute inset-0 grid place-items-center bg-white/50 p-4 text-center">
             <div className="max-w-sm rounded-2xl border border-line bg-white px-6 py-5 shadow-card">
               <p className="flex items-center justify-center gap-1.5 text-[14px] font-semibold"><Lock size={14} /> CV is locked</p>
-              <p className="mt-1 text-[13px] text-muted">Viewing {c.name.split(' ')[0]}'s CV, email or phone uses 1 credit — once. After that all three stay open.</p>
-              <Button variant="primary" size="sm" icon={Eye} className="mt-3" onClick={onUnlock}>View CV · 1 credit</Button>
+              <p className="mt-1 text-[13px] text-muted">{creditSpent(c) ? `You have already used the credit for ${c.name.split(' ')[0]} — viewing the CV is free.` : `Viewing ${c.name.split(' ')[0]}'s CV uses 1 credit — once. Email and phone open separately, and are then free.`}</p>
+              <Button variant="primary" size="sm" icon={Eye} className="mt-3" onClick={onUnlock}>{creditSpent(c) ? 'View CV · free' : 'View CV · 1 credit'}</Button>
             </div>
           </div>
         </div>
@@ -227,7 +234,7 @@ export default function CandidateProfile() {
             <Button key={a.label} variant={a.primary ? 'primary' : 'outline'} icon={a.icon} onClick={a.run} className={a.on ? 'border-[#bfe8cf] bg-ok-soft text-[#1a8f5a]' : ''}>{a.label}</Button>
           ))}
           <Button icon={GitCompareArrows} onClick={() => toggleCompare(c.id)}>{compare.includes(c.id) ? 'In compare' : 'Compare'}</Button>
-          <Button icon={IS_DEMO || c._live?.unlocked ? FileText : Lock} onClick={() => onAction('resume', c)}>View CV</Button>
+          <Button icon={IS_DEMO || isRevealed(c, 'resume') ? FileText : Lock} onClick={() => onAction('resume', c)}>View CV</Button>
           <Button variant="ghost" icon={Share2} onClick={() => onAction('share', c)}>Share</Button>
         </div>
         {!IS_DEMO && c._live?.candidateId && (
@@ -247,7 +254,7 @@ export default function CandidateProfile() {
             <p className="text-[14px] leading-6 text-ink-2">{c.summary || 'No summary provided.'}</p>
             <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
               <Fact icon={Briefcase} label="Experience">{years(c.experienceYears)}</Fact>
-              {!IS_DEMO && <Fact icon={Mail} label="Contact"><ContactFact candidate={c} onView={() => onAction('unlock', c)} /></Fact>}
+              {!IS_DEMO && <Fact icon={Mail} label="Contact"><ContactFact candidate={c} onView={(part) => onAction('unlock', c, part)} /></Fact>}
               {c.currentSalaryLPA != null && <Fact icon={IndianRupee} label="Current CTC">{lpa(c.currentSalaryLPA)}</Fact>}
               <Fact icon={IndianRupee} label="Expected CTC">{lpa(c.expectedSalaryLPA)}</Fact>
               {c.noticePeriodDays != null && <Fact icon={Clock} label="Notice period">{notice(c.noticePeriodDays)}</Fact>}
@@ -259,7 +266,7 @@ export default function CandidateProfile() {
             )}
           </SectionCard>
 
-          <CvSection candidate={c} onUnlock={() => onAction('unlock', c)} />
+          <CvSection candidate={c} onUnlock={() => onAction('resume', c)} />
 
           <SectionCard title="Experience">
             <Timeline history={c.workHistory} />

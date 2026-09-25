@@ -32,13 +32,17 @@ export const getSession = () => {
 }
 
 /**
- * Spends 1 CV credit (idempotent) → { candidate:{email,phone,resumeUrl,...}, wallet, alreadyUnlocked }.
- * A resume-database profile not yet in this company's pipeline is added to it
- * on unlock, so the backend needs the job they're being sourced for.
+ * Opens one part of a candidate (`field`) → { candidate:{email,phone,resumeUrl,revealed,...}, wallet, alreadyUnlocked }.
+ * The 1 CV credit is spent on the candidate's first reveal only. A
+ * resume-database profile not yet in this company's pipeline is added to it,
+ * optionally under one of its jobs (`jobId`).
  */
-export const unlockCandidate = (c, { jobId } = {}) => {
+export const unlockCandidate = (c, { jobId, field } = {}) => {
   const { kind, candidateId, employeeId } = c._live ?? {}
-  const req = kind === 'resdex' ? apiClient.post(`/resume-search/${employeeId}/unlock`, jobId ? { jobId } : {}) : apiClient.post(`/candidates/${candidateId ?? c.id}/unlock`)
+  // `field` (email | phone | resume): the part being opened. The credit is spent
+  // on a candidate's first reveal only; the other parts are then free.
+  const body = { ...(field ? { field } : {}), ...(jobId ? { jobId } : {}) }
+  const req = kind === 'resdex' ? apiClient.post(`/resume-search/${employeeId}/unlock`, body) : apiClient.post(`/candidates/${candidateId ?? c.id}/unlock`, body)
   return req.then((r) => {
     invalidatePool()
     return r.data
@@ -67,7 +71,9 @@ export async function getResumeLink(c) {
       }
       const r = await apiClient.get(`/candidates/${candidateId}`)
       if (r.data.resumeUrl) return { url: r.data.resumeUrl }
-      throw resumeError(r.data.unlocked ? 'NO_RESUME' : 'LOCKED')
+      // Paid for but the CV part not opened yet is still locked (see lib/reveal.js).
+      const cvOpen = r.data.unlocked && (r.data.revealed ?? ['resume']).includes('resume')
+      throw resumeError(cvOpen ? 'NO_RESUME' : 'LOCKED')
     }
     return (await apiClient.get(`/resume-search/${employeeId}/resume-url`)).data
   } catch (e) {

@@ -6,6 +6,7 @@ import { getTalentMany } from '../services/talentService'
 import { MatchSheet, TrustSheet } from './Sheets'
 import { IS_DEMO } from '../lib/config'
 import { getResumeLink } from '../services/liveApi'
+import { isRevealed } from '../lib/reveal'
 import { ResumeViewer } from './ResumeViewer'
 import { UnlockModal, ShortlistModal, AddToJobModal, OutreachModal, InterviewModal, NoteModal } from './ActionModals'
 import CompareModal from './CompareModal'
@@ -32,7 +33,7 @@ export function useActions(criteria, { onUnlocked } = {}) {
   const [resume, setResume] = useState(null)
 
   const onAction = useCallback(
-    (type, payload) => {
+    (type, payload, field) => {
       const c = payload?.candidate ?? payload
       switch (type) {
         case 'open': return nav(`/candidate/${c.id}`)
@@ -40,22 +41,23 @@ export function useActions(criteria, { onUnlocked } = {}) {
         case 'trust': return setTrust(payload)
         case 'shortlist': return setShortlistIds([c.id])
         case 'job': return setJobIds([c.id])
-        case 'contact': case 'email': return !IS_DEMO && !c._live?.unlocked ? setUnlock(c) : setOutreach({ list: [c], channel: 'email' })
+        // Writing to someone needs their email open — otherwise offer the reveal first.
+        case 'contact': case 'email': return !IS_DEMO && !isRevealed(c, 'email') ? setUnlock({ c, field: 'email' }) : setOutreach({ list: [c], channel: 'email' })
         case 'message': return setOutreach({ list: [c], channel: 'message' })
         case 'sms': return setOutreach({ list: [c], channel: 'sms' })
-        case 'call': case 'unlock': return IS_DEMO ? toast('Demo data has no phone numbers.', { tone: 'warn' }) : setUnlock(c)
+        case 'call': case 'unlock': return IS_DEMO ? toast('Demo data has no phone numbers.', { tone: 'warn' }) : setUnlock({ c, field: type === 'call' ? 'phone' : field ?? 'phone' })
         case 'resume': {
           if (IS_DEMO) return toast('Demo data has no resumes.', { tone: 'warn' })
           // Opens the CV when the plan or an earlier unlock allows it; otherwise offers the CV-credit unlock.
           return getResumeLink(c)
             .then((f) => setResume({ ...f, name: c.name }))
-            .catch((e) => (e.code === 'LOCKED' ? setUnlock(c) : toast(e.code === 'NO_RESUME' ? `${c.name} has no verified CV yet.` : 'Could not open the CV — try again.', { tone: 'warn' })))
+            .catch((e) => (e.code === 'LOCKED' ? setUnlock({ c, field: 'resume' }) : toast(e.code === 'NO_RESUME' ? `${c.name} has no verified CV yet.` : 'Could not open the CV — try again.', { tone: 'warn' })))
         }
         case 'interview': {
           // Interviews hang off a pipeline row, which a resume-database profile only gets when it's unlocked for a job.
           if (!IS_DEMO && !c._live?.candidateId) {
-            toast('Unlock this candidate first — that adds them to one of your jobs.', { tone: 'warn' })
-            return setUnlock(c)
+            toast('View this candidate first — that adds them to your pipeline.', { tone: 'warn' })
+            return setUnlock({ c, field: 'email' })
           }
           return setInterview(c)
         }
@@ -105,7 +107,8 @@ export function useActions(criteria, { onUnlocked } = {}) {
       <AddToJobModal ids={jobIds} onClose={() => setJobIds([])} />
       <OutreachModal candidates={outreach.list} channel={outreach.channel} onClose={() => setOutreach({ list: [], channel: 'email' })} />
       <UnlockModal
-        candidate={unlock}
+        candidate={unlock?.c ?? null}
+        field={unlock?.field}
         onClose={() => setUnlock(null)}
         onUnlocked={onUnlocked}
         onViewResume={(c, f) => { setUnlock(null); setResume({ ...f, name: c.name }) }}

@@ -6,6 +6,7 @@ import { Avatar, Button, Chip, Highlight, MatchBadge, TrustScore, VerifiedBadge,
 import { lpa, years, notice, ago, agoDate } from '../lib/format'
 import { STAGE_LABELS } from '../lib/talent/criteria'
 import { IS_DEMO } from '../lib/config'
+import { isRevealed, creditSpent } from '../lib/reveal'
 import { useWorkspace } from '../store/workspace'
 
 const MORE_ACTIONS = [
@@ -67,7 +68,7 @@ function CandidateCard({ row, terms, compact, onAction }) {
               <div className="flex flex-wrap items-center gap-2">
                 <Link to={`/candidate/${c.id}`} className="truncate text-[16px] font-semibold text-ink hover:text-accent"><Highlight text={c.name} terms={terms} /></Link>
                 <VerifiedBadge candidate={c} />
-                {c._live?.unlocked && <span className="inline-flex items-center gap-1 rounded-md bg-ok-soft px-1.5 py-0.5 text-[11px] font-semibold text-[#1a8f5a]" title="Your company has unlocked this CV"><Unlock size={11} /> CV unlocked</span>}
+                {creditSpent(c) && <span className="inline-flex items-center gap-1 rounded-md bg-ok-soft px-1.5 py-0.5 text-[11px] font-semibold text-[#1a8f5a]" title={isRevealed(c, 'resume') ? 'Your company has opened this CV' : 'Credit used for this candidate — email, phone and CV each open free'}><Unlock size={11} /> {isRevealed(c, 'resume') ? 'CV unlocked' : 'Credit used'}</span>}
                 {viewed[c.id] && <span className="inline-flex items-center gap-1 rounded-md bg-line-2 px-1.5 py-0.5 text-[11px] font-medium text-muted" title={`You opened this profile ${agoDate(viewed[c.id])}`}><Eye size={11} /> Viewed</span>}
                 <button onClick={() => toggleSaved(c.id)} aria-label={bookmarked ? 'Unsave candidate' : 'Save candidate'} className={clsx('opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100', bookmarked && 'opacity-100')}>
                   <Pin size={14} className={bookmarked ? 'fill-accent text-accent' : 'text-muted'} />
@@ -87,7 +88,7 @@ function CandidateCard({ row, terms, compact, onAction }) {
               <Meta icon={Phone} title="Unlocked contact">{c.contact.phone}</Meta>
             ) : (
               !IS_DEMO && c._live?.contactPreview?.phone && (
-                <button onClick={() => onAction('unlock', c)} title="View phone, email and CV — uses 1 credit, once per candidate" className="inline-flex items-center gap-1.5 text-[13px] text-ink-2 hover:text-accent">
+                <button onClick={() => onAction('unlock', c, 'phone')} title={creditSpent(c) ? 'View the phone number — free, the credit is already used' : 'View the phone number — uses 1 credit, once per candidate'} className="inline-flex items-center gap-1.5 text-[13px] text-ink-2 hover:text-accent">
                   <Phone size={13} className="text-[#7d93a6]" /> {c._live.contactPreview.phone}
                   <span className="inline-flex items-center gap-0.5 font-semibold text-accent"><Eye size={12} /> View</span>
                 </button>
@@ -119,9 +120,9 @@ function CandidateCard({ row, terms, compact, onAction }) {
               {/* Always visible (not just md+): it's the way to the CV, and it opens the credit step when the CV is still locked. */}
               <Button
                 size="sm"
-                icon={IS_DEMO || c._live?.unlocked ? FileText : Lock}
+                icon={IS_DEMO || isRevealed(c, 'resume') ? FileText : Lock}
                 onClick={() => onAction('resume', c)}
-                title={IS_DEMO || c._live?.unlocked ? 'Open the CV' : 'View the CV — uses 1 credit, once per candidate'}
+                title={IS_DEMO || isRevealed(c, 'resume') ? 'Open the CV' : creditSpent(c) ? 'View the CV — free, the credit is already used' : 'View the CV — uses 1 credit, once per candidate'}
               >
                 View CV
               </Button>
