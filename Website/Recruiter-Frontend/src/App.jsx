@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import TopNav from './components/TopNav'
+import ErrorBoundary from './components/ErrorBoundary'
 import AskAI from './components/AskAI'
 import { ToastStack } from './components/ui'
 import { WorkspaceProvider } from './store/workspace'
@@ -12,7 +13,8 @@ import UnlockedCvs from './pages/UnlockedCvs'
 import JobTalent from './pages/JobTalent'
 import Jobs from './pages/Jobs'
 import JobForm from './pages/JobForm'
-import { Messages, Interviews, AITalent, Reports, Settings } from './pages/Workspaces'
+import { Messages, Interviews, AITalent, Reports } from './pages/Workspaces'
+import { Notifications, Help, Settings } from './pages/Account'
 import PlanCredits from './pages/PlanCredits'
 import { refreshPlan } from './services/planService'
 import { IS_DEMO, TOKEN_KEY, EMPLOYER_SIGNIN_URL } from './lib/config'
@@ -57,6 +59,7 @@ export default function App() {
     <WorkspaceProvider>
       <TopNav onAskAI={() => setAi(true)} />
       <main key={location.pathname} className="fade-up">
+        <ErrorBoundary key={location.pathname}>
         <Routes>
           <Route path="/" element={<SearchCandidates />} />
           <Route path="/candidate/:id" element={<CandidateProfile />} />
@@ -73,8 +76,11 @@ export default function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/credits" element={<PlanCredits />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/help" element={<Help />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </ErrorBoundary>
       </main>
       <AskAI open={ai} onClose={() => setAi(false)} />
       <ToastStack />

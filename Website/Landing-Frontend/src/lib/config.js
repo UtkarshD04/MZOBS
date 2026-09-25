@@ -17,6 +17,9 @@ export const EMPLOYEE_API_URL = import.meta.env.VITE_EMPLOYEE_API_URL ?? 'http:/
 // Same Backend — public contact form submissions.
 export const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL ?? 'http://localhost:4000/api/contact'
 
+// Same Backend — Campus Mantri applications (shown in the Operations portal).
+export const CAMPUS_MANTRI_API_URL = import.meta.env.VITE_CAMPUS_MANTRI_API_URL ?? 'http://localhost:4000/api/campus-mantri'
+
 // Same Backend — public, unauthenticated feed of jobs admin/ops have
 // approved and pushed live, for the home page's "Latest jobs" section.
 export const PUBLIC_JOBS_API_URL = import.meta.env.VITE_PUBLIC_JOBS_API_URL ?? 'http://localhost:4000/api/jobs'

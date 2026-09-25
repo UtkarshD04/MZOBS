@@ -18,4 +18,5 @@ export const CLIENT_ONLY_ROUTES = {
   employerSignin: '/employers/signin',
   employerForgotPassword: '/employers/forgot-password',
   employerResetPassword: '/employers/reset-password',
+  campusMantri: '/campus-mantri',
 }

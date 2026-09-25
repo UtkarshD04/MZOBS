@@ -16,6 +16,7 @@ import '@fontsource/playfair-display/700.css'
 import '@fontsource/playfair-display/700-italic.css'
 import './index.css'
 import App from './App.jsx'
+import { installClickShine } from './lib/clickShine'
 
 // server.js embeds the job it already fetched for /jobs/:id here (see
 // buildJobSeo's caller) so JobDetail.jsx can reuse it on hydration instead
@@ -27,6 +28,8 @@ const initialJob = typeof window !== 'undefined' ? (window.__INITIAL_JOB__ ?? nu
 // paint instead of their loading/zero state; every other route leaves this
 // undefined.
 const initialHomeData = typeof window !== 'undefined' ? (window.__INITIAL_HOME_DATA__ ?? null) : null
+
+installClickShine()
 
 const app = (
   <StrictMode>

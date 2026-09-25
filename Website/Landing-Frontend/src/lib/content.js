@@ -35,7 +35,11 @@ import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 export const NAV_LINKS = [
   { label: 'Find Jobs', to: '/#latest-jobs' },
   { label: 'Companies', to: '/#companies' },
+<<<<<<< Updated upstream
   { label: 'Campuses', to: '/#campuses' },
+=======
+  { label: 'Campus Mantri', to: '/campus-mantri' },
+>>>>>>> Stashed changes
 ]
 
 export const HERO_DATA = {

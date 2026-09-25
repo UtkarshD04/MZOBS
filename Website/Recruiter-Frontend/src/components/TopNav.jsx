@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { NavLink, Link, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
+<<<<<<< Updated upstream
 import { Bell, HelpCircle, Sparkles, ChevronDown, Search, Menu, X, CreditCard, LogOut } from 'lucide-react'
+=======
+import { Bell, HelpCircle, Sparkles, ChevronDown, Search, Menu, X, CreditCard, Settings, LogOut } from 'lucide-react'
+>>>>>>> Stashed changes
 import { IS_DEMO } from '../lib/config'
 import { getSession, logout } from '../services/liveApi'
 import { getPlanSnapshot, subscribePlan } from '../services/planService'
+import { listNotifications } from '../services/accountService'
 import { ROUTES } from '../lib/routes'
 
 // The source PNG has wide transparent margins, so it is cropped to the mark
@@ -40,6 +45,77 @@ function NavItem({ to, children, onClick }) {
   )
 }
 
+// Dropdown behaviour shared by the More and profile menus: closes on outside click,
+// Esc, and — the part that used to be missing — whenever the route changes, so
+// choosing an item never leaves the menu hanging open.
+function useMenu() {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const { pathname } = useLocation()
+  useEffect(() => setOpen(false), [pathname])
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e) => ref.current && !ref.current.contains(e.target) && setOpen(false)
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+  return { open, setOpen, ref }
+}
+
+/** Bell: goes to /notifications and shows the unread count from the API. */
+function BellLink() {
+  const [unread, setUnread] = useState(0)
+  useEffect(() => {
+    if (IS_DEMO) return
+    const load = () => listNotifications().then((r) => setUnread(r.filter((n) => n.unread).length)).catch(() => {})
+    load()
+    const t = setInterval(load, 60000)
+    window.addEventListener('mzt-notifications-changed', load)
+    return () => {
+      clearInterval(t)
+      window.removeEventListener('mzt-notifications-changed', load)
+    }
+  }, [])
+  return (
+    <NavLink to="/notifications" aria-label={unread ? `Notifications, ${unread} unread` : 'Notifications'} title="Notifications" className={({ isActive }) => `relative grid h-9 w-9 place-items-center rounded-lg transition-colors hover:bg-line-2 ${isActive ? 'bg-accent-soft text-accent' : 'text-ink-2'}`}>
+      <Bell size={17} />
+      {unread > 0 && <span className="pop absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 text-[9.5px] font-bold text-white">{unread > 9 ? '9+' : unread}</span>}
+    </NavLink>
+  )
+}
+
+function ProfileMenu() {
+  const { open, setOpen, ref } = useMenu()
+  const s = IS_DEMO ? null : getSession()
+  const item = 'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] hover:bg-line-2'
+  return (
+    <div ref={ref} className="relative">
+      <button onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open} aria-label="Account menu" className="grid h-9 w-9 place-items-center rounded-full bg-ink text-[12px] font-semibold text-white transition-colors hover:bg-accent">
+        {IS_DEMO ? 'R' : s?.user?.initials ?? 'R'}
+      </button>
+      {open && (
+        <div role="menu" className="fade-up absolute right-0 top-11 z-50 w-56 rounded-2xl border border-line bg-white p-1 shadow-pop">
+          <div className="border-b border-line-2 px-3 pb-2 pt-1.5">
+            <p className="truncate text-[13px] font-semibold">{IS_DEMO ? 'Demo recruiter' : s?.user?.name ?? 'Recruiter'}</p>
+            <p className="truncate text-[12px] text-muted">{IS_DEMO ? 'Sample workspace' : s?.user?.email ?? s?.company?.name}</p>
+          </div>
+          <Link role="menuitem" to="/settings" className={item}><Settings size={14} className="text-muted" /> Recruiter settings</Link>
+          <Link role="menuitem" to="/credits" className={item}><CreditCard size={14} className="text-muted" /> Plan & credits</Link>
+          <Link role="menuitem" to="/help" className={item}><HelpCircle size={14} className="text-muted" /> Help & support</Link>
+          {!IS_DEMO && (
+            <button role="menuitem" onClick={() => { if (window.confirm('Sign out of Mzobs Talent?')) { logout(); window.dispatchEvent(new Event('mzt-signed-out')) } }} className={`${item} text-bad`}><LogOut size={14} /> Sign out</button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function PlanPill() {
   const [plan, setPlan] = useState(getPlanSnapshot())
   useEffect(() => subscribePlan(setPlan), [])
@@ -63,8 +139,10 @@ function signOut() {
 }
 
 export default function TopNav({ onAskAI }) {
-  const [more, setMore] = useState(false)
+  const more = useMenu()
   const [mobile, setMobile] = useState(false)
+  const { pathname } = useLocation()
+  useEffect(() => setMobile(false), [pathname])
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-[#f7f9fb]/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 lg:px-6">
@@ -74,14 +152,14 @@ export default function TopNav({ onAskAI }) {
         <Logo />
         <nav className="ml-4 hidden items-center gap-0.5 lg:flex" aria-label="Primary">
           {PRIMARY.map((r) => <NavItem key={r.path} to={r.path}>{r.label}</NavItem>)}
-          <div className="relative">
-            <button onClick={() => setMore((v) => !v)} onBlur={() => setTimeout(() => setMore(false), 120)} className="flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-medium text-muted hover:text-ink">
-              More <ChevronDown size={14} />
+          <div ref={more.ref} className="relative">
+            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors ${MORE.some((r) => pathname.startsWith(r.path)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
+              More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
             </button>
-            {more && (
-              <div className="fade-up absolute left-0 top-9 w-48 rounded-2xl border border-line bg-white p-1 shadow-lift">
+            {more.open && (
+              <div role="menu" className="fade-up absolute left-0 top-10 z-50 w-52 rounded-2xl border border-line bg-white p-1 shadow-lift">
                 {MORE.map((r) => (
-                  <NavLink key={r.path} to={r.path} className="block rounded-lg px-3 py-2 text-[13px] hover:bg-line-2">{r.label}</NavLink>
+                  <NavLink key={r.path} to={r.path} role="menuitem" className={({ isActive }) => `block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isActive ? 'text-accent' : ''}`}>{r.label}</NavLink>
                 ))}
               </div>
             )}
@@ -93,6 +171,7 @@ export default function TopNav({ onAskAI }) {
             <Sparkles size={14} /> Ask Mzobs AI <kbd className="rounded bg-white/70 px-1 text-[10px] text-muted">Ctrl K</kbd>
           </button>
           <Link to="/" className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2 md:hidden" aria-label="Search candidates"><Search size={17} /></Link>
+<<<<<<< Updated upstream
           <button className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2" aria-label="Notifications"><Bell size={17} /></button>
           <button className="hidden h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2 2xl:grid" aria-label="Help"><HelpCircle size={17} /></button>
           <PlanPill />
@@ -113,6 +192,12 @@ export default function TopNav({ onAskAI }) {
               <span className="hidden 2xl:inline">Log out</span>
             </button>
           )}
+=======
+          <BellLink />
+          <NavLink to="/help" aria-label="Help & support" title="Help & support" className={({ isActive }) => `hidden h-9 w-9 place-items-center rounded-lg transition-colors hover:bg-line-2 sm:grid ${isActive ? 'bg-accent-soft text-accent' : 'text-ink-2'}`}><HelpCircle size={17} /></NavLink>
+          <PlanPill />
+          <ProfileMenu />
+>>>>>>> Stashed changes
         </div>
       </div>
       {mobile && (

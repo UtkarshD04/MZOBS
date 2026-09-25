@@ -5,6 +5,7 @@ import {
   FileCheck,
   Video,
   Star,
+  GraduationCap,
   Settings,
   LifeBuoy,
   LogOut,
@@ -61,6 +62,7 @@ export default function MzobsSidebar() {
     { to: '/app/resumes', label: 'Resume Verification', icon: FileCheck, badge: kpis.resumeQueue },
     { to: '/app/mock-interviews', label: 'Mock Interviews', icon: Video, badge: kpis.mockQueue },
     { to: '/app/shortlisted', label: 'Shortlisted', icon: Star },
+    { to: '/app/campus-mantri', label: 'Campus Mantri', icon: GraduationCap },
   ]
   const business = [{ to: '/app/settings', label: 'Settings', icon: Settings }]
 
