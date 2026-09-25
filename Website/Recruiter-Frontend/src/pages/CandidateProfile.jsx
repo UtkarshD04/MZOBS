@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Building2, Phone, Mail, MessageSquare, CalendarPlus, Bookmark, FolderPlus, Pin, FileText, GitCompareArrows, Share2, ExternalLink, Sparkles, GraduationCap, Award, Languages, Briefcase, Clock, IndianRupee, Activity, StickyNote, Lightbulb, Lock, Database } from 'lucide-react'
 import { useActions } from '../components/useActions'
 import { NotesList } from '../components/ActionModals'
-import { ResumeFrame, OpenResumeLink } from '../components/ResumeViewer'
+import { ResumeFrame, ResumeLinks } from '../components/ResumeViewer'
 import { Avatar, Button, Chip, MatchBadge, SectionCard, Skeleton, StatusPill, TrustScore, VerifiedBadge, EmptyState } from '../components/ui'
 import { getTalent, findSimilar } from '../services/talentService'
 import { setCandidateStage, getResumeLink } from '../services/liveApi'
@@ -60,7 +60,7 @@ function CvSection({ candidate: c, onUnlock }) {
   }, [c])
 
   return (
-    <SectionCard title="CV" action={cv.status === 'ready' && <OpenResumeLink url={cv.url} />}>
+    <SectionCard title="CV" action={cv.status === 'ready' && <ResumeLinks url={cv.url} />}>
       {cv.status === 'loading' && <Skeleton className="h-[420px] w-full" />}
       {cv.status === 'ready' && <ResumeFrame url={cv.url} fileName={cv.fileName} title={`${c.name} — CV`} className="h-[760px]" />}
       {cv.status === 'locked' && (

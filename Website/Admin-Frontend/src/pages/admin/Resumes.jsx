@@ -73,7 +73,7 @@ export default function Resumes() {
                         </button>
                       )}
                       {c.resume.url && (
-                        <button onClick={() => downloadFile(`${FILE_BASE_URL}${c.resume.url}`, c.resume.file)} title="Download" className="text-ink-tertiary hover:text-navy flex-shrink-0">
+                        <button onClick={() => downloadFile(`${FILE_BASE_URL}${c.resume.url}`)} title="Download" className="text-ink-tertiary hover:text-navy flex-shrink-0">
                           <Download size={14} />
                         </button>
                       )}

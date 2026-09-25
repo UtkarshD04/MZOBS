@@ -65,7 +65,6 @@ function ContactField({ icon: Icon, label, value, href, app }) {
 // admin needs to reach a candidate without opening another screen.
 function EmployeeDetailModal({ id, app }) {
   const { data: e, isLoading, isError, refetch } = useEmployeeQuery(id)
-  const [downloading, setDownloading] = useState(false)
   const resumeUrl = e?.resume?.url ? `${FILE_BASE_URL}${e.resume.url}` : null
 
   return (
@@ -114,8 +113,8 @@ function EmployeeDetailModal({ id, app }) {
           <Button variant="secondary" size="sm" onClick={() => window.open(resumeUrl, '_blank', 'noopener')}>
             <ExternalLink size={14} /> Open in new tab
           </Button>
-          <Button variant="secondary" size="sm" disabled={downloading} onClick={async () => { setDownloading(true); await downloadFile(resumeUrl, e.resume.file); setDownloading(false) }}>
-            <Download size={14} /> {downloading ? 'Downloading…' : 'Download'}
+          <Button variant="secondary" size="sm" onClick={() => downloadFile(resumeUrl)}>
+            <Download size={14} /> Download
           </Button>
         </ModalFoot>
       )}
