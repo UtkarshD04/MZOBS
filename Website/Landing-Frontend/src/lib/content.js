@@ -36,7 +36,7 @@ export const NAV_LINKS = [
   { label: 'Find Jobs', to: '/#latest-jobs' },
   { label: 'Companies', to: '/#companies' },
   { label: 'Campuses', to: '/#campuses' },
-  { label: 'Mzobs Doot', to: '/doot' },
+  { label: 'Mzobs Ally', to: '/ally' },
 ]
 
 export const HERO_DATA = {

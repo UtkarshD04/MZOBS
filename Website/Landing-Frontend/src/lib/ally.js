@@ -1,7 +1,7 @@
-import { DOOT_API_URL } from './config'
+import { ALLY_API_URL } from './config'
 
-export async function submitDootApplication(application) {
-  const res = await fetch(DOOT_API_URL, {
+export async function submitAllyApplication(application) {
+  const res = await fetch(ALLY_API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(application),

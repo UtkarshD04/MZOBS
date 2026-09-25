@@ -12,7 +12,7 @@ export const EMPLOYER_API_URL = import.meta.env.VITE_EMPLOYER_API_URL ?? 'http:/
 
 // The Backend's origin, taken from the employer API URL that every deployment
 // already sets. Endpoints without their own VITE_ variable in the Dockerfile
-// (Mzobs Doot, account deletion) are built from it, so a production build
+// (Mzobs Ally, account deletion) are built from it, so a production build
 // never falls back to localhost. A blank/unset own variable counts as unset (`||`).
 const API_ORIGIN = (() => {
   try {
@@ -29,8 +29,8 @@ export const EMPLOYEE_API_URL = import.meta.env.VITE_EMPLOYEE_API_URL ?? 'http:/
 // Same Backend — public contact form submissions.
 export const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL ?? 'http://localhost:4000/api/contact'
 
-// Same Backend — Mzobs Doot applications (shown in the Operations portal).
-export const DOOT_API_URL = import.meta.env.VITE_CAMPUS_MANTRI_API_URL || `${API_ORIGIN}/api/campus-mantri`
+// Same Backend — Mzobs Ally applications (shown in the Operations portal).
+export const ALLY_API_URL = import.meta.env.VITE_CAMPUS_MANTRI_API_URL || `${API_ORIGIN}/api/campus-mantri`
 
 // Same Backend — public, unauthenticated feed of jobs admin/ops have
 // approved and pushed live, for the home page's "Latest jobs" section.
