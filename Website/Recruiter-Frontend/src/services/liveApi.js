@@ -48,6 +48,16 @@ export const unlockCandidate = (c, { jobId, field } = {}) => {
     return r.data
   })
 }
+/**
+ * Emails or texts a candidate from the portal (channel: 'email' | 'sms'). The
+ * backend needs the matching part viewed first (email / phone), sends email
+ * from Mzobs with replies to the recruiter, and SMS as a fixed DLT template.
+ */
+export const sendOutreach = (c, { channel, subject, body }) => {
+  const id = c._live?.candidateId ?? c.id
+  return apiClient.post(`/candidates/${id}/outreach`, { channel, ...(channel === 'email' ? { subject, body } : {}) }).then((r) => r.data)
+}
+
 export const setCandidateStage = (id, stage, rejectionReason) =>
   apiClient.patch(`/candidates/${id}/stage`, { stage, rejectionReason }).then((r) => {
     invalidatePool()

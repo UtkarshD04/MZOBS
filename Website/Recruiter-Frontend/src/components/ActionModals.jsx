@@ -6,12 +6,16 @@ import { useWorkspace } from '../store/workspace'
 import { IS_DEMO } from '../lib/config'
 import { Link } from 'react-router-dom'
 import { refreshPlan } from '../services/planService'
-import { getCredits, unlockCandidate, scheduleInterview, setCandidateStage } from '../services/liveApi'
+import { getCredits, unlockCandidate, scheduleInterview, setCandidateStage, sendOutreach, getSession } from '../services/liveApi'
 import { listJobs, getTalentMany } from '../services/talentService'
 import { agoDate } from '../lib/format'
 import { PARTS, PART_LABEL, isRevealed, creditSpent } from '../lib/reveal'
+import { dial } from '../lib/dial'
 
 const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1)
+
+// What the outreach step needs from an unlock result: the opened contact, the pipeline row's id, and which parts are open.
+const contactOf = (c, candidate) => ({ email: c.email, phone: c.phone, candidateId: c.candidateId ?? candidate._live?.candidateId, revealed: c.revealed })
 
 const field = 'h-9 w-full rounded-lg border border-line bg-white px-3 text-[13px] outline-none focus:border-accent'
 
@@ -101,25 +105,66 @@ const CHANNELS = [
   { id: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, disabled: true },
 ]
 
-export function OutreachModal({ candidates, channel: initial = 'email', onClose }) {
+// SMS goes out as one fixed message: India needs SMS wording pre-approved (DLT),
+// so it cannot be edited. Keep in sync with SMS_TEMPLATE_TEXT in the Backend's utils/outreach.js.
+const smsFor = (c, company) => `Hi ${c.name.split(' ')[0]}, ${company || 'A company'} found your profile on Mzobs and would like to connect. Check your Mzobs account or email. - Mzobs`
+
+export function OutreachModal({ candidates, channel: initial = 'email', onClose, onReveal }) {
   const { addMessage, toast } = useWorkspace()
   const [channel, setChannel] = useState(initial)
   const [tpl, setTpl] = useState('intro')
   const [subject, setSubject] = useState('An opportunity that fits your background')
   const [body, setBody] = useState('')
+  const [sending, setSending] = useState(false)
+  const [sendErr, setSendErr] = useState('')
   const open = candidates.length > 0
   const first = candidates[0]
   const draft = (key) => TEMPLATES[key].body(first ?? { name: 'there', experienceYears: '', designation: 'professional', skills: [] }, 'The Hiring Team')
   useEffect(() => {
-    if (open) { setChannel(initial); setTpl('intro'); setBody(draft('intro')) }
+    if (open) { setChannel(initial); setTpl('intro'); setBody(draft('intro')); setSendErr('') }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, first?.id, initial])
   const many = candidates.length > 1
+  const personal = (c) => body.replace(/^Hi [^,]+,/, `Hi ${c.name.split(' ')[0]},`)
+
+  // Email and SMS are really delivered (live mode); other channels stay drafts.
+  // Each needs the part it uses opened first — email for email, phone for SMS.
+  const sendsFromHere = !IS_DEMO && (channel === 'email' || channel === 'sms')
+  const part = channel === 'sms' ? 'phone' : 'email'
+  const canSend = (c) => !!c._live?.candidateId && isRevealed(c, part)
+  const ready = candidates.filter(canSend)
+  const blocked = candidates.filter((c) => !canSend(c))
+  const session = IS_DEMO ? null : getSession()
+  const company = session?.company?.name
+  const smsBody = first ? smsFor(first, company) : ''
 
   const save = () => {
-    candidates.forEach((c) => addMessage({ candidateId: c.id, candidateName: c.name, channel, subject: channel === 'email' ? subject : null, body: body.replace(/^Hi [^,]+,/, `Hi ${c.name.split(' ')[0]},`), state: 'draft' }))
+    candidates.forEach((c) => addMessage({ candidateId: c.id, candidateName: c.name, channel, subject: channel === 'email' ? subject : null, body: personal(c), state: 'draft' }))
     toast(`Saved ${candidates.length > 1 ? `${candidates.length} drafts` : 'draft'} to Messages`)
     onClose()
+  }
+
+  const send = async () => {
+    setSending(true)
+    setSendErr('')
+    let sent = 0
+    let lastError = ''
+    for (const c of ready) {
+      try {
+        await sendOutreach(c, { channel, subject, body: personal(c) })
+        sent += 1
+        addMessage({ candidateId: c.id, candidateName: c.name, channel, subject: channel === 'email' ? subject : null, body: channel === 'sms' ? smsFor(c, company) : personal(c), state: 'sent' })
+      } catch (e) {
+        lastError = e.response?.data?.message ?? 'Could not send. Check your connection and try again.'
+      }
+    }
+    setSending(false)
+    if (sent) {
+      const skipped = blocked.length ? ` · ${blocked.length} skipped (view their ${PART_LABEL[part]} first)` : ''
+      toast(ready.length === 1 && !skipped ? `${channel === 'sms' ? 'SMS' : 'Email'} sent to ${ready[0].name}` : `Sent to ${sent} of ${candidates.length}${skipped}`)
+    }
+    if (lastError) setSendErr(sent ? `${lastError} (${sent} of ${ready.length} were sent.)` : lastError)
+    else if (sent) onClose()
   }
 
   return (
@@ -129,32 +174,74 @@ export function OutreachModal({ candidates, channel: initial = 'email', onClose 
       title={many ? `Message ${candidates.length} candidates` : `Contact ${first?.name ?? ''}`}
       width={640}
       footer={
-        <>
-          {first?.contact?.email && candidates.length === 1 && <a className="inline-flex h-9 items-center rounded-lg border border-line px-3.5 text-[13px] font-medium hover:bg-line-2" href={`mailto:${first.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`}>Open in mail app</a>}
-          <Button icon={Copy} onClick={() => { navigator.clipboard?.writeText(body); toast('Copied to clipboard') }}>Copy</Button>
-          <Button variant="primary" onClick={save}>Save draft to Messages</Button>
-        </>
+        sendsFromHere ? (
+          <>
+            {channel === 'email' && <Button icon={Copy} onClick={() => { navigator.clipboard?.writeText(body); toast('Copied to clipboard') }}>Copy</Button>}
+            {channel === 'email' && <Button onClick={save}>Save draft</Button>}
+            <Button variant="primary" icon={channel === 'sms' ? Smartphone : Mail} disabled={sending || ready.length === 0 || (channel === 'email' && (!subject.trim() || !body.trim()))} onClick={send}>
+              {sending ? 'Sending…' : channel === 'sms' ? `Send SMS${ready.length > 1 ? ` to ${ready.length}` : ''}` : `Send email${ready.length > 1 ? ` to ${ready.length}` : ''}`}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button icon={Copy} onClick={() => { navigator.clipboard?.writeText(body); toast('Copied to clipboard') }}>Copy</Button>
+            <Button variant="primary" onClick={save}>Save draft to Messages</Button>
+          </>
+        )
       }
     >
       <div className="space-y-4">
         <div className="flex flex-wrap gap-2">
           {CHANNELS.map((ch) => (
-            <button key={ch.id} disabled={ch.disabled} title={ch.disabled ? 'WhatsApp isn’t supported by the Mzobs backend yet' : undefined} onClick={() => setChannel(ch.id)} className={clsx('flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[13px] font-medium disabled:opacity-40', channel === ch.id ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line hover:bg-line-2')}>
+            <button key={ch.id} disabled={ch.disabled} title={ch.disabled ? 'WhatsApp isn’t supported by the Mzobs backend yet' : undefined} onClick={() => { setChannel(ch.id); setSendErr('') }} className={clsx('flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors', channel === ch.id ? 'border-accent bg-accent-soft text-accent' : 'border-line hover:bg-line-2', ch.disabled && 'cursor-not-allowed opacity-45')}>
               <ch.icon size={14} /> {ch.label}
             </button>
           ))}
         </div>
-        <div>
-          <p className="mb-1.5 flex items-center gap-1.5 text-[12px] font-medium text-[#0a6f64]"><Sparkles size={12} /> Generate a draft — you can edit everything before it goes anywhere</p>
-          <div className="flex flex-wrap gap-1.5">
-            {Object.entries(TEMPLATES).map(([k, t]) => (
-              <button key={k} onClick={() => { setTpl(k); setBody(draft(k)) }} className={clsx('rounded-md border px-2.5 py-1 text-[12.5px]', tpl === k ? 'border-[#a9dcd3] bg-ai-soft text-[#0a6f64]' : 'border-line hover:bg-line-2')}>{t.label}</button>
-            ))}
+
+        {sendsFromHere && blocked.length > 0 && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg bg-warn-soft px-3 py-2 text-[13px] text-warn">
+            <span>
+              {many
+                ? `${blocked.length} of ${candidates.length} candidates will be skipped — you haven't viewed their ${PART_LABEL[part]} yet.`
+                : `To ${channel === 'sms' ? 'text' : 'email'} ${first.name.split(' ')[0]} from here, view their ${PART_LABEL[part]} first.`}
+            </span>
+            {!many && onReveal && (
+              <button onClick={() => onReveal(first, part)} className="rounded-md border border-current/25 bg-white px-2.5 py-1 text-[12.5px] font-semibold hover:bg-white/70">
+                View {PART_LABEL[part]} · {creditSpent(first) ? 'free' : '1 credit'}
+              </button>
+            )}
           </div>
-        </div>
-        {channel === 'email' && <input value={subject} onChange={(e) => setSubject(e.target.value)} className={field} aria-label="Subject" />}
-        <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={10} className="w-full rounded-lg border border-line p-3 text-[13.5px] leading-6 outline-none focus:border-accent" aria-label="Message" />
-        <p className="text-[12px] text-muted">Drafts are stored in Messages on this device. Delivery needs a connected messaging service, and contact details stay masked until you unlock a candidate with a CV credit.</p>
+        )}
+
+        {channel === 'sms' && sendsFromHere ? (
+          <div>
+            <p className="mb-1.5 text-[12px] font-medium text-muted">The text message that will be sent</p>
+            <textarea value={many ? smsFor({ name: 'Name' }, company) : smsBody} readOnly rows={4} className="w-full resize-none rounded-lg border border-line bg-line-2 p-3 text-[13.5px] leading-6 outline-none" aria-label="SMS text" />
+          </div>
+        ) : (
+          <>
+            <div>
+              <p className="mb-1.5 flex items-center gap-1.5 text-[12px] font-medium text-[#0a6f64]"><Sparkles size={12} /> Generate a draft — you can edit everything before it goes anywhere</p>
+              <div className="flex flex-wrap gap-1.5">
+                {Object.entries(TEMPLATES).map(([k, t]) => (
+                  <button key={k} onClick={() => { setTpl(k); setBody(draft(k)) }} className={clsx('rounded-md border px-2.5 py-1 text-[12.5px]', tpl === k ? 'border-[#a9dcd3] bg-ai-soft text-[#0a6f64]' : 'border-line hover:bg-line-2')}>{t.label}</button>
+                ))}
+              </div>
+            </div>
+            {channel === 'email' && <input value={subject} onChange={(e) => setSubject(e.target.value)} className={field} aria-label="Subject" />}
+            <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={10} className="w-full rounded-lg border border-line p-3 text-[13.5px] leading-6 outline-none focus:border-accent" aria-label="Message" />
+          </>
+        )}
+
+        {sendErr && <p role="alert" className="rounded-lg bg-[#fdecec] px-3 py-2 text-[13px] text-bad">{sendErr}</p>}
+        <p className="text-[12px] text-muted">
+          {sendsFromHere && channel === 'email'
+            ? `Sent from Mzobs. ${many ? 'Replies' : `${first?.name?.split(' ')[0] ?? 'The candidate'}'s replies`} go to ${session?.user?.email ?? 'your email'}. You can send at most 3 emails to the same candidate per day.`
+            : sendsFromHere
+              ? "SMS uses one fixed message approved for India (DLT), so it can't be edited. At most 3 texts to the same candidate per day."
+              : 'Drafts are stored in Messages on this device until you send them by email or SMS.'}
+        </p>
       </div>
     </Modal>
   )
@@ -335,7 +422,7 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
   const stillHidden = c ? PARTS.filter((p) => c.revealed && !c.revealed.includes(p)).map((p) => PART_LABEL[p]) : []
   return (
     <Modal open={!!candidate} onClose={onClose} title={c ? cap(label) : `View ${label}`} subtitle={candidate?.name} width={460}
-      footer={c ? <><Button onClick={onClose}>Done</Button>{part === 'email' && c.email && onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, { email: c.email, phone: c.phone })}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || (!paid && credits === 0) || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Opening…' : paid ? `View ${label} · free` : `View ${label} · uses 1 credit`}</Button></>}>
+      footer={c ? <><Button onClick={onClose}>Done</Button>{part === 'phone' && c.phone && <Button icon={Phone} onClick={() => dial(c.phone)}>Call now</Button>}{part === 'phone' && c.phone && onCompose && <Button variant="primary" icon={Smartphone} onClick={() => onCompose(candidate, contactOf(c, candidate), 'sms')}>Send SMS</Button>}{part === 'email' && c.email && onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, contactOf(c, candidate), 'email')}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || (!paid && credits === 0) || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Opening…' : paid ? `View ${label} · free` : `View ${label} · uses 1 credit`}</Button></>}>
       {c ? (
         <div className="space-y-3 text-[14px]">
           {part === 'email' && <div><p className="text-[12px] text-muted">Email</p><p className="font-medium">{c.email || '—'}</p></div>}
@@ -345,7 +432,7 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
           ) : (
             <p className="text-[12.5px] text-muted">No verified CV on this profile yet.</p>
           ))}
-          <p className="text-[12.5px] text-muted">{stillHidden.length ? `${cap(stillHidden.join(' and '))} stay hidden — view ${stillHidden.length === 1 ? 'it' : 'them'} any time, no more credits.` : `Everything for ${first} is open.`}</p>
+          <p className="text-[12.5px] text-muted">{stillHidden.length ? `${cap(stillHidden.join(' and '))} ${stillHidden.length === 1 ? 'stays' : 'stay'} hidden — view ${stillHidden.length === 1 ? 'it' : 'them'} any time, no more credits.` : `Everything for ${first} is open.`}</p>
         </div>
       ) : (
         <div className="space-y-3 text-[13.5px]">
