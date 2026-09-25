@@ -315,3 +315,40 @@
 .cm-face dd { font-size: 15px; }
 .cm-chip { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.28); color: #fff; box-shadow: none; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .cm-chip::before { color: #7fe0d3; }
+
+/* the pass, v3 — a proper ID: holo strip, avatar, verified mark; no floating chips */
+.cm-face { padding: 26px 28px; }
+.cm-face .holo { position: absolute; top: -10%; right: 16%; width: 16%; height: 130%; transform: rotate(18deg); background: linear-gradient(180deg, rgba(255, 255, 255, 0.0), rgba(255, 255, 255, 0.22) 30%, rgba(255, 214, 240, 0.18) 50%, rgba(180, 245, 255, 0.22) 70%, rgba(255, 255, 255, 0)); mix-blend-mode: soft-light; filter: blur(1px); pointer-events: none; }
+.cm-face .role { font-size: clamp(2.1rem, 5.6vw, 2.9rem); line-height: 0.94; }
+.cm-face .row { align-items: center; }
+.cm-face .ident { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.cm-face .avatar { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.5); }
+.cm-face .who { font-size: 16px; }
+.cm-face .verified { display: flex; align-items: flex-start; gap: 6px; font-size: 8.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #eafff6; text-align: right; line-height: 1.45; }
+.cm-face .verified svg { flex: none; margin-top: 1px; color: #8ff3cf; }
+.cm-stage .cm-tilt { animation: cmIdle 7s ease-in-out infinite; }
+@keyframes cmIdle { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
+.cm-rings { position: absolute; left: 50%; top: 50%; width: min(500px, 100%); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; pointer-events: none; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 0 44px rgba(255, 255, 255, 0.02); }
+.cm-ident-top .cm-stage { min-height: 420px; padding: 24px 0; }
+
+/* align the card with the section grid: right edge meets the rule lines, top/bottom sit level with the text block */
+.cm-ident-top { grid-template-columns: 1fr minmax(0, 470px); align-items: stretch; }
+.cm-ident-top .cm-ident-head { align-self: center; }
+.cm-ident-top .cm-stage { min-height: 0; padding: 0; place-items: center; justify-items: stretch; align-self: center; }
+.cm-ident-top .cm-tilt { width: 100%; animation: none; }
+.cm-ident-top .cm-pass { width: 100%; }
+.cm-ident-top .cm-rings { width: 112%; }
+@media (max-width: 980px) { .cm-ident-top { grid-template-columns: 1fr; } .cm-ident-top .cm-stage { max-width: 470px; } }
+@media (min-width: 981px) {
+  .cm-ident-top .cm-ident-head { align-self: stretch; display: flex; flex-direction: column; }
+  .cm-ident-top .cm-ident-head .cm-lead { margin-top: auto !important; padding-top: 22px; }
+  .cm-ident-top .cm-stage { align-self: stretch; }
+}
+.cm-ident-top .cm-ident-head .cm-lead { line-height: 1.2; }
+@media (max-width: 560px) {
+  .cm-pass { aspect-ratio: 1.3 / 1; }
+  .cm-face { padding: 20px 20px; }
+  .cm-face .role { font-size: 2rem; }
+  .cm-face .row { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .cm-face .verified { text-align: left; }
+}

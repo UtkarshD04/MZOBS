@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Users, Briefcase, Network, Compass, Award, ScrollText, CalendarDays, BookOpen, Gift, Check } from 'lucide-react'
+import { ArrowRight, Users, Briefcase, Network, Compass, Award, ScrollText, CalendarDays, BookOpen, Gift, Check, User, BadgeCheck } from 'lucide-react'
 import { submitDootApplication } from '../lib/doot'
 import './doot.css'
 
@@ -108,16 +108,18 @@ function Pass({ name, college, city, hoverFlip = true }) {
     >
       <div className="cm-pass-inner">
         <div className="cm-face">
+          <span className="holo" aria-hidden="true" />
           <div className="brand"><span>MZOBS</span><i>2026</i></div>
-          <div>
-            <div className="role">Mzobs<br /><b>Doot</b></div>
-          </div>
+          <div className="role">Mzobs<br /><b>Doot</b></div>
           <div className="row">
-            <div>
-              <div className="who">{name || 'Your name'}</div>
-              <div className="sub">{college || 'Your college'}</div>
+            <div className="ident">
+              <span className="avatar" aria-hidden="true"><User size={20} strokeWidth={1.7} /></span>
+              <div>
+                <div className="who">{name || 'Your name'}</div>
+                <div className="sub">{college || 'Your college'}</div>
+              </div>
             </div>
-            <div className="tag">Your campus.<br />Your voice.</div>
+            <div className="verified"><BadgeCheck size={14} strokeWidth={2.2} /> Verified Mzobs<br />Community Representative</div>
           </div>
         </div>
         <div className="cm-face cm-back">
@@ -428,9 +430,7 @@ export default function Doot() {
               <p className="cm-lead cm-rv" style={{ '--d': '0.16s', marginTop: 22 }}>You are:</p>
             </div>
           <div className="cm-stage cm-rv" style={{ '--d': '0.2s' }} onPointerMove={onMove} onPointerLeave={onLeave}>
-            {[['Opportunity', '4%', '9%', 0, true], ['Community', '62%', '3%', 1.2], ['Leadership', '2%', '87%', 2.4], ['Events', '70%', '85%', 0.7, true], ['Connections', '36%', '95%', 1.8]].map(([label, l, t, d, v]) => (
-              <span key={label} className={`cm-chip ${v ? 'v' : ''}`} style={{ left: l, top: t, '--fd': `${d}s` }} aria-hidden="true">{label}</span>
-            ))}
+            <span className="cm-rings" aria-hidden="true" />
             <div className="cm-tilt" ref={stage}>
               <Pass name="" college="" city="" hoverFlip />
             </div>
