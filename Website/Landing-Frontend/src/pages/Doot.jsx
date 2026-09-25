@@ -361,9 +361,10 @@ export default function Doot() {
   const pathRef = useIn(0.3)
 
   return (
+    <>
+    {/* Outside .cm so the page's reset (a { color: inherit }) doesn't override the navbar's own colours. */}
+    <Navbar />
     <div className="cm" style={{ '--cm-jaali-dark': jaali('rgba(120,220,205,0.45)') }}>
-      {/* navigation */}
-      <Navbar />
 
       {/* hero */}
       <section className="cm-hero" id="top" ref={hero}>
@@ -557,6 +558,7 @@ export default function Doot() {
         </div>
       </section>
     </div>
+    </>
   )
 }
 
