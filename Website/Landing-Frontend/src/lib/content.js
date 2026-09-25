@@ -821,22 +821,20 @@ export const COMPANIES_HIRING_DATA = [
   { name: "Sunsure Energy", logo: "/industry-logos/sunsure.svg", industry: "Renewable Energy" }
 ]
 
-// "Campus Network" band on the home page (see CampusNetwork.jsx). `count`
-// is the big count-up figure; `orbitChips` are the two floating cards on the
-// campus orbit visual beside it.
+// "Campus Connect" band on the home page (see CampusNetwork.jsx). `count` is
+// the big count-up figure; the title renders as lead + serif-italic accent +
+// tail beside it; `highlights` are the small chips under the subtitle.
 export const CAMPUS_NETWORK_DATA = {
-  eyebrow: "Campus Network",
+  eyebrow: "Campus Connect",
   count: 100,
-  title: "College campuses integrated with MZOBS",
-  subtitle: "Students from our partner campuses discover internships and fresher roles, apply directly and move into their first job — all on one platform.",
+  titleLead: "College campuses",
+  titleAccent: "integrated",
+  titleTail: "with MZOBS",
+  subtitle: "Students from our partner campuses find internships and fresher roles — and apply directly on MZOBS.",
   highlights: [
-    { icon: CalendarCheck, title: "Campus placement drives", text: "Employers reach final-year batches straight through their college." },
-    { icon: Send, title: "Direct student applications", text: "Students apply from their own MZOBS profile — no middlemen." },
-    { icon: Briefcase, title: "Internships & fresher roles", text: "Openings picked for students just starting out." }
-  ],
-  orbitChips: [
-    { icon: GraduationCap, title: "100+ campuses", text: "On one hiring network" },
-    { icon: Briefcase, title: "Campus to career", text: "Internships & fresher roles" }
+    { icon: CalendarCheck, label: "Placement drives" },
+    { icon: Send, label: "Direct applications" },
+    { icon: Briefcase, label: "Fresher roles" }
   ],
   ctaText: "Bring your campus on board",
   ctaTo: "/contact"
