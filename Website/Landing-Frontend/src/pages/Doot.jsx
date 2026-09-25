@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Users, Briefcase, Network, Compass, Award, ScrollText, CalendarDays, BookOpen, Gift, Check } from 'lucide-react'
-import { submitCampusMantriApplication } from '../lib/campusMantri'
-import './campusMantri.css'
+import { submitDootApplication } from '../lib/doot'
+import './doot.css'
 
 /* ------------------------------------------------------------------ content */
 
@@ -193,7 +193,7 @@ function ApplicationForm({ f, set }) {
     setBusy(true)
     setFail('')
     try {
-      await submitCampusMantriApplication({
+      await submitDootApplication({
         name: f.name.trim(),
         email: f.email.trim(),
         phone: f.phone.trim(),
@@ -298,7 +298,7 @@ function ApplicationForm({ f, set }) {
 
 /* --------------------------------------------------------------------- page */
 
-export default function CampusMantri() {
+export default function Doot() {
   const [scrolled, setScrolled] = useState(false)
   const [f, setF] = useState(EMPTY)
   const set = useCallback((k, v) => setF((x) => ({ ...x, [k]: v })), [])
