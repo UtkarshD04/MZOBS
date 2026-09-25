@@ -10,10 +10,13 @@ import './index.css'
 import App from './App.jsx'
 import { IS_DEMO } from './lib/config'
 import { exchangeHandoff } from './services/liveApi'
+import { installClickShine } from './lib/clickShine'
 
 // The marketing site's employer sign-in redirects here with a one-time
 // `?code=` (see Landing-Frontend/src/lib/employerAuth.js). Trade it for the
 // session token before the app mounts, then strip it from the URL.
+installClickShine()
+
 async function boot() {
   const url = new URL(window.location.href)
   const code = url.searchParams.get('code')

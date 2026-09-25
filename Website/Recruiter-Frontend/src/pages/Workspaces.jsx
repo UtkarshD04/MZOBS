@@ -1,4 +1,4 @@
-import { Video, BarChart3, Settings as Cog, Sparkles, MessageSquare, CalendarDays } from 'lucide-react'
+import { Video, BarChart3, Sparkles, MessageSquare, CalendarDays } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Button, EmptyState } from '../components/ui'
 import { listInterviews } from '../services/liveApi'
@@ -96,12 +96,3 @@ export function Reports() {
     </Page>
   )
 }
-
-export function Settings() {
-  return (
-    <Page title="Recruiter settings">
-      <EmptyState icon={Cog} title="Settings coming next" body="Profile, notifications and team preferences will live here." />
-    </Page>
-  )
-}
-

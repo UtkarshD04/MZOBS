@@ -40,7 +40,8 @@ function SubscriptionCard({ data, onBuy, busy }) {
       )}
       {!isActive && (
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          {data.plans.map((p) => <TierCard key={p.planCode} plan={p} busy={busy === p.planCode} onBuy={onBuy} />)}
+          {(data.plans ?? []).map((p) => <TierCard key={p.planCode} plan={p} busy={busy === p.planCode} onBuy={onBuy} />)}
+          {!(data.plans ?? []).length && <p className="text-[13px] text-muted sm:col-span-3">Plans are not available from the server right now.</p>}
         </div>
       )}
     </Card>

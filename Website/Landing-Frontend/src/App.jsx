@@ -41,6 +41,7 @@ const EmployerSignup = lazy(() => import('./pages/EmployerSignup'))
 const EmployerSignin = lazy(() => import('./pages/EmployerSignin'))
 const EmployerForgotPassword = lazy(() => import('./pages/EmployerForgotPassword'))
 const EmployerResetPassword = lazy(() => import('./pages/EmployerResetPassword'))
+const CampusMantri = lazy(() => import('./pages/CampusMantri'))
 
 // Only ever visible for the fraction of a second a lazy route's chunk takes
 // to fetch (and never at all for the eager/SSR'd routes above) — deliberately
@@ -96,6 +97,7 @@ export default function App() {
             <Route path={CLIENT_ONLY_ROUTES.employerSignin} element={<EmployerSignin />} />
             <Route path={CLIENT_ONLY_ROUTES.employerForgotPassword} element={<EmployerForgotPassword />} />
             <Route path={CLIENT_ONLY_ROUTES.employerResetPassword} element={<EmployerResetPassword />} />
+            <Route path={CLIENT_ONLY_ROUTES.campusMantri} element={<CampusMantri />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="*" element={<NotFound />} />
