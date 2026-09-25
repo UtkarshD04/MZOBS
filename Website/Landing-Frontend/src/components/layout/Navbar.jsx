@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X, LogOut, User } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
@@ -11,6 +11,9 @@ import EmployeeAuthModal from '../forms/EmployeeAuthModal'
 // visibly changes when navigating (e.g. clicking "For Employers").
 export default function Navbar() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  // On the Mzobs Doot page, add a way back to the employee (job-seeker) side.
+  const navLinks = pathname === '/doot' ? [...NAV_LINKS, { label: 'Employee', to: '/employees' }] : NAV_LINKS
   const [open, setOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -95,7 +98,7 @@ export default function Navbar() {
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:flex items-center gap-1" onMouseLeave={() => setHoverLink(null)}>
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.to}
@@ -182,7 +185,7 @@ export default function Navbar() {
               className="lg:hidden fixed top-19 left-0 right-0 bg-white border-b border-(--jobs-border) shadow-lg z-40"
             >
               <div className="p-5 flex flex-col gap-1">
-                {NAV_LINKS.map((link) => (
+                {navLinks.map((link) => (
                   <Link
                     key={link.label}
                     to={link.to}
