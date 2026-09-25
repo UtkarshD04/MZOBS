@@ -10,6 +10,7 @@
 
 import { apiClient } from '../lib/api'
 import { IS_DEMO } from '../lib/config'
+import { revealedFromApi } from '../lib/reveal'
 import { DEMO_POOL } from '../lib/talent/demoPool'
 import { rankPool, similarTo, computeMatch, computeTrust } from '../lib/talent/engine'
 import { setVocabularyFrom } from '../lib/talent/vocab'
@@ -104,7 +105,7 @@ export function mapApiCandidate(c, jobTitles = {}) {
     rejectionReason: c.rejectionReason ?? null,
     contact: c.unlocked ? { email: c.email, phone: c.phone } : null,
     links: [],
-    _live: { kind: 'applicant', candidateId: c.id, employeeId: c.employeeId ?? null, stage: c.stage, unlocked: !!c.unlocked, contactPreview: c.contactPreview },
+    _live: { kind: 'applicant', candidateId: c.id, employeeId: c.employeeId ?? null, stage: c.stage, unlocked: !!c.unlocked, revealed: revealedFromApi(c), contactPreview: c.contactPreview },
   }
 }
 
@@ -165,7 +166,7 @@ export function mapResdexCandidate(e) {
     rejectionReason: null,
     contact: e.unlocked ? { email: e.email, phone: e.phone } : null,
     links,
-    _live: { kind: 'resdex', candidateId: e.candidateId ?? null, employeeId: e.employeeId, stage: null, unlocked: !!e.unlocked, contactPreview: e.contactPreview },
+    _live: { kind: 'resdex', candidateId: e.candidateId ?? null, employeeId: e.employeeId, stage: null, unlocked: !!e.unlocked, revealed: revealedFromApi(e), contactPreview: e.contactPreview },
   }
 }
 
@@ -195,7 +196,7 @@ function mergePool(applicants, resdex) {
       certifications: a.certifications,
       verification: { ...r.verification, identity: a.verification.identity },
       contact: a.contact ?? r.contact,
-      _live: { ...r._live, kind: 'applicant', candidateId: a._live.candidateId, stage: a._live.stage, unlocked: a._live.unlocked || r._live.unlocked, contactPreview: a._live.contactPreview ?? r._live.contactPreview },
+      _live: { ...r._live, kind: 'applicant', candidateId: a._live.candidateId, stage: a._live.stage, unlocked: a._live.unlocked || r._live.unlocked, revealed: a._live.unlocked ? a._live.revealed : r._live.revealed, contactPreview: a._live.contactPreview ?? r._live.contactPreview },
     }
   })
   return [...merged, ...resdex.filter((r) => !used.has(r.id))]

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Unlock, Search, FileText, Mail, Download } from 'lucide-react'
+import { Unlock, Search, FileText, Mail, Download, Eye } from 'lucide-react'
 import { Avatar, Button, EmptyState, Skeleton } from '../components/ui'
 import { useActions } from '../components/useActions'
 import { useWorkspace } from '../store/workspace'
@@ -9,6 +9,7 @@ import { listUnlocks } from '../services/liveApi'
 import { getTalentMany } from '../services/talentService'
 import { agoDate, years } from '../lib/format'
 import { IS_DEMO } from '../lib/config'
+import { isRevealed } from '../lib/reveal'
 
 // Every candidate this company has spent a CV credit on — the recruiter's
 // "downloaded CVs" folder, with contact details and the CV one click away.
@@ -77,7 +78,7 @@ export default function UnlockedCvs() {
         <EmptyState
           icon={Unlock}
           title={IS_DEMO ? 'Demo data has no unlocks' : 'No CVs unlocked yet'}
-          body="Unlock a candidate from search with one CV credit to see their CV, email and phone. They'll be listed here."
+          body="View a candidate's email, phone or CV from search — one CV credit per candidate. They'll be listed here."
           action={<Link to="/" className="text-[13px] font-medium text-accent hover:underline">Search candidates</Link>}
         />
       ) : shown.length === 0 ? (
@@ -97,8 +98,15 @@ export default function UnlockedCvs() {
                 </div>
                 {p?.contact && (
                   <div className="min-w-[180px] text-[13px]">
-                    <p className="truncate font-medium">{p.contact.email || '—'}</p>
-                    <p className="text-ink-2">{p.contact.phone || '—'}</p>
+                    {['email', 'phone'].map((part) =>
+                      isRevealed(p, part) ? (
+                        <p key={part} className={part === 'email' ? 'truncate font-medium' : 'text-ink-2'}>{p.contact[part] || '—'}</p>
+                      ) : (
+                        <button key={part} onClick={() => onAction('unlock', p, part)} title={`View the ${part === 'email' ? 'email' : 'phone number'} — free, the credit is already used`} className="flex items-center gap-1.5 text-ink-2 hover:text-accent">
+                          {p._live?.contactPreview?.[part] ?? '—'} <Eye size={12} /> <span className="font-semibold text-accent">View</span>
+                        </button>
+                      )
+                    )}
                   </div>
                 )}
                 {p && (
