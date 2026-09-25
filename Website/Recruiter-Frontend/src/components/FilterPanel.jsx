@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import clsx from 'clsx'
-import { ChevronDown, BookmarkPlus } from 'lucide-react'
+import { ChevronDown, BookmarkPlus, X } from 'lucide-react'
 import { criteriaToChips, removeChip, NOTICE_OPTIONS, STAGE_LABELS } from '../lib/talent/criteria'
 import { EMPLOYMENT_TYPE_LIST } from '../lib/talent/demoPool'
 import { vocab } from '../lib/talent/vocab'
@@ -157,7 +157,8 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
         <h2 className="text-[14px] font-semibold">Filters</h2>
         <div className="flex items-center gap-1">
           <button onClick={onSave} disabled={!chips.length} className="flex items-center gap-1 rounded-md px-2 py-1 text-[12.5px] font-medium text-accent hover:bg-accent-soft disabled:text-muted disabled:hover:bg-transparent"><BookmarkPlus size={13} /> Save search</button>
-          <button onClick={onClear} disabled={!chips.length} className="rounded-md px-2 py-1 text-[12.5px] font-medium text-muted hover:bg-line-2 disabled:opacity-40">Clear all</button>
+          {/* Clear whenever there is anything to clear — a filter, or search text the parser turned into none. Only the empty state is faded. */}
+          <button onClick={onClear} disabled={!chips.length && !c.q.trim()} className="flex items-center gap-1 rounded-md px-2 py-1 text-[12.5px] font-semibold text-accent hover:bg-accent-soft disabled:pointer-events-none disabled:font-medium disabled:text-muted disabled:opacity-40"><X size={12} /> Clear all</button>
         </div>
       </div>
 
