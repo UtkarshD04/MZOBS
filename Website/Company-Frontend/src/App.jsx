@@ -16,7 +16,7 @@ import Dashboard from './pages/mzobs/Dashboard'
 import ResumeQueue from './pages/mzobs/ResumeQueue'
 import MockInterviews from './pages/mzobs/MockInterviews'
 import Shortlisted from './pages/mzobs/Shortlisted'
-import Doot from './pages/mzobs/Doot'
+import Ally from './pages/mzobs/Ally'
 import Team from './pages/mzobs/Team'
 import Settings from './pages/mzobs/Settings'
 import ComingSoon from './pages/mzobs/ComingSoon'
@@ -38,8 +38,9 @@ export default function App() {
           <Route path="resumes" element={<ResumeQueue />} />
           <Route path="mock-interviews" element={<MockInterviews />} />
           <Route path="shortlisted" element={<Shortlisted />} />
-          <Route path="doot" element={<Doot />} />
-          <Route path="campus-mantri" element={<Navigate to="/app/doot" replace />} />
+          <Route path="ally" element={<Ally />} />
+          <Route path="campus-mantri" element={<Navigate to="/app/ally" replace />} />
+          <Route path="doot" element={<Navigate to="/app/ally" replace />} />
 
           <Route element={<RequireAdmin />}>
             <Route path="team" element={<Team />} />
