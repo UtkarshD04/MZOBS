@@ -32,7 +32,7 @@ import ParallaxImage from '../components/ui/ParallaxImage'
 import { Field, Input, Select } from '../components/ui/JobsAuthField'
 import { getEmployeeSession, saveEmployeeSession } from '../lib/employeeSession'
 import { getEmployeeProfile, updateEmployeeProfile } from '../lib/employeeProfile'
-import { uploadEmployeeResume, validateResumeFileClientSide } from '../lib/employeeResume'
+import { resumeDownloadUrl, uploadEmployeeResume, validateResumeFileClientSide } from '../lib/employeeResume'
 import { profileCompletion } from '../lib/profileCompletion'
 
 const SECTIONS = [
@@ -413,7 +413,7 @@ export default function EmployeeProfile() {
                     </div>
                     {profile.resume.url && (
                       <a
-                        href={profile.resume.url}
+                        href={resumeDownloadUrl(profile.resume.url)}
                         target="_blank"
                         rel="noreferrer"
                         className="flex items-center gap-1.5 text-[12.5px] font-bold text-(--jobs-blue-dark) hover:underline shrink-0"
