@@ -821,19 +821,21 @@ export const COMPANIES_HIRING_DATA = [
   { name: "Sunsure Energy", logo: "/industry-logos/sunsure.svg", industry: "Renewable Energy" }
 ]
 
-// "Campus Network" band on the home page (see CampusNetwork.jsx). `count`
-// drives both the big count-up figure and the 10×10 campus mosaic beside it.
+// "Campus Connect" band on the home page (see CampusNetwork.jsx). `count` is
+// the big count-up figure; the title renders as lead + serif-italic accent +
+// tail beside it; `highlights` are the small chips under the subtitle.
 export const CAMPUS_NETWORK_DATA = {
-  eyebrow: "Campus Network",
+  eyebrow: "Campus Connect",
   count: 100,
-  title: "College campuses integrated with MZOBS",
-  subtitle: "Students from our partner campuses discover internships and fresher roles, apply directly and move into their first job — all on one platform.",
+  titleLead: "College campuses",
+  titleAccent: "integrated",
+  titleTail: "with MZOBS",
+  subtitle: "Students from our partner campuses find internships and fresher roles — and apply directly on MZOBS.",
   highlights: [
-    { icon: CalendarCheck, title: "Campus placement drives", text: "Employers reach final-year batches straight through their college." },
-    { icon: Send, title: "Direct student applications", text: "Students apply from their own MZOBS profile — no middlemen." },
-    { icon: Briefcase, title: "Internships & fresher roles", text: "Openings picked for students just starting out." }
+    { icon: CalendarCheck, label: "Placement drives" },
+    { icon: Send, label: "Direct applications" },
+    { icon: Briefcase, label: "Fresher roles" }
   ],
-  mosaicCaption: "Each square is one partner campus.",
   ctaText: "Bring your campus on board",
   ctaTo: "/contact"
 }

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Download } from 'lucide-react'
 import { ModalHead, ModalBody, ModalFoot } from './ui/Modal'
 import Button from './ui/Button'
@@ -7,28 +6,25 @@ import Button from './ui/Button'
 // through Google's viewer to still show inline instead of downloading.
 const OFFICE_DOC_RE = /\.(docx?|rtf|odt)(\?|$)/i
 
-// `download` attr is ignored for cross-origin URLs, so pull the file as a blob;
-// fall back to opening it in a new tab if the fetch is blocked.
-export async function downloadFile(url, fileName) {
-  try {
-    const res = await fetch(url)
-    if (!res.ok) throw new Error('fetch failed')
-    const blobUrl = URL.createObjectURL(await res.blob())
-    const a = document.createElement('a')
-    a.href = blobUrl
-    a.download = fileName || url.split('/').pop().split('?')[0] || 'resume'
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-    URL.revokeObjectURL(blobUrl)
-  } catch {
-    window.open(url, '_blank')
-  }
+// Token links (/files/resume/:token) carry no extension, so the stored file
+// name decides when there is one.
+export function resumeViewerSrc(url, fileName) {
+  return OFFICE_DOC_RE.test(fileName || url) ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}` : url
+}
+
+// The `download` attr is ignored for cross-origin URLs, and fetching the file
+// as a blob fails on the redirect to S3 (no CORS there) — so ask the API for
+// an attachment instead: `/files/resume/:token?download=1` makes the browser
+// save the file. Opened in a new tab so an expired link shows its message
+// there instead of navigating away from the panel; for a successful download
+// the browser closes that tab again on its own.
+export function downloadFile(url) {
+  const href = `${url}${url.includes('?') ? '&' : '?'}download=1`
+  window.open(href, '_blank', 'noopener')
 }
 
 export function ResumeViewerModal({ url, fileName, onClose }) {
-  const [downloading, setDownloading] = useState(false)
-  const viewerSrc = OFFICE_DOC_RE.test(url) ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}` : url
+  const viewerSrc = resumeViewerSrc(url, fileName)
 
   return (
     <>
@@ -37,8 +33,8 @@ export function ResumeViewerModal({ url, fileName, onClose }) {
         <iframe src={viewerSrc} title={fileName || 'Resume'} className="w-full h-[78vh] block" />
       </ModalBody>
       <ModalFoot>
-        <Button variant="secondary" size="sm" disabled={downloading} onClick={async () => { setDownloading(true); await downloadFile(url, fileName); setDownloading(false) }}>
-          <Download size={14} /> {downloading ? 'Downloading…' : 'Download'}
+        <Button variant="secondary" size="sm" onClick={() => downloadFile(url)}>
+          <Download size={14} /> Download
         </Button>
       </ModalFoot>
     </>

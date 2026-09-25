@@ -708,3 +708,74 @@
     transition: none !important;
   }
 }
+
+/* ============================================================
+   CAMPUS NETWORK (home page) — see sections/home/CampusNetwork.jsx.
+   A compact "aurora" glass band in the Hero's --bubble-*-rgb palette:
+   drifting blurred color washes, a faint dot grid and a stack of glossy
+   campus bubbles. Transform/opacity-only motion, all of it dropped under
+   prefers-reduced-motion.
+============================================================ */
+.campus-panel {
+  background: linear-gradient(160deg, #f3f6ff 0%, #fbfaff 48%, #fdf7ef 100%);
+  box-shadow:
+    0 40px 80px -48px rgba(var(--bubble-navy-rgb), 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.campus-aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(72px);
+  will-change: transform;
+}
+
+.campus-dots {
+  background-image: radial-gradient(rgba(var(--bubble-navy-rgb), 0.13) 1px, transparent 1.3px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 70% 90% at 30% 50%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 90% at 30% 50%, #000 20%, transparent 75%);
+}
+
+.campus-glass {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 20px 44px -26px rgba(var(--bubble-navy-rgb), 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+}
+
+.campus-count {
+  background-image: linear-gradient(90deg, #3b6df0 0%, #2f8f7f 25%, #3b6df0 50%, #2f8f7f 75%, #3b6df0 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.campus-accent {
+  background-image: var(--hero-cta-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes campusAuroraA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(12%, 10%) scale(1.18); }
+}
+@keyframes campusAuroraB {
+  0%, 100% { transform: translate(0, 0) scale(1.1); }
+  50% { transform: translate(-14%, -8%) scale(0.92); }
+}
+@keyframes campusShimmer {
+  to { background-position: -100% center; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .campus-aurora-a { animation: campusAuroraA 18s ease-in-out infinite; }
+  .campus-aurora-b { animation: campusAuroraB 22s ease-in-out infinite; }
+  .campus-count { animation: campusShimmer 7s linear infinite; }
+}

@@ -6,6 +6,11 @@ export function useEmployeesQuery(filters = {}) {
   return useQuery({ queryKey: queryKeys.employees(filters), queryFn: () => employeesService.listEmployees(filters) })
 }
 
+// The resume link expires in ~10 minutes, so every open fetches a fresh one.
+export function useEmployeeQuery(id) {
+  return useQuery({ queryKey: queryKeys.employee(id), queryFn: () => employeesService.getEmployee(id), enabled: !!id, staleTime: 0, gcTime: 0 })
+}
+
 export function useCreateEmployeeMutation() {
   const queryClient = useQueryClient()
   return useMutation({

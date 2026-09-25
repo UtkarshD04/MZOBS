@@ -3,6 +3,7 @@ export const ROUTES = [
   { path: '/', label: 'Search Candidates', nav: 'primary' },
   { path: '/jobs', label: 'Jobs', nav: 'primary' },
   { path: '/talent-pool', label: 'Job Talent', nav: 'primary' },
+  { path: '/unlocked', label: 'Unlocked CVs', nav: 'more' },
   { path: '/saved-searches', label: 'Saved Searches', nav: 'more' },
   { path: '/shortlists', label: 'Shortlists', nav: 'primary' },
   { path: '/messages', label: 'Messages', nav: 'primary' },

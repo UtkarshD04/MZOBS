@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import clsx from 'clsx'
-import { ChevronDown, BookmarkPlus } from 'lucide-react'
+import { ChevronDown, BookmarkPlus, X } from 'lucide-react'
 import { criteriaToChips, removeChip, NOTICE_OPTIONS, STAGE_LABELS } from '../lib/talent/criteria'
 import { EMPLOYMENT_TYPE_LIST } from '../lib/talent/demoPool'
 import { vocab } from '../lib/talent/vocab'
@@ -135,6 +135,7 @@ const ACTIVE_OPTIONS = [['Any time', null], ['Last 1 day', 1], ['Last 7 days', 7
 const FRESH_OPTIONS = [['Any time', null], ['Last 7 days', 7], ['Last 30 days', 30], ['Last 90 days', 90], ['Last 6 months', 180]]
 const PROFILE_OPTIONS = [['Any', null], ['≥ 50%', 50], ['≥ 70%', 70], ['≥ 90%', 90]]
 const TRUST_OPTIONS = [['Any', null], ['≥ 40', 40], ['≥ 60', 60], ['≥ 80', 80]]
+const CV_ACCESS_OPTIONS = [['Any', ''], ['CV unlocked', 'unlocked'], ['Not unlocked yet', 'locked']]
 
 function Choice({ name, value, options, onChange }) {
   return options.map(([label, v]) => (
@@ -156,7 +157,8 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
         <h2 className="text-[14px] font-semibold">Filters</h2>
         <div className="flex items-center gap-1">
           <button onClick={onSave} disabled={!chips.length} className="flex items-center gap-1 rounded-md px-2 py-1 text-[12.5px] font-medium text-accent hover:bg-accent-soft disabled:text-muted disabled:hover:bg-transparent"><BookmarkPlus size={13} /> Save search</button>
-          <button onClick={onClear} disabled={!chips.length} className="rounded-md px-2 py-1 text-[12.5px] font-medium text-muted hover:bg-line-2 disabled:opacity-40">Clear all</button>
+          {/* Clear whenever there is anything to clear — a filter, or search text the parser turned into none. Only the empty state is faded. */}
+          <button onClick={onClear} disabled={!chips.length && !c.q.trim()} className="flex items-center gap-1 rounded-md px-2 py-1 text-[12.5px] font-semibold text-accent hover:bg-accent-soft disabled:pointer-events-none disabled:font-medium disabled:text-muted disabled:opacity-40"><X size={12} /> Clear all</button>
         </div>
       </div>
 
@@ -295,9 +297,16 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
           </Section>
         )}
 
-        <Section title="Already actioned" count={n(c.hideContacted, c.hideShortlisted)}>
+        <Section title="Already actioned" count={n(c.hideContacted, c.hideShortlisted, c.hideViewed, c.cvAccess)}>
           <Check checked={c.hideContacted} onChange={(hideContacted) => set({ hideContacted })}>Hide candidates I’ve contacted</Check>
           <Check checked={c.hideShortlisted} onChange={(hideShortlisted) => set({ hideShortlisted })}>Hide shortlisted candidates</Check>
+          <Check checked={c.hideViewed} onChange={(hideViewed) => set({ hideViewed })}>Hide profiles I’ve viewed</Check>
+          {m.pipeline && (
+            <>
+              <Label>CV access</Label>
+              <Choice name="cv" value={c.cvAccess} options={CV_ACCESS_OPTIONS} onChange={(cvAccess) => set({ cvAccess })} />
+            </>
+          )}
         </Section>
       </div>
     </div>

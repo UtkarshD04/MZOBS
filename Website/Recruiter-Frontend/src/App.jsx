@@ -8,6 +8,7 @@ import SearchCandidates from './pages/SearchCandidates'
 import CandidateProfile from './pages/CandidateProfile'
 import SavedSearches from './pages/SavedSearches'
 import Shortlists from './pages/Shortlists'
+import UnlockedCvs from './pages/UnlockedCvs'
 import JobTalent from './pages/JobTalent'
 import Jobs from './pages/Jobs'
 import JobForm from './pages/JobForm'
@@ -61,6 +62,7 @@ export default function App() {
           <Route path="/candidate/:id" element={<CandidateProfile />} />
           <Route path="/saved-searches" element={<SavedSearches />} />
           <Route path="/shortlists" element={<Shortlists />} />
+          <Route path="/unlocked" element={<UnlockedCvs />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/new" element={<JobForm />} />
           <Route path="/jobs/:id/edit" element={<JobForm />} />
