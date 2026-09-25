@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X, LogOut, User } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
+import { CLIENT_ONLY_ROUTES } from '../../lib/routes'
 import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange } from '../../lib/employeeSession'
 import { subscribeToWebPush, unsubscribeFromWebPush } from '../../lib/webPush'
 import EmployeeAuthModal from '../forms/EmployeeAuthModal'
@@ -11,6 +12,9 @@ import EmployeeAuthModal from '../forms/EmployeeAuthModal'
 // visibly changes when navigating (e.g. clicking "For Employers").
 export default function Navbar() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  // The Mzobs Ally page is for students — the employer call-to-action doesn't belong there.
+  const showEmployer = pathname !== CLIENT_ONLY_ROUTES.ally
   const [open, setOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -142,7 +146,7 @@ export default function Navbar() {
                 Sign in
               </button>
             )}
-            {!session && (
+            {!session && showEmployer && (
               <Link
                 to="/employers"
                 className="text-[13.5px] font-bold text-white bg-(--jobs-navy) hover:bg-(--jobs-teal-dark) transition-colors px-4 py-2.5 rounded-lg"
@@ -223,7 +227,7 @@ export default function Navbar() {
                       Sign in
                     </button>
                   )}
-                  {!session && (
+                  {!session && showEmployer && (
                     <Link
                       to="/employers"
                       onClick={() => setOpen(false)}
