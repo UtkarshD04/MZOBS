@@ -324,8 +324,8 @@ export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewR
   const c = result?.candidate
   const credits = wallet?.remainingCredits
   return (
-    <Modal open={!!candidate} onClose={onClose} title={c ? 'Contact details' : 'Unlock CV & contact details'} subtitle={candidate?.name} width={460}
-      footer={c ? <><Button onClick={onClose}>Done</Button>{onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, { email: c.email, phone: c.phone })}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || credits === 0 || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Unlocking…' : 'Unlock for 1 credit'}</Button></>}>
+    <Modal open={!!candidate} onClose={onClose} title={c ? 'Contact details' : 'View contact details & CV'} subtitle={candidate?.name} width={460}
+      footer={c ? <><Button onClick={onClose}>Done</Button>{onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, { email: c.email, phone: c.phone })}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || credits === 0 || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Opening…' : 'View · uses 1 credit'}</Button></>}>
       {c ? (
         <dl className="space-y-3 text-[14px]">
           <div><dt className="text-[12px] text-muted">Email</dt><dd className="font-medium">{c.email || '—'}</dd></div>
@@ -338,7 +338,7 @@ export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewR
         </dl>
       ) : (
         <div className="space-y-3 text-[13.5px]">
-          <p>The CV, email and phone stay hidden until you spend one CV credit. The unlock is permanent for this candidate.</p>
+          <p>Email, phone and CV stay hidden. Viewing any of them uses <b>1 CV credit</b> — only once for this candidate. After that all three stay open and you are never charged again for {candidate?.name?.split(' ')[0]}.</p>
           <p className="rounded-lg bg-line-2 px-3 py-2 text-ink-2">Email {preview?.email ?? '—'} · Phone {preview?.phone ?? '—'}</p>
           {needsJob && jobs === null && <p className="text-muted">Loading your jobs…</p>}
           {needsJob && jobs?.length === 0 && (

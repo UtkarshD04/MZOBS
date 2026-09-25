@@ -83,7 +83,16 @@ function CandidateCard({ row, terms, compact, onAction }) {
             {c.expectedSalaryLPA != null && <Meta icon={IndianRupee} title="Current → expected salary">{c.currentSalaryLPA != null ? `${lpa(c.currentSalaryLPA)} → ` : 'Expects '}{lpa(c.expectedSalaryLPA)}</Meta>}
             <Meta icon={MapPin}>{c.location || '—'}</Meta>
             {c.noticePeriodDays != null && <Meta icon={Clock} title="Notice period">{notice(c.noticePeriodDays)} notice</Meta>}
-            {c.contact?.phone && <Meta icon={Phone} title="Unlocked contact">{c.contact.phone}</Meta>}
+            {c.contact?.phone ? (
+              <Meta icon={Phone} title="Unlocked contact">{c.contact.phone}</Meta>
+            ) : (
+              !IS_DEMO && c._live?.contactPreview?.phone && (
+                <button onClick={() => onAction('unlock', c)} title="View phone, email and CV — uses 1 credit, once per candidate" className="inline-flex items-center gap-1.5 text-[13px] text-ink-2 hover:text-accent">
+                  <Phone size={13} className="text-[#7d93a6]" /> {c._live.contactPreview.phone}
+                  <span className="inline-flex items-center gap-0.5 font-semibold text-accent"><Eye size={12} /> View</span>
+                </button>
+              )
+            )}
             {!compact && c.education[0] && <Meta icon={GraduationCap}>{c.education[0].degree}{c.education[0].institute ? `, ${c.education[0].institute}` : ''}</Meta>}
           </div>
 
