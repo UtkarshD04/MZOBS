@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Building2, Phone, Mail, MessageSquare, CalendarPlus, Bookmark, FolderPlus, Pin, FileText, GitCompareArrows, Share2, ExternalLink, Sparkles, GraduationCap, Award, Languages, Briefcase, Clock, IndianRupee, Activity, StickyNote, Lightbulb, Lock, Database } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Building2, Phone, Mail, MessageSquare, CalendarPlus, Bookmark, FolderPlus, Pin, FileText, GitCompareArrows, Share2, ExternalLink, Sparkles, GraduationCap, Award, Languages, Briefcase, Clock, IndianRupee, Activity, StickyNote, Lightbulb, Lock, Database, Eye } from 'lucide-react'
 import { useActions } from '../components/useActions'
 import { NotesList } from '../components/ActionModals'
 import { ResumeFrame, ResumeLinks } from '../components/ResumeViewer'
@@ -14,6 +14,24 @@ import { loadLastResults } from '../lib/lastResults'
 import { useWorkspace } from '../store/workspace'
 import { lpa, years, notice, ago } from '../lib/format'
 import { IS_DEMO } from '../lib/config'
+
+// Email and phone stay masked until the company views them: the button opens
+// the confirm step, and one credit then opens email, phone and CV together —
+// never charged again for the same candidate.
+function ContactFact({ candidate: c, onView }) {
+  if (c.contact) return <>{c.contact.email || '—'}<br />{c.contact.phone || '—'}</>
+  const preview = c._live?.contactPreview
+  return (
+    <>
+      <span className="text-ink-2">{preview?.email ?? '—'}</span>
+      <br />
+      <span className="text-ink-2">{preview?.phone ?? '—'}</span>
+      <button onClick={onView} className="mt-1.5 flex items-center gap-1 rounded-md border border-line px-2 py-1 text-[12px] font-semibold text-accent transition-colors hover:bg-accent-soft">
+        <Eye size={12} /> View · 1 credit
+      </button>
+    </>
+  )
+}
 
 function Fact({ icon: Icon, label, children }) {
   return (
@@ -71,8 +89,8 @@ function CvSection({ candidate: c, onUnlock }) {
           <div className="absolute inset-0 grid place-items-center bg-white/60 p-4 text-center">
             <div>
               <p className="flex items-center justify-center gap-1.5 text-[14px] font-semibold"><Lock size={14} /> CV is locked</p>
-              <p className="mt-1 text-[13px] text-muted">One CV credit unlocks {c.name.split(' ')[0]}'s CV, email and phone — permanently.</p>
-              <Button variant="primary" size="sm" className="mt-3" onClick={onUnlock}>Unlock CV (1 credit)</Button>
+              <p className="mt-1 text-[13px] text-muted">Viewing {c.name.split(' ')[0]}'s CV, email or phone uses 1 credit — once. After that all three stay open.</p>
+              <Button variant="primary" size="sm" icon={Eye} className="mt-3" onClick={onUnlock}>View CV · 1 credit</Button>
             </div>
           </div>
         </div>
@@ -229,7 +247,7 @@ export default function CandidateProfile() {
             <p className="text-[14px] leading-6 text-ink-2">{c.summary || 'No summary provided.'}</p>
             <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
               <Fact icon={Briefcase} label="Experience">{years(c.experienceYears)}</Fact>
-              {!IS_DEMO && <Fact icon={Mail} label="Contact">{c.contact ? <>{c.contact.email || '—'}<br />{c.contact.phone || '—'}</> : <button onClick={() => onAction('unlock', c)} className="text-accent hover:underline">Unlock (1 credit)</button>}</Fact>}
+              {!IS_DEMO && <Fact icon={Mail} label="Contact"><ContactFact candidate={c} onView={() => onAction('unlock', c)} /></Fact>}
               {c.currentSalaryLPA != null && <Fact icon={IndianRupee} label="Current CTC">{lpa(c.currentSalaryLPA)}</Fact>}
               <Fact icon={IndianRupee} label="Expected CTC">{lpa(c.expectedSalaryLPA)}</Fact>
               {c.noticePeriodDays != null && <Fact icon={Clock} label="Notice period">{notice(c.noticePeriodDays)}</Fact>}
