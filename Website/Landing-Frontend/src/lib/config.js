@@ -10,6 +10,18 @@ export const EMPLOYEE_LOGIN_URL = `${EMPLOYEE_APP_URL}/login`
 // in/up directly against it, then hands the app a token via ?token=.
 export const EMPLOYER_API_URL = import.meta.env.VITE_EMPLOYER_API_URL ?? 'http://localhost:4000/api/employer'
 
+// The Backend's origin, taken from the employer API URL that every deployment
+// already sets. Endpoints without their own VITE_ variable in the Dockerfile
+// (Campus Mantri, account deletion) are built from it, so a production build
+// never falls back to localhost. A blank/unset own variable counts as unset (`||`).
+const API_ORIGIN = (() => {
+  try {
+    return new URL(EMPLOYER_API_URL).origin
+  } catch {
+    return ''
+  }
+})()
+
 // Same Backend, employee side — this marketing site signs employees in/up
 // directly against it too, then hands the app a token via ?token=.
 export const EMPLOYEE_API_URL = import.meta.env.VITE_EMPLOYEE_API_URL ?? 'http://localhost:4000/api/employee'
@@ -18,7 +30,7 @@ export const EMPLOYEE_API_URL = import.meta.env.VITE_EMPLOYEE_API_URL ?? 'http:/
 export const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL ?? 'http://localhost:4000/api/contact'
 
 // Same Backend — Campus Mantri applications (shown in the Operations portal).
-export const CAMPUS_MANTRI_API_URL = import.meta.env.VITE_CAMPUS_MANTRI_API_URL ?? 'http://localhost:4000/api/campus-mantri'
+export const CAMPUS_MANTRI_API_URL = import.meta.env.VITE_CAMPUS_MANTRI_API_URL || `${API_ORIGIN}/api/campus-mantri`
 
 // Same Backend — public, unauthenticated feed of jobs admin/ops have
 // approved and pushed live, for the home page's "Latest jobs" section.
@@ -27,7 +39,7 @@ export const PUBLIC_JOBS_API_URL = import.meta.env.VITE_PUBLIC_JOBS_API_URL ?? '
 // Same Backend — the public, no-login account deletion page Play Store's
 // Account Deletion policy requires (see /delete-account). Deliberately not
 // under EMPLOYEE_API_URL: this must work for someone who can't log in.
-export const ACCOUNT_DELETION_API_URL = import.meta.env.VITE_ACCOUNT_DELETION_API_URL ?? 'http://localhost:4000/api/account-deletion'
+export const ACCOUNT_DELETION_API_URL = import.meta.env.VITE_ACCOUNT_DELETION_API_URL || `${API_ORIGIN}/api/account-deletion`
 
 // Google OAuth Web Client ID — must match GOOGLE_CLIENT_ID on the backend,
 // since it checks this as the token audience. Left blank, the Google button
