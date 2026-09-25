@@ -18,5 +18,7 @@ export const CLIENT_ONLY_ROUTES = {
   employerSignin: '/employers/signin',
   employerForgotPassword: '/employers/forgot-password',
   employerResetPassword: '/employers/reset-password',
-  campusMantri: '/campus-mantri',
+  doot: '/doot',
+  // old link — redirects to /doot (see App.jsx)
+  dootLegacy: '/campus-mantri',
 }

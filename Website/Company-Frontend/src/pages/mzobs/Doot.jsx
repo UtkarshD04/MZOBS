@@ -12,7 +12,7 @@ import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Select, Textarea } from '../../components/ui/Field'
 import { useApp } from '../../lib/appContext'
-import { useCampusMantriQuery, useCampusMantriStatsQuery, useUpdateCampusMantriMutation } from '../../hooks/useCampusMantri'
+import { useDootQuery, useDootStatsQuery, useUpdateDootMutation } from '../../hooks/useDoot'
 
 const STATUSES = ['New', 'Reviewing', 'Shortlisted', 'Selected', 'Rejected']
 const TABS = ['All', ...STATUSES]
@@ -31,7 +31,7 @@ function Section({ title, children }) {
 function DetailModal({ app, item }) {
   const [status, setStatus] = useState(item.status)
   const [notes, setNotes] = useState(item.notes || '')
-  const update = useUpdateCampusMantriMutation()
+  const update = useUpdateDootMutation()
 
   function save() {
     update.mutate(
@@ -80,14 +80,14 @@ function DetailModal({ app, item }) {
   )
 }
 
-export default function CampusMantri() {
+export default function Doot() {
   const app = useApp()
   const [tab, setTab] = useState(0)
   const [query, setQuery] = useState('')
 
   const status = tab === 0 ? null : TABS[tab]
-  const { data: rows = [], isLoading, isError, refetch } = useCampusMantriQuery(status ? { status } : {})
-  const { data: stats } = useCampusMantriStatsQuery()
+  const { data: rows = [], isLoading, isError, refetch } = useDootQuery(status ? { status } : {})
+  const { data: stats } = useDootStatsQuery()
 
   const filtered = useMemo(() => {
     if (!query) return rows
@@ -101,8 +101,8 @@ export default function CampusMantri() {
   return (
     <StaggerGroup>
       <StaggerItem className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Campus Mantri</h1>
-        <p className="text-sm text-ink-secondary mt-1">Applications submitted through the Campus Mantri form on the Mzobs website.</p>
+        <h1 className="text-2xl font-bold tracking-tight">Mzobs Doot</h1>
+        <p className="text-sm text-ink-secondary mt-1">Applications submitted through the Mzobs Doot form on the Mzobs website.</p>
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-5">

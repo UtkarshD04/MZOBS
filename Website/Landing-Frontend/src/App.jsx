@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import ScrollToTop from './components/layout/ScrollToTop'
 import CursorDot from './components/ui/CursorDot'
@@ -41,7 +41,7 @@ const EmployerSignup = lazy(() => import('./pages/EmployerSignup'))
 const EmployerSignin = lazy(() => import('./pages/EmployerSignin'))
 const EmployerForgotPassword = lazy(() => import('./pages/EmployerForgotPassword'))
 const EmployerResetPassword = lazy(() => import('./pages/EmployerResetPassword'))
-const CampusMantri = lazy(() => import('./pages/CampusMantri'))
+const Doot = lazy(() => import('./pages/Doot'))
 
 // Only ever visible for the fraction of a second a lazy route's chunk takes
 // to fetch (and never at all for the eager/SSR'd routes above) — deliberately
@@ -97,7 +97,8 @@ export default function App() {
             <Route path={CLIENT_ONLY_ROUTES.employerSignin} element={<EmployerSignin />} />
             <Route path={CLIENT_ONLY_ROUTES.employerForgotPassword} element={<EmployerForgotPassword />} />
             <Route path={CLIENT_ONLY_ROUTES.employerResetPassword} element={<EmployerResetPassword />} />
-            <Route path={CLIENT_ONLY_ROUTES.campusMantri} element={<CampusMantri />} />
+            <Route path={CLIENT_ONLY_ROUTES.doot} element={<Doot />} />
+            <Route path={CLIENT_ONLY_ROUTES.dootLegacy} element={<Navigate to={CLIENT_ONLY_ROUTES.doot} replace />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="*" element={<NotFound />} />
