@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Trash2, Pencil, ArrowLeft, FolderOpen, X } from 'lucide-react'
+import { Plus, Trash2, Pencil, ArrowLeft, FolderOpen, X, FileText } from 'lucide-react'
 import { Avatar, Button, EmptyState, Chip } from '../components/ui'
 import { useWorkspace } from '../store/workspace'
 import { getTalentMany } from '../services/talentService'
@@ -45,6 +45,7 @@ function ListDetail({ list, onBack }) {
               <p className="truncate text-[13px] text-muted">{c.designation} · {years(c.experienceYears)} · {c.location} · {lpa(c.expectedSalaryLPA)}</p>
             </div>
             <div className="hidden gap-1 md:flex">{c.skills.slice(0, 3).map((s) => <Chip key={s}>{s}</Chip>)}</div>
+            <Button size="sm" icon={FileText} onClick={() => onAction('resume', c)}>View CV</Button>
             <Button size="sm" onClick={() => onAction('contact', c)}>Contact</Button>
             <Button size="sm" variant="ghost" icon={X} onClick={() => removeFromShortlist(list.id, c.id)} aria-label={`Remove ${c.name}`} />
           </li>

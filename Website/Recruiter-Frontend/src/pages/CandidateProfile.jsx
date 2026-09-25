@@ -86,8 +86,8 @@ function CvSection({ candidate: c, onUnlock }) {
           <div aria-hidden className="space-y-2.5 p-6 blur-[3px]">
             {[70, 45, 90, 80, 60, 85, 40, 75].map((w, i) => <div key={i} className="h-2.5 rounded bg-line-2" style={{ width: `${w}%` }} />)}
           </div>
-          <div className="absolute inset-0 grid place-items-center bg-white/60 p-4 text-center">
-            <div>
+          <div className="absolute inset-0 grid place-items-center bg-white/50 p-4 text-center">
+            <div className="max-w-sm rounded-2xl border border-line bg-white px-6 py-5 shadow-card">
               <p className="flex items-center justify-center gap-1.5 text-[14px] font-semibold"><Lock size={14} /> CV is locked</p>
               <p className="mt-1 text-[13px] text-muted">Viewing {c.name.split(' ')[0]}'s CV, email or phone uses 1 credit — once. After that all three stay open.</p>
               <Button variant="primary" size="sm" icon={Eye} className="mt-3" onClick={onUnlock}>View CV · 1 credit</Button>
@@ -227,7 +227,7 @@ export default function CandidateProfile() {
             <Button key={a.label} variant={a.primary ? 'primary' : 'outline'} icon={a.icon} onClick={a.run} className={a.on ? 'border-[#bfe8cf] bg-ok-soft text-[#1a8f5a]' : ''}>{a.label}</Button>
           ))}
           <Button icon={GitCompareArrows} onClick={() => toggleCompare(c.id)}>{compare.includes(c.id) ? 'In compare' : 'Compare'}</Button>
-          <Button icon={FileText} onClick={() => onAction('resume', c)}>View CV</Button>
+          <Button icon={IS_DEMO || c._live?.unlocked ? FileText : Lock} onClick={() => onAction('resume', c)}>View CV</Button>
           <Button variant="ghost" icon={Share2} onClick={() => onAction('share', c)}>Share</Button>
         </div>
         {!IS_DEMO && c._live?.candidateId && (
