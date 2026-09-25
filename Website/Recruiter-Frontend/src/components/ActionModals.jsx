@@ -282,7 +282,8 @@ export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewR
   const [err, setErr] = useState('')
   const [jobs, setJobs] = useState(null)
   const [jobId, setJobId] = useState('')
-  // A resume-database profile joins one of the company's jobs when it is first unlocked.
+  // A resume-database profile can join one of the company's jobs when it is first
+  // unlocked — optional: with no job (or "No specific job") it is simply unlocked.
   const needsJob = candidate?._live?.kind === 'resdex' && !candidate._live.candidateId
   useEffect(() => {
     setResult(null)
@@ -324,7 +325,7 @@ export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewR
   const credits = wallet?.remainingCredits
   return (
     <Modal open={!!candidate} onClose={onClose} title={c ? 'Contact details' : 'Unlock CV & contact details'} subtitle={candidate?.name} width={460}
-      footer={c ? <><Button onClick={onClose}>Done</Button>{onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, { email: c.email, phone: c.phone })}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || credits === 0 || (needsJob && !jobId)} onClick={unlock}>{busy ? 'Unlocking…' : 'Unlock for 1 credit'}</Button></>}>
+      footer={c ? <><Button onClick={onClose}>Done</Button>{onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, { email: c.email, phone: c.phone })}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || credits === 0 || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Unlocking…' : 'Unlock for 1 credit'}</Button></>}>
       {c ? (
         <dl className="space-y-3 text-[14px]">
           <div><dt className="text-[12px] text-muted">Email</dt><dd className="font-medium">{c.email || '—'}</dd></div>
@@ -341,15 +342,16 @@ export function UnlockModal({ candidate, onClose, onCompose, onUnlocked, onViewR
           <p className="rounded-lg bg-line-2 px-3 py-2 text-ink-2">Email {preview?.email ?? '—'} · Phone {preview?.phone ?? '—'}</p>
           {needsJob && jobs === null && <p className="text-muted">Loading your jobs…</p>}
           {needsJob && jobs?.length === 0 && (
-            <p className="rounded-lg bg-warn-soft px-3 py-2 text-warn">Unlocking adds the candidate to one of your jobs, and you don't have one yet. <Link to="/jobs/new" onClick={onClose} className="font-medium underline">Post a job</Link></p>
+            <p className="text-[12.5px] text-muted">You have no jobs yet, so this CV is unlocked on its own. <Link to="/jobs/new" onClick={onClose} className="font-medium text-accent hover:underline">Post a job</Link> to build a pipeline.</p>
           )}
           {needsJob && jobs?.length > 0 && (
             <label className="block text-[12px] text-muted">
-              Add to job
+              Add to job (optional)
               <select value={jobId} onChange={(e) => setJobId(e.target.value)} className={clsx(field, 'mt-1')}>
                 {jobs.map((j) => <option key={j.id} value={j.id}>{j.title}</option>)}
+                <option value="">No specific job</option>
               </select>
-              <span className="mt-1 block">{candidate.name.split(' ')[0]} joins this job's pipeline, so you can shortlist and schedule interviews.</span>
+              <span className="mt-1 block">{jobId ? `${candidate.name.split(' ')[0]} joins this job's pipeline, so you can shortlist and schedule interviews.` : 'Unlocked on its own, not added to any job pipeline.'}</span>
             </label>
           )}
           {credits != null && <p className="text-muted">Credits available: <b className="text-ink">{credits}</b>{credits === 0 && <> · <Link to="/credits" onClick={onClose} className="font-medium text-accent hover:underline">Buy credits</Link></>}</p>}
