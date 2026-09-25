@@ -5,8 +5,8 @@ import { useWorkspace } from '../store/workspace'
 import { getTalentMany } from '../services/talentService'
 import { MatchSheet, TrustSheet } from './Sheets'
 import { IS_DEMO } from '../lib/config'
-import { getCandidateResumeUrl } from '../services/liveApi'
-import { FILE_BASE_URL } from '../lib/config'
+import { getResumeLink } from '../services/liveApi'
+import { ResumeViewer } from './ResumeViewer'
 import { UnlockModal, ShortlistModal, AddToJobModal, OutreachModal, InterviewModal, NoteModal } from './ActionModals'
 import CompareModal from './CompareModal'
 import { Button } from './ui'
@@ -14,9 +14,10 @@ import { Button } from './ui'
 /**
  * One place that wires every recruiter action (card menus, profile header,
  * bulk bar) to its modal/sheet. Returns `onAction(type, payload)` plus the
- * `host` element to render once per page.
+ * `host` element to render once per page. `onUnlocked(result)` runs after a
+ * CV credit is spent, so the page can reload the now-unmasked candidate.
  */
-export function useActions(criteria) {
+export function useActions(criteria, { onUnlocked } = {}) {
   const nav = useNavigate()
   const { toast, compare, selected, clearSelection, setCompareIds } = useWorkspace()
   const [why, setWhy] = useState(null)
@@ -28,6 +29,7 @@ export function useActions(criteria) {
   const [note, setNote] = useState({ c: null, kind: 'note' })
   const [compareOpen, setCompareOpen] = useState(false)
   const [unlock, setUnlock] = useState(null)
+  const [resume, setResume] = useState(null)
 
   const onAction = useCallback(
     (type, payload) => {
@@ -41,15 +43,22 @@ export function useActions(criteria) {
         case 'contact': case 'email': return !IS_DEMO && !c._live?.unlocked ? setUnlock(c) : setOutreach({ list: [c], channel: 'email' })
         case 'message': return setOutreach({ list: [c], channel: 'message' })
         case 'sms': return setOutreach({ list: [c], channel: 'sms' })
-        case 'call': return IS_DEMO ? toast('Demo data has no phone numbers.', { tone: 'warn' }) : setUnlock(c)
+        case 'call': case 'unlock': return IS_DEMO ? toast('Demo data has no phone numbers.', { tone: 'warn' }) : setUnlock(c)
         case 'resume': {
           if (IS_DEMO) return toast('Demo data has no resumes.', { tone: 'warn' })
-          // A plan can open verified resumes directly; otherwise fall back to a CV-credit unlock.
-          return getCandidateResumeUrl(c.id)
-            .then(({ url }) => window.open(`${FILE_BASE_URL}${url}`, '_blank', 'noopener'))
-            .catch(() => setUnlock(c))
+          // Opens the CV when the plan or an earlier unlock allows it; otherwise offers the CV-credit unlock.
+          return getResumeLink(c)
+            .then((f) => setResume({ ...f, name: c.name }))
+            .catch((e) => (e.code === 'LOCKED' ? setUnlock(c) : toast(e.code === 'NO_RESUME' ? `${c.name} has no verified CV yet.` : 'Could not open the CV — try again.', { tone: 'warn' })))
         }
-        case 'interview': return setInterview(c)
+        case 'interview': {
+          // Interviews hang off a pipeline row, which a resume-database profile only gets when it's unlocked for a job.
+          if (!IS_DEMO && !c._live?.candidateId) {
+            toast('Unlock this candidate first — that adds them to one of your jobs.', { tone: 'warn' })
+            return setUnlock(c)
+          }
+          return setInterview(c)
+        }
         case 'note': return setNote({ c, kind: 'note' })
         case 'reminder': return setNote({ c, kind: 'reminder' })
         case 'share': {
@@ -95,7 +104,14 @@ export function useActions(criteria) {
       <ShortlistModal ids={shortlistIds} onClose={(ok) => { setShortlistIds([]); if (ok) clearSelection() }} />
       <AddToJobModal ids={jobIds} onClose={() => setJobIds([])} />
       <OutreachModal candidates={outreach.list} channel={outreach.channel} onClose={() => setOutreach({ list: [], channel: 'email' })} />
-      <UnlockModal candidate={unlock} onClose={() => setUnlock(null)} onCompose={(c, contact) => { setUnlock(null); setOutreach({ list: [{ ...c, contact, _live: { ...c._live, unlocked: true } }], channel: 'email' }) }} />
+      <UnlockModal
+        candidate={unlock}
+        onClose={() => setUnlock(null)}
+        onUnlocked={onUnlocked}
+        onViewResume={(c, f) => { setUnlock(null); setResume({ ...f, name: c.name }) }}
+        onCompose={(c, contact) => { setUnlock(null); setOutreach({ list: [{ ...c, contact, _live: { ...c._live, unlocked: true } }], channel: 'email' }) }}
+      />
+      <ResumeViewer file={resume} onClose={() => setResume(null)} />
       <InterviewModal candidate={interview} onClose={() => setInterview(null)} />
       <NoteModal candidate={note.c} kind={note.kind} onClose={() => setNote({ c: null, kind: 'note' })} />
       <CompareModal open={compareOpen} onClose={() => setCompareOpen(false)} criteria={criteria} />

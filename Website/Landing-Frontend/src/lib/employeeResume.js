@@ -7,6 +7,16 @@ import { EMPLOYEE_API_URL } from './config'
 export const RESUME_MAX_SIZE = 5 * 1024 * 1024
 export const RESUME_ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx']
 
+// The API returns a resume as a root-relative `/files/resume/:token` link,
+// which lives on the API's own origin, not this site's. `?download=1` makes
+// the API serve it as an attachment, so the browser saves the file instead
+// of opening it.
+export function resumeDownloadUrl(path) {
+  const url = new URL(path, new URL(EMPLOYEE_API_URL).origin)
+  url.searchParams.set('download', '1')
+  return url.href
+}
+
 export function validateResumeFileClientSide(file) {
   if (!file) return null
   const ext = /\.[a-zA-Z0-9]+$/.exec(file.name)?.[0]?.toLowerCase()

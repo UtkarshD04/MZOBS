@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import clsx from 'clsx'
-import { Bell, HelpCircle, Sparkles, ChevronDown, Search, Menu, X, CreditCard } from 'lucide-react'
+import { Bell, HelpCircle, Sparkles, ChevronDown, Search, Menu, X, CreditCard, LogOut } from 'lucide-react'
 import { IS_DEMO } from '../lib/config'
 import { getSession, logout } from '../services/liveApi'
 import { getPlanSnapshot, subscribePlan } from '../services/planService'
@@ -53,6 +53,15 @@ function PlanPill() {
   )
 }
 
+// Same event App.jsx and lib/api.js already use to drop the signed-in state
+// (an expired token fires it too), so signing out from here lands on the
+// same login screen.
+function signOut() {
+  if (!window.confirm('Sign out of Mzobs Talent?')) return
+  logout()
+  window.dispatchEvent(new Event('mzt-signed-out'))
+}
+
 export default function TopNav({ onAskAI }) {
   const [more, setMore] = useState(false)
   const [mobile, setMobile] = useState(false)
@@ -85,21 +94,35 @@ export default function TopNav({ onAskAI }) {
           </button>
           <Link to="/" className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2 md:hidden" aria-label="Search candidates"><Search size={17} /></Link>
           <button className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2" aria-label="Notifications"><Bell size={17} /></button>
-          <button className="hidden h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2 sm:grid" aria-label="Help"><HelpCircle size={17} /></button>
+          <button className="hidden h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2 2xl:grid" aria-label="Help"><HelpCircle size={17} /></button>
           <PlanPill />
-          <button
-            onClick={() => { if (!IS_DEMO && window.confirm('Sign out of Mzobs Talent?')) { logout(); window.dispatchEvent(new Event('mzt-signed-out')) } }}
+          <span
             className="grid h-9 w-9 place-items-center rounded-full bg-ink text-[12px] font-semibold text-white"
-            aria-label={IS_DEMO ? 'Recruiter profile' : 'Sign out'}
-            title={IS_DEMO ? 'Demo recruiter' : `${getSession()?.user?.name ?? 'Recruiter'} — click to sign out`}
+            title={IS_DEMO ? 'Demo recruiter' : getSession()?.user?.name ?? 'Recruiter'}
           >
             {IS_DEMO ? 'R' : getSession()?.user?.initials ?? 'R'}
-          </button>
+          </span>
+          {!IS_DEMO && (
+            <button
+              onClick={signOut}
+              className="ml-0.5 flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-ink/15 px-2.5 text-[13px] font-bold text-ink transition-colors hover:border-[#f0c4c4] hover:bg-[#fdf1f1] hover:text-[#c0392b] 2xl:px-3.5"
+              aria-label="Log out"
+              title="Log out"
+            >
+              <LogOut size={15} />
+              <span className="hidden 2xl:inline">Log out</span>
+            </button>
+          )}
         </div>
       </div>
       {mobile && (
         <nav className="fade-up grid grid-cols-2 gap-1 border-t border-line bg-white p-3 lg:hidden">
           {[...PRIMARY, ...MORE].map((r) => <NavItem key={r.path} to={r.path} onClick={() => setMobile(false)}>{r.label}</NavItem>)}
+          {!IS_DEMO && (
+            <button onClick={signOut} className="col-span-2 mt-1 flex items-center justify-center gap-2 rounded-lg border border-line px-2.5 py-2 text-[13.5px] font-bold text-[#c0392b] hover:bg-[#fdf1f1]">
+              <LogOut size={15} /> Log out
+            </button>
+          )}
         </nav>
       )}
     </header>

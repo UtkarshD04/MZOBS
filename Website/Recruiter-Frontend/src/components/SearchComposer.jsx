@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import clsx from 'clsx'
-import { Search, Sparkles, Braces, ChevronDown, CornerDownLeft, AlertCircle, CheckCircle2, CircleHelp } from 'lucide-react'
+import { Search, Sparkles, Braces, ChevronDown, CornerDownLeft, AlertCircle, CheckCircle2, CircleHelp, X } from 'lucide-react'
 import { SCOPES } from '../lib/talent/criteria'
 import { exampleQueries } from '../lib/talent/parse'
 import { validateBoolean, boolToString, BOOLEAN_EXAMPLES, FIELD_HELP } from '../lib/talent/boolean'
@@ -24,7 +24,7 @@ function Toggle({ on, onClick, icon: Icon, children, tone }) {
   )
 }
 
-export default function SearchComposer({ criteria, onSearch, loading }) {
+export default function SearchComposer({ criteria, onSearch, onClear, canClear, loading }) {
   const [text, setText] = useState(criteria.q)
   const [mode, setMode] = useState(criteria.mode === 'boolean' ? 'boolean' : 'ai')
   const [scope, setScope] = useState(criteria.scope)
@@ -99,6 +99,22 @@ export default function SearchComposer({ criteria, onSearch, loading }) {
           className={clsx('min-h-[52px] flex-1 resize-none bg-transparent py-1.5 text-[15px] leading-6 outline-none placeholder:text-[#8aa0b2]', isBool && 'font-mono text-[14px]')}
           aria-label="Search candidates"
         />
+        {(text || canClear) && (
+          <button
+            type="button"
+            onClick={() => {
+              setText('')
+              setTried(false)
+              onClear?.()
+              ref.current?.focus()
+            }}
+            aria-label="Clear search"
+            title="Clear search and filters"
+            className="mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-lg text-muted transition-colors hover:bg-line-2 hover:text-ink"
+          >
+            <X size={16} />
+          </button>
+        )}
         <button type="button" onClick={() => submit()} disabled={check && !check.ok && tried} className={clsx('mt-0.5 flex h-10 items-center gap-1.5 rounded-2xl px-4 text-[14px] font-semibold text-white transition-colors', ai ? 'bg-accent hover:bg-ink' : 'bg-blue hover:bg-[#185a94]')}>
           <Search size={15} /> <span className="hidden sm:inline">Search</span>
         </button>
