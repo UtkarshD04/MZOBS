@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
-<<<<<<< Updated upstream
-import { Bell, HelpCircle, Sparkles, ChevronDown, Search, Menu, X, CreditCard, LogOut } from 'lucide-react'
-=======
 import { Bell, HelpCircle, Sparkles, ChevronDown, Search, Menu, X, CreditCard, Settings, LogOut } from 'lucide-react'
->>>>>>> Stashed changes
 import { IS_DEMO } from '../lib/config'
 import { getSession, logout } from '../services/liveApi'
 import { getPlanSnapshot, subscribePlan } from '../services/planService'
@@ -171,16 +167,10 @@ export default function TopNav({ onAskAI }) {
             <Sparkles size={14} /> Ask Mzobs AI <kbd className="rounded bg-white/70 px-1 text-[10px] text-muted">Ctrl K</kbd>
           </button>
           <Link to="/" className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2 md:hidden" aria-label="Search candidates"><Search size={17} /></Link>
-<<<<<<< Updated upstream
-          <button className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2" aria-label="Notifications"><Bell size={17} /></button>
-          <button className="hidden h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2 2xl:grid" aria-label="Help"><HelpCircle size={17} /></button>
+          <BellLink />
+          <NavLink to="/help" aria-label="Help & support" title="Help & support" className={({ isActive }) => `hidden h-9 w-9 place-items-center rounded-lg transition-colors hover:bg-line-2 2xl:grid ${isActive ? 'bg-accent-soft text-accent' : 'text-ink-2'}`}><HelpCircle size={17} /></NavLink>
           <PlanPill />
-          <span
-            className="grid h-9 w-9 place-items-center rounded-full bg-ink text-[12px] font-semibold text-white"
-            title={IS_DEMO ? 'Demo recruiter' : getSession()?.user?.name ?? 'Recruiter'}
-          >
-            {IS_DEMO ? 'R' : getSession()?.user?.initials ?? 'R'}
-          </span>
+          <ProfileMenu />
           {!IS_DEMO && (
             <button
               onClick={signOut}
@@ -192,12 +182,6 @@ export default function TopNav({ onAskAI }) {
               <span className="hidden 2xl:inline">Log out</span>
             </button>
           )}
-=======
-          <BellLink />
-          <NavLink to="/help" aria-label="Help & support" title="Help & support" className={({ isActive }) => `hidden h-9 w-9 place-items-center rounded-lg transition-colors hover:bg-line-2 sm:grid ${isActive ? 'bg-accent-soft text-accent' : 'text-ink-2'}`}><HelpCircle size={17} /></NavLink>
-          <PlanPill />
-          <ProfileMenu />
->>>>>>> Stashed changes
         </div>
       </div>
       {mobile && (
