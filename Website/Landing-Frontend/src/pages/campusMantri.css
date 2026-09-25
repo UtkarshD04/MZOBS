@@ -31,7 +31,7 @@
 
 /* ---------- type ---------- */
 .cm-eyebrow { display: inline-flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--cm-teal-deep); }
-.cm-eyebrow::before { content: ''; width: 34px; height: 1px; background: currentColor; }
+.cm-eyebrow::before { content: ''; flex: none; width: 7px; height: 7px; background: currentColor; transform: rotate(45deg); border-radius: 1px; }
 .cm-deva { font-weight: 600; letter-spacing: 0.04em; text-transform: none; opacity: 0.75; }
 .cm-h1 { font-weight: 800; letter-spacing: -0.055em; line-height: 0.9; text-transform: uppercase; font-size: clamp(2rem, 9vw, 4.7rem); margin: 22px 0 0; }
 .cm-h1 .cm-line { white-space: nowrap; }
@@ -287,10 +287,31 @@
 
 /* hero video background */
 .cm-hero .cm-bg { position: absolute; inset: 0; overflow: hidden; z-index: -1; }
-.cm-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cm-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(1.15) contrast(1.2) saturate(1.1); }
 .cm-hero-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(247, 249, 248, 0.6) 0%, rgba(247, 249, 248, 0.4) 40%, rgba(247, 249, 248, 0) 75%); }
 @media (max-width: 980px) { .cm-hero-scrim { background: rgba(247, 249, 248, 0.5); } }
 @media (prefers-reduced-motion: reduce) { .cm-hero-video { display: none; } }
 
-.cm-ident-top { display: grid; grid-template-columns: 1fr minmax(0, 420px); gap: 48px; align-items: center; }
+.cm-ident-top { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
 @media (max-width: 980px) { .cm-ident-top { grid-template-columns: 1fr; } }
+.cm-hero .cm-lead { color: rgba(8, 32, 44, 0.88); font-weight: 500; }
+
+/* the pass — a lit, colourful card instead of a flat dark slab */
+.cm-pass { width: min(470px, 82vw); }
+.cm-ident-top .cm-stage { min-height: 500px; padding: 84px 0; }
+.cm-ident-top .cm-stage::before { content: ''; position: absolute; left: 50%; top: 50%; width: 88%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(11, 143, 131, 0.38), transparent 72%); filter: blur(24px); pointer-events: none; }
+.cm-face { padding: 28px 30px; background: linear-gradient(140deg, #14a596 0%, #0b8f83 30%, #0a5f6b 68%, #0d2d3d 100%); box-shadow: 0 40px 70px -30px rgba(7, 111, 102, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.28) inset; color: #fff; }
+.cm-face::before { opacity: 0.55; -webkit-mask-image: linear-gradient(150deg, #000, transparent 75%); mask-image: linear-gradient(150deg, #000, transparent 75%); }
+.cm-face::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.22) 47%, transparent 62%); transform: translateX(-30%); transition: transform 1s var(--cm-ease); pointer-events: none; }
+.cm-pass:hover .cm-face::after { transform: translateX(30%); }
+.cm-face .brand { font-size: 13px; }
+.cm-face .brand i { border-color: rgba(255, 255, 255, 0.55); color: #fff; }
+.cm-face .role { font-size: clamp(2rem, 5.2vw, 2.7rem); }
+.cm-face .role b { color: #fff; }
+.cm-face .who { font-size: 17px; }
+.cm-face .sub { opacity: 0.85; }
+.cm-face .tag { opacity: 0.8; }
+.cm-face dt { opacity: 0.75; }
+.cm-face dd { font-size: 15px; }
+.cm-chip { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.28); color: #fff; box-shadow: none; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.cm-chip::before { color: #7fe0d3; }

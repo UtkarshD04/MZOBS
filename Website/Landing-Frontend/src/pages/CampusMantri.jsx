@@ -6,7 +6,7 @@ import './campusMantri.css'
 
 /* ------------------------------------------------------------------ content */
 
-// The benefits below are the ones the Campus Mantri brief lists. Each is shown
+// The benefits below are the ones the Mzobs Doot brief lists. Each is shown
 // as offered "where applicable" — confirm the final list with the Mzobs team
 // before launch; nothing is added beyond it.
 const BENEFITS = [
@@ -22,9 +22,9 @@ const BENEFITS = [
 ]
 
 const CONCEPTS = [
-  ['01', 'Connect', 'Bring students closer to opportunities.'],
-  ['02', 'Lead', 'Create conversations, communities and campus activity.'],
-  ['03', 'Grow', 'Build experience, confidence and professional connections.'],
+  ['01', 'Represent', 'Bring the Mzobs experience to your community.'],
+  ['02', 'Connect', 'Connect students with relevant opportunities and initiatives.'],
+  ['03', 'Create impact', 'Help more people discover opportunities that matter.'],
 ]
 
 const IDENTITIES = [
@@ -42,13 +42,13 @@ const IMPACT = [
   ['04', 'Amplify', 'Spread opportunities across your campus.'],
 ]
 
-const JOURNEY = ['Apply', 'Get selected', 'Get your Mantri ID', 'Build your campus community', 'Connect students', 'Create impact']
+const JOURNEY = ['Apply', 'Get selected', 'Get your Doot ID', 'Build your campus community', 'Connect students', 'Create impact']
 
 const FAQ = [
-  ['What is Campus Mantri?', 'Campus Mantri is your opportunity to become the bridge between your campus and the opportunities waiting beyond it — representing Mzobs, connecting students and building something that matters.'],
+  ['What is a Mzobs Doot?', 'A Mzobs Doot is a student representative who helps connect their community with meaningful career opportunities, hiring initiatives, events and the Mzobs ecosystem.'],
   ['What will I actually do?', 'You’ll discover opportunities worth sharing, bring students into the Mzobs ecosystem, create campus conversations and activities, and spread opportunities across your campus.'],
   ['How do I apply?', 'Fill in the application below — about you, your campus, your experience and why Mzobs. It takes a few minutes and you can move back and forth between steps.'],
-  ['What do I get as a Campus Mantri?', 'Access to the Mzobs community, career opportunities, networking, leadership experience, recognition, events and learning resources — with certificates and rewards where applicable.'],
+  ['What do I get as a Doot?', 'Early access to opportunities and events, a network of students, recruiters and professionals, recognition for your contribution, and room to build communication and leadership skills.'],
 ]
 
 const STEPS = ['About you', 'Your campus', 'Your experience', 'Why Mzobs', 'Finish']
@@ -95,7 +95,7 @@ const go = (id) => (e) => {
 
 function Pass({ name, college, city, hoverFlip = true }) {
   const [flip, setFlip] = useState(false)
-  const id = 'MZ-CM-2026-••••'
+  const id = 'MZ-DT-2026-••••'
   return (
     <button
       type="button"
@@ -103,14 +103,14 @@ function Pass({ name, college, city, hoverFlip = true }) {
       data-flip={flip}
       onClick={() => setFlip((f) => !f)}
       aria-pressed={flip}
-      aria-label="Campus Mantri pass preview — tap to flip"
+      aria-label="Mzobs Doot ID preview — tap to flip"
       style={{ background: 'none', border: 0, padding: 0, textAlign: 'left', color: 'inherit' }}
     >
       <div className="cm-pass-inner">
         <div className="cm-face">
           <div className="brand"><span>MZOBS</span><i>2026</i></div>
           <div>
-            <div className="role">Campus<br /><b>Mantri</b></div>
+            <div className="role">Mzobs<br /><b>Doot</b></div>
           </div>
           <div className="row">
             <div>
@@ -121,11 +121,11 @@ function Pass({ name, college, city, hoverFlip = true }) {
           </div>
         </div>
         <div className="cm-face cm-back">
-          <div className="brand"><span>MANTRI ID</span><i>PREVIEW</i></div>
+          <div className="brand"><span>DOOT ID</span><i>PREVIEW</i></div>
           <dl>
             <div><dt>Campus</dt><dd>{college || '—'}</dd></div>
             <div><dt>City</dt><dd>{city || '—'}</dd></div>
-            <div><dt>Mantri ID</dt><dd>{id}</dd></div>
+            <div><dt>Doot ID</dt><dd>{id}</dd></div>
             <div><dt>Joined</dt><dd>2026</dd></div>
           </dl>
           <div className="tag" style={{ textAlign: 'left' }}>Illustrative preview · not an issued ID</div>
@@ -266,7 +266,7 @@ function ApplicationForm({ f, set }) {
           )}
           {step === 3 && (
             <>
-              <h3>Why Mzobs</h3><p className="s">What draws you to being a Campus Mantri?</p>
+              <h3>Why Mzobs</h3><p className="s">What draws you to being a Mzobs Doot?</p>
               <div className="cm-fgrid">
                 <div className="full"><Field textarea label="In your own words" name="why" f={f} set={set} error={errors.why} placeholder="What would you want to build on your campus?" autoFocus /></div>
               </div>
@@ -309,7 +309,7 @@ export default function CampusMantri() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = 'Mzobs Campus Mantri — Your Campus. Your Voice. Your Opportunity.'
+    document.title = 'Mzobs Doot — Carry Opportunities. Connect Talent.'
     return () => { document.title = prev }
   }, [])
 
@@ -366,32 +366,32 @@ export default function CampusMantri() {
       <header className={`cm-nav ${scrolled ? 'is-scrolled' : ''}`}>
         <div className="cm-wrap cm-nav-in">
           <Link to="/" className="cm-logo" aria-label="Mzobs home"><img src="/images/logo.png" alt="Mzobs" draggable="false" /></Link>
-          <nav className="cm-links" aria-label="Campus Mantri">
+          <nav className="cm-links" aria-label="Mzobs Doot">
             {NAV.map(([id, label]) => <a key={id} href={`#${id}`} onClick={go(id)}>{label}</a>)}
           </nav>
-          <a href="#apply" onClick={go('apply')} className="cm-btn cm-btn-primary">Become a Mantri <ArrowRight size={14} /></a>
+          <a href="#apply" onClick={go('apply')} className="cm-btn cm-btn-primary">Become a Doot <ArrowRight size={14} /></a>
         </div>
       </header>
 
       {/* hero */}
       <section className="cm-hero" id="top" ref={hero}>
         <div className="cm-bg" aria-hidden="true">
-          <video className="cm-hero-video" src="/herovideo.mp4?v=3" autoPlay muted loop playsInline preload="auto" />
+          <video className="cm-hero-video" src="/herovideo.mp4?v=4" autoPlay muted loop playsInline preload="auto" />
           <div className="cm-hero-scrim" />
         </div>
 
         <div className="cm-wrap cm-hero-grid">
           <div>
-            <p className="cm-eyebrow cm-rv" style={{ '--d': '0s' }}>Mzobs Campus Mantri <span className="cm-deva">· कैंपस मंत्री</span></p>
+            <p className="cm-eyebrow cm-rv" style={{ '--d': '0s' }}>Mzobs Community <span className="cm-deva">· दूत</span></p>
             <h1 className="cm-h1">
-              <span className="cm-line"><span>Your campus.</span></span>
-              <span className="cm-line"><span>Your voice.</span></span>
-              <span className="cm-line"><span>Your <span className="cm-accent" style={{ display: 'inline' }}>opportunity.</span></span></span>
+              <span className="cm-line"><span>Meet the</span></span>
+              <span className="cm-line"><span>Mzobs</span></span>
+              <span className="cm-line"><span><span className="cm-accent" style={{ display: 'inline' }}>Doot.</span></span></span>
             </h1>
-            <p className="cm-lead cm-rv" style={{ '--d': '0.3s', marginTop: 30 }}>Represent Mzobs on your campus, connect students with opportunities, and build something that matters.</p>
+            <p className="cm-lead cm-rv" style={{ '--d': '0.3s', marginTop: 30 }}>Carry opportunities. Connect talent. Become the connection between Mzobs and your student community — discover opportunities, spread awareness, build your network and create real impact.</p>
             <div className="cm-hero-cta cm-rv" style={{ '--d': '0.42s' }}>
-              <a href="#apply" onClick={go('apply')} className="cm-btn cm-btn-primary">Become a Campus Mantri <ArrowRight size={16} /></a>
-              <a href="#why" onClick={go('why')} className="cm-btn cm-btn-ghost">Explore the program</a>
+              <a href="#apply" onClick={go('apply')} className="cm-btn cm-btn-primary">Become a Mzobs Doot <ArrowRight size={16} /></a>
+              <a href="#why" onClick={go('why')} className="cm-btn cm-btn-ghost">Explore the Doot network</a>
             </div>
           </div>
 
@@ -402,9 +402,9 @@ export default function CampusMantri() {
       <section className="cm-sec" id="why">
         <div className="cm-wrap cm-more">
           <div>
-            <Rv as="p" className="cm-eyebrow">What is Campus Mantri?</Rv>
+            <Rv as="p" className="cm-eyebrow">What is a Mzobs Doot?</Rv>
             <IntroHeading />
-            <Rv as="p" d={0.15} className="cm-statement">Campus Mantri is your opportunity to become the <em>bridge</em> between your campus and the opportunities waiting beyond it.</Rv>
+            <Rv as="p" d={0.15} className="cm-statement">A Mzobs Doot is a student representative who helps connect their community with meaningful career opportunities, hiring initiatives, events and the Mzobs ecosystem.</Rv>
           </div>
           <div>
             {CONCEPTS.map(([n, t, p], i) => (
@@ -471,8 +471,8 @@ export default function CampusMantri() {
         <div className="cm-wrap">
           <Rv as="p" className="cm-eyebrow">Where you fit</Rv>
           <Rv as="h2" d={0.06} className="cm-h2">The bridge.</Rv>
-          <div className="cm-flow" ref={flowRef} aria-label="Student to Campus Mantri to Mzobs to opportunity to student community">
-            {[['Student', 'Starts here'], ['Campus Mantri', 'You', true], ['Mzobs', 'The platform'], ['Opportunity', 'Jobs & careers'], ['Student community', 'Everyone benefits']].map(([v, k, hero], i, arr) => (
+          <div className="cm-flow" ref={flowRef} aria-label="Student to Mzobs Doot to Mzobs to opportunity to student community">
+            {[['Student', 'Starts here'], ['Mzobs Doot', 'You', true], ['Mzobs', 'The platform'], ['Opportunity', 'Jobs & careers'], ['Student community', 'Everyone benefits']].map(([v, k, hero], i, arr) => (
               <div key={v} style={{ display: 'contents' }}>
                 <div className={`cm-node cm-rv ${hero ? 'hero' : ''}`} style={{ '--d': `${i * 0.12}s` }}><div className="k">{k}</div><div className="v">{v}</div></div>
                 {i < arr.length - 1 && <div className="cm-link" style={{ '--td': `${i * 0.5}s` }} aria-hidden="true" />}
@@ -486,7 +486,7 @@ export default function CampusMantri() {
       <section className="cm-sec" id="how" style={{ background: '#fff', borderBlock: '1px solid var(--cm-line)' }}>
         <div className="cm-wrap">
           <Rv as="p" className="cm-eyebrow">How it works</Rv>
-          <Rv as="h2" d={0.06} className="cm-h2">The Mantri journey.</Rv>
+          <Rv as="h2" d={0.06} className="cm-h2">The Doot journey.</Rv>
           <div className="cm-path" ref={pathRef}>
             {JOURNEY.map((s, i) => (
               <div key={s} className="cm-pstep">
@@ -502,7 +502,7 @@ export default function CampusMantri() {
       <section className="cm-sec" id="benefits">
         <div className="cm-wrap">
           <Rv as="p" className="cm-eyebrow">What you get</Rv>
-          <Rv as="h2" d={0.06} className="cm-h2">As a Campus Mantri,<br />you get access to.</Rv>
+          <Rv as="h2" d={0.06} className="cm-h2">As a Mzobs Doot,<br />you get access to.</Rv>
           <div className="cm-ben">
             {BENEFITS.map(([Icon, label], i) => (
               <Rv key={label} d={(i % 3) * 0.07} className="cm-b"><Icon size={22} strokeWidth={1.6} /><span>{label}</span></Rv>
@@ -516,7 +516,7 @@ export default function CampusMantri() {
         <div className="cm-wrap cm-passgrid">
           <div>
             <Rv as="p" className="cm-eyebrow">Your pass</Rv>
-            <Rv as="h2" d={0.06} className="cm-h2">Your Mantri pass.</Rv>
+            <Rv as="h2" d={0.06} className="cm-h2">Your Doot ID.</Rv>
             <Rv as="p" d={0.12} className="cm-lead" style={{ marginTop: 22 }}>Preview how your pass could look. Hover — or tap — to flip it. This is a visual preview only, not an issued ID.</Rv>
             <div className="cm-fields">
               <label className="cm-field"><span>Your name</span><input value={f.name} onChange={(e) => set('name', e.target.value)} placeholder="Your name" /></label>
@@ -543,10 +543,10 @@ export default function CampusMantri() {
       <section className="cm-sec cm-dark cm-cta" id="apply" style={{ paddingBottom: 'clamp(70px, 9vw, 120px)' }}>
         <div className="cm-wrap">
           <Rv as="p" className="cm-eyebrow">Apply</Rv>
-          <Rv as="h2" d={0.06} className="cm-h2">Ready to become your Campus Mantri?</Rv>
+          <Rv as="h2" d={0.06} className="cm-h2">Ready to become a Mzobs Doot?</Rv>
           <Rv as="p" d={0.14} className="cm-lead" style={{ marginTop: 26 }}>Your campus already has potential. Now give it a connection to opportunity.</Rv>
           <Rv d={0.22} style={{ marginTop: 34 }}>
-            <a href="#apply-form" onClick={go('apply-form')} className="cm-btn cm-btn-light">Become a Campus Mantri <ArrowRight size={16} /></a>
+            <a href="#apply-form" onClick={go('apply-form')} className="cm-btn cm-btn-light">Become a Mzobs Doot <ArrowRight size={16} /></a>
           </Rv>
         </div>
       </section>
@@ -559,10 +559,10 @@ export default function CampusMantri() {
       <section className="cm-sec cm-dark cm-final" style={{ paddingBottom: 60 }}>
         <div className="cm-wrap">
           <Rv as="h2" className="cm-h2">Your campus is waiting.<br /><span className="cm-accent" style={{ color: '#5fb8ac' }}>Are you ready to lead it?</span></Rv>
-          <Rv d={0.12}><a href="#apply-form" onClick={go('apply-form')} className="cm-btn cm-btn-light">Become a Campus Mantri <ArrowRight size={16} /></a></Rv>
+          <Rv d={0.12}><a href="#apply-form" onClick={go('apply-form')} className="cm-btn cm-btn-light">Become a Mzobs Doot <ArrowRight size={16} /></a></Rv>
           <div className="cm-foot">
             <Link to="/" className="cm-logo" aria-label="Mzobs home"><img src="/images/logo.png" alt="Mzobs" draggable="false" /></Link>
-            <span>Mzobs Campus Mantri · 2026</span>
+            <span>Mzobs Doot · 2026</span>
           </div>
         </div>
       </section>
@@ -574,8 +574,8 @@ function IntroHeading() {
   const ref = useIn()
   return (
     <h2 className="cm-h2" ref={ref}>
-      <span className="cm-line"><span>More than</span></span>
-      <span className="cm-line"><span>an <span className="cm-accent" style={{ display: 'inline' }}>ambassador.</span></span></span>
+      <span className="cm-line"><span>Not just an</span></span>
+      <span className="cm-line"><span>ambassador. A <span className="cm-accent" style={{ display: 'inline' }}>Doot.</span></span></span>
     </h2>
   )
 }
