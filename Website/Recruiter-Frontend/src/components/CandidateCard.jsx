@@ -1,7 +1,7 @@
 import { memo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
-import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin } from 'lucide-react'
+import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin, Lock } from 'lucide-react'
 import { Avatar, Button, Chip, Highlight, MatchBadge, TrustScore, VerifiedBadge, IconButton } from './ui'
 import { lpa, years, notice, ago, agoDate } from '../lib/format'
 import { STAGE_LABELS } from '../lib/talent/criteria'
@@ -116,7 +116,15 @@ function CandidateCard({ row, terms, compact, onAction }) {
             </div>
             <div className="flex items-center gap-1.5">
               <Button size="sm" onClick={() => onAction('open', c)} className="hidden sm:inline-flex">View profile</Button>
-              <Button size="sm" icon={FileText} onClick={() => onAction('resume', c)} className="hidden md:inline-flex">CV</Button>
+              {/* Always visible (not just md+): it's the way to the CV, and it opens the credit step when the CV is still locked. */}
+              <Button
+                size="sm"
+                icon={IS_DEMO || c._live?.unlocked ? FileText : Lock}
+                onClick={() => onAction('resume', c)}
+                title={IS_DEMO || c._live?.unlocked ? 'Open the CV' : 'View the CV — uses 1 credit, once per candidate'}
+              >
+                View CV
+              </Button>
               <ShortlistButton candidate={c} onAction={onAction} />
               <Button size="sm" variant="primary" onClick={() => onAction('contact', c)}>Contact</Button>
               <div className="relative">
