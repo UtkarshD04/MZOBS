@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Users, Briefcase, Network, Compass, Award, ScrollText, CalendarDays, BookOpen, Gift, Check, User, BadgeCheck } from 'lucide-react'
+import Navbar from '../components/layout/Navbar'
 import { submitDootApplication } from '../lib/doot'
 import './doot.css'
 
@@ -54,7 +55,6 @@ const FAQ = [
 const STEPS = ['About you', 'Your campus', 'Your experience', 'Why Mzobs', 'Finish']
 
 const jaali = (c) => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'><path d='M13 1 25 13 13 25 1 13Z' fill='none' stroke='${c}' stroke-width='1'/><circle cx='13' cy='13' r='1.4' fill='${c}'/></svg>`)}")`
-const NAV = [['why', 'Why join'], ['how', 'How it works'], ['benefits', 'Benefits'], ['faq', 'FAQ'], ['apply', 'Apply']]
 
 
 /* ------------------------------------------------------------------- hooks */
@@ -301,7 +301,6 @@ function ApplicationForm({ f, set }) {
 /* --------------------------------------------------------------------- page */
 
 export default function Doot() {
-  const [scrolled, setScrolled] = useState(false)
   const [f, setF] = useState(EMPTY)
   const set = useCallback((k, v) => setF((x) => ({ ...x, [k]: v })), [])
   const stage = useRef(null)
@@ -321,7 +320,6 @@ export default function Doot() {
     let raf = 0
     const tick = () => {
       raf = 0
-      setScrolled(window.scrollY > 24)
       if (reduced) return
       const vh = window.innerHeight
       words.current?.querySelectorAll('.cm-word').forEach((el, i) => {
@@ -365,15 +363,7 @@ export default function Doot() {
   return (
     <div className="cm" style={{ '--cm-jaali-dark': jaali('rgba(120,220,205,0.45)') }}>
       {/* navigation */}
-      <header className={`cm-nav ${scrolled ? 'is-scrolled' : ''}`}>
-        <div className="cm-wrap cm-nav-in">
-          <Link to="/" className="cm-logo" aria-label="Mzobs home"><img src="/images/logo.png" alt="Mzobs" draggable="false" /></Link>
-          <nav className="cm-links" aria-label="Mzobs Doot">
-            {NAV.map(([id, label]) => <a key={id} href={`#${id}`} onClick={go(id)}>{label}</a>)}
-          </nav>
-          <a href="#apply" onClick={go('apply')} className="cm-btn cm-btn-primary">Become a Doot <ArrowRight size={14} /></a>
-        </div>
-      </header>
+      <Navbar />
 
       {/* hero */}
       <section className="cm-hero" id="top" ref={hero}>

@@ -63,20 +63,9 @@
 .cm .cm-btn-light:hover { background: var(--cm-mint); }
 .cm-btn:focus-visible, .cm a:focus-visible, .cm summary:focus-visible { outline: 2px solid var(--cm-teal); outline-offset: 3px; }
 
-/* ---------- nav ---------- */
-.cm-nav { position: fixed; inset: 0 0 auto 0; z-index: 50; height: 80px; display: flex; align-items: center; transition: height 0.3s var(--cm-ease), background-color 0.3s, box-shadow 0.3s, backdrop-filter 0.3s; }
-.cm-nav.is-scrolled { height: 58px; background: rgba(247, 249, 248, 0.92); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); box-shadow: 0 1px 0 var(--cm-line); }
-.cm-nav-in { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-.cm-logo { position: relative; display: block; width: 116px; height: 36px; overflow: hidden; flex: none; transition: transform 0.3s var(--cm-ease); }
-.cm-nav.is-scrolled .cm-logo { transform: scale(0.88); transform-origin: left center; }
+/* ---------- logo (footer) ---------- */
+.cm-logo { position: relative; display: block; width: 116px; height: 36px; overflow: hidden; flex: none; }
 .cm-logo img { position: absolute; max-width: none; height: 90px; width: 165px; left: -28px; top: -27px; }
-.cm-links { display: flex; align-items: center; gap: 28px; }
-.cm-links a { position: relative; font-size: 13px; font-weight: 600; color: var(--cm-muted); padding: 6px 0; transition: color 0.2s; }
-.cm-links a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px; background: var(--cm-teal); transform: scaleX(0); transform-origin: left; transition: transform 0.3s var(--cm-ease); }
-.cm-links a:hover { color: var(--cm-navy); }
-.cm-links a:hover::after { transform: scaleX(1); }
-.cm-nav .cm-btn { height: 42px; padding: 0 20px; font-size: 12px; }
-@media (max-width: 900px) { .cm-links { display: none; } }
 
 /* ---------- hero ---------- */
 .cm-hero { position: relative; padding: 150px 0 96px; min-height: 100svh; display: flex; align-items: center; isolation: isolate; }
