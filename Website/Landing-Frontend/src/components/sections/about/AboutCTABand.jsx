@@ -13,7 +13,7 @@ const EMOTIONAL_LINES = [
 
 const AUDIENCE_CARDS = [
   {
-    to: '/employees',
+    to: '/',
     icon: Briefcase,
     label: 'For Job Seekers',
     cta: "I'm Looking for a Job",

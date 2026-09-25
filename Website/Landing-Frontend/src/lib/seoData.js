@@ -34,10 +34,6 @@ export const STATIC_PAGE_SEO = {
     title: 'Our Story — Mzobs',
     description: 'How Mzobs began and where it is headed — the story behind the platform.',
   },
-  '/employees': {
-    title: 'For Employees — Mzobs',
-    description: 'Search verified job openings, apply directly, and get matched with employers hiring now on Mzobs.',
-  },
   '/employers': {
     title: 'For Employers — Mzobs',
     description: 'Post jobs and hire pre-verified, job-ready candidates fast with Mzobs.',
