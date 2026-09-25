@@ -20,16 +20,16 @@ function Page({ title, sub, children }) {
 export function Messages() {
   const { messages } = useWorkspace()
   return (
-    <Page title="Messages" sub="Outreach drafts you've prepared from candidate profiles.">
+    <Page title="Messages" sub="Emails and texts you sent from candidate profiles, and drafts you saved.">
       {messages.length === 0 ? (
-        <EmptyState icon={MessageSquare} title="No messages yet" body="Use Contact on a candidate to write an email, SMS or message." />
+        <EmptyState icon={MessageSquare} title="No messages yet" body="Use Contact on a candidate to email or text them — once you have viewed their email or phone number." />
       ) : (
         <ul className="space-y-2">
           {messages.map((m) => (
             <li key={m.id} className="rounded-2xl border border-line bg-white p-4 shadow-card">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-[14px] font-semibold">{m.candidateName} <span className="ml-1 rounded bg-line-2 px-1.5 py-0.5 text-[11px] font-medium uppercase text-muted">{m.channel}</span></p>
-                <span className="text-[12px] text-muted">Draft · {agoDate(m.at)}</span>
+                <span className={m.state === 'sent' ? 'text-[12px] font-medium text-[#1a8f5a]' : 'text-[12px] text-muted'}>{m.state === 'sent' ? 'Sent' : 'Draft'} · {agoDate(m.at)}</span>
               </div>
               {m.subject && <p className="mt-1 text-[13px] font-medium">{m.subject}</p>}
               <p className="mt-1 line-clamp-3 whitespace-pre-line text-[13px] text-ink-2">{m.body}</p>
@@ -37,7 +37,7 @@ export function Messages() {
           ))}
         </ul>
       )}
-      <p className="mt-5 text-[12px] text-muted">Drafts are not delivered yet — sending requires the messaging service to be connected.</p>
+      <p className="mt-5 text-[12px] text-muted">This list is stored on this device. Drafts are not delivered until you send them from the candidate's Contact window.</p>
     </Page>
   )
 }
