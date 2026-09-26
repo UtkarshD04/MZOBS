@@ -33,6 +33,7 @@ const EmployeeProfile = lazy(() => import('./pages/EmployeeProfile'))
 const EmployeeSubscription = lazy(() => import('./pages/EmployeeSubscription'))
 const EmployeeSignup = lazy(() => import('./pages/EmployeeSignup'))
 const EmployeeSignin = lazy(() => import('./pages/EmployeeSignin'))
+const RecommendedJobs = lazy(() => import('./pages/RecommendedJobs'))
 const EmployeeForgotPassword = lazy(() => import('./pages/EmployeeForgotPassword'))
 const EmployeeResetPassword = lazy(() => import('./pages/EmployeeResetPassword'))
 const DeleteAccount = lazy(() => import('./pages/DeleteAccount'))
@@ -84,6 +85,7 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path={CLIENT_ONLY_ROUTES.employeeProfile} element={<EmployeeProfile />} />
             <Route path={CLIENT_ONLY_ROUTES.employeeSubscription} element={<EmployeeSubscription />} />
+            <Route path={CLIENT_ONLY_ROUTES.employeeRecommended} element={<RecommendedJobs />} />
             <Route path={CLIENT_ONLY_ROUTES.employeeSignup} element={<EmployeeSignup />} />
             <Route path={CLIENT_ONLY_ROUTES.employeeSignin} element={<EmployeeSignin />} />
             <Route path={CLIENT_ONLY_ROUTES.employeeForgotPassword} element={<EmployeeForgotPassword />} />

@@ -103,6 +103,7 @@ export const STATIC_PAGE_SEO = {
 // Auth/dashboard-handoff routes — never worth indexing, and never
 // prerendered/SSR'd (see server.js's catch-all).
 export const NOINDEX_PREFIXES = [
+  '/employees/recommended',
   '/employees/signup',
   '/employees/signin',
   '/employees/forgot-password',
