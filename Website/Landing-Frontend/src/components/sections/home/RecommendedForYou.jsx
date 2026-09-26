@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Check } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ExplorerTextLink } from '../../ui/ExplorerButton'
 import { initialsOf, jobHref } from '../../../lib/jobCardHelpers'
 import { fetchRecommendedJobs } from '../../../lib/recommendedJobs'
 import { getEmployeeSession, onEmployeeSessionChange } from '../../../lib/employeeSession'
-import { EMPLOYEE_APP_URL } from '../../../lib/config'
 import { sampleJobs, MATCH_LEVELS } from './recommendedForYouData'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -82,6 +80,7 @@ function toDeckJob(job, i) {
     matchLevel: levelForReasonCount(matchReasons.length),
     matchReasons,
     accent: ACCENT_ORDER[i % ACCENT_ORDER.length],
+    to: job.id ? `/jobs/${job.id}` : undefined,
     href: jobHref(job),
   }
 }
@@ -515,7 +514,7 @@ function DeckSkeleton() {
 // Magazine-style ending for signed-out visitors: the statement on the left, the
 // (blue) action on the right, under a thin rule. Fades up once on scroll-in;
 // no motion under prefers-reduced-motion.
-function SignInCta() {
+function SignInCta({ signedIn }) {
   const rootRef = useRef(null)
 
   useLayoutEffect(() => {
@@ -549,14 +548,25 @@ function SignInCta() {
         </p>
 
         <div data-cta-side className="lg:justify-self-end">
-          <Link
-            to="/employees/signin"
+          {signedIn ? (
+            <Link
+              to="/employees/recommended"
+              className="group inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[11px] px-7 py-3 text-[14.5px] font-bold text-white shadow-[0_10px_24px_-10px_rgba(37,99,235,0.6)] transition-colors duration-200 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+              style={{ backgroundImage: GRADIENT }}
+            >
+              See jobs matched to your profile
+              <ArrowRight size={16} aria-hidden="true" className="shrink-0 motion-safe:transition-transform motion-safe:duration-200 group-hover:translate-x-1" />
+            </Link>
+          ) : (
+            <Link
+            to={`/employees/signin?next=${encodeURIComponent('/employees/recommended')}`}
             className="group inline-flex min-h-[52px] items-center justify-center gap-2 rounded-[11px] px-7 py-3 text-[14.5px] font-bold text-white shadow-[0_10px_24px_-10px_rgba(37,99,235,0.6)] transition-colors duration-200 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
             style={{ backgroundImage: GRADIENT }}
           >
             Sign in to see jobs matched to your profile
             <ArrowRight size={16} aria-hidden="true" className="shrink-0 motion-safe:transition-transform motion-safe:duration-200 group-hover:translate-x-1" />
-          </Link>
+            </Link>
+          )}
         </div>
       </div>
     </div>
@@ -628,8 +638,9 @@ export default function RecommendedForYou() {
   // flashing the signed-out preview before flipping to real matches.
   if (!sessionChecked) return null
   const signedIn = !!session?.token
-  // Signed in, matches loaded, and genuinely none — nothing honest to show.
-  if (signedIn && !failed && jobs && jobs.length === 0) return null
+  // Signed in, matches loaded, and genuinely none — keep the section (never
+  // vanish after sign-in) but say so honestly instead of showing a deck.
+  const noMatches = signedIn && !failed && jobs && jobs.length === 0
 
   const deckJobs = signedIn ? (jobs?.length ? jobs.map(toDeckJob) : []) : sampleJobs
 
@@ -644,7 +655,9 @@ export default function RecommendedForYou() {
             </h2>
             <p className="mt-5 max-w-[460px] text-[16px] leading-relaxed" style={{ color: MUTED }}>
               {signedIn
-                ? 'Matched against your skills, preferred role and location — with a clear reason for every recommendation.'
+                ? noMatches
+                  ? 'We match jobs against your skills, preferred role and location. Complete your profile to start seeing recommendations here.'
+                  : 'Matched against your skills, preferred role and location — with a clear reason for every recommendation.'
                 : 'Sign in to see opportunities matched to your skills, preferred role and location.'}
             </p>
 
@@ -657,9 +670,9 @@ export default function RecommendedForYou() {
                   {deckJobs.length} {deckJobs.length === 1 ? 'opportunity' : 'opportunities'} selected from your profile.
                 </p>
                 {signedIn && (
-                  <ExplorerTextLink href={`${EMPLOYEE_APP_URL}/app/jobs?tab=recommended`} className="mt-3 text-[13.5px]">
-                    View all matches
-                  </ExplorerTextLink>
+                  <Link to="/employees/recommended" className="mt-3 inline-flex items-center gap-1.5 text-[13.5px] font-bold hover:underline" style={{ color: BLUE }}>
+                    View all matches <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
                 )}
               </div>
             )}
@@ -670,6 +683,21 @@ export default function RecommendedForYou() {
               <p className="text-[13.5px]" style={{ color: MUTED }}>
                 Couldn't load your matches right now — check back shortly.
               </p>
+            ) : noMatches ? (
+              <div className="rounded-[24px] border bg-white p-8 sm:p-10" style={{ borderColor: RULE }}>
+                <p className="text-[20px] font-extrabold leading-snug" style={{ color: INK }}>No matches yet</p>
+                <p className="mt-2 max-w-[420px] text-[14.5px] leading-relaxed" style={{ color: MUTED }}>
+                  Add your skills, preferred role and location and we'll line up openings that fit — each with a clear reason.
+                </p>
+                <Link
+                  to="/employees/profile"
+                  className="mt-5 inline-flex items-center gap-2 rounded-[11px] px-6 py-3 text-[14px] font-bold text-white transition-[filter] hover:brightness-110"
+                  style={{ backgroundImage: GRADIENT }}
+                >
+                  Complete your profile
+                  <ArrowRight size={15} aria-hidden="true" />
+                </Link>
+              </div>
             ) : signedIn && jobs === null ? (
               <DeckSkeleton />
             ) : (
@@ -678,7 +706,7 @@ export default function RecommendedForYou() {
           </div>
         </div>
 
-        {!signedIn && <SignInCta />}
+        <SignInCta signedIn={signedIn} />
       </div>
     </section>
   )

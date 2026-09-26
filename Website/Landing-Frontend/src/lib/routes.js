@@ -9,6 +9,7 @@
 export const CLIENT_ONLY_ROUTES = {
   employeeProfile: '/employees/profile',
   employeeSubscription: '/employees/subscription',
+  employeeRecommended: '/employees/recommended',
   employeeSignup: '/employees/signup',
   employeeSignin: '/employees/signin',
   employeeForgotPassword: '/employees/forgot-password',

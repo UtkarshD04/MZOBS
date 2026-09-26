@@ -47,6 +47,9 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const redirect = searchParams.get('redirect')
+  // Same-site return path (e.g. /employees/recommended) — only ever a local path.
+  const rawNext = searchParams.get('next')
+  const next = rawNext && rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : null
 
   // 'phone' | 'otp' | 'profile' | 'resume'  (mobile number path)
   // 'email' | 'emailOtp' | 'emailProfile'     (email path; a new email then reuses 'otp' to verify the number)
@@ -108,7 +111,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
     // Navbar picks up the new session itself (onEmployeeSessionChange). The
     // standalone pages have no such caller, so they still land on home.
     if (onAuthComplete) onAuthComplete()
-    else navigate('/')
+    else navigate(next ?? '/')
   }
 
   function resetToPhoneStep() {
