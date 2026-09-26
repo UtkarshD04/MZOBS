@@ -21,7 +21,7 @@ function toTags(values) {
 // itself is always the candidate one — "I'm hiring talent" is a straight
 // nav link to the employer home page, not a second search-bar mode.
 const HeroCtaClasses =
-  'group relative inline-flex items-center justify-center gap-1.5 rounded-full px-6 h-11 text-[13.5px] font-bold text-white whitespace-nowrap shadow-[0_10px_24px_-8px_rgba(59,109,240,0.55)] ' +
+  'group relative inline-flex items-center justify-center gap-1.5 rounded-full px-6 h-11 text-[13.5px] font-bold text-white whitespace-nowrap shadow-[0_10px_24px_-8px_rgba(16,42,67,0.55)] ' +
   'transition-transform duration-200 motion-safe:hover:-translate-y-px motion-safe:active:translate-y-0 motion-safe:active:scale-[0.98] ' +
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)'
 
@@ -76,6 +76,10 @@ export default function JobSearchHero({ filters, onSearch }) {
 
   return (
     <section id="job-search" className="hero-atmosphere relative pt-28 pb-24 md:pt-32 md:pb-28">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="hero-aurora" />
+        <div className="hero-lattice" />
+      </div>
       <HeroBubbleField />
 
       {/* Bleeds past this section's own bottom edge, unlike HeroBubbleField's
@@ -88,18 +92,26 @@ export default function JobSearchHero({ filters, onSearch }) {
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10">
         {/* Headline, toggle */}
         <div className="max-w-2xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-6"
+          >
+            <span className="hero-eyebrow"><i aria-hidden="true" />Verified talent · Real work</span>
+          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[34px] sm:text-[44px] lg:text-[50px] xl:text-[54px] font-extrabold leading-[1.08] tracking-tight text-balance"
+            className="text-[36px] sm:text-[48px] lg:text-[58px] xl:text-[64px] font-extrabold leading-[1.02] tracking-tight text-balance"
           >
             <span className="block text-(--explorer-navy)">{JOB_SEARCH_DATA.headlineLine1}</span>
-            <span
-              className="block"
-              style={{ backgroundImage: 'var(--hero-cta-gradient)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
-            >
+            <span className="relative inline-block hero-accent">
               {JOB_SEARCH_DATA.headlineLine2}
+              <svg className="hero-swoosh" viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M3 11 C 60 2, 140 2, 297 9" fill="none" stroke="#0b8f83" strokeWidth="4" strokeLinecap="round" />
+              </svg>
             </span>
           </motion.h1>
 
@@ -129,8 +141,7 @@ export default function JobSearchHero({ filters, onSearch }) {
             <button
               type="button"
               aria-pressed="true"
-              className="rounded-full px-5 h-9 text-[12.5px] font-bold uppercase tracking-wide text-white"
-              style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
+              className="rounded-full px-5 h-9 text-[12.5px] font-bold uppercase tracking-wide text-[#e8f8f5] bg-(--explorer-navy) shadow-[0_8px_18px_-10px_rgba(8,32,44,0.7)]"
             >
               {JOB_SEARCH_DATA.toggleJobLabel}
             </button>
