@@ -822,22 +822,25 @@ export const COMPANIES_HIRING_DATA = [
   { name: "Sunsure Energy", logo: "/industry-logos/sunsure.svg", industry: "Renewable Energy" }
 ]
 
-// "Campus Connect" band on the home page (see CampusNetwork.jsx). `count` is
-// the big count-up figure; the title renders as lead + serif-italic accent +
-// tail beside it; `highlights` are the small chips under the subtitle.
+// "Campus Connect" section on the home page (see CampusNetwork.jsx).
+//
+// `count` is the number of campuses connected. There is no backend endpoint
+// for it yet, so it is null — the floating stat then reads "Growing every
+// week" instead of a figure. Set it (or feed it from an API response) and the
+// count appears; nothing else needs to change.
 export const CAMPUS_NETWORK_DATA = {
   eyebrow: "Campus Connect",
-  count: 100,
-  titleLead: "College campuses",
-  titleAccent: "integrated",
-  titleTail: "with MZOBS",
-  subtitle: "Students from our partner campuses find internships and fresher roles — and apply directly on MZOBS.",
-  highlights: [
-    { icon: CalendarCheck, label: "Placement drives" },
-    { icon: Send, label: "Direct applications" },
-    { icon: Briefcase, label: "Fresher roles" }
-  ],
-  ctaText: "Bring your campus on board",
+  headline: ["Where Campus", "Talent Meets"],
+  headlineAccent: "Opportunity.",
+  subtitle: "Connect your campus with verified employers, real opportunities and a smarter path from learning to hiring.",
+  count: null,
+  statLabel: "Campuses connected",
+  statFallback: "Growing every week",
+  verifiedLabel: "Campus Verified",
+  verifiedDetail: "Placement cell connected",
+  badgeTitle: "MZOBS",
+  badgeSub: "Intelligent Hiring Network",
+  ctaText: "Bring Your Campus to MZOBS",
   ctaTo: "/contact"
 }
 
