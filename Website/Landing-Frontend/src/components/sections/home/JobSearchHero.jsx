@@ -109,9 +109,6 @@ export default function JobSearchHero({ filters, onSearch }) {
             <span className="block text-(--explorer-navy)">{JOB_SEARCH_DATA.headlineLine1}</span>
             <span className="relative inline-block hero-accent">
               {JOB_SEARCH_DATA.headlineLine2}
-              <svg className="hero-swoosh" viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden="true">
-                <path d="M3 11 C 60 2, 140 2, 297 9" fill="none" stroke="#0b8f83" strokeWidth="4" strokeLinecap="round" />
-              </svg>
             </span>
           </motion.h1>
 
