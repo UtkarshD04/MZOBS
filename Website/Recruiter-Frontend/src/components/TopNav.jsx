@@ -91,7 +91,7 @@ function ProfileMenu() {
   const item = 'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] hover:bg-line-2'
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open} aria-label="Account menu" className="grid h-9 w-9 place-items-center rounded-full bg-ink text-[12px] font-semibold text-white transition-colors hover:bg-accent">
+      <button onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open} aria-label="Account menu" className="grid h-9 w-9 place-items-center rounded-full text-[12px] font-semibold text-white shadow-[0_1px_1px_rgba(14,34,55,0.25)] transition-transform hover:-translate-y-px [background-image:var(--grad-primary)]">
         {IS_DEMO ? 'R' : s?.user?.initials ?? 'R'}
       </button>
       {open && (
@@ -118,7 +118,7 @@ function PlanPill() {
   const needsPlan = !IS_DEMO && plan && !plan.active
   const warn = !IS_DEMO && plan && plan.active && plan.credits === 0
   return (
-    <Link to="/credits" title={IS_DEMO ? 'Demo workspace' : plan ? (plan.active ? `Plan active${plan.expiresAt ? ` until ${new Date(plan.expiresAt).toLocaleDateString('en-IN')}` : ''}` : 'No active plan') : 'Plan & credits'} className={`hidden items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold transition-colors duration-200 md:flex ${needsPlan ? 'bg-accent text-white hover:bg-ink' : warn ? 'border border-[#f3dfb8] bg-warn-soft text-warn' : 'border border-ink/15 text-ink hover:bg-accent-soft'}`}>
+    <Link to="/credits" title={IS_DEMO ? 'Demo workspace' : plan ? (plan.active ? `Plan active${plan.expiresAt ? ` until ${new Date(plan.expiresAt).toLocaleDateString('en-IN')}` : ''}` : 'No active plan') : 'Plan & credits'} className={`hidden items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold transition-all duration-200 hover:-translate-y-px md:flex ${needsPlan ? 'border-transparent text-white shadow-[0_1px_1px_rgba(8,104,94,0.3)] [background-image:var(--grad-accent)]' : warn ? 'border border-[#f3dfb8] bg-warn-soft text-warn' : 'border border-ink/15 text-ink hover:bg-accent-soft'}`}>
       <CreditCard size={14} className={needsPlan || warn ? '' : 'text-accent'} />
       {IS_DEMO ? 'Demo plan' : plan ? (plan.active ? `${plan.credits} credits` : 'Subscribe') : 'Credits'}
     </Link>
@@ -140,7 +140,7 @@ export default function TopNav({ onAskAI }) {
   const { pathname } = useLocation()
   useEffect(() => setMobile(false), [pathname])
   return (
-    <header className="sticky top-0 z-40 border-b border-ink/10 bg-[#f7f9fb]/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-ink/10 bg-bg/90 shadow-[0_1px_0_rgba(14,34,55,0.03)] backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 lg:px-6">
         <button className="grid h-9 w-9 place-items-center rounded-lg hover:bg-line-2 lg:hidden" onClick={() => setMobile((v) => !v)} aria-label="Menu">
           {mobile ? <X size={18} /> : <Menu size={18} />}
