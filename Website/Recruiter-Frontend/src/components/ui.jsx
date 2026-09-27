@@ -21,10 +21,10 @@ export function Avatar({ candidate, size = 44 }) {
 }
 
 const BUTTON = {
-  primary: 'bg-ink text-[#e8f8f5] hover:bg-accent border-transparent',
-  blue: 'bg-blue text-white hover:bg-[#185a94] border-transparent',
-  ai: 'bg-accent text-white hover:bg-ink border-transparent',
-  outline: 'bg-white text-ink border-line hover:border-[#c4d1db] hover:bg-[#f5f9fb]',
+  primary: 'text-[#e8f8f5] border-transparent shadow-[0_1px_1px_rgba(14,34,55,0.25)] hover:shadow-[0_6px_16px_-6px_rgba(14,34,55,0.55)] [background-image:var(--grad-primary)]',
+  blue: 'bg-blue text-white hover:bg-[#175a94] border-transparent',
+  ai: 'text-white border-transparent shadow-[0_1px_1px_rgba(8,104,94,0.3)] hover:shadow-[0_6px_16px_-6px_rgba(8,104,94,0.5)] [background-image:var(--grad-accent)]',
+  outline: 'bg-white text-ink border-line hover:border-[#bcd0da] hover:bg-[#f5f9fb]',
   ghost: 'bg-transparent text-ink-2 border-transparent hover:bg-line-2',
 }
 export function Button({ variant = 'outline', size = 'md', className, icon: Icon, children, ...rest }) {
@@ -32,7 +32,7 @@ export function Button({ variant = 'outline', size = 'md', className, icon: Icon
     <button
       {...rest}
       className={clsx(
-        'inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border font-bold transition-colors duration-200 disabled:opacity-50',
+        'inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border font-bold transition-all duration-200 hover:-translate-y-px active:translate-y-0 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none disabled:translate-y-0',
         size === 'sm' ? 'h-8 px-3.5 text-[12.5px]' : size === 'lg' ? 'h-11 px-6 text-[14.5px]' : 'h-9 px-4 text-[13px]',
         BUTTON[variant],
         className
@@ -187,7 +187,7 @@ export function Sheet({ open, onClose, title, subtitle, width = 440, children, f
   if (!open) return null
   return (
     <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-[#102a43]/40" onClick={onClose} />
+      <div className="absolute inset-0 bg-ink/45 backdrop-blur-[2px]" onClick={onClose} />
       <aside
         role="dialog"
         aria-modal="true"
@@ -223,7 +223,7 @@ export function Modal({ open, onClose, title, subtitle, width = 640, children, f
   if (!open) return null
   return (
     <div className="fixed inset-0 z-50 grid place-items-end md:place-items-center md:p-6">
-      <div className="absolute inset-0 h-full w-full bg-[#102a43]/40" onClick={onClose} />
+      <div className="absolute inset-0 h-full w-full bg-ink/45 backdrop-blur-[2px]" onClick={onClose} />
       <div role="dialog" aria-modal="true" aria-label={title} style={{ '--w': `${width}px` }} className="fade-up relative flex max-h-[92vh] w-full flex-col rounded-t-2xl bg-white shadow-pop md:max-w-[var(--w)] md:rounded-2xl">
         <header className="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
           <div>
