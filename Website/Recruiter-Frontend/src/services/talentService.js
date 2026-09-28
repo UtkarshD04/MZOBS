@@ -143,6 +143,7 @@ export function mapResdexCandidate(e) {
     certifications: [],
     languages: [],
     summary: e.headline || '',
+    resumeText: e.resumeText || '',
     hasPortfolio: !!e.portfolioLink,
     portfolioLink: e.portfolioLink || '',
     hasVideo: false,
