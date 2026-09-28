@@ -143,7 +143,7 @@ function textFor(c, scope) {
   if (scope === 'title') return `${c.designation} ${c.workHistory.map((w) => w.role).join(' ')}`
   if (scope === 'skills') return c.skills.join(' ')
   if (scope === 'experience') return c.workHistory.map((w) => `${w.role} ${w.company} ${(w.skills ?? []).join(' ')}`).join(' ')
-  return [c.name, c.designation, c.currentCompany, c.summary, c.skills.join(' '), c.workHistory.map((w) => `${w.role} ${w.company}`).join(' '), c.projects.map((p) => `${p.name} ${p.description}`).join(' '), c.education.map((e) => `${e.degree} ${e.institute}`).join(' ')].join(' ')
+  return [c.name, c.designation, c.currentCompany, c.summary, c.location, (c.preferredLocations ?? []).join(' '), canonCity(c.location), c.skills.join(' '), c.workHistory.map((w) => `${w.role} ${w.company}`).join(' '), c.projects.map((p) => `${p.name} ${p.description} ${(p.tech ?? []).join(' ')}`).join(' '), c.education.map((e) => `${e.degree} ${e.institute}`).join(' ')].join(' ')
 }
 
 function passes(c, crit, trust, exclude) {
