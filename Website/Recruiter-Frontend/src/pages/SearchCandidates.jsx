@@ -8,7 +8,7 @@ import CandidateCard from '../components/CandidateCard'
 import { useActions } from '../components/useActions'
 import { Button, CardSkeleton, Chip, EmptyState, Modal, Sheet } from '../components/ui'
 import { EMPTY_CRITERIA, SORTS, criteriaToChips, criteriaTitle, hasActiveCriteria, makeCriteria, removeChip } from '../lib/talent/criteria'
-import { parseQuery } from '../lib/talent/parse'
+import { parseQueryAI } from '../lib/talent/parse'
 import { collectTerms } from '../lib/talent/boolean'
 import { searchTalent, getPoolMeta, refreshPool } from '../services/talentService'
 import { useWorkspace } from '../store/workspace'
@@ -123,8 +123,8 @@ export default function SearchCandidates() {
     return () => io.disconnect()
   }, [loadMore])
 
-  const runQuery = (text, mode, scope) => {
-    const parsed = { ...parseQuery(text, mode), scope }
+  const runQuery = async (text, mode, scope) => {
+    const parsed = { ...(await parseQueryAI(text, mode)), scope }
     setCriteria(parsed)
     if (hasActiveCriteria(parsed)) pushRecent(parsed)
   }

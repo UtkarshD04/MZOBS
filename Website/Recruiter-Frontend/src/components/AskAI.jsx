@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Sparkles, CornerDownLeft } from 'lucide-react'
 import { Modal, Button, Chip } from './ui'
-import { parseNaturalLanguage } from '../lib/talent/parse'
+import { parseNaturalLanguage, parseNaturalLanguageAI } from '../lib/talent/parse'
 import { criteriaToChips } from '../lib/talent/criteria'
 import { useWorkspace } from '../store/workspace'
 
@@ -27,15 +27,20 @@ export default function AskAI({ open, onClose }) {
   const parsed = text.trim() ? parseNaturalLanguage(text) : null
   const chips = parsed ? criteriaToChips(parsed) : []
 
-  const go = () => {
+  const [busy, setBusy] = useState(false)
+  const go = async () => {
+    if (busy) return
     if (!parsed || !chips.length) return toast('Mzobs couldn’t find skills, roles or locations in that. Add a few details.', { tone: 'warn' })
+    setBusy(true)
+    const criteria = await parseNaturalLanguageAI(text)
+    setBusy(false)
     onClose()
-    nav('/', { state: { criteria: parsed } })
+    nav('/', { state: { criteria } })
   }
 
   return (
     <Modal open={open} onClose={onClose} title="Ask Mzobs AI" subtitle="Describe who you need, or paste a job description." width={620}
-      footer={<><Button onClick={onClose}>Cancel</Button><Button variant="ai" icon={Sparkles} onClick={go} disabled={!text.trim()}>Find candidates</Button></>}>
+      footer={<><Button onClick={onClose}>Cancel</Button><Button variant="ai" icon={Sparkles} onClick={go} disabled={!text.trim() || busy}>{busy ? 'Thinking…' : 'Find candidates'}</Button></>}>
       <textarea autoFocus value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) go() }} rows={6} placeholder="e.g. Senior Python developer, 4–8 years, FastAPI and AWS, Bengaluru, joins within 45 days…" className="w-full rounded-2xl border border-line p-3 text-[14px] leading-6 outline-none focus:border-ai" />
       <div className="mt-2 flex min-h-7 flex-wrap items-center gap-1.5">
         {chips.length > 0 && <span className="mr-1 text-[12px] font-medium text-[#0a6f64]">Understood:</span>}

@@ -10,6 +10,7 @@ import { makeCriteria } from './criteria'
 import { validateBoolean } from './boolean'
 import { vocab, CITY_ALIASES, canonCity } from './vocab'
 import { escapeRegex } from '../format'
+import { apiClient } from '../api'
 
 function has(text, term) {
   return new RegExp(`(^|[^a-z0-9+#.])${escapeRegex(term)}([^a-z0-9+#]|$)`, 'i').test(text)
@@ -83,6 +84,26 @@ const FILLER = new Set(('a an and any are as at be but by can for from has have 
   'developer developers engineer engineers designer designers analyst analysts').split(' '))
 
 /**
+ * LLM-backed parse (POST /ai/parse-query). Any failure — no key on the server, timeout,
+ * rate limit — falls back to the local parser, so search always works. Use on submit only;
+ * the local parser stays the live, as-you-type one.
+ */
+export async function parseNaturalLanguageAI(text) {
+  const local = parseNaturalLanguage(text)
+  if (!text?.trim()) return local
+  try {
+    const { data } = await apiClient.post('/ai/parse-query', { text }, { timeout: 12000 })
+    const ai = makeCriteria({ ...data.filters, q: text, mode: 'ai' })
+    return hasStructure(ai) ? ai : local
+  } catch {
+    return local
+  }
+}
+
+const hasStructure = (c) => Boolean(c.role || c.skills.length || c.locations.length || c.keywords.length || c.industry || c.workMode ||
+  c.expMin != null || c.expMax != null || c.salaryMin != null || c.salaryMax != null || c.noticeMax != null)
+
+/**
  * Words the recruiter typed that no filter picked up (an unknown skill, tool or domain).
  * They become required keywords, so a search never silently widens to "everyone" just
  * because the vocabulary didn't recognise a word.
@@ -126,6 +147,11 @@ export function parseQuery(text, mode) {
   if (mode === 'boolean') return parseBoolean(text)
   if (mode === 'keyword') return parseKeywords(text)
   return parseNaturalLanguage(text)
+}
+
+/** Same as parseQuery, but AI mode asks the server's LLM first. */
+export async function parseQueryAI(text, mode) {
+  return mode === 'ai' ? parseNaturalLanguageAI(text) : parseQuery(text, mode)
 }
 
 export { exampleQueries } from './vocab'
