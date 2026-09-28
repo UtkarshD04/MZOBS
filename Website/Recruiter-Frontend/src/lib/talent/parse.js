@@ -60,8 +60,10 @@ export function parseNaturalLanguage(text) {
     if (m) {
       const lead = m[1].split(/\s+/).pop()
       const noun = m[2].replace(/s$/i, '')
-      c.role = `${lead[0].toUpperCase()}${lead.slice(1)} ${noun[0].toUpperCase()}${noun.slice(1).toLowerCase()}`
-      if (vocab.skills.some((s) => s.toLowerCase() === lead.toLowerCase()) && !c.skills.includes(vocab.skills.find((s) => s.toLowerCase() === lead.toLowerCase()))) {
+      const nounCap = `${noun[0].toUpperCase()}${noun.slice(1).toLowerCase()}`
+      // "looking for developers" → the lead word is filler, not part of the role
+      c.role = FILLER.has(lead.toLowerCase()) ? nounCap : `${lead[0].toUpperCase()}${lead.slice(1)} ${nounCap}`
+      if (!FILLER.has(lead.toLowerCase()) && vocab.skills.some((s) => s.toLowerCase() === lead.toLowerCase()) && !c.skills.includes(vocab.skills.find((s) => s.toLowerCase() === lead.toLowerCase()))) {
         c.skills.push(vocab.skills.find((s) => s.toLowerCase() === lead.toLowerCase()))
       }
     }
@@ -71,7 +73,34 @@ export function parseNaturalLanguage(text) {
   const excl = [...t.matchAll(/\b(?:not|without|excluding|except)\s+([a-z0-9+#./]+)/gi)].map((m) => m[1])
   c.exclude = excl
   if (/verified/i.test(t)) c.verifiedOnly = true
+  c.keywords = leftoverWords(t, c)
   return c
+}
+
+const FILLER = new Set(('a an and any are as at be but by can for from has have in is it of on or the to who with looking need needs want wanted hiring hire find show me us candidate candidates profile profiles people person resource resources someone ' +
+  'experience experienced years year yrs yr days day notice period joiner join available availability within under below above over least minimum maximum max min up lpa lakh lakhs salary ctc ' +
+  'not without excluding except remote hybrid onsite verified immediate immediately based located location in near around skilled skills skill knowledge good strong best top expert ' +
+  'developer developers engineer engineers designer designers analyst analysts').split(' '))
+
+/**
+ * Words the recruiter typed that no filter picked up (an unknown skill, tool or domain).
+ * They become required keywords, so a search never silently widens to "everyone" just
+ * because the vocabulary didn't recognise a word.
+ */
+function leftoverWords(text, c) {
+  let rest = ` ${text.toLowerCase()} `
+  const eat = (s) => { if (s) rest = rest.split(String(s).toLowerCase()).join(' ') }
+  ;[...c.skills, ...c.locations, c.role, c.industry].forEach(eat)
+  Object.keys(CITY_ALIASES).forEach((a) => { if (has(text, a)) eat(a) })
+  c.exclude.forEach(eat)
+  rest = rest.replace(/[\d.]+\s*(?:-|–|to)?\s*[\d.]*\s*\+?\s*(?:years?|yrs?|days?|lpa|lakhs?|l)\b/g, ' ')
+  const out = []
+  for (const w of rest.split(/[^a-z0-9+#.]+/)) {
+    const word = w.replace(/^\.+|\.+$/g, '')
+    if (word.length < 2 || FILLER.has(word) || /^[\d.]+$/.test(word) || out.includes(word)) continue
+    out.push(word)
+  }
+  return out
 }
 
 /**
