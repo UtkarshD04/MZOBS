@@ -94,10 +94,31 @@ export async function parseNaturalLanguageAI(text) {
   try {
     const { data } = await apiClient.post('/ai/parse-query', { text }, { timeout: 12000 })
     const ai = makeCriteria({ ...data.filters, q: text, mode: 'ai' })
-    return hasStructure(ai) ? ai : local
+    return hasStructure(ai) ? mergeWithLocal(ai, local) : local
   } catch {
     return local
   }
+}
+
+/**
+ * The model understands wording; the local parser knows the exact spellings in our data
+ * ("Bengaluru", "Node.js"). Keep the model's result, add what only the vocabulary caught, and
+ * fill fields the model left empty. Leftover-word keywords from the local parser are not merged:
+ * the model already decided which words matter.
+ */
+function mergeWithLocal(ai, local) {
+  const union = (a, b, key = (x) => x.toLowerCase()) => {
+    const seen = new Set(a.map(key))
+    return [...a, ...b.filter((x) => !seen.has(key(x)))]
+  }
+  const c = { ...ai }
+  c.skills = union(ai.skills, local.skills)
+  c.locations = union(local.locations, ai.locations, canonCity) // vocabulary spelling wins
+  c.exclude = union(ai.exclude, local.exclude)
+  for (const k of ['role', 'industry', 'workMode']) if (!c[k]) c[k] = local[k]
+  for (const k of ['expMin', 'expMax', 'salaryMin', 'salaryMax', 'noticeMax']) if (c[k] == null) c[k] = local[k]
+  if (local.verifiedOnly) c.verifiedOnly = true
+  return c
 }
 
 const hasStructure = (c) => Boolean(c.role || c.skills.length || c.locations.length || c.keywords.length || c.industry || c.workMode ||
