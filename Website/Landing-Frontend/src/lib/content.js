@@ -824,22 +824,15 @@ export const COMPANIES_HIRING_DATA = [
 
 // "Campus Connect" section on the home page (see CampusNetwork.jsx).
 //
-// `count` is the number of campuses connected. There is no backend endpoint
-// for it yet, so it is null — the floating stat then reads "Growing every
-// week" instead of a figure. Set it (or feed it from an API response) and the
-// count appears; nothing else needs to change.
+// `count` is the number of colleges attached, shown as a "{count}+" count-up.
 export const CAMPUS_NETWORK_DATA = {
   eyebrow: "Campus Connect",
   headline: ["Where Campus", "Talent Meets"],
   headlineAccent: "Opportunity.",
   subtitle: "Connect your campus with verified employers, real opportunities and a smarter path from learning to hiring.",
-  count: null,
-  statLabel: "Campuses connected",
-  statFallback: "Growing every week",
-  verifiedLabel: "Campus Verified",
-  verifiedDetail: "Placement cell connected",
-  badgeTitle: "MZOBS",
-  badgeSub: "Intelligent Hiring Network",
+  count: 100,
+  statLabel: "Colleges attached",
+  statNote: "Placement cells already on MZOBS",
   ctaText: "Bring Your Campus to MZOBS",
   ctaTo: "/contact"
 }
