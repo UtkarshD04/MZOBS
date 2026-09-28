@@ -143,17 +143,31 @@ function textFor(c, scope) {
   if (scope === 'title') return `${c.designation} ${c.workHistory.map((w) => w.role).join(' ')}`
   if (scope === 'skills') return c.skills.join(' ')
   if (scope === 'experience') return c.workHistory.map((w) => `${w.role} ${w.company} ${(w.skills ?? []).join(' ')}`).join(' ')
-  return [c.name, c.designation, c.currentCompany, c.summary, c.location, (c.preferredLocations ?? []).join(' '), canonCity(c.location), c.skills.join(' '), c.workHistory.map((w) => `${w.role} ${w.company}`).join(' '), c.projects.map((p) => `${p.name} ${p.description} ${(p.tech ?? []).join(' ')}`).join(' '), c.education.map((e) => `${e.degree} ${e.institute}`).join(' ')].join(' ')
+  return [c.name, c.designation, c.currentCompany, c.summary, c.location, (c.preferredLocations ?? []).join(' '), canonCity(c.location), c.skills.join(' '), c.workHistory.map((w) => `${w.role} ${w.company}`).join(' '), c.projects.map((p) => `${p.name} ${p.description} ${(p.tech ?? []).join(' ')}`).join(' '), c.education.map((e) => `${e.degree} ${e.institute}`).join(' '), c.resumeText ?? ''].join(' ')
+}
+
+// A keyword matches at the start of a word ("cyber" finds "cybersecurity", "sap" never finds "map"),
+// which matters now that the haystack includes the full CV text.
+const wordRe = new Map()
+function hasWord(hay, k) {
+  const term = norm(k)
+  if (!term) return true
+  let re = wordRe.get(term)
+  if (!re) {
+    re = new RegExp(`(^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`)
+    wordRe.set(term, re)
+  }
+  return re.test(hay)
 }
 
 function passes(c, crit, trust, exclude) {
   if (exclude?.has(c.id)) return false
   const hay = norm(textFor(c, crit.scope))
-  if (crit.keywords.some((k) => !hay.includes(norm(k)))) return false
-  if (crit.keywordGroups.some((g) => !g.some((k) => hay.includes(norm(k))))) return false
+  if (crit.keywords.some((k) => !hasWord(hay, k))) return false
+  if (crit.keywordGroups.some((g) => !g.some((k) => hasWord(hay, k)))) return false
   if (crit.boolExpr && !evalBool(crit.boolExpr, c, (x) => textFor(x, crit.scope))) return false
-  if (crit.exclude.some((k) => norm(textFor(c, 'all')).includes(norm(k)))) return false
-  if (crit.anyKeywords.length && !crit.anyKeywords.some((k) => hay.includes(norm(k)))) return false
+  if (crit.exclude.some((k) => hasWord(norm(textFor(c, 'all')), k))) return false
+  if (crit.anyKeywords.length && !crit.anyKeywords.some((k) => hasWord(hay, k))) return false
   if (!roleMatches(c, crit.role)) return false
   if (crit.skills.length) {
     const have = new Set(c.skills.map(norm))
