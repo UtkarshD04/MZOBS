@@ -1,13 +1,19 @@
 import { TRUSTED_LOGOS_DATA } from '../../../lib/content'
+<<<<<<< Updated upstream
 import { useLiveStatRows } from '../../../lib/useLiveStats'
 import { FadeInLoad } from './employerMotion'
 
 // Live platform numbers straight from the database (see useLiveStatRows) —
 // rendered only when the API returns them, never a fixed figure.
+=======
+import { FadeInLoad } from './employerMotion'
+
+>>>>>>> Stashed changes
 export default function EmployerAuthTrustPanel({ delay = 0.34 }) {
   const stats = useLiveStatRows().slice(0, 2)
   return (
     <FadeInLoad delay={delay} className="mt-10">
+<<<<<<< Updated upstream
       {stats.length > 0 && (
       <div className="grid grid-cols-2 gap-5 pb-8 border-b border-[#111827]/10">
         {stats.map((s) => (
@@ -21,6 +27,10 @@ export default function EmployerAuthTrustPanel({ delay = 0.34 }) {
 
       <div className="mt-8">
         <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#667085] mb-4">Companies hiring on Mzobs</p>
+=======
+      <div>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#51697e] mb-4">Companies hiring on Mzobs</p>
+>>>>>>> Stashed changes
         <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
           {TRUSTED_LOGOS_DATA.logos.map((logo) => (
             <img

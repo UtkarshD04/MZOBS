@@ -1,45 +1,46 @@
-import { ArrowRight, Briefcase, Inbox, UserSearch, ListChecks } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Briefcase, Search, SlidersHorizontal, Inbox, ListChecks, CalendarCheck } from 'lucide-react'
 import { FadeInView } from './employerMotion'
 
-const CARDS = [
+const FEATURES = [
   {
+    n: '01',
     icon: Briefcase,
-    title: 'Manage every open role from one place',
-    desc: 'Live, draft or paused — every requisition sits in one dashboard instead of scattered spreadsheets and email threads, so nothing slips because it fell off someone\'s inbox.',
-    cta: 'Post a role',
-    to: '/employers/signup',
-    size: 'lg',
-    Visual: RolesFragment,
+    title: 'Post Jobs',
+    desc: 'Create and publish job opportunities with role, skills, location, experience and salary requirements.',
   },
   {
+    n: '02',
+    icon: Search,
+    title: 'Find Candidates',
+    desc: 'Discover candidates based on the role requirements that matter to you.',
+  },
+  {
+    n: '03',
+    icon: SlidersHorizontal,
+    title: 'Search & Filter',
+    desc: 'Find relevant talent using filters for skills, experience and location.',
+  },
+  {
+    n: '04',
     icon: Inbox,
-    title: 'One inbox for every application',
-    desc: "Applications from every open role land in a single inbox, tagged to the role they applied for — nothing to chase down across email or forwarded resumes.",
-    cta: 'Get your inbox',
-    to: '/employers/signup',
-    size: 'md',
-    Visual: ApplicationsFragment,
+    title: 'Manage Applications',
+    desc: 'Review and organize applications as they come in, all from one inbox.',
   },
   {
-    icon: UserSearch,
-    title: 'Full candidate profiles, not bare attachments',
-    desc: 'Every applicant comes with a complete profile — experience, skills and a resume our team has already reviewed — so you\'re never deciding off a forwarded PDF.',
-    cta: 'See a sample profile',
-    to: '#how-it-works',
-    size: 'md',
-  },
-  {
+    n: '05',
     icon: ListChecks,
-    title: 'Track offers, not just applicants',
-    desc: 'Move a candidate from applied to shortlisted to offer, with status and notes kept together in one place instead of split across chats and calls.',
-    cta: 'See the full workflow',
-    to: '#how-it-works',
-    size: 'lg',
-    Visual: ShortlistFragment,
+    title: 'Shortlist Talent',
+    desc: 'Review candidate profiles and move the relevant ones forward.',
+  },
+  {
+    n: '06',
+    icon: CalendarCheck,
+    title: 'Schedule Interviews',
+    desc: 'Manage interview steps with the candidates you shortlist.',
   },
 ]
 
+<<<<<<< Updated upstream
 function RolesFragment() {
   const rows = [
     { role: 'Backend Engineer', status: 'Live' },
@@ -128,13 +129,34 @@ export default function EmployerWhySection() {
           </h2>
           <p className="mt-3 text-[15px] text-[#111827]/70 leading-relaxed">
             From posting a role to making the offer, everything your hiring team needs lives in one workspace.
+=======
+export default function EmployerWhySection() {
+  return (
+    <section id="solutions" className="bg-(--explorer-bg) py-16 md:py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto">
+        <FadeInView className="max-w-xl">
+          <h2 className="font-sans text-3xl sm:text-4xl md:text-[44px] font-bold text-(--explorer-navy) tracking-tight leading-tight">
+            Everything You Need to Hire.
+          </h2>
+          <p className="mt-3 text-[15px] text-(--explorer-muted) leading-relaxed">
+            From your first job post to the final interview, Mzobs keeps your hiring workflow simple.
+>>>>>>> Stashed changes
           </p>
         </FadeInView>
 
-        <div className="mt-12 grid md:grid-cols-12 gap-5">
-          {CARDS.map((card, i) => (
-            <FadeInView key={card.title} delay={i * 0.06} className={`h-full ${card.size === 'lg' ? 'md:col-span-7' : 'md:col-span-5'}`}>
-              <SolutionCard card={card} />
+        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {FEATURES.map((f, i) => (
+            <FadeInView key={f.title} delay={i * 0.05} className="h-full">
+              <div className="flex h-full flex-col rounded-[22px] border border-(--explorer-border) bg-white p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_35px_-24px_rgba(16,42,67,0.25)]">
+                <div className="flex items-center justify-between">
+                  <span className="grid h-11 w-11 place-items-center rounded-full bg-(--explorer-blue-surface) text-(--explorer-blue)">
+                    <f.icon size={19} strokeWidth={1.8} />
+                  </span>
+                  <span className="text-[13px] font-extrabold text-(--explorer-border)">{f.n}</span>
+                </div>
+                <h3 className="mt-4 text-[17px] font-bold text-(--explorer-navy) leading-snug">{f.title}</h3>
+                <p className="mt-2.5 text-[14px] text-(--explorer-muted) leading-relaxed">{f.desc}</p>
+              </div>
             </FadeInView>
           ))}
         </div>

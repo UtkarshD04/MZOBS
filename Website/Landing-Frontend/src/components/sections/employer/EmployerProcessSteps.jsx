@@ -1,20 +1,16 @@
 import { useRef } from 'react'
-import { CalendarCheck, Sparkles } from 'lucide-react'
-import { FadeInView } from './employerMotion'
+import { Briefcase, Search, ListChecks, CalendarCheck, CheckCircle2 } from 'lucide-react'
 import { useStoryProgress } from '../../../lib/employerMotionHooks'
 
-// The full Mzobs hiring journey — from describing a role to making the hire.
-// Each stage keeps the same small "product state" fragment style the
-// original 3-step version used (see git history), just widened to six.
 const STEPS = [
-  { num: '01', tag: 'Define', title: 'Create your requirement', desc: 'Tell us what the job needs — responsibilities, experience and location — and MZOBS turns it into a live posting.', Fragment: RequirementFragment },
-  { num: '02', tag: 'Discover', title: 'Discover relevant talent', desc: "Describe who you're looking for with Talent Lens, and see focused results instead of a pile of unrelated resumes.", Fragment: DiscoverFragment },
-  { num: '03', tag: 'Understand', title: 'Understand the match', desc: 'Every recommendation comes with a plain-language reason, so you can see where a candidate fits before you reach out.', Fragment: UnderstandFragment },
-  { num: '04', tag: 'Shortlist', title: 'Shortlist with context', desc: 'Save promising people to a Talent Pool or move them forward — with notes and status kept in one place.', Fragment: ShortlistFragment },
-  { num: '05', tag: 'Interview', title: 'Move into interviews', desc: 'Schedule and track interview rounds against the shortlist, without losing the thread across chats and calls.', Fragment: InterviewFragment },
-  { num: '06', tag: 'Hire', title: 'Make the hire', desc: 'Track the offer through to acceptance, and close the loop on the requirement you opened with.', Fragment: HireFragment },
+  { icon: Briefcase, title: 'Post a Job' },
+  { icon: Search, title: 'Discover Talent' },
+  { icon: ListChecks, title: 'Shortlist' },
+  { icon: CalendarCheck, title: 'Interview' },
+  { icon: CheckCircle2, title: 'Hire' },
 ]
 
+<<<<<<< Updated upstream
 function RequirementFragment() {
   return (
     <div className="rounded-xl border border-[#111827]/10 bg-[#eeefff] p-4">
@@ -110,10 +106,13 @@ function HireFragment() {
   )
 }
 
+=======
+>>>>>>> Stashed changes
 export default function EmployerProcessSteps() {
   const storyRef = useRef(null)
   useStoryProgress(storyRef)
   return (
+<<<<<<< Updated upstream
     <section ref={storyRef} id="how-it-works" className="relative overflow-hidden bg-[#111827] py-20 md:py-28 px-6 md:px-12">
       <div aria-hidden="true" className="absolute -right-28 top-10 h-72 w-72 rounded-full bg-[#4a4ed8] blur-[90px] opacity-70" />
       <div className="max-w-7xl mx-auto">
@@ -121,11 +120,22 @@ export default function EmployerProcessSteps() {
           <h2 className="font-sans text-3xl sm:text-4xl md:text-[48px] font-bold text-[#eeefff] tracking-tight leading-tight">A clearer path from role to right person.</h2>
           <p className="mt-3 text-[15px] text-white/60 leading-relaxed">From requirement to right person — one continuous Mzobs experience.</p>
         </FadeInView>
+=======
+    <section ref={storyRef} id="how-it-works" className="relative overflow-hidden bg-(--explorer-navy-deep) py-20 md:py-28 px-6 md:px-12">
+      <div aria-hidden="true" className="absolute -right-28 top-10 h-72 w-72 rounded-full bg-(--explorer-teal) blur-[100px] opacity-15" />
+      <div className="max-w-5xl mx-auto text-center">
+        <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-(--explorer-teal)">Simple hiring workflow</span>
+        <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[44px] font-bold text-white tracking-tight leading-tight">
+          From Requirement to Hire.
+        </h2>
 
-        <div className="mt-14 relative grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-x-6 gap-y-10">
-          <span className="hidden xl:block absolute top-[22px] left-[4%] right-[4%] h-px bg-white/20" aria-hidden="true" />
-          <span data-story-line className="hidden xl:block absolute origin-left top-[22px] left-[4%] right-[4%] h-px scale-x-0 bg-[#B9D6CC]" aria-hidden="true" />
+        <div className="relative mt-16 flex flex-col items-center gap-10 sm:flex-row sm:items-start sm:justify-between">
+          <span className="hidden sm:block absolute top-[26px] left-[8%] right-[8%] h-px bg-white/15" aria-hidden="true" />
+          <span data-story-line className="hidden sm:block absolute origin-left top-[26px] left-[8%] right-[8%] h-px scale-x-0 bg-(--explorer-teal)" aria-hidden="true" />
+>>>>>>> Stashed changes
+
           {STEPS.map((step) => (
+<<<<<<< Updated upstream
             <div data-story-card key={step.num} className="relative">
               <span className="text-[15px] font-bold text-[#B9D6CC] bg-[#111827] pr-3">{step.num}</span>
               <span className="ml-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white/40">{step.tag}</span>
@@ -134,6 +144,13 @@ export default function EmployerProcessSteps() {
               <div className="mt-4">
                 <step.Fragment />
               </div>
+=======
+            <div data-story-card key={step.title} className="relative flex flex-col items-center gap-3">
+              <span className="grid h-[52px] w-[52px] place-items-center rounded-full bg-(--explorer-navy-deep) border border-white/15 text-white">
+                <step.icon size={20} strokeWidth={1.8} />
+              </span>
+              <p className="text-[14px] font-bold text-white">{step.title}</p>
+>>>>>>> Stashed changes
             </div>
           ))}
         </div>

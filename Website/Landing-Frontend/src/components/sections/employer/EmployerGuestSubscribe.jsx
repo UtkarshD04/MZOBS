@@ -5,7 +5,11 @@ import { createGuestSubscriptionOrder, guestSubscribeSignup, redirectToEmployerD
 import { openRazorpayCheckout, loadRazorpay } from '../../../lib/razorpay'
 
 const inputClass =
+<<<<<<< Updated upstream
   'w-full h-11 px-3.5 rounded-xl border border-[#111827]/15 bg-white text-[13.5px] text-[#111827] outline-none transition-colors placeholder:text-[#111827]/35 focus:border-[#4a4ed8] focus:ring-[3px] focus:ring-[#4a4ed8]/15'
+=======
+  'w-full h-11 px-3.5 rounded-xl border border-(--explorer-border) bg-white text-[13.5px] text-(--explorer-navy) outline-none transition-colors placeholder:text-(--explorer-navy)/35 focus:border-(--explorer-blue) focus:ring-[3px] focus:ring-(--explorer-blue)/15'
+>>>>>>> Stashed changes
 
 // The pricing page's "no signup form" path: take the phone number, pay the
 // plan price, and the account (Company + Admin user + an already-active
@@ -99,7 +103,11 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+<<<<<<< Updated upstream
             className="fixed inset-0 z-[100] bg-[#111827]/50 backdrop-blur-sm"
+=======
+            className="fixed inset-0 z-[100] bg-(--explorer-navy)/50 backdrop-blur-sm"
+>>>>>>> Stashed changes
             onClick={handleClose}
             aria-hidden="true"
           />
@@ -110,14 +118,22 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             role="dialog"
             aria-modal="true"
+<<<<<<< Updated upstream
             className="fixed inset-x-0 bottom-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[101] w-full sm:max-w-md sm:rounded-[28px] rounded-t-[28px] bg-white border border-[#111827]/10 shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
+=======
+            className="fixed inset-x-0 bottom-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[101] w-full sm:max-w-md sm:rounded-[28px] rounded-t-[28px] bg-white border border-(--explorer-navy)/10 shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
+>>>>>>> Stashed changes
           >
             {step !== 'paying' && (
               <button
                 type="button"
                 onClick={handleClose}
                 aria-label="Close"
+<<<<<<< Updated upstream
                 className="absolute right-5 top-5 w-8 h-8 rounded-full flex items-center justify-center text-[#111827]/50 hover:text-[#111827] hover:bg-[#f7f8fc] transition-colors"
+=======
+                className="absolute right-5 top-5 w-8 h-8 rounded-full flex items-center justify-center text-(--explorer-navy)/50 hover:text-(--explorer-navy) hover:bg-(--explorer-bg) transition-colors"
+>>>>>>> Stashed changes
               >
                 <X size={18} />
               </button>
@@ -125,13 +141,19 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
 
             {step === 'phone' && (
               <>
+<<<<<<< Updated upstream
                 <h3 className="font-sans text-2xl font-bold text-[#111827]">Add your mobile number</h3>
                 <p className="text-[13px] text-[#667085] mt-1.5 mb-6">
+=======
+                <h3 className="font-sans text-2xl font-bold text-(--explorer-navy)">Add your mobile number</h3>
+                <p className="text-[13px] text-(--explorer-muted) mt-1.5 mb-6">
+>>>>>>> Stashed changes
                   We'll use this to reach you about your account — then take you straight to payment, no signup form to fill in.
                 </p>
 
                 {payError && <p className="text-[12.5px] text-red-600 mb-4 -mt-2">{payError}</p>}
 
+<<<<<<< Updated upstream
                 <label className="block text-[12.5px] font-bold text-[#111827] mb-1.5">Mobile number</label>
                 <div className="flex gap-2">
                   <div className="h-11 px-3.5 flex items-center rounded-xl border border-[#111827]/15 bg-[#f7f8fc] text-[13.5px] font-bold text-[#111827] shrink-0">
@@ -139,6 +161,15 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                   </div>
                   <div className="relative flex-1">
                     <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#111827]/40" />
+=======
+                <label className="block text-[12.5px] font-bold text-(--explorer-navy) mb-1.5">Mobile number</label>
+                <div className="flex gap-2">
+                  <div className="h-11 px-3.5 flex items-center rounded-xl border border-(--explorer-navy)/15 bg-(--explorer-bg) text-[13.5px] font-bold text-(--explorer-navy) shrink-0">
+                    +91
+                  </div>
+                  <div className="relative flex-1">
+                    <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--explorer-navy)/40" />
+>>>>>>> Stashed changes
                     <input
                       type="tel"
                       inputMode="numeric"
@@ -154,7 +185,11 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                   type="button"
                   onClick={handleContinue}
                   disabled={phone.length !== 10}
+<<<<<<< Updated upstream
                   className="mt-3 w-full h-11 rounded-xl bg-[#111827] text-[#eeefff] text-[13.5px] font-bold hover:bg-[#4a4ed8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+=======
+                  className="mt-3 w-full h-11 rounded-xl bg-(--explorer-navy) text-(--explorer-teal-surface) text-[13.5px] font-bold hover:bg-(--explorer-blue) transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+>>>>>>> Stashed changes
                 >
                   Continue to payment
                 </button>
@@ -163,14 +198,21 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
 
             {step === 'paying' && (
               <div className="py-8 flex flex-col items-center text-center gap-3">
+<<<<<<< Updated upstream
                 <Loader2 size={28} className="animate-spin text-[#4a4ed8]" />
                 <p className="text-[14px] font-bold text-[#111827]">Setting up your subscription…</p>
                 <p className="text-[12.5px] text-[#667085]">Complete the payment in the window that opens.</p>
+=======
+                <Loader2 size={28} className="animate-spin text-(--explorer-blue)" />
+                <p className="text-[14px] font-bold text-(--explorer-navy)">Setting up your subscription…</p>
+                <p className="text-[12.5px] text-(--explorer-muted)">Complete the payment in the window that opens.</p>
+>>>>>>> Stashed changes
               </div>
             )}
 
             {step === 'success' && result && (
               <div className="text-center">
+<<<<<<< Updated upstream
                 <div className="w-14 h-14 rounded-full bg-[#ccceff] flex items-center justify-center mx-auto mb-4">
                   <CheckCircle2 size={28} className="text-[#4a4ed8]" />
                 </div>
@@ -186,6 +228,23 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                     type="button"
                     onClick={copyCredentials}
                     className="mt-3 inline-flex items-center gap-1.5 text-[12px] font-bold text-[#4a4ed8] hover:underline"
+=======
+                <div className="w-14 h-14 rounded-full bg-(--explorer-blue-surface) flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 size={28} className="text-(--explorer-blue)" />
+                </div>
+                <h3 className="font-sans text-2xl font-bold text-(--explorer-navy)">You're subscribed.</h3>
+                <p className="text-[13px] text-(--explorer-muted) mt-1.5">Your MZOBS Employer Annual plan is active. Save these details to sign in later:</p>
+
+                <div className="mt-5 rounded-2xl border border-(--explorer-navy)/12 bg-(--explorer-teal-surface) p-4 text-left">
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-(--explorer-muted)">Login email</div>
+                  <div className="text-[13.5px] font-bold text-(--explorer-navy) break-all mt-0.5">{result.placeholderEmail}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-(--explorer-muted) mt-3">Temporary password</div>
+                  <div className="text-[13.5px] font-bold text-(--explorer-navy) font-mono mt-0.5">{result.tempPassword}</div>
+                  <button
+                    type="button"
+                    onClick={copyCredentials}
+                    className="mt-3 inline-flex items-center gap-1.5 text-[12px] font-bold text-(--explorer-blue) hover:underline"
+>>>>>>> Stashed changes
                   >
                     {copied ? <Check size={13} /> : <Copy size={13} />} {copied ? 'Copied' : 'Copy details'}
                   </button>
@@ -195,7 +254,11 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                 <button
                   type="button"
                   onClick={goToDashboard}
+<<<<<<< Updated upstream
                   className="mt-5 w-full inline-flex items-center justify-center gap-2 h-12 rounded-full bg-[#111827] text-[#eeefff] text-sm font-bold hover:bg-[#4a4ed8] transition-colors"
+=======
+                  className="mt-5 w-full inline-flex items-center justify-center gap-2 h-12 rounded-full bg-(--explorer-navy) text-(--explorer-teal-surface) text-sm font-bold hover:bg-(--explorer-blue) transition-colors"
+>>>>>>> Stashed changes
                 >
                   Go to your dashboard <ArrowRight size={16} />
                 </button>
