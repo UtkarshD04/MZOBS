@@ -76,7 +76,7 @@ export default function EmployerHero() {
       <div aria-hidden="true" className="pointer-events-none absolute top-1/4 left-0 h-[320px] w-[320px] rounded-full bg-(--color-violet)/5 blur-[140px]" />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-0 right-1/4 h-[260px] w-[260px] rounded-full bg-(--explorer-teal)/6 blur-[130px]" />
 
-      <div className="relative mx-auto flex min-h-[72vh] max-w-7xl flex-col justify-center py-20 md:py-0">
+      <div className="relative mx-auto flex min-h-[72vh] max-w-7xl flex-col justify-center pt-28 pb-16 md:pt-36 md:pb-16">
         <div className="grid items-center gap-16 lg:grid-cols-[1.2fr_1fr]">
           <div>
             <FadeInLoad delay={0.05}>
