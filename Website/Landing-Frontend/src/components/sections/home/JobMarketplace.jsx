@@ -222,13 +222,6 @@ export default function JobMarketplace({ external }) {
           id="jobs-title"
           eyebrow="Job discovery"
           title="Opportunities Worth Exploring"
-          action={
-            <p className="shrink-0 text-[14px] text-mz-muted" aria-live="polite">
-              <span className="text-[26px] font-bold tracking-tight text-mz-ink">{total.toLocaleString('en-IN')}</span>{' '}
-              {total === 1 ? 'live opening' : 'live openings'}
-              {loading && jobs.length > 0 && <Loader2 size={14} className="ml-2 inline animate-spin" aria-hidden="true" />}
-            </p>
-          }
         >
           Fresh roles from employers hiring across India &mdash; filter by what matters and apply in a couple of taps.
         </SectionHead>
