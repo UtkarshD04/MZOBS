@@ -51,30 +51,30 @@ export default function EmployerNavbar() {
             aria-hidden="true"
           />
 
-          <Link to="/employers" className="flex items-center gap-2.5 shrink-0">
+          <Link to="/employers" className="flex shrink-0 flex-nowrap items-center gap-3">
             <img
               src="/images/logo.png"
               alt="Mzobs"
-              className={`w-auto object-contain transition-[height] duration-500 ${floating ? 'h-11' : 'h-14'}`}
+              className={`h-9 w-auto shrink-0 object-contain transition-[height] duration-500 ${floating ? 'h-8' : 'h-9'}`}
             />
-            <span className="hidden sm:inline text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-(--explorer-blue) bg-(--explorer-blue-surface) border border-(--explorer-blue-border) rounded-full px-2.5 py-1">
+            <span className="hidden shrink-0 whitespace-nowrap rounded-full border border-(--explorer-blue-border) bg-(--explorer-blue-surface) px-2.5 py-1.5 text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-(--explorer-blue) sm:inline-flex sm:items-center">
               For Employers
             </span>
           </Link>
 
-          <nav aria-label="Employer" className="hidden lg:flex items-center gap-1">
+          <nav aria-label="Employer" className="hidden flex-1 items-center justify-center gap-2 lg:flex">
             {EMPLOYER_NAV_LINKS.map((link) => (
               <Link
                 key={link.label}
                 to={link.to}
-                className="rounded-full px-3.5 py-2 text-[14px] font-semibold text-(--explorer-navy)/75 hover:text-(--explorer-navy) hover:bg-(--explorer-navy)/[0.06] transition-colors"
+                className="whitespace-nowrap rounded-full px-3.5 py-2 text-[14px] font-semibold text-(--explorer-navy)/75 hover:text-(--explorer-navy) hover:bg-(--explorer-navy)/[0.06] transition-colors"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <div className="hidden shrink-0 items-center gap-3 lg:flex">
             <Link
               to="/"
               className="text-[13.5px] font-semibold text-(--explorer-muted) hover:text-(--explorer-navy) transition-colors px-3 py-2"
