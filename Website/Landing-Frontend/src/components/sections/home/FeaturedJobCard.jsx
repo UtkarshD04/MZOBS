@@ -1,5 +1,5 @@
 import { MapPin, TrendingUp, IndianRupee, Clock, ArrowUpRight } from 'lucide-react'
-import { CompanyMark, VerifiedMark, NewBadge } from './jobCardPrimitives'
+import { CompanyMark, NewBadge } from './jobCardPrimitives'
 
 const MAX_SKILLS = 3
 
@@ -81,7 +81,6 @@ export default function FeaturedJobCard({ job, onOpen }) {
           View role <ArrowUpRight size={15} aria-hidden="true" />
         </span>
         <span className="flex flex-col items-end gap-1 text-right">
-          {job.verified && <VerifiedMark />}
           <span className="flex items-center gap-1 text-[12px] text-(--explorer-muted)">
             <Clock size={12} className="shrink-0" aria-hidden="true" />
             Posted {job.postedDaysAgo === 0 ? 'today' : `${job.postedDaysAgo}d ago`}

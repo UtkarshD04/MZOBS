@@ -93,7 +93,7 @@ export default function JobDetail() {
 
         {status === 'ready' && job && (
           <div className="bg-white border border-(--jobs-border) rounded-xl p-6 sm:p-7 pb-24 lg:pb-7">
-            <JobDetailPanel job={job} stickyActions />
+            <JobDetailPanel job={job} stickyActions initialApplyOpen={Boolean(location.state?.apply)} />
           </div>
         )}
       </div>

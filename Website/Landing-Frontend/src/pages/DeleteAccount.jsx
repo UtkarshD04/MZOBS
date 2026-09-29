@@ -14,7 +14,7 @@ const APP_STEPS = [
 
 const WEB_STEPS = [
   'Enter the mobile number registered with your Mzobs account.',
-  'Verify it with the 6-digit OTP we send you.',
+  'Confirm it with the 6-digit OTP we send you.',
   'Confirm the request and select “Delete my account and data”.',
 ]
 

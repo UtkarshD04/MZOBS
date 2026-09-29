@@ -49,7 +49,7 @@ const FAQS = [
   },
   {
     q: 'How do I subscribe?',
-    a: 'Verify your mobile number and pay right from this page — no signup form. Your account, already on the active plan, is ready the moment payment goes through.',
+    a: 'Confirm your mobile number and pay right from this page — no signup form. Your account, already on the active plan, is ready the moment payment goes through.',
   },
 ]
 
@@ -59,19 +59,19 @@ function fmtINR(n) {
 
 function FaqItem({ item, isOpen, onToggle }) {
   return (
-    <div className="border-b border-[#102a43]/10 last:border-0">
+    <div className="border-b border-[#111827]/10 last:border-0">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
-        className="group w-full flex items-center justify-between gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0a6f64]"
+        className="group w-full flex items-center justify-between gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#4a4ed8]"
       >
-        <span className="text-[15px] font-bold text-[#102a43] group-hover:text-[#0a6f64] transition-colors">{item.q}</span>
-        <ChevronDown size={18} className={`shrink-0 text-[#0a6f64] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="text-[15px] font-bold text-[#111827] group-hover:text-[#4a4ed8] transition-colors">{item.q}</span>
+        <ChevronDown size={18} className={`shrink-0 text-[#4a4ed8] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       <div className={`grid transition-[grid-template-rows] duration-200 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden">
-          <p className="pb-5 text-[14px] text-[#51697e] leading-relaxed max-w-2xl">{item.a}</p>
+          <p className="pb-5 text-[14px] text-[#667085] leading-relaxed max-w-2xl">{item.a}</p>
         </div>
       </div>
     </div>
@@ -83,19 +83,19 @@ export default function EmployerPricing() {
   const [subscribeOpen, setSubscribeOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-white text-[#102a43] font-sans antialiased selection:bg-blue-200">
+    <div className="min-h-screen bg-white text-[#111827] font-sans antialiased selection:bg-blue-200">
       <Seo path="/employers/pricing" {...STATIC_PAGE_SEO['/employers/pricing']} />
       <EmployerNavbar />
 
       {/* Header */}
       <section className="relative overflow-hidden pt-[104px] pb-14 md:pt-[128px] md:pb-20 px-6 md:px-12">
-        <div aria-hidden="true" className="absolute -left-28 -top-16 h-72 w-72 rounded-full bg-[#bfdbfe]/60 blur-[90px]" />
+        <div aria-hidden="true" className="absolute -left-28 -top-16 h-72 w-72 rounded-full bg-[#ccceff]/60 blur-[90px]" />
         <FadeInLoad className="relative max-w-2xl mx-auto text-center">
-          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#0a6f64]">Simple, transparent pricing</span>
-          <h1 className="mt-3 font-sans text-4xl sm:text-5xl md:text-[56px] font-bold text-[#102a43] tracking-tight leading-[1.02]">
+          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#4a4ed8]">Simple, transparent pricing</span>
+          <h1 className="mt-3 font-sans text-4xl sm:text-5xl md:text-[56px] font-bold text-[#111827] tracking-tight leading-[1.02]">
             One plan. Everything you need to hire.
           </h1>
-          <p className="mt-5 text-[15px] sm:text-base text-[#51697e] leading-relaxed max-w-xl mx-auto">
+          <p className="mt-5 text-[15px] sm:text-base text-[#667085] leading-relaxed max-w-xl mx-auto">
             No tiers to compare, no add-ons to negotiate. A single annual plan unlocks unlimited job postings and full
             access to your applicants' resumes.
           </p>
@@ -105,24 +105,24 @@ export default function EmployerPricing() {
       {/* Pricing card */}
       <section className="px-6 md:px-12 pb-20 md:pb-28">
         <FadeInView className="relative max-w-lg mx-auto">
-          <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#102a43] text-[#12a594] text-[11px] font-bold uppercase tracking-[0.1em] shadow-sm">
+          <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#111827] text-[#20c997] text-[11px] font-bold uppercase tracking-[0.1em] shadow-sm">
             Best value
           </span>
-          <div className="rounded-[28px] border border-[#102a43]/15 bg-white shadow-[10px_12px_0_#102a43] p-8 sm:p-10">
-            <div className="text-[11.5px] font-semibold tracking-wide uppercase text-[#51697e]">{PLAN.name}</div>
+          <div className="rounded-[28px] border border-[#111827]/15 bg-white shadow-[10px_12px_0_#111827] p-8 sm:p-10">
+            <div className="text-[11.5px] font-semibold tracking-wide uppercase text-[#667085]">{PLAN.name}</div>
 
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-sans text-5xl font-bold tracking-tight text-[#102a43]">{fmtINR(PLAN.baseAmount)}</span>
-              <span className="text-[13px] text-[#51697e]">+ {PLAN.gstRatePercent}% GST / year</span>
+              <span className="font-sans text-5xl font-bold tracking-tight text-[#111827]">{fmtINR(PLAN.baseAmount)}</span>
+              <span className="text-[13px] text-[#667085]">+ {PLAN.gstRatePercent}% GST / year</span>
             </div>
-            <div className="mt-1.5 text-[12.5px] text-[#51697e]/80">
+            <div className="mt-1.5 text-[12.5px] text-[#667085]/80">
               Total {fmtINR(totalAmount)} — billed once, no surprises at checkout
             </div>
 
             <ul className="mt-7 flex flex-col gap-3">
               {FEATURES.map((f) => (
-                <li key={f} className="flex items-start gap-2.5 text-[13.5px] text-[#102a43]/85 leading-relaxed">
-                  <CheckCircle2 size={17} className="text-[#0a6f64] mt-0.5 flex-shrink-0" /> {f}
+                <li key={f} className="flex items-start gap-2.5 text-[13.5px] text-[#111827]/85 leading-relaxed">
+                  <CheckCircle2 size={17} className="text-[#4a4ed8] mt-0.5 flex-shrink-0" /> {f}
                 </li>
               ))}
             </ul>
@@ -130,12 +130,12 @@ export default function EmployerPricing() {
             <button
               type="button"
               onClick={() => setSubscribeOpen(true)}
-              className="mt-8 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[46px] rounded-full bg-[#102a43] text-[#e8f8f5] text-sm font-bold transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#0a6f64]"
+              className="mt-8 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[46px] rounded-full bg-[#111827] text-[#eeefff] text-sm font-bold transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#4a4ed8]"
             >
               <IndianRupee size={15} /> Create account to subscribe
             </button>
-            <p className="mt-3 text-center text-[12px] text-[#51697e]">
-              Just verify your mobile number and pay — your account is created for you.
+            <p className="mt-3 text-center text-[12px] text-[#667085]">
+              Just confirm your mobile number and pay — your account is created for you.
             </p>
           </div>
         </FadeInView>
@@ -143,12 +143,12 @@ export default function EmployerPricing() {
         <div className="mt-14 max-w-4xl mx-auto grid sm:grid-cols-3 gap-4">
           {HIGHLIGHTS.map((h, i) => (
             <FadeInView key={h.title} delay={i * 0.06}>
-              <div className="h-full rounded-2xl border border-[#102a43]/12 bg-[#e8f8f5] p-5">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#bfdbfe] text-[#0a6f64]">
+              <div className="h-full rounded-2xl border border-[#111827]/12 bg-[#eeefff] p-5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#ccceff] text-[#4a4ed8]">
                   <h.icon size={16} strokeWidth={1.8} />
                 </span>
-                <h3 className="mt-4 text-[13.5px] font-bold text-[#102a43]">{h.title}</h3>
-                <p className="mt-1.5 text-[12.5px] text-[#51697e] leading-relaxed">{h.desc}</p>
+                <h3 className="mt-4 text-[13.5px] font-bold text-[#111827]">{h.title}</h3>
+                <p className="mt-1.5 text-[12.5px] text-[#667085] leading-relaxed">{h.desc}</p>
               </div>
             </FadeInView>
           ))}
@@ -156,13 +156,13 @@ export default function EmployerPricing() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-[#f7f9fb] py-20 md:py-24 px-6 md:px-12">
+      <section className="bg-[#f7f8fc] py-20 md:py-24 px-6 md:px-12">
         <div className="max-w-2xl mx-auto">
           <FadeInView className="text-center mb-10">
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#0a6f64]">Good questions</span>
-            <h2 className="mt-3 font-sans text-3xl sm:text-4xl font-bold text-[#102a43] tracking-tight">Pricing, answered.</h2>
+            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#4a4ed8]">Good questions</span>
+            <h2 className="mt-3 font-sans text-3xl sm:text-4xl font-bold text-[#111827] tracking-tight">Pricing, answered.</h2>
           </FadeInView>
-          <FadeInView delay={0.08} className="rounded-[26px] border border-[#102a43]/15 bg-white px-6 shadow-[0_18px_35px_-24px_rgba(16,42,67,0.38)] sm:px-8">
+          <FadeInView delay={0.08} className="rounded-[26px] border border-[#111827]/15 bg-white px-6 shadow-[0_18px_35px_-24px_rgba(16,42,67,0.38)] sm:px-8">
             {FAQS.map((item, i) => (
               <FaqItem key={item.q} item={item} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? -1 : i)} />
             ))}

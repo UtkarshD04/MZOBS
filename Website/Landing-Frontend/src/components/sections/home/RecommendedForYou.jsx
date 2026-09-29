@@ -20,7 +20,7 @@ const AUTOPLAY_MS = 3000
 const PAPER = '#F4F7FC'
 const INK = '#162B3A'
 const MUTED = '#64748B'
-const BLUE = '#2563EB'
+const BLUE = '#5b5fef'
 // Same gradient the Hero uses for its highlighted headline word and its CTA.
 const GRADIENT = 'var(--hero-cta-gradient)'
 const gradientText = { backgroundImage: GRADIENT, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }
@@ -29,7 +29,7 @@ const RULE = 'rgba(22,43,58,0.12)'
 // Each job carries an `accent`; it picks the card surface and the small
 // details (rule, label dot, logo-frame edge, page dot).
 const THEMES = {
-  blue: { bg: '#EAF2FE', accent: BLUE, markInk: '#1D4ED8', border: 'rgba(37,99,235,0.18)' },
+  blue: { bg: '#EAF2FE', accent: BLUE, markInk: '#4a4ed8', border: 'rgba(37,99,235,0.18)' },
   lavender: { bg: '#F1EEFC', accent: '#7C5CE8', markInk: '#5B3FC4', border: 'rgba(124,92,232,0.2)' },
   mint: { bg: '#EAF6F1', accent: '#168A72', markInk: '#0F6B58', border: 'rgba(22,138,114,0.2)' },
 }
@@ -638,6 +638,10 @@ export default function RecommendedForYou() {
   // flashing the signed-out preview before flipping to real matches.
   if (!sessionChecked) return null
   const signedIn = !!session?.token
+  // Signed-out visitors get the "Stop Searching. Start Matching." pitch
+  // (MatchSection) instead of a sample deck — the home page shows no
+  // placeholder jobs.
+  if (!signedIn) return null
   // Signed in, matches loaded, and genuinely none — keep the section (never
   // vanish after sign-in) but say so honestly instead of showing a deck.
   const noMatches = signedIn && !failed && jobs && jobs.length === 0

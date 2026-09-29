@@ -39,7 +39,7 @@ export default function About() {
       {/* 5. What is our goal */}
       
 
-      {/* 6. How we work: verification steps */}
+      {/* 6. How we work: the four matching steps */}
       <AboutApproachSection />
 
       {/* 7. Companies hiring on Mzobs */}

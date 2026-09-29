@@ -10,7 +10,7 @@ import Reveal from '../components/ui/Reveal'
 import SectionLabel from '../components/ui/SectionLabel'
 import SplitText from '../components/ui/SplitText'
 import AboutCTABand from '../components/sections/about/AboutCTABand'
-import { WHO_WE_ARE_DATA } from '../lib/content'
+import { useLiveStatRows } from '../lib/useLiveStats'
 
 const CHAPTERS = [
   {
@@ -19,15 +19,15 @@ const CHAPTERS = [
     tint: 'rose',
     eyebrow: 'The Gap We Saw',
     title: 'Hiring wasn’t broken by accident.',
-    body: 'Job seekers were applying into what felt like a void — sending resumes into inboxes with no real way to know if a role was even the right fit. Employers, meanwhile, were sifting through unscreened applications trying to find people who genuinely matched what they needed. Both sides wanted the same outcome — a good match — but neither had a reliable way to get there, and neither had much reason to trust what the other side was presenting.',
+    body: 'Job seekers were applying into what felt like a void — sending resumes into inboxes with no real way to know if a role was even the right fit. Employers, meanwhile, were sifting through unscreened applications trying to find people who genuinely matched what they needed. Both sides wanted the same outcome — a good match — but neither had a reliable way to get there, and both were spending far too much time searching.',
   },
   {
     num: '02',
     icon: Lightbulb,
     tint: 'sand',
     eyebrow: 'The Idea',
-    title: 'A layer of real verification, not another listing.',
-    body: 'That gap is where the idea for Mzobs came from. If job seekers needed a way to prove they were genuinely qualified, and employers needed a way to see only candidates worth their time, the fix wasn’t a bigger job board — it was something sitting between the two sides: a place where profiles and requirements were actually checked before either side ever saw them.',
+    title: 'A smarter layer between talent and opportunity.',
+    body: 'That gap is where the idea for Mzobs came from. If job seekers needed a way to show what they can really do, and employers needed a way to see the candidates who fit, the fix wasn’t a bigger job board — it was something sitting between the two sides: a place where profiles and requirements are matched before either side ever sees them.',
   },
   {
     num: '03',
@@ -35,15 +35,15 @@ const CHAPTERS = [
     tint: 'sage',
     eyebrow: 'Why Mzobs',
     title: 'Built to bring both sides together.',
-    body: 'Mzobs was created to bring job seekers and employers together through a hiring process that’s more trusted, more relevant and more transparent than posting a listing and hoping for the best. Every profile is reviewed before it reaches an employer, and every requirement is understood before candidates are matched to it — so what each side sees is actually worth their time.',
+    body: 'Mzobs was created to bring job seekers and employers together through a hiring process that’s smarter, more relevant and more transparent than posting a listing and hoping for the best. Every requirement is understood before candidates are matched to it — so what each side sees is actually worth their time.',
   },
   {
     num: '04',
     icon: Target,
     tint: 'blue',
     eyebrow: 'What We’re Building',
-    title: 'A hiring ecosystem worth trusting.',
-    body: 'The goal is simple to state and harder to build: a hiring ecosystem where verified talent can connect with genuine opportunities, and employers can consistently discover people who fit what they’re actually hiring for. Not a bigger pile of listings and resumes — a smaller, more trustworthy layer between the two sides, where being on Mzobs actually means something.',
+    title: 'A hiring ecosystem that works for both sides.',
+    body: 'The goal is simple to state and harder to build: a hiring ecosystem where talent can connect with real opportunities, and employers can consistently discover people who fit what they’re actually hiring for. Not a bigger pile of listings and resumes — a smarter layer between the two sides, where being on Mzobs actually means something.',
   },
 ]
 
@@ -62,6 +62,7 @@ const STAT_TINTS = [
 ]
 
 export default function OurStory() {
+  const liveStats = useLiveStatRows()
   return (
     <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
       <Seo path="/our-story" {...STATIC_PAGE_SEO['/our-story']} />
@@ -180,7 +181,8 @@ export default function OurStory() {
         </div>
       </section>
 
-      {/* Story so far — the numbers behind it */}
+      {/* Story so far — live numbers from the database; hidden until they load */}
+      {liveStats.length > 0 && (
       <section className="relative bg-[#fafaf9] py-16 md:py-20 px-6 md:px-12 border-y border-black/[0.05]">
         <div className="max-w-5xl mx-auto">
           <Reveal direction="up" duration={0.7} scale={0.96} blur className="text-center mb-10">
@@ -188,8 +190,8 @@ export default function OurStory() {
             <h3 className="mt-3 text-2xl sm:text-3xl font-black text-black tracking-tight">Where it stands today</h3>
           </Reveal>
           <Reveal direction="up" delay={0.15} duration={0.8} scale={0.96} blur>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
-              {WHO_WE_ARE_DATA.stats.map((stat, i) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 max-w-2xl mx-auto">
+              {liveStats.map((stat, i) => (
                 <div
                   key={stat.label}
                   className={`rounded-2xl border border-black/[0.06] p-5 md:p-6 text-center ${STAT_TINTS[i % STAT_TINTS.length]}`}
@@ -206,6 +208,7 @@ export default function OurStory() {
           </Reveal>
         </div>
       </section>
+      )}
 
       {/* Pull quote */}
       <section className="relative bg-white py-20 md:py-28 px-6 md:px-12 overflow-hidden">

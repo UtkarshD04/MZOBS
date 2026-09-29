@@ -18,7 +18,6 @@ import EmployerCopilotSection from '../components/sections/employer/EmployerCopi
 import EmployerProcessSteps from '../components/sections/employer/EmployerProcessSteps'
 import EmployerTalentPoolsSection from '../components/sections/employer/EmployerTalentPoolsSection'
 import EmployerQualitySection from '../components/sections/employer/EmployerQualitySection'
-import EmployerTestimonialSection from '../components/sections/employer/EmployerTestimonialSection'
 import EmployerFAQ from '../components/sections/employer/EmployerFAQ'
 import EmployerCTABand from '../components/sections/employer/EmployerCTABand'
 import { useEmployerSmoothScroll, useEdgeBounce } from '../lib/employerMotionHooks'
@@ -28,7 +27,7 @@ export default function Employer() {
   const pageRef = useRef(null)
   useEdgeBounce(pageRef)
   return (
-    <div ref={pageRef} className="min-h-screen bg-white text-[#102a43] font-sans antialiased selection:bg-blue-200">
+    <div ref={pageRef} className="min-h-screen bg-white text-[#111827] font-sans antialiased selection:bg-blue-200">
       <Seo path="/employers" {...STATIC_PAGE_SEO['/employers']} />
       <EmployerNavbar />
 
@@ -56,7 +55,7 @@ export default function Employer() {
       {/* 6. Match Intelligence — why a recommendation appears */}
       <EmployerMatchIntelligenceSection />
 
-      {/* 7. Trust Signals — verification, kept separate from Match Score */}
+      {/* 7. Candidate insights — profile context shown next to the Match Score */}
       <EmployerTrustSignalsSection />
 
       {/* 8. Talent Radar — proactive discovery for roles you may open next */}
@@ -73,9 +72,6 @@ export default function Employer() {
 
       {/* 12. Why employers choose MZOBS */}
       <EmployerQualitySection />
-
-      {/* 13. Social proof */}
-      <EmployerTestimonialSection />
 
       {/* 14. Employer FAQs (doubles as recruiter resources — no blog exists) */}
       <EmployerFAQ />

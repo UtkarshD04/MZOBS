@@ -51,7 +51,7 @@ export default function TestimonialsCarousel({ items, heading }) {
             onClick={() => scroll(-1)}
             disabled={!canPrev}
             aria-label="Previous"
-            whileHover={canPrev ? { scale: 1.1, backgroundColor: '#3D5C34', color: '#fff' } : {}}
+            whileHover={canPrev ? { scale: 1.1, backgroundColor: '#5b5fef', color: '#fff' } : {}}
             whileTap={canPrev ? { scale: 0.9 } : {}}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             className="w-11 h-11 rounded-full border border-[#C9C9C9] flex items-center justify-center text-[#595959] disabled:opacity-30 disabled:pointer-events-none transition-opacity"
@@ -62,7 +62,7 @@ export default function TestimonialsCarousel({ items, heading }) {
             onClick={() => scroll(1)}
             disabled={!canNext}
             aria-label="Next"
-            whileHover={canNext ? { scale: 1.1, backgroundColor: '#3D5C34', color: '#fff' } : {}}
+            whileHover={canNext ? { scale: 1.1, backgroundColor: '#5b5fef', color: '#fff' } : {}}
             whileTap={canNext ? { scale: 0.9 } : {}}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             className="w-11 h-11 rounded-full border border-[#C9C9C9] flex items-center justify-center text-[#595959] disabled:opacity-30 disabled:pointer-events-none transition-opacity"

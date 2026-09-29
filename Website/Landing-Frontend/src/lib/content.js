@@ -6,7 +6,6 @@ import {
   Lightbulb,
   BarChart2,
   Rocket,
-  ShieldCheck,
   Briefcase,
   Users2,
   Wallet,
@@ -43,23 +42,23 @@ export const HERO_DATA = {
   titleLine1: "Hiring, Built",
   titleItalic: "Right From",
   titleLine2: "Both Sides.",
-  subtitle: "MZOBS bridges the gap between verified talent and genuine employment opportunities — connecting job seekers with employers through a trusted, human-verified hiring process.",
+  subtitle: "MZOBS brings talent and opportunity together — connecting job seekers with employers through smart matching and one simple hiring workflow.",
   ctaText: "Get Started",
   bgImage: "/images/hero-bg.jpg",
   rotatingPrefix: "It's time to",
-  rotatingWords: ["Get Hired!", "Hire Smarter!", "Get Verified!", "Grow!", "Build Your Team!"],
+  rotatingWords: ["Get Hired!", "Hire Smarter!", "Get Matched!", "Grow!", "Build Your Team!"],
   searchPlaceholder: "Search jobs, roles or companies"
 }
 
 export const WHO_WE_ARE_DATA = {
   badge: "WHO WE ARE",
-  heroTitleLine1: "Built On Trust,",
+  heroTitleLine1: "Built For Smarter Hiring,",
   heroTitleLine2: "Made For Both Sides.",
   heroSubtitle: "Every profile checked, every pipeline refined — a hiring platform where job seekers find roles they're right for, and employers find people worth hiring.",
   stats: [
     {
       number: "12,400+",
-      label: "Job seeker profiles verified and rebuilt by our operations team."
+      label: "Job seeker profiles built and improved with our operations team."
     },
     {
       number: "340+",
@@ -67,7 +66,7 @@ export const WHO_WE_ARE_DATA = {
     },
     {
       number: "3,180+",
-      label: "Interviews arranged between verified candidates and employers."
+      label: "Interviews arranged between candidates and employers."
     },
     {
       number: "96%",
@@ -83,10 +82,10 @@ export const SERVICES_DATA = {
   services: [
     {
       icon: Target,
-      title: "Verified Candidate Pipeline",
-      desc: "Every profile is screened and resume-checked by our team before it reaches an employer.",
+      title: "Quality Candidate Pipeline",
+      desc: "Candidates are matched to each role on skills and experience before they reach an employer.",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=85",
-      expandedText: "Every candidate profile that reaches an employer on Mzobs has already been reviewed by our team, not just run through an automated filter. We check the details on each profile, rebuild resumes where needed, and only pass a candidate forward once they're verified against the role. That means employers spend their time meeting people who are actually qualified — not sifting through a pile of unscreened applications."
+      expandedText: "Every requirement on Mzobs is matched against candidate skills, experience, location and role preference, so employers start with the people who fit best — not a pile of unsorted applications. Candidates see why a role suits them, and employers see why a candidate suits the role."
     },
     {
       icon: Settings,
@@ -137,14 +136,14 @@ export const CASE_STUDIES_DATA = {
       tags: ["FOR EMPLOYERS", "TIME-TO-OFFER CUT IN HALF"],
       title: "Solace Technologies Cut Time-To-Offer By Half",
       italicWords: null,
-      desc: "By sending only pre-verified, screened candidates into their pipeline, Mzobs helped Solace Technologies stop sifting resumes that went nowhere and start interviewing candidates worth their time.",
+      desc: "By sending only well-matched candidates into their pipeline, Mzobs helped Solace Technologies stop sifting resumes that went nowhere and start interviewing candidates worth their time.",
       bgImage: "/images/new_images/story_solace.jpg"
     },
     {
       id: "batch-hiring",
       tags: ["FOR EMPLOYERS", "BATCH HIRING"],
-      title: "Filling Dozens of Roles At Once With Verified Talent",
-      italicWords: "Verified Talent",
+      title: "Filling Dozens of Roles At Once With Quality Talent",
+      italicWords: "Quality Talent",
       desc: "A growing company used Mzobs to fill an entire team of open roles in one hiring cycle, with every candidate matched to the requirement instead of keyword-searched.",
       bgImage: "/images/new_images/story_batch.jpg"
     }
@@ -156,7 +155,7 @@ export const COMPANY_WORKFLOW_DATA = {
   titlePrefix: "How Companies ",
   titleItalic: "Hire",
   titleSuffix: " On Mzobs",
-  subtitle: "One workflow, from open requirement to signed offer — with every candidate verified before they reach you.",
+  subtitle: "One workflow, from open requirement to signed offer — with candidates matched to your role before they reach you.",
   steps: [
     {
       num: "01",
@@ -168,9 +167,9 @@ export const COMPANY_WORKFLOW_DATA = {
     },
     {
       num: "02",
-      icon: ShieldCheck,
-      title: "We Screen & Verify",
-      desc: "Every applicant is manually reviewed and verified before reaching your pipeline.",
+      icon: Sparkles,
+      title: "We Match & Shortlist",
+      desc: "Applicants are matched to your requirement and shortlisted by fit before reaching your pipeline.",
       bg: "#cdeec5",
       accent: "#16a34a"
     },
@@ -210,19 +209,19 @@ export const FAQ_DATA = {
   items: [
     {
       q: "What is Mzobs?",
-      a: "Mzobs is a hiring platform that verifies both sides of the match — job seekers get their resume rebuilt and screened, and employers only see candidates who are pre-verified against their requirement."
+      a: "Mzobs is an AI-powered hiring marketplace — job seekers discover roles matched to their skills, and employers discover candidates ranked by fit for their requirement."
     },
     {
       q: "Is Mzobs free for job seekers?",
       a: "Yes. Creating a profile, applying to roles and getting matched is free for job seekers. We only charge employers for successful placements."
     },
     {
-      q: "How does candidate verification work?",
-      a: "Every applicant is manually reviewed by our team — we check their experience, rebuild their resume where needed, and run them through structured interviews before they're matched to any requirement."
+      q: "How does candidate matching work?",
+      a: "Mzobs compares each candidate's skills, experience, location and role preference with the requirement, and shows employers the best-fitting candidates first."
     },
     {
       q: "How long does it take to fill a role?",
-      a: "Most employers start receiving verified, matched candidates within days of posting a requirement, and see time-to-offer drop significantly since every candidate is already screened."
+      a: "Matching starts as soon as a requirement is live, so employers can begin reviewing the best-fitting candidates right away."
     },
     {
       q: "What roles and industries does Mzobs cover?",
@@ -230,7 +229,7 @@ export const FAQ_DATA = {
     },
     {
       q: "How do I get started as an employer?",
-      a: "Sign up on the Employers page and post your requirement — our team verifies it and starts matching candidates from your very first job post."
+      a: "Sign up on the Employers page and post your requirement — we start matching candidates from your very first job post."
     }
   ]
 }
@@ -251,7 +250,7 @@ export const TESTIMONIALS_DATA = {
     {
       id: 2,
       image: "/images/new_images/testimonial_rhea.jpg",
-      quote: "We used to spend weeks sifting resumes that went nowhere. With Mzobs, every candidate we interview is already pre-verified.",
+      quote: "We used to spend weeks sifting resumes that went nowhere. With Mzobs, every candidate we interview is already a strong match.",
       name: "Rhea Kapoor",
       title: "Head of Talent, Solace Technologies"
     },
@@ -265,7 +264,7 @@ export const TESTIMONIALS_DATA = {
     {
       id: 4,
       image: "/images/new_images/testimonial_mario.jpg",
-      quote: "Our time-to-offer dropped by more than half once every candidate arrived pre-screened and ready to interview.",
+      quote: "Our time-to-offer dropped by more than half once every candidate arrived well-matched and ready to interview.",
       name: "Mario Fotiou",
       title: "Talent Lead, Constructo"
     },
@@ -283,8 +282,8 @@ export const OUR_GOAL_DATA = {
   badge: "OUR MISSION",
   titlePrefix: "Turning ",
   titleItalic: "Hiring",
-  titleSuffix: " Into a Trusted Match",
-  desc: "MZOBS is built to make hiring more trustworthy and relevant for both sides — helping job seekers showcase their skills and helping employers discover candidates who better fit their requirements.",
+  titleSuffix: " Into a Smarter Match",
+  desc: "MZOBS is built to make hiring faster and more relevant for both sides — helping job seekers showcase their skills and helping employers discover candidates who better fit their requirements.",
   ctaText: "Meet Our Team",
   image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
 }
@@ -294,9 +293,9 @@ export const OUR_VISION_DATA = {
   titlePrefix: "We're building a future where opportunity finds ",
   titleItalic: "the right person",
   titleSuffix: ".",
-  desc: "Not just faster hiring — a system both sides can actually trust. Verified people, matched to relevant opportunities, inside one hiring ecosystem people rely on.",
+  desc: "Not just faster hiring — smarter hiring. Talent matched to relevant opportunities, inside one hiring ecosystem both sides can rely on.",
   badges: [
-    { icon: "ShieldCheck", text: "Every profile, verified" },
+    { icon: "Sparkles", text: "AI-powered matching" },
     { icon: "Users", text: "Matched, not just listed" }
   ],
   ctaText: "Get in touch",
@@ -314,19 +313,19 @@ export const ABOUT_GOAL_DATA = {
     {
       title: "Fair Match",
       desc: "Right candidate, right role — decided on skill, not luck.",
-      detail: "No black-box algorithms and no back-channel referrals deciding who gets seen. Every candidate is matched against a role on skill, experience and verified fit — so a great engineer from a small city gets the same shot as one from a big brand name.",
+      detail: "No black-box algorithms and no back-channel referrals deciding who gets seen. Every candidate is matched against a role on skill, experience and real fit — so a great engineer from a small city gets the same shot as one from a big brand name.",
       icon: Target, bg: "var(--careers-cyan)", ink: "#0b3b3d"
     },
     {
-      title: "Verified Profiles",
-      desc: "Every resume checked and rebuilt before it's shared.",
-      detail: "Our team manually reviews and rebuilds every resume that goes out, and screens every candidate before a profile is shared with an employer. What reaches the other side has already been checked — not just uploaded.",
-      icon: ShieldCheck, bg: "var(--careers-mint)", ink: "#1f4d1a"
+      title: "Stronger Profiles",
+      desc: "Resumes that show what candidates can really do.",
+      detail: "Our team helps candidates rebuild their resumes and present their skills clearly, so the profile an employer sees reflects the person — not just an upload.",
+      icon: Sparkles, bg: "var(--careers-mint)", ink: "#1f4d1a"
     },
     {
       title: "Faster Hiring",
-      desc: "Pre-screened candidates cut time-to-hire in half.",
-      detail: "Because every candidate in front of an employer is already screened and verified, interview loops skip the early filtering rounds entirely — most roles on Mzobs close in half the time of a typical job-board hire.",
+      desc: "Better-matched candidates mean fewer filtering rounds.",
+      detail: "Because the candidates in front of an employer are already matched to the role, interview loops can skip much of the early filtering and get to the right conversations sooner.",
       icon: Rocket, bg: "var(--careers-peach)", ink: "#7a3d0c"
     },
     {
@@ -336,9 +335,9 @@ export const ABOUT_GOAL_DATA = {
       icon: MessageCircle, bg: "var(--careers-pink)", ink: "#7a1f42"
     },
     {
-      title: "Employer Trust",
-      desc: "Only genuine, verified requirements reach candidates.",
-      detail: "Every hiring requirement posted on Mzobs is verified before it goes live, so candidates never waste time chasing a role that doesn't exist or a company that isn't really hiring.",
+      title: "Employer Growth",
+      desc: "Tools that grow with every team that hires.",
+      detail: "From a first hire to a full team, employers post roles, discover candidates, schedule interviews and send offers from one dashboard — so hiring scales without extra spreadsheets.",
       icon: Building2, bg: "var(--careers-tint-blue)", ink: "var(--careers-tint-blue-ink)"
     },
     {
@@ -361,17 +360,17 @@ export const WHAT_MAKES_US_DIFFERENT_DATA = {
   rows: [
     {
       traditional: "Résumés vanish into an ATS black hole, sorted by keyword luck.",
-      mzobs: "Every candidate is matched on verified skill and fit — not keyword luck.",
+      mzobs: "Every candidate is matched on skills and fit — not keyword luck.",
       icon: Target, bg: "var(--careers-tint-blue)", ink: "var(--careers-tint-blue-ink)"
     },
     {
-      traditional: "Anyone can upload an embellished, unchecked resume.",
-      mzobs: "Every resume is manually reviewed and rebuilt before it's shared.",
-      icon: ShieldCheck, bg: "var(--careers-tint-sage)", ink: "var(--careers-tint-sage-ink)"
+      traditional: "A résumé is a keyword list that undersells the candidate.",
+      mzobs: "Resume and interview coaching help candidates show what they can do.",
+      icon: Sparkles, bg: "var(--careers-tint-sage)", ink: "var(--careers-tint-sage-ink)"
     },
     {
       traditional: "Weeks of filtering rounds before you ever talk to a human.",
-      mzobs: "Pre-screened candidates skip the filtering — time-to-hire is cut in half.",
+      mzobs: "Well-matched candidates skip much of the filtering, so hiring moves faster.",
       icon: Rocket, bg: "var(--careers-tint-sand)", ink: "var(--careers-tint-sand-ink)"
     },
     {
@@ -380,8 +379,8 @@ export const WHAT_MAKES_US_DIFFERENT_DATA = {
       icon: MessageCircle, bg: "var(--careers-tint-rose)", ink: "var(--careers-tint-rose-ink)"
     },
     {
-      traditional: "Job posts that turn out to be fake, stale or already filled.",
-      mzobs: "Every requirement is verified as genuine before it goes live.",
+      traditional: "Interviews scheduled over endless email and phone back-and-forth.",
+      mzobs: "Interviews scheduled and tracked from one hiring dashboard.",
       icon: Building2, bg: "var(--careers-tint-blue)", ink: "var(--careers-tint-blue-ink)"
     },
     {
@@ -400,7 +399,7 @@ export const APPROACH_DATA = {
     { text: " should do more than " },
     { text: "collect resumes", italic: true },
     { text: " — it should drive a " },
-    { text: "real, verified", italic: true },
+    { text: "real, lasting", italic: true },
     { text: " match." }
   ],
   image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=85",
@@ -415,8 +414,8 @@ export const APPROACH_DATA = {
     {
       num: "02",
       icon: BarChart2,
-      title: "Build Your Trust Profile",
-      desc: "MZOBS helps build credibility through profile verification and trust-based information, giving both job seekers and employers greater confidence in the hiring process.",
+      title: "Set Your Preferences",
+      desc: "Job seekers share the roles, locations and work modes they want, and employers define must-have skills — so MZOBS knows what a good match looks like for both sides.",
       image: "/images/new_images/step_02.jpg"
     },
     {
@@ -456,9 +455,9 @@ export const EMPLOYEE_APPROACH_DATA = {
   steps: [
     {
       num: "01",
-      icon: ShieldCheck,
-      title: "Verified Employer Network",
-      desc: "Every company on Mzobs is vetted before their openings go live — no fake listings, no ghost jobs."
+      icon: Building2,
+      title: "Top Employer Network",
+      desc: "Discover openings from companies actively hiring on Mzobs, with role, pay and work mode up front."
     },
     {
       num: "02",
@@ -470,7 +469,7 @@ export const EMPLOYEE_APPROACH_DATA = {
       num: "03",
       icon: Target,
       title: "Matched, Not Searched",
-      desc: "We match you to roles based on your verified skills — you stop scrolling job boards that go nowhere."
+      desc: "We match you to roles based on your skills and preferences — you stop scrolling job boards that go nowhere."
     },
     {
       num: "04",
@@ -531,14 +530,14 @@ export const CTA_BAND_DATA = {
   titlePrefix: "Ready To ",
   titleItalic: "Get Hired",
   titleSuffix: " Or Hire Faster?",
-  desc: "Whichever side of hiring you're on, Mzobs verifies it before it goes live. Create a free account or reach out to our team to get started.",
+  desc: "Whichever side of hiring you're on, Mzobs matches you with the right people and roles. Create a free account or reach out to our team to get started.",
   ctaText: "Get Started Today",
   bgImage: "/images/new_images/cta_band.jpg"
 }
 
 export const FOOTER_DATA = {
   logoSub: "HIRING PLATFORM",
-  desc: "Mzobs connects verified job seekers with employers who need them — every profile and every requirement reviewed by a real person before it goes live.",
+  desc: "Mzobs is an AI-powered hiring marketplace — Talent × Opportunity × Smarter Hiring. Discover jobs, find quality talent and hire in one simple workflow.",
   ctaText: "Contact Us",
   menuTitle: "Menu",
   menuItems: [
@@ -660,7 +659,7 @@ export const EMPLOYEE_FEATURES = [
   },
   {
     icon: Settings,
-    title: "Expert Resume Verification",
+    title: "Expert Resume Review",
     desc: "Our recruitment experts review and structure your resume to ensure it highlights your core strengths to employers.",
     image: "/images/new_images/emp_feature_2.jpg"
   },
@@ -688,10 +687,10 @@ export const EMPLOYEE_PRICING_DATA = {
   priceNote: "Paid once, valid for life",
   perks: [
     "Lifetime access to profile matching & placement tools",
-    "Expert resume verification by our recruitment team",
+    "Expert resume review by our recruitment team",
     "Mock interview practice with real feedback",
     "Smart skill categorisation to match you to relevant roles",
-    "Your resume placed in front of verified hiring employers"
+    "Your resume placed in front of employers who are hiring"
   ],
   reassurance: "You're never charged again — not to apply, not to get shortlisted, not to get placed.",
   ctaText: "Get Premium Access",
@@ -700,9 +699,9 @@ export const EMPLOYEE_PRICING_DATA = {
 
 export const EMPLOYER_FEATURES = [
   {
-    icon: ShieldCheck,
-    title: "Pre-Screened Candidates",
-    desc: "Receive candidates whose resumes, skills, and background have been verified by our operations team.",
+    icon: Sparkles,
+    title: "Matched Candidates",
+    desc: "Receive candidates whose resumes and skills match your requirement, ranked by fit.",
     image: "/images/new_images/employer_feature_1.jpg"
   },
   {
@@ -726,9 +725,9 @@ export const EMPLOYER_FEATURES = [
 ]
 export const EMPLOYER_QUALITY_POINTS = [
   {
-    icon: ShieldCheck,
-    title: "Manually Verified Resumes",
-    desc: "Every resume is personally checked by our operations team before a candidate is even allowed to apply — not just auto-filtered by keywords."
+    icon: Sparkles,
+    title: "Well-Matched Resumes",
+    desc: "Candidates are ranked on skills, experience and role fit — not just auto-filtered by keywords."
   },
   {
     icon: Target,
@@ -757,7 +756,7 @@ export const TEAM = [
   { name: 'Ananya Rao', role: 'Founder & CEO', initials: 'AR', image: '/images/new_images/team_ananya.jpg' },
   { name: 'Vikram Shetty', role: 'Head of Operations', initials: 'VS', image: '/images/new_images/team_vikram.jpg' },
   { name: 'Priya Menon', role: 'Head of Talent', initials: 'PM', image: '/images/new_images/team_priya.jpg' },
-  { name: 'Karan Malhotra', role: 'Head of Verification', initials: 'KM', image: '/images/new_images/team_karan.jpg' }
+  { name: 'Karan Malhotra', role: 'Head of Candidate Operations', initials: 'KM', image: '/images/new_images/team_karan.jpg' }
 ]
 export const TRUSTED_LOGOS = TRUSTED_LOGOS_DATA.logos.map(l => l.name)
 export const EMPLOYER_TESTIMONIAL = TESTIMONIALS_DATA.items[1]
@@ -783,10 +782,10 @@ export const GALLERY_IMAGES = [
 // ============================================================
 
 export const JOB_SEARCH_DATA = {
-  headlineLine1: "Where Verified Talent",
+  headlineLine1: "Where Talent",
   headlineLine2: "Meets Real Work.",
   subtitleLine1: "Get discovered, build your skills, and grow through real opportunities.",
-  subtitleLine2: "One platform connecting candidates, employers, verification, feedback and growth.",
+  subtitleLine2: "One platform connecting candidates, employers, matching, feedback and growth.",
   toggleJobLabel: "I'm looking for a job",
   toggleEmployerLabel: "I'm hiring talent",
   titlePlaceholder: "Search jobs, skills or company",
@@ -829,7 +828,7 @@ export const CAMPUS_NETWORK_DATA = {
   eyebrow: "Campus Connect",
   headline: ["Where Campus", "Talent Meets"],
   headlineAccent: "Opportunity.",
-  subtitle: "Connect your campus with verified employers, real opportunities and a smarter path from learning to hiring.",
+  subtitle: "Connect your campus with top employers, real opportunities and a smarter path from learning to hiring.",
   count: 100,
   statLabel: "Colleges attached",
   statNote: "Placement cells already on MZOBS",
@@ -839,7 +838,7 @@ export const CAMPUS_NETWORK_DATA = {
 
 export const HOME_EMPLOYER_CTA_DATA = {
   title: "Hiring for your team?",
-  subtitle: "Post a requirement and reach candidates MZOBS has already screened — every profile reviewed before it reaches you.",
+  subtitle: "Post a requirement and reach candidates MZOBS has matched to it — ranked by fit before they reach you.",
   ctaText: "Post a requirement",
   ctaTo: "/employers/signup"
 }

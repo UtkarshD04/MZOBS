@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Users, Briefcase, Network, Compass, Award, ScrollText, CalendarDays, BookOpen, Gift, Check, User, BadgeCheck } from 'lucide-react'
+import { ArrowRight, Users, Briefcase, Network, Compass, Award, ScrollText, CalendarDays, BookOpen, Gift, Check, User } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import { submitAllyApplication } from '../lib/ally'
 import './ally.css'
@@ -119,7 +119,7 @@ function Pass({ name, college, city, hoverFlip = true }) {
                 <div className="sub">{college || 'Your college'}</div>
               </div>
             </div>
-            <div className="verified"><BadgeCheck size={14} strokeWidth={2.2} /> Verified Mzobs<br />Community Representative</div>
+            <div className="verified"><Award size={14} strokeWidth={2.2} /> Official Mzobs<br />Community Representative</div>
           </div>
         </div>
         <div className="cm-face cm-back">

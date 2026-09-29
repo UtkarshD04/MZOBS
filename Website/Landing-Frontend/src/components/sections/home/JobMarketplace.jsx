@@ -1,14 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Search, MapPin, ChevronDown, SlidersHorizontal, X, ArrowRight, ArrowUpRight, ShieldCheck, Sparkles, Loader2, RotateCw, SearchX } from 'lucide-react'
-import Reveal from '../../ui/Reveal'
-import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
-import { CompanyMark } from './jobCardPrimitives'
+import { Search, ChevronDown, SlidersHorizontal, X, ArrowRight, Loader2, RotateCw, SearchX } from 'lucide-react'
+import { Container, Reveal, SectionHead } from '../../mz/primitives'
+import JobCard, { JobCardSkeleton } from '../../mz/JobCard'
 import LocationConsentDialog from '../../ui/LocationConsentDialog'
 import MarketplaceFilters from './MarketplaceFilters'
 import { fetchLatestJobs, fetchJobFacets } from '../../../lib/publicJobs'
-import { useAutoRail } from '../../../lib/useAutoRail'
 import { useInitialHomeData } from '../../../lib/initialHomeDataContext'
 import {
   MARKETPLACE_DEFAULTS,
@@ -32,201 +29,39 @@ import {
 const CATEGORIES = [{ key: '', label: 'All' }, ...DEPARTMENT_CHOICES.map((o) => ({ key: o.value, label: o.label }))]
 const RESULTS_LIMIT = 12
 
-// Soft, desaturated tones a card can land on — cycled by grid position (not
-// random, not per-company hash) so the alternation reads as a deliberate
-// system. Kept fixed/light regardless of OS theme, matching the rest of
-// this redesigned home page's --explorer-* palette.
-const CARD_TONES = [
-  { bg: '#EAF2FE', border: '#D3E4FC' }, // soft blue
-  { bg: '#E8F7F1', border: '#CBEADD' }, // soft mint
-  { bg: '#FDF0E6', border: '#F6DDC3' }, // warm peach
-  { bg: '#F1EEFC', border: '#DDD2F7' }, // muted lavender
-  { bg: '#FBF7EF', border: '#EEE2C9' }, // soft cream
-]
-
-// A job earns a tag only when it has something real to say — freshly
-// posted (Backend's own postedDaysAgo) or a verified employer
-// (Company.verificationStatus, same signal VerifiedMark uses elsewhere on
-// this page) — never an invented "urgent"/applicant-count claim.
-function StatusTag({ job }) {
-  const reduceMotion = useReducedMotion()
-  const isRecent = job.postedDaysAgo != null && job.postedDaysAgo <= 1
-  if (!isRecent && !job.verified) return null
-  const label = isRecent ? (job.postedDaysAgo === 0 ? 'Posted today' : 'New') : 'Verified employer'
-  const dot = isRecent ? 'bg-(--explorer-blue)' : 'bg-(--explorer-teal)'
-  const text = isRecent ? 'text-(--explorer-blue)' : 'text-(--explorer-teal)'
-
-  return (
-    <span className={`inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wide ${text}`}>
-      <span className="relative flex items-center justify-center w-1.5 h-1.5">
-        {/* A slow, barely-there breathing ring — not Tailwind's default 1s
-            ping, which reads as busy rather than "alive". ~3s cycle, low
-            amplitude. */}
-        {!reduceMotion && (
-          <motion.span
-            className={`absolute inset-0 rounded-full ${dot}`}
-            animate={{ scale: [1, 2.1, 1], opacity: [0.55, 0, 0.55] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            aria-hidden="true"
-          />
-        )}
-        <span className={`relative w-1.5 h-1.5 rounded-full ${dot}`} aria-hidden="true" />
-      </span>
-      {!isRecent && <ShieldCheck size={11} aria-hidden="true" />}
-      {label}
-    </span>
-  )
-}
-
-function JobCard({ job, tone, onOpen }) {
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className="job-card-sheen group relative w-full h-full min-w-0 text-left flex flex-col rounded-2xl border p-4 sm:p-5 motion-safe:transition-[transform,box-shadow,filter] motion-safe:duration-300 motion-safe:hover:-translate-y-1 hover:shadow-[0_20px_38px_-20px_rgba(22,50,79,0.32),inset_0_0_0_1px_rgba(22,50,79,0.14)] motion-safe:hover:brightness-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
-      style={{ backgroundColor: tone.bg, borderColor: tone.border }}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <span className="motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-[1.03]">
-          <CompanyMark company={job.company} logo={job.logo} size="sm" tone="bg-white text-(--explorer-navy)" />
-        </span>
-        <StatusTag job={job} />
-      </div>
-
-      <p className="mt-2 sm:mt-3 text-[12px] font-bold text-(--explorer-navy)/70 truncate">{job.company}</p>
-      <h3 className="mt-0.5 text-[16px] font-extrabold text-(--explorer-navy) leading-snug text-balance">{job.title}</h3>
-
-      <p className="mt-1 sm:mt-2 flex items-center gap-1 text-[12.5px] text-(--explorer-navy)/70">
-        <MapPin size={12} className="shrink-0" aria-hidden="true" />
-        <span className="truncate">{job.location}</span>
-      </p>
-
-      <p className="mt-1.5 sm:mt-2 text-[15px] font-black text-(--explorer-navy)">{job.salary || 'Not disclosed'}</p>
-
-      <div className="mt-2 sm:mt-2.5 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
-        {job.employmentType && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.employmentType}</span>}
-        {job.workMode && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.workMode}</span>}
-        {job.experience && <span className="px-2 py-0.5 rounded-full bg-white/70">{job.experience}</span>}
-      </div>
-
-      <div className="mt-auto pt-2.5 sm:pt-4 flex items-center justify-end">
-        <span className="inline-flex items-center gap-1 text-[12.5px] font-black text-(--explorer-navy) opacity-70 group-hover:opacity-100 motion-safe:transition-[opacity,transform] motion-safe:duration-300">
-          View details
-          <ArrowRight size={13} className="motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1" aria-hidden="true" />
-        </span>
-      </div>
-    </button>
-  )
-}
-
-function FeaturedJobTile({ job, tone, onOpen }) {
-  const reduceMotion = useReducedMotion()
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className="job-card-sheen group relative w-full h-full min-w-0 text-left flex flex-col justify-between rounded-2xl border p-4 sm:p-7 motion-safe:transition-[transform,box-shadow,filter] motion-safe:duration-300 motion-safe:hover:-translate-y-1.5 hover:shadow-[0_26px_52px_-22px_rgba(22,50,79,0.36),inset_0_0_0_1px_rgba(22,50,79,0.16)] motion-safe:hover:brightness-[1.025] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
-      style={{ backgroundColor: tone.bg, borderColor: tone.border }}
-    >
-      {/* One-time highlight sweep, fired once as the card settles into
-          place — not a hover effect, and never repeats. */}
-      {!reduceMotion && (
-        <motion.span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 left-0 w-1/4"
-          style={{ background: 'linear-gradient(100deg, transparent, rgba(255,255,255,0.5), transparent)' }}
-          initial={{ x: '-140%' }}
-          whileInView={{ x: '480%' }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 0.9, delay: 0.6, ease: 'easeInOut' }}
-        />
-      )}
-      <div>
-        <div className="flex items-start justify-between gap-3">
-          <span className="inline-flex items-center gap-1.5 text-[10.5px] font-black uppercase tracking-wide text-(--explorer-navy)/70">
-            <Sparkles size={12} className="text-(--explorer-gold-hover)" aria-hidden="true" /> Featured opportunity
-          </span>
-          <StatusTag job={job} />
-        </div>
-
-        <div className="mt-3 sm:mt-4 flex items-center gap-3">
-          <span className="motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-[1.05]">
-            <CompanyMark company={job.company} logo={job.logo} size="lg" tone="bg-white text-(--explorer-navy)" />
-          </span>
-          <div className="min-w-0">
-            <p className="text-[12.5px] font-bold text-(--explorer-navy)/70 truncate">{job.company}</p>
-            <h3 className="text-[19px] sm:text-[24px] font-black text-(--explorer-navy) leading-snug text-balance">{job.title}</h3>
-          </div>
-        </div>
-
-        <p className="mt-2 sm:mt-3 flex items-center gap-1 text-[13px] text-(--explorer-navy)/70">
-          <MapPin size={13} className="shrink-0" aria-hidden="true" />
-          {job.location}
-        </p>
-        <p className="mt-1 sm:mt-1.5 text-[20px] sm:text-[22px] font-black text-(--explorer-navy)">{job.salary || 'Not disclosed'}</p>
-
-        {job.description && <p className="mt-2 sm:mt-3 line-clamp-2 sm:line-clamp-none text-[13.5px] text-(--explorer-navy)/75 leading-relaxed max-w-md">{job.description}</p>}
-
-        <div className="mt-3 sm:mt-4 flex flex-wrap gap-1.5 text-[11px] font-bold text-(--explorer-navy)/80">
-          {job.employmentType && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.employmentType}</span>}
-          {job.workMode && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.workMode}</span>}
-          {job.experience && <span className="px-2.5 py-1 rounded-full bg-white/70">{job.experience}</span>}
-        </div>
-      </div>
-
-      <div className="mt-3 pt-3 sm:mt-6 sm:pt-5 border-t border-white/50 flex items-center justify-between">
-        <span className="inline-flex items-center gap-1.5 text-[13.5px] font-black text-(--explorer-navy)">
-          View opportunity
-          <ArrowUpRight size={15} className="motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5" aria-hidden="true" />
-        </span>
-      </div>
-    </button>
-  )
-}
-
-function JobCardSkeleton() {
-  return (
-    <div className="rounded-2xl border border-(--explorer-border) bg-white p-5 animate-pulse flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <div className="w-9 h-9 rounded-xl bg-(--explorer-bg)" />
-        <div className="w-14 h-2.5 rounded bg-(--explorer-bg)" />
-      </div>
-      <div className="h-2.5 w-1/2 rounded bg-(--explorer-bg)" />
-      <div className="h-4 w-3/4 rounded bg-(--explorer-bg)" />
-      <div className="h-2.5 w-1/3 rounded bg-(--explorer-bg)" />
-      <div className="h-4 w-1/2 rounded bg-(--explorer-bg) mt-1" />
-    </div>
-  )
-}
-
-function FeaturedJobTileSkeleton() {
-  return (
-    <div className="sm:col-span-2 sm:row-span-2 rounded-2xl border border-(--explorer-border) bg-white p-7 animate-pulse flex flex-col gap-4">
-      <div className="h-2.5 w-32 rounded bg-(--explorer-bg)" />
-      <div className="flex items-center gap-3">
-        <div className="w-14 h-14 rounded-2xl bg-(--explorer-bg)" />
-        <div className="flex-1 flex flex-col gap-2">
-          <div className="h-2.5 w-1/3 rounded bg-(--explorer-bg)" />
-          <div className="h-5 w-2/3 rounded bg-(--explorer-bg)" />
-        </div>
-      </div>
-      <div className="h-2.5 w-1/4 rounded bg-(--explorer-bg)" />
-      <div className="h-6 w-1/3 rounded bg-(--explorer-bg)" />
-    </div>
-  )
-}
-
-export default function JobMarketplace() {
-  const sectionRef = useRef(null)
-  useAutoRail(sectionRef)
-  const navigate = useNavigate()
+// `external` is Home's lifted search ({ q: [], location: [], experience })
+// from the hero search bar, quick suggestions, category and city tiles. Each
+// new value replaces this section's search terms/location/experience so what
+// the visitor picked above is exactly what the grid shows.
+export default function JobMarketplace({ external }) {
   const reduceMotion = useReducedMotion()
 
   const [search, setSearch] = useState('')
+  const [terms, setTerms] = useState([])
   const [sort, setSort] = useState('newest')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [filterState, setFilterState] = useState(MARKETPLACE_DEFAULTS)
   const [facets, setFacets] = useState(null)
+
+  const firstExternal = useRef(true)
+  useEffect(() => {
+    if (firstExternal.current) {
+      firstExternal.current = false
+      return
+    }
+    if (!external) return
+    setTerms(external.q ?? [])
+    setSearch('')
+    setFilterState({
+      ...MARKETPLACE_DEFAULTS,
+      location: external.location ?? [],
+      experience: external.experience ? [external.experience] : [],
+      tracks: external.track ? [external.track] : [],
+    })
+  }, [external])
+
+  // Hero terms (OR'd) plus whatever is typed in this section's own box.
+  const withTerms = (params) => ({ ...params, q: [...terms, ...(search.trim() ? [search.trim()] : [])] })
 
   // "Nearest to me": we ask (in our own dialog) BEFORE the browser prompt.
   const [coords, setCoords] = useState(null)
@@ -253,10 +88,15 @@ export default function JobMarketplace() {
   facets?.companies?.forEach((c) => companyNames.current.set(c.id, c.name))
 
   const activeFilterCount = countMarketplaceFilters(filterState)
-  const chips = marketplaceChips(filterState, { companyNameOf: (id) => companyNames.current.get(id) })
+  const chips = [
+    ...terms.map((t) => ({ id: `term:${t}`, label: `\u201c${t}\u201d`, clearTerm: t })),
+    ...marketplaceChips(filterState, { companyNameOf: (id) => companyNames.current.get(id) }),
+  ]
 
   function clearFilters() {
     setFilterState(MARKETPLACE_DEFAULTS)
+    setTerms([])
+    setSearch('')
   }
 
   function handleSortChange(next) {
@@ -296,14 +136,19 @@ export default function JobMarketplace() {
   // Real fetch, debounced the same way LatestJobs.jsx debounces its own —
   // every control here (department tabs, search box, sort, sidebar filters)
   // maps straight onto Backend's GET /api/jobs query params.
+  // The first fetch only refreshes the prerendered default list; if it fails,
+  // keep showing those real jobs instead of swapping them for an error.
+  const refreshingInitial = useRef(Boolean(initialHomeData?.jobs?.length))
   useEffect(() => {
     let cancelled = false
     const controller = new AbortController()
+    const keepOnError = refreshingInitial.current
+    refreshingInitial.current = false
     setLoadError(false)
     setLoadMoreError(false)
 
     const timer = setTimeout(() => {
-      fetchLatestJobs(listParams(filterState, { search, sort, coords, limit: RESULTS_LIMIT, page: 1 }), { signal: controller.signal })
+      fetchLatestJobs(withTerms(listParams(filterState, { search, sort, coords, limit: RESULTS_LIMIT, page: 1 })), { signal: controller.signal })
         .then(({ jobs: fetchedJobs, total: fetchedTotal }) => {
           if (cancelled) return
           setJobs(fetchedJobs)
@@ -312,6 +157,7 @@ export default function JobMarketplace() {
         })
         .catch((err) => {
           if (cancelled || err?.name === 'AbortError') return
+          if (keepOnError) return
           setJobs([])
           setTotal(0)
           setLoadError(true)
@@ -326,7 +172,7 @@ export default function JobMarketplace() {
       clearTimeout(timer)
       controller.abort()
     }
-  }, [search, sort, coords, filterState, retryToken])
+  }, [search, terms, sort, coords, filterState, retryToken])
 
   // Live counts next to every option. Best-effort: if this fails the filters
   // still work, they just show no numbers.
@@ -334,7 +180,7 @@ export default function JobMarketplace() {
     let cancelled = false
     const controller = new AbortController()
     const timer = setTimeout(() => {
-      fetchJobFacets(filterParams(filterState, search), { signal: controller.signal })
+      fetchJobFacets(withTerms(filterParams(filterState, search)), { signal: controller.signal })
         .then((data) => !cancelled && setFacets(data))
         .catch(() => {})
     }, 250)
@@ -343,14 +189,14 @@ export default function JobMarketplace() {
       clearTimeout(timer)
       controller.abort()
     }
-  }, [search, filterState, retryToken])
+  }, [search, terms, filterState, retryToken])
 
   async function loadMore() {
     const nextPage = page + 1
     setLoadingMore(true)
     setLoadMoreError(false)
     try {
-      const { jobs: more } = await fetchLatestJobs(listParams(filterState, { search, sort, coords, limit: RESULTS_LIMIT, page: nextPage }))
+      const { jobs: more } = await fetchLatestJobs(withTerms(listParams(filterState, { search, sort, coords, limit: RESULTS_LIMIT, page: nextPage })))
       setJobs((prev) => [...prev, ...more.filter((j) => !prev.some((p) => p.id === j.id))])
       setPage(nextPage)
     } catch {
@@ -362,48 +208,34 @@ export default function JobMarketplace() {
 
   const hasMore = jobs.length < total
 
-  const featured = jobs[0]
-  const restJobs = jobs.slice(1)
   const showInitialLoading = loading && jobs.length === 0 && !loadError
   const showError = !loading && loadError
   const showEmpty = !loading && !loadError && jobs.length === 0
 
-  function openJob(job) {
-    // Same route/shape every other job surface on this page already uses
-    // (FeaturedJobCard/CompactJobRow → /jobs/:id with the real object in
-    // router state) — this is real data, not a parallel demo path.
-    navigate(`/jobs/${job.id ?? encodeURIComponent(job.title)}`, { state: { job } })
-  }
+  const pill = 'h-11 rounded-full bg-white ring-1 ring-mz-line text-[14px] text-mz-ink outline-none transition-shadow focus:ring-2 focus:ring-mz-primary'
+  const primaryPill = 'inline-flex h-10 items-center gap-1.5 rounded-full bg-mz-primary px-5 text-[13.5px] font-semibold text-white hover:bg-mz-primary-strong'
 
   return (
-    <section ref={sectionRef} id="latest-jobs" className="hero-afterglow-faint relative pt-8 pb-14 md:py-20 px-6 md:px-10 scroll-mt-20">
-      <div className="max-w-[1400px] mx-auto">
-        {/* Heading — the hero's handoff into an actual marketplace */}
-        <Reveal direction="up" duration={0.6} className="max-w-2xl">
-          <motion.span
-            initial={reduceMotion ? false : { scaleY: 0 }}
-            whileInView={{ scaleY: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="block w-px h-8 mb-4 origin-top"
-            style={{ backgroundImage: 'linear-gradient(180deg, transparent, var(--explorer-blue-border))' }}
-            aria-hidden="true"
-          />
-          <h2 className="text-[32px] sm:text-[42px] font-black leading-[1.05] tracking-tight text-balance">
-            <span className="block text-(--explorer-navy)">Find your next</span>
-            <span
-              className="block"
-              style={{ backgroundImage: 'var(--hero-cta-gradient)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
-            >
-              opportunity.
-            </span>
-          </h2>
-          <p className="mt-3 text-[15px] text-(--explorer-navy)/75 leading-relaxed">Explore fresh roles from companies hiring across India.</p>
-        </Reveal>
+    <section id="latest-jobs" aria-labelledby="jobs-title" className="relative scroll-mt-20 bg-mz-bg py-20 lg:py-28">
+      <Container className="max-w-[1320px]">
+        <SectionHead
+          id="jobs-title"
+          eyebrow="Job discovery"
+          title="Opportunities Worth Exploring"
+          action={
+            <p className="shrink-0 text-[14px] text-mz-muted" aria-live="polite">
+              <span className="text-[26px] font-bold tracking-tight text-mz-ink">{total.toLocaleString('en-IN')}</span>{' '}
+              {total === 1 ? 'live opening' : 'live openings'}
+              {loading && jobs.length > 0 && <Loader2 size={14} className="ml-2 inline animate-spin" aria-hidden="true" />}
+            </p>
+          }
+        >
+          Fresh roles from employers hiring across India &mdash; filter by what matters and apply in a couple of taps.
+        </SectionHead>
 
-        {/* Category navigation — editorial, underlined, not pills */}
-        <Reveal direction="up" duration={0.5} delay={0.05} className="mt-8 careers-scroll-x overflow-x-auto -mx-1 px-1">
-          <div className="flex items-center gap-5 sm:gap-6 border-b border-(--explorer-border) min-w-max">
+        {/* Department tabs */}
+        <Reveal className="mz-scroll-x -mx-4 mt-10 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <div className="flex min-w-max items-center gap-2" role="group" aria-label="Filter by department">
             {CATEGORIES.map((c) => {
               // "All" means no department filter; every other tab toggles its department
               // (several can be on at once, same as the sidebar's Department list).
@@ -414,239 +246,184 @@ export default function JobMarketplace() {
                   type="button"
                   onClick={() => setFilterState((prev) => ({ ...prev, tracks: c.key ? toggleIn(prev.tracks, c.key) : [] }))}
                   aria-pressed={active}
-                  className={`relative shrink-0 pb-3 text-[13.5px] font-bold whitespace-nowrap motion-safe:transition-colors motion-safe:duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue) ${
-                    active ? 'text-(--explorer-navy)' : 'text-(--explorer-muted) hover:text-(--explorer-navy)'
+                  className={`h-10 shrink-0 rounded-full px-4 text-[13.5px] font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary ${
+                    active ? 'bg-mz-ink text-white' : 'bg-white text-mz-ink-2 ring-1 ring-mz-line hover:ring-mz-primary hover:text-mz-primary-strong'
                   }`}
                 >
                   {c.label}
-                  {active && (
-                    <span
-                      className="absolute left-0 right-0 -bottom-px h-[2.5px] rounded-full"
-                      style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
-                      aria-hidden="true"
-                    />
-                  )}
                 </button>
               )
             })}
           </div>
         </Reveal>
 
-        {/* Main composition: filter sidebar + marketplace */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-[21%_1fr] gap-8">
-          {/* Desktop sidebar — slides in from -20px, settles, then goes fully
-              static (no lingering motion once revealed). */}
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-            className="hidden lg:block"
-          >
-            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain rounded-2xl border border-(--explorer-border) bg-white p-6">
+        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
+          {/* Desktop sidebar */}
+          <aside className="hidden lg:block" aria-label="Job filters">
+            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain rounded-3xl bg-white p-6 ring-1 ring-mz-line">
               <MarketplaceFilters state={filterState} setState={setFilterState} facets={facets} activeCount={activeFilterCount} onClear={clearFilters} />
             </div>
-          </motion.div>
-
-          {/* Mobile filter trigger */}
-          <div className="lg:hidden -mt-2">
-            <button
-              type="button"
-              onClick={() => setMobileFiltersOpen(true)}
-              className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-(--explorer-border) bg-white text-[13.5px] font-bold text-(--explorer-navy) shadow-[0_1px_2px_rgba(16,42,67,0.04)]"
-            >
-              <SlidersHorizontal size={15} aria-hidden="true" /> Filter jobs
-              {activeFilterCount > 0 && (
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-(--explorer-blue) text-white text-[10.5px] font-bold">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
-          </div>
+          </aside>
 
           <div className="min-w-0">
-            {/* Header: total + search + sort */}
-            <Reveal direction="up" duration={0.5} delay={0.1} className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-6">
-              <div className="shrink-0">
-                <p className="text-[10.5px] font-black uppercase tracking-wide text-(--explorer-muted)">Total jobs</p>
-                <p className="flex items-center gap-2 text-[22px] font-black text-(--explorer-navy) leading-none mt-0.5">
-                  {total} <span className="text-[14px] font-bold text-(--explorer-muted)">opportunities</span>
-                  {loading && jobs.length > 0 && <Loader2 size={14} className="animate-spin text-(--explorer-muted)" aria-hidden="true" />}
-                </p>
-              </div>
-
-              <div className="relative flex-1 min-w-0">
-                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--explorer-muted)" aria-hidden="true" />
+            {/* Toolbar: search + sort + mobile filter trigger */}
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="relative min-w-0 flex-1">
+                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-mz-muted" aria-hidden="true" />
                 <input
-                  type="text"
+                  type="search"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search jobs, skills or companies..."
-                  className="w-full h-10 pl-10 pr-4 rounded-full border border-(--explorer-border) bg-white text-[13.5px] text-(--explorer-navy) outline-none focus:border-(--explorer-blue) focus:ring-3 focus:ring-(--explorer-blue)/12 transition-colors"
+                  placeholder="Search within results: role, skill or company"
+                  aria-label="Search jobs"
+                  className={`${pill} w-full pl-11 pr-4 placeholder:text-mz-muted`}
                 />
               </div>
-
-              <div className="relative shrink-0">
-                <select
-                  value={sort}
-                  onChange={(e) => handleSortChange(e.target.value)}
-                  disabled={locating}
-                  aria-label="Sort jobs"
-                  className="h-10 pl-4 pr-9 rounded-full border border-(--explorer-border) bg-white text-[13px] font-bold text-(--explorer-navy) outline-none appearance-none cursor-pointer focus:border-(--explorer-blue) focus:ring-3 focus:ring-(--explorer-blue)/12 transition-colors"
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setMobileFiltersOpen(true)}
+                  className={`${pill} inline-flex flex-1 items-center justify-center gap-2 px-4 font-medium lg:hidden`}
                 >
-                  {SORT_CHOICES.map((opt) => (
-                    <option key={opt.key} value={opt.key}>
-                      Sort: {opt.key === 'nearest' && locating ? 'Locating\u2026' : opt.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={13} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-(--explorer-muted) pointer-events-none" aria-hidden="true" />
+                  <SlidersHorizontal size={15} aria-hidden="true" /> Filters
+                  {activeFilterCount > 0 && (
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-mz-primary px-1 text-[11px] font-bold text-white">{activeFilterCount}</span>
+                  )}
+                </button>
+                <div className="relative flex-1 sm:flex-none">
+                  <select
+                    value={sort}
+                    onChange={(e) => handleSortChange(e.target.value)}
+                    disabled={locating}
+                    aria-label="Sort jobs"
+                    className={`${pill} w-full cursor-pointer appearance-none pl-4 pr-10 font-medium`}
+                  >
+                    {SORT_CHOICES.map((opt) => (
+                      <option key={opt.key} value={opt.key}>
+                        Sort: {opt.key === 'nearest' && locating ? 'Locating\u2026' : opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-mz-muted" aria-hidden="true" />
+                </div>
               </div>
-            </Reveal>
+            </div>
 
             {locationNotice && (
-              <p role="status" className="mb-4 rounded-xl border border-(--explorer-border) bg-(--explorer-bg) px-4 py-3 text-[13px] text-(--explorer-navy)">
+              <p role="status" className="mb-4 rounded-2xl bg-white px-4 py-3 text-[13.5px] text-mz-ink ring-1 ring-mz-line">
                 {locationNotice}
               </p>
             )}
 
-            {/* Everything applied, each removable with one click */}
             {chips.length > 0 && (
               <div className="mb-5 flex flex-wrap items-center gap-2" aria-label="Applied filters">
                 {chips.map((chip) => (
                   <button
                     key={chip.id}
                     type="button"
-                    onClick={() => setFilterState((prev) => chip.clear(prev))}
+                    onClick={() => (chip.clearTerm ? setTerms((list) => list.filter((x) => x !== chip.clearTerm)) : setFilterState((prev) => chip.clear(prev)))}
                     aria-label={`Remove filter ${chip.label}`}
-                    className="inline-flex items-center gap-1.5 h-8 pl-3 pr-2.5 rounded-full border border-(--explorer-blue-border) bg-(--explorer-blue-surface) text-[12.5px] font-semibold text-(--explorer-blue) hover:bg-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+                    className="inline-flex h-8 items-center gap-1.5 rounded-full bg-mz-primary-tint pl-3 pr-2.5 text-[12.5px] font-medium text-mz-primary-strong transition-colors hover:bg-white hover:ring-1 hover:ring-mz-primary focus-visible:outline-2 focus-visible:outline-mz-primary"
                   >
                     {chip.label}
                     <X size={12} aria-hidden="true" />
                   </button>
                 ))}
-                <button type="button" onClick={clearFilters} className="text-[12.5px] font-bold text-(--explorer-muted) hover:text-(--explorer-navy) transition-colors ml-1">
+                <button type="button" onClick={clearFilters} className="ml-1 text-[12.5px] font-semibold text-mz-muted transition-colors hover:text-mz-ink">
                   Clear all
                 </button>
               </div>
             )}
 
-            {/* Grid */}
             {showError ? (
-              <div className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
-                <SearchX size={26} className="text-(--explorer-muted)" aria-hidden="true" />
-                <p className="text-[15px] font-bold text-(--explorer-navy)">Couldn't load jobs right now</p>
-                <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">There was a problem reaching the jobs feed. Check your connection and try again.</p>
-                <button
-                  type="button"
-                  onClick={() => setRetryToken((n) => n + 1)}
-                  className="mt-1.5 inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-white text-[13px] font-bold"
-                  style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
-                >
+              <div className="flex flex-col items-center justify-center gap-2.5 rounded-3xl border border-dashed border-mz-line-strong bg-white px-6 py-16 text-center">
+                <SearchX size={26} className="text-mz-muted" aria-hidden="true" />
+                <p className="text-[15px] font-semibold text-mz-ink">Couldn&rsquo;t load jobs right now</p>
+                <p className="max-w-sm text-[14px] text-mz-muted">There was a problem reaching the jobs feed. Check your connection and try again.</p>
+                <button type="button" onClick={() => setRetryToken((n) => n + 1)} className={`${primaryPill} mt-2`}>
                   <RotateCw size={14} aria-hidden="true" /> Retry
                 </button>
               </div>
             ) : showInitialLoading ? (
-              <div className="flex snap-x snap-mandatory items-start gap-4 overflow-x-auto scroll-px-6 -mx-6 px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:items-stretch sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4">
-                <div className="w-[82%] shrink-0 snap-start sm:w-auto sm:col-span-2 sm:row-span-2">
-                  <FeaturedJobTileSkeleton />
-                </div>
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="w-[82%] shrink-0 snap-start sm:w-auto">
-                    <JobCardSkeleton />
-                  </div>
-                ))}
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true" aria-label="Loading jobs">
+                {Array.from({ length: 6 }).map((_, i) => <JobCardSkeleton key={i} />)}
               </div>
             ) : showEmpty ? (
-              <div className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-dashed border-(--explorer-border) py-16 px-6 text-center">
-                <SearchX size={26} className="text-(--explorer-muted)" aria-hidden="true" />
-                <p className="text-[15px] font-bold text-(--explorer-navy)">No roles match these filters</p>
-                <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">Try clearing a filter or searching a different keyword.</p>
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="mt-1.5 inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-white text-[13px] font-bold"
-                  style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
-                >
-                  Clear all filters
-                </button>
+              <div className="flex flex-col items-center justify-center gap-2.5 rounded-3xl border border-dashed border-mz-line-strong bg-white px-6 py-16 text-center">
+                <SearchX size={26} className="text-mz-muted" aria-hidden="true" />
+                <p className="text-[15px] font-semibold text-mz-ink">No roles match these filters</p>
+                <p className="max-w-sm text-[14px] text-mz-muted">Try removing a filter or searching a different keyword.</p>
+                <button type="button" onClick={clearFilters} className={`${primaryPill} mt-2`}>Clear all filters</button>
               </div>
             ) : (
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${sort}-${search}-${JSON.stringify(filterState)}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.ul
+                  key={`${sort}-${search}-${terms.join('|')}-${JSON.stringify(filterState)}`}
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: 0.22 }}
+                  className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
                 >
-                  <StaggerGroup data-auto-rail className="flex snap-x snap-mandatory items-start gap-4 overflow-x-auto scroll-px-6 -mx-6 px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:items-stretch sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4" staggerDelay={0.08}>
-                    {featured && (
-                      <StaggerItem y={20} scale={1} duration={0.5} className="w-[82%] shrink-0 snap-start sm:w-auto sm:col-span-2 sm:row-span-2">
-                        <FeaturedJobTile job={featured} tone={CARD_TONES[0]} onOpen={() => openJob(featured)} />
-                      </StaggerItem>
-                    )}
-                    {restJobs.map((job, i) => (
-                      <StaggerItem key={job.id ?? `${job.title}-${job.company}`} y={20} scale={1} duration={0.45} className="w-[82%] shrink-0 snap-start sm:w-auto">
-                        <JobCard job={job} tone={CARD_TONES[(i + 1) % CARD_TONES.length]} onOpen={() => openJob(job)} />
-                      </StaggerItem>
-                    ))}
-                  </StaggerGroup>
-                </motion.div>
+                  {jobs.map((job) => (
+                    <li key={job.id ?? `${job.title}-${job.company}`}>
+                      <JobCard job={job} />
+                    </li>
+                  ))}
+                </motion.ul>
               </AnimatePresence>
             )}
 
             {!showError && !showEmpty && !showInitialLoading && hasMore && (
-              <div className="mt-8 flex flex-col items-center gap-2">
+              <div className="mt-10 flex flex-col items-center gap-2">
                 <button
                   type="button"
                   onClick={loadMore}
                   disabled={loadingMore}
-                  className="inline-flex items-center gap-2 h-11 px-6 rounded-full border border-(--explorer-border) bg-white text-[13.5px] font-bold text-(--explorer-navy) hover:border-(--explorer-blue-border) hover:text-(--explorer-blue) transition-colors disabled:opacity-60"
+                  className="group inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[14.5px] font-semibold text-mz-ink ring-1 ring-mz-line-strong transition-colors hover:text-mz-primary-strong hover:ring-mz-primary disabled:opacity-60"
                 >
                   {loadingMore ? <Loader2 size={15} className="animate-spin" aria-hidden="true" /> : null}
-                  {loadingMore ? 'Loading\u2026' : `Show more jobs (${total - jobs.length} left)`}
+                  {loadingMore ? 'Loading\u2026' : <>View all jobs <span className="text-mz-muted">({(total - jobs.length).toLocaleString('en-IN')} more)</span></>}
+                  {!loadingMore && <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />}
                 </button>
-                {loadMoreError && <p className="text-[12.5px] text-(--explorer-muted)">Couldn&rsquo;t load more jobs. Please try again.</p>}
+                {loadMoreError && <p className="text-[13px] text-mz-muted">Couldn&rsquo;t load more jobs. Please try again.</p>}
               </div>
             )}
           </div>
         </div>
-
-      </div>
+      </Container>
 
       {/* Mobile filter drawer */}
       <AnimatePresence>
         {mobileFiltersOpen && (
-          <motion.div className="fixed inset-0 z-50 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-            <div className="absolute inset-0 bg-(--explorer-navy)/40 backdrop-blur-[2px]" onClick={() => setMobileFiltersOpen(false)} />
+          <motion.div className="fixed inset-0 z-[60] lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} role="dialog" aria-modal="true" aria-label="Filter jobs">
+            <div className="absolute inset-0 bg-mz-ink/40 backdrop-blur-[2px]" onClick={() => setMobileFiltersOpen(false)} />
             <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-y-0 left-0 w-[86%] max-w-sm bg-white p-6 overflow-y-auto shadow-[0_0_60px_rgba(0,0,0,0.25)]"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col rounded-t-[28px] bg-white shadow-[0_-20px_60px_rgba(0,0,0,0.2)]"
             >
-              <div className="flex items-center justify-between mb-6">
-                <p className="text-[15px] font-black text-(--explorer-navy)">Filter jobs</p>
+              <div className="flex items-center justify-between border-b border-mz-line px-5 py-4">
+                <p className="text-[16px] font-semibold text-mz-ink">Filter jobs</p>
                 <button
                   type="button"
                   onClick={() => setMobileFiltersOpen(false)}
-                  className="flex items-center justify-center w-9 h-9 rounded-full bg-(--explorer-bg) text-(--explorer-navy)"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-mz-bg text-mz-ink"
                   aria-label="Close filters"
                 >
-                  <X size={16} aria-hidden="true" />
+                  <X size={17} aria-hidden="true" />
                 </button>
               </div>
-              <MarketplaceFilters state={filterState} setState={setFilterState} facets={facets} activeCount={activeFilterCount} onClear={clearFilters} />
-              <button
-                type="button"
-                onClick={() => setMobileFiltersOpen(false)}
-                className="mt-8 w-full h-11 rounded-full text-white text-[14px] font-bold"
-                style={{ backgroundImage: 'var(--hero-cta-gradient)' }}
-              >
-                Show {total} opportunities
-              </button>
+              <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-5">
+                <MarketplaceFilters state={filterState} setState={setFilterState} facets={facets} activeCount={activeFilterCount} onClear={clearFilters} />
+              </div>
+              <div className="border-t border-mz-line px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
+                <button type="button" onClick={() => setMobileFiltersOpen(false)} className="h-12 w-full rounded-full bg-mz-primary text-[15px] font-semibold text-white">
+                  Show {total.toLocaleString('en-IN')} {total === 1 ? 'opportunity' : 'opportunities'}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

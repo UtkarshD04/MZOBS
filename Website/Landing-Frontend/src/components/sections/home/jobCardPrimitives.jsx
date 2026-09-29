@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { ShieldCheck } from 'lucide-react'
 import { initialsOf, toneForCompany } from '../../../lib/jobCardHelpers'
 
 // Small presentational pieces shared between the "Latest jobs" list/inline
@@ -42,17 +41,6 @@ export function CompanyMark({ company, logo, size = 'sm', tone }) {
     )
   }
   return <Avatar initials={initialsOf(company)} tone={tone ?? toneForCompany(company)} size={size} />
-}
-
-// Small blue marker shown only when Company.verificationStatus is actually
-// 'verified' (see Backend's toLatestJobSummary) — never rendered as a
-// default/assumed state, so its presence always means something real.
-export function VerifiedMark() {
-  return (
-    <span className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-(--explorer-blue)">
-      <ShieldCheck size={12.5} aria-hidden="true" /> Verified employer
-    </span>
-  )
 }
 
 // Recently-posted marker for the list card and detail header — "recent"

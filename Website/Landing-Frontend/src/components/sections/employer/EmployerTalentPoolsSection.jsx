@@ -35,22 +35,22 @@ export default function EmployerTalentPoolsSection() {
     <section ref={ref} className="bg-[#EEF1EE] py-16 md:py-20 px-6 md:px-12">
       <div className="max-w-5xl mx-auto">
         <FadeInView className="text-center">
-          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#0a6f64]">Talent Pools</span>
-          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[40px] font-bold text-[#102a43] tracking-tight leading-tight">
+          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#4a4ed8]">Talent Pools</span>
+          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[40px] font-bold text-[#111827] tracking-tight leading-tight">
             Keep promising people close, even when the timing isn't right.
           </h2>
         </FadeInView>
 
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3.5">
           {POOLS.map((pool) => (
-            <div data-pool-card key={pool.label} className="rounded-2xl border border-[#102a43]/15 bg-white p-4 sm:p-5">
+            <div data-pool-card key={pool.label} className="rounded-2xl border border-[#111827]/15 bg-white p-4 sm:p-5">
               <span className="text-[22px]">{pool.emoji}</span>
-              <p className="mt-2.5 text-[13px] font-bold text-[#102a43] leading-snug">{pool.label}</p>
-              <p className="mt-1 text-[11.5px] text-[#51697e]">{pool.count} saved</p>
+              <p className="mt-2.5 text-[13px] font-bold text-[#111827] leading-snug">{pool.label}</p>
+              <p className="mt-1 text-[11.5px] text-[#667085]">{pool.count} saved</p>
             </div>
           ))}
         </div>
-        <p className="mt-6 text-center text-[11.5px] text-[#51697e]/80">Illustrative example — product preview.</p>
+        <p className="mt-6 text-center text-[11.5px] text-[#667085]/80">Illustrative example — product preview.</p>
       </div>
     </section>
   )

@@ -109,7 +109,7 @@ export default function DeleteAccountForm() {
     <div>
       <div className="flex items-center gap-2 text-(--explorer-muted) mb-4">
         <Phone size={16} />
-        <p className="text-[13px] font-medium">Verify your mobile number to request deletion.</p>
+        <p className="text-[13px] font-medium">Confirm your mobile number to request deletion.</p>
       </div>
 
       <Field label="Mobile number">
@@ -146,7 +146,7 @@ export default function DeleteAccountForm() {
       {phoneToken ? (
         <div className="flex items-center gap-2 mb-4 px-3.5 py-2.5 rounded-lg bg-green-tint text-[13px] font-bold text-green">
           <ShieldCheck size={16} className="shrink-0" />
-          Mobile number verified
+          Mobile number confirmed
         </div>
       ) : otpSent ? (
         <div className="mb-4">
@@ -166,7 +166,7 @@ export default function DeleteAccountForm() {
               disabled={verifyingOtp || otp.length !== 6}
               className="h-10 px-4 rounded-lg border border-(--explorer-border) bg-white text-[13px] font-bold text-(--explorer-navy) hover:border-(--explorer-blue) transition-colors disabled:opacity-50"
             >
-              {verifyingOtp ? 'Verifying...' : 'Verify code'}
+              {verifyingOtp ? 'Checking...' : 'Confirm code'}
             </button>
             <button
               type="button"

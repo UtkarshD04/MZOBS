@@ -20,7 +20,7 @@ export default function AboutApproachSection() {
       <div className="relative max-w-7xl mx-auto">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-3xl mx-auto text-center space-y-5">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight leading-tight">
-            <SplitText text="Verification, Not Just Listings" className="justify-center" />
+            <SplitText text="Matching, Not Just Listings" className="justify-center" />
           </h2>
           <p className="text-[15px] sm:text-base text-[#595959] leading-relaxed font-medium">
             The same four steps power every profile and every requirement on Mzobs.

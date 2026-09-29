@@ -31,14 +31,14 @@ export default function EmployerNavbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-19 bg-[#f7f9fb]/95 backdrop-blur-md border-b border-[#102a43]/10 transition-[transform,box-shadow] duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 h-19 bg-[#f7f8fc]/95 backdrop-blur-md border-b border-[#111827]/10 transition-[transform,box-shadow] duration-300 ${
           hidden ? '-translate-y-full' : 'translate-y-0'
         } ${scrolled ? 'shadow-[0_1px_2px_rgba(16,42,67,0.04),0_8px_24px_-16px_rgba(16,42,67,0.4)]' : 'shadow-none'}`}
       >
         <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between gap-6">
           <Link to="/employers" className="flex items-center gap-2 shrink-0">
             <img src="/images/logo.png" alt="Mzobs" className="h-14 w-auto object-contain" />
-            <span className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#102a43]/65 border-l border-[#102a43]/20 pl-2">
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#111827]/65 border-l border-[#111827]/20 pl-2">
               For Employers
             </span>
           </Link>
@@ -48,7 +48,7 @@ export default function EmployerNavbar() {
               <Link
                 key={link.label}
                 to={link.to}
-                className="text-[13px] font-bold text-[#102a43]/65 hover:text-[#0a6f64] transition-colors"
+                className="text-[13px] font-bold text-[#111827]/65 hover:text-[#4a4ed8] transition-colors"
               >
                 {link.label}
               </Link>
@@ -58,21 +58,22 @@ export default function EmployerNavbar() {
           <div className="hidden lg:flex items-center gap-3 shrink-0">
             <Link
               to="/employers/pricing"
-              className="flex items-center gap-1.5 text-[13px] font-bold text-white bg-[#0a6f64] hover:bg-[#102a43] transition-colors duration-200 px-4 py-2 rounded-full"
+              className="flex items-center gap-1.5 text-[13px] font-bold text-white bg-[#4a4ed8] hover:bg-[#111827] transition-colors duration-200 px-4 py-2 rounded-full"
             >
               <Crown size={14} className="fill-white/15" />
               Subscription
             </Link>
             <Link
               to="/employers/signin"
-              className="text-[13px] font-bold text-[#102a43]/75 hover:text-[#0a6f64] transition-colors px-3 py-2"
+              className="text-[13px] font-bold text-[#111827]/75 hover:text-[#4a4ed8] transition-colors px-3 py-2"
             >
               Sign in
-            </Link>
+            </Link>
+
           </div>
 
           <button
-            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full border border-[#102a43]/20 text-[#102a43]"
+            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full border border-[#111827]/20 text-[#111827]"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle navigation"
             aria-expanded={open}
@@ -98,7 +99,7 @@ export default function EmployerNavbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="lg:hidden fixed top-19 left-0 right-0 bg-[#f7f9fb] border-b border-[#102a43]/10 shadow-lg z-40"
+              className="lg:hidden fixed top-19 left-0 right-0 bg-[#f7f8fc] border-b border-[#111827]/10 shadow-lg z-40"
             >
               <div className="p-5 flex flex-col gap-1">
                 {EMPLOYER_NAV_LINKS.map((link) => (
@@ -106,7 +107,7 @@ export default function EmployerNavbar() {
                     key={link.label}
                     to={link.to}
                     onClick={() => setOpen(false)}
-                    className="py-3 text-[14px] font-bold text-[#102a43] border-b border-[#102a43]/10"
+                    className="py-3 text-[14px] font-bold text-[#111827] border-b border-[#111827]/10"
                   >
                     {link.label}
                   </Link>
@@ -115,14 +116,14 @@ export default function EmployerNavbar() {
                   <Link
                     to="/employers/pricing"
                     onClick={() => setOpen(false)}
-                    className="h-10 flex items-center justify-center gap-1.5 rounded-full bg-[#0a6f64] text-white text-[13.5px] font-bold"
+                    className="h-10 flex items-center justify-center gap-1.5 rounded-full bg-[#4a4ed8] text-white text-[13.5px] font-bold"
                   >
                     <Crown size={14} className="fill-white/15" /> Subscription
                   </Link>
                   <Link
                     to="/employers/signin"
                     onClick={() => setOpen(false)}
-                    className="h-10 flex items-center justify-center rounded-full border border-[#102a43]/20 text-[#102a43] text-[13.5px] font-bold"
+                    className="h-10 flex items-center justify-center rounded-full border border-[#111827]/20 text-[#111827] text-[13.5px] font-bold"
                   >
                     Sign in
                   </Link>

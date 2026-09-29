@@ -23,12 +23,35 @@ export function canonicalPath(path) {
 // scripts/prerender.js.
 export const STATIC_PAGE_SEO = {
   '/': {
-    title: 'Mzobs — Find Verified Jobs & Hire Job-Ready Talent',
-    description: 'Mzobs connects verified job seekers with employers hiring — one platform for candidates and companies.',
+    title: 'Mzobs — Talent × Opportunity × Smarter Hiring',
+    description:
+      'Discover jobs from top employers across India, get AI-powered matches on your skills and experience, and move from profile to offer faster. Employers find quality talent and hire in one pipeline.',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          '@id': 'https://mzobs.com/#organization',
+          name: 'Mzobs',
+          url: 'https://mzobs.com/',
+          logo: 'https://mzobs.com/images/logo.png',
+          email: 'support@mzobs.com',
+          sameAs: ['https://www.instagram.com/mzobs2601'],
+        },
+        {
+          '@type': 'WebSite',
+          '@id': 'https://mzobs.com/#website',
+          name: 'Mzobs',
+          url: 'https://mzobs.com/',
+          publisher: { '@id': 'https://mzobs.com/#organization' },
+          inLanguage: 'en-IN',
+        },
+      ],
+    },
   },
   '/about': {
     title: 'Who We Are — Mzobs',
-    description: 'Learn about Mzobs, the hiring platform built to connect verified candidates with genuine employers.',
+    description: 'Learn about Mzobs, the AI-powered hiring marketplace connecting talent with real opportunity.',
   },
   '/our-story': {
     title: 'Our Story — Mzobs',
@@ -36,7 +59,7 @@ export const STATIC_PAGE_SEO = {
   },
   '/employers': {
     title: 'For Employers — Mzobs',
-    description: 'Post jobs and hire pre-verified, job-ready candidates fast with Mzobs.',
+    description: 'Post jobs, discover candidates ranked by fit and manage interviews and offers in one hiring pipeline with Mzobs.',
   },
   '/employers/pricing': {
     title: 'Pricing — Mzobs for Employers',
@@ -59,44 +82,44 @@ export const STATIC_PAGE_SEO = {
   // adding its slug here too, so it gets prerendered and shows up in
   // sitemap.xml like every other static route.
   '/jobs/city/bengaluru': {
-    title: 'Bengaluru Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Bengaluru. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Bengaluru Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Bengaluru from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
   '/jobs/city/mumbai': {
-    title: 'Mumbai Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Mumbai. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Mumbai Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Mumbai from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
   '/jobs/city/delhi-ncr': {
-    title: 'Delhi NCR Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Delhi NCR. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Delhi NCR Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Delhi NCR from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
   '/jobs/city/hyderabad': {
-    title: 'Hyderabad Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Hyderabad. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Hyderabad Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Hyderabad from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
   '/jobs/city/pune': {
-    title: 'Pune Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Pune. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Pune Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Pune from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
   '/jobs/city/chennai': {
-    title: 'Chennai Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Chennai. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Chennai Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Chennai from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
   '/jobs/city/noida': {
-    title: 'Noida Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Noida. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Noida Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Noida from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
   '/jobs/city/gurugram': {
-    title: 'Gurugram Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Gurugram. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Gurugram Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Gurugram from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
   '/jobs/city/kolkata': {
-    title: 'Kolkata Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Kolkata. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Kolkata Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Kolkata from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
   '/jobs/city/lucknow': {
-    title: 'Lucknow Jobs — Verified Openings Hiring Now | Mzobs',
-    description: 'Browse verified job openings in Lucknow. Real employers, screened listings, updated as new requirements come in.',
+    title: 'Lucknow Jobs — Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Lucknow from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
   },
 }
 

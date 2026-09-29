@@ -21,11 +21,11 @@ function CollegeCount({ data, active }) {
   return (
     <div className="relative mx-auto flex aspect-square w-full max-w-[460px] items-center justify-center">
       {/* Soft concentric rings */}
-      <span className="absolute inset-[4%] rounded-full border border-[#2563EB]/15" aria-hidden="true" />
+      <span className="absolute inset-[4%] rounded-full border border-[#5b5fef]/15" aria-hidden="true" />
       <span className="absolute inset-[16%] rounded-full border border-[#6D5DFB]/20" aria-hidden="true" />
       <span className="absolute inset-[28%] rounded-full bg-[radial-gradient(circle,rgba(109,93,251,.16),transparent_70%)]" aria-hidden="true" />
       <div className="campus-glass relative z-10 flex w-[78%] flex-col items-center rounded-[32px] px-6 py-10 text-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2563EB] text-white shadow-[0_12px_24px_-10px_rgba(37,99,235,.7)]">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#5b5fef] text-white shadow-[0_12px_24px_-10px_rgba(37,99,235,.7)]">
           <GraduationCap size={24} aria-hidden="true" />
         </span>
         <p className="campus-accent mt-5 text-[84px] font-black leading-none tracking-[-0.04em] sm:text-[104px]" aria-label={`${data.count}+ ${data.statLabel}`}>
@@ -93,9 +93,9 @@ export default function CampusNetwork() {
         <div className="md:pb-8">
           <motion.p
             initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: EASE }}
-            className="flex items-center gap-2.5 text-[12px] font-bold uppercase tracking-[0.2em] text-[#2563EB]"
+            className="flex items-center gap-2.5 text-[12px] font-bold uppercase tracking-[0.2em] text-[#5b5fef]"
           >
-            <span className="h-px w-6 bg-[#2563EB]" aria-hidden="true" />{d.eyebrow}
+            <span className="h-px w-6 bg-[#5b5fef]" aria-hidden="true" />{d.eyebrow}
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, delay: 0.08, ease: EASE }}

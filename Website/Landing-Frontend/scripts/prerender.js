@@ -45,11 +45,14 @@ const { render } = await import(pathToFileURL(SERVER_ENTRY).href)
 async function fetchInitialHomeData() {
   try {
     const [jobsRes, categories, hotCities] = await Promise.all([
-      fetch(`${PUBLIC_JOBS_API_URL}?sort=newest&limit=12&page=1`).then((r) => (r.ok ? r.json() : Promise.reject(r.status))),
+      fetch(`${PUBLIC_JOBS_API_URL}?sort=newest&limit=12&page=1`).then(async (r) => (r.ok ? { jobs: await r.json(), total: Number(r.headers.get('X-Total-Count')) } : Promise.reject(r.status))),
       fetch(`${PUBLIC_JOBS_API_URL}/categories`).then((r) => (r.ok ? r.json() : Promise.reject(r.status))),
       fetch(`${PUBLIC_JOBS_API_URL}/hot-cities`).then((r) => (r.ok ? r.json() : Promise.reject(r.status))),
     ])
-    return { jobs: jobsRes, total: jobsRes.length, categories, hotCities: hotCities.cities }
+    // Platform stats are optional — the page renders fine without them.
+    const stats = await fetch(`${PUBLIC_JOBS_API_URL}/platform-stats`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+    const total = Number.isFinite(jobsRes.total) ? jobsRes.total : jobsRes.jobs.length
+    return { jobs: jobsRes.jobs, total, categories, hotCities: hotCities.cities, stats }
   } catch (err) {
     console.error('prerender: failed to fetch initial home data, falling back to empty state:', err)
     return null
@@ -61,7 +64,7 @@ const initialHomeData = await fetchInitialHomeData()
 for (const [route, seo] of Object.entries(STATIC_PAGE_SEO)) {
   const isHome = route === '/'
   const appHtml = render(route, isHome ? { initialHomeData } : {})
-  const headHtml = buildHeadHtml({ title: seo.title, description: seo.description, canonical: `${SITE_URL}${canonicalPath(route)}` })
+  const headHtml = buildHeadHtml({ title: seo.title, description: seo.description, jsonLd: seo.jsonLd ?? null, canonical: `${SITE_URL}${canonicalPath(route)}` })
   // Hands the same data back to the client for hydration so JobMarketplace/
   // CategoryGrid/HotJobsByCity don't show a redundant loading flash before
   // their own useEffect re-fetches live data (see initialHomeDataContext.js).

@@ -90,7 +90,7 @@ export const HELP_TOPICS = {
       index: '05',
       title: 'Employer Profile',
       description: 'Your company page, team access, and account details.',
-      questions: ['Edit company profile', 'Add team members', 'Verify your company'],
+      questions: ['Edit company profile', 'Add team members', 'Update company details'],
     },
     {
       id: 'billing',

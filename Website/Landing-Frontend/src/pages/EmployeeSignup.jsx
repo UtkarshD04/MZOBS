@@ -19,7 +19,7 @@ export default function EmployeeSignup() {
               Your next opportunity starts here.
             </h1>
             <p className="mt-1.5 text-[13.5px] text-(--jobs-ink-soft)">
-              Create your profile and get matched with verified employers.
+              Create your profile and get matched with top employers.
             </p>
           </div>
 
