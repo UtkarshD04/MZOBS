@@ -50,21 +50,6 @@ const liveSocials = FOOTER_DATA.socialsItems.filter((item) => item.href && item.
 // reordered so "For employers" leads.
 export default function EmployerFooter() {
   return (
-<<<<<<< Updated upstream
-    <footer className="relative overflow-hidden bg-[#111827] pt-16 pb-8 px-6 md:px-12">
-      <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#4a4ed8] blur-[100px] opacity-60" />
-      <div aria-hidden="true" className="absolute -right-16 bottom-0 h-56 w-56 rounded-full bg-[#4a4ed8] blur-[110px] opacity-20" />
-
-      <div className="relative max-w-7xl mx-auto space-y-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          {/* Brand column */}
-          <div className="md:col-span-5 space-y-5">
-            <Link to="/employers" className="flex items-center gap-2 group w-fit">
-              <img src="/images/logo.png" alt="Mzobs" className="h-10 w-auto object-contain brightness-0 invert" />
-              <span className="text-[10px] tracking-[0.18em] text-[#20c997] uppercase font-bold border-l border-white/20 pl-2">
-                For Employers
-              </span>
-=======
     <footer className="bg-white border-t border-(--explorer-border)">
       <div className="h-1 bg-(image:--hero-cta-gradient)" aria-hidden="true" />
 
@@ -73,38 +58,12 @@ export default function EmployerFooter() {
           <div className="col-span-2 md:col-span-4 space-y-5">
             <Link to="/employers" className="block w-fit" aria-label="Mzobs for employers">
               <img src="/images/logo.png" alt="Mzobs" className="h-24 w-auto object-contain -my-6 -ml-5" />
->>>>>>> Stashed changes
             </Link>
             <p className="text-[14px] text-(--explorer-muted) leading-relaxed max-w-sm">
               Post jobs, discover relevant candidates, and manage your hiring pipeline — the employer side of Mzobs.
             </p>
 
             <div className="flex flex-wrap gap-3">
-<<<<<<< Updated upstream
-              <Link
-                to="/"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-white/20 text-white text-[12px] font-bold hover:border-[#4a4ed8] hover:text-[#4a4ed8] transition-colors"
-              >
-                Looking for a job?
-              </Link>
-              <Link
-                to="/employers/signin"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#4a4ed8] text-[#111827] text-[12px] font-bold hover:bg-[#20c997] transition-colors"
-              >
-                Employer sign in
-              </Link>
-            </div>
-          </div>
-
-          {/* Menu column */}
-          <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-[#eeefff]">{FOOTER_DATA.menuTitle}</h4>
-            <ul className="space-y-2.5 text-[13px] text-white/55 font-medium">
-              {FOOTER_DATA.menuItems.map((item, idx) => (
-                <li key={idx}>
-                  <Link to={item.to} className="hover:text-[#20c997] transition-colors">
-                    {item.label}
-=======
               <ExplorerButton to="/" variant="secondary" size="md">
                 Looking for a job?
               </ExplorerButton>
@@ -161,62 +120,11 @@ export default function EmployerFooter() {
                 <li key={link.to}>
                   <Link to={link.to} className="hover:text-(--explorer-blue) transition-colors">
                     {link.label}
->>>>>>> Stashed changes
                   </Link>
                 </li>
               ))}
             </ul>
 
-<<<<<<< Updated upstream
-          {/* Contact column */}
-          <div className="md:col-span-3 space-y-4">
-            <h4 className="text-sm font-bold text-[#eeefff]">{FOOTER_DATA.contactTitle}</h4>
-            <div className="space-y-2.5 text-[13px] text-white/55 leading-relaxed font-medium">
-              <a href={`tel:${FOOTER_DATA.phone}`} className="block hover:text-[#20c997] transition-colors w-fit">
-                {FOOTER_DATA.phone}
-              </a>
-              <a href={`mailto:${FOOTER_DATA.email}`} className="block hover:text-[#20c997] transition-colors w-fit">
-                {FOOTER_DATA.email}
-              </a>
-              <p className="pt-1">{FOOTER_DATA.address}</p>
-            </div>
-          </div>
-
-          {/* Socials column */}
-          <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-[#eeefff]">{FOOTER_DATA.socialsTitle}</h4>
-            <div className="flex flex-wrap gap-2.5">
-              {FOOTER_DATA.socialsItems.map((item, idx) => {
-                const Icon = SOCIAL_ICONS[item.label]
-                return (
-                  <a
-                    key={idx}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={item.label}
-                    className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/70 transition-all duration-200 hover:border-[#4a4ed8] hover:text-[#4a4ed8] hover:-translate-y-0.5"
-                  >
-                    {Icon && <Icon size={14} />}
-                  </a>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-white/40 font-medium">
-          <p>{FOOTER_DATA.copyright}</p>
-          <div className="flex items-center gap-4">
-            {FOOTER_DATA.rightLinks.map((link, i) => (
-              <span key={i} className="flex items-center gap-4">
-                <Link to={link.to} className="hover:text-[#20c997] transition-colors">
-                  {link.label}
-                </Link>
-                {i < FOOTER_DATA.rightLinks.length - 1 && <span className="text-white/15">|</span>}
-              </span>
-            ))}
-=======
             {liveSocials.length > 0 && (
               <div className="flex gap-2">
                 {liveSocials.map((item) => {
@@ -236,7 +144,6 @@ export default function EmployerFooter() {
                 })}
               </div>
             )}
->>>>>>> Stashed changes
           </div>
         </div>
       </div>

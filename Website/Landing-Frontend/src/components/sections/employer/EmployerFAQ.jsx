@@ -29,39 +29,22 @@ const FAQ_ITEMS = [
 
 function FAQItem({ item, isOpen, onToggle }) {
   return (
-<<<<<<< Updated upstream
-    <div className="border-b border-[#111827]/10 last:border-0">
-=======
     <div className="border-b border-(--explorer-border) last:border-0">
->>>>>>> Stashed changes
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
-<<<<<<< Updated upstream
-        className="group w-full flex items-center justify-between gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#4a4ed8]"
-      >
-        <span className="text-[15px] font-bold text-[#111827] group-hover:text-[#4a4ed8] transition-colors">{item.q}</span>
-        <ChevronDown
-          size={18}
-          className={`shrink-0 text-[#4a4ed8] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-=======
         className="group w-full flex items-center justify-between gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--explorer-blue)"
       >
         <span className="text-[15px] font-bold text-(--explorer-navy) group-hover:text-(--explorer-blue) transition-colors">{item.q}</span>
         <ChevronDown
           size={18}
           className={`shrink-0 text-(--explorer-blue) transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
->>>>>>> Stashed changes
         />
       </button>
       <div className={`grid transition-[grid-template-rows] duration-200 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden">
-<<<<<<< Updated upstream
-          <p className="pb-5 text-[14px] text-[#667085] leading-relaxed max-w-2xl">{item.a}</p>
-=======
           <p className="pb-5 text-[14px] text-(--explorer-muted) leading-relaxed max-w-2xl">{item.a}</p>
->>>>>>> Stashed changes
         </div>
       </div>
     </div>
@@ -72,15 +55,6 @@ export default function EmployerFAQ() {
   const [openIndex, setOpenIndex] = useState(0)
 
   return (
-<<<<<<< Updated upstream
-    <section id="faq" className="bg-[#f7f8fc] py-20 md:py-28 px-6 md:px-12">
-      <div className="max-w-7xl mx-auto grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
-        <FadeInView className="lg:sticky lg:top-28 self-start">
-          <h2 className="font-sans text-4xl sm:text-5xl font-bold text-[#111827] tracking-tight leading-[0.98]">Answers before you begin.</h2>
-          <p className="mt-5 text-[15px] text-[#667085] leading-relaxed">
-            Everything you need to know about hiring on MZOBS. Still have questions?{' '}
-            <Link to="/contact" className="font-bold text-[#4a4ed8] underline decoration-[#4a4ed8] decoration-2 underline-offset-4 hover:text-[#4a4ed8] transition-colors">
-=======
     <section id="faq" className="bg-(--explorer-bg) py-20 md:py-28 px-6 md:px-12">
       <div className="max-w-7xl mx-auto grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
         <FadeInView className="lg:sticky lg:top-28 self-start">
@@ -88,18 +62,13 @@ export default function EmployerFAQ() {
           <p className="mt-5 text-[15px] text-(--explorer-muted) leading-relaxed">
             Everything you need to know about hiring on MZOBS. Still have questions?{' '}
             <Link to="/contact" className="font-bold text-(--explorer-blue) underline decoration-(--explorer-blue) decoration-2 underline-offset-4 hover:text-(--explorer-blue-hover) transition-colors">
->>>>>>> Stashed changes
               Contact our team
             </Link>
             .
           </p>
         </FadeInView>
 
-<<<<<<< Updated upstream
-        <FadeInView delay={0.08} className="rounded-[26px] border border-[#111827]/15 bg-white px-6 shadow-[0_18px_35px_-24px_rgba(16,42,67,0.38)] sm:px-8">
-=======
         <FadeInView delay={0.08} className="rounded-[26px] border border-(--explorer-border) bg-white px-6 shadow-[0_18px_35px_-24px_rgba(16,42,67,0.25)] sm:px-8">
->>>>>>> Stashed changes
           {FAQ_ITEMS.map((item, i) => (
             <FAQItem key={item.q} item={item} isOpen={openIndex === i} onToggle={() => setOpenIndex(openIndex === i ? -1 : i)} />
           ))}

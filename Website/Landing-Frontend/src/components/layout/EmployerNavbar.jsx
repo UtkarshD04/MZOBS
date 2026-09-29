@@ -1,23 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-<<<<<<< Updated upstream
-import { Crown, Menu, X } from 'lucide-react'
-
-const EMPLOYER_NAV_LINKS = [
-  { label: 'How it works', to: '/employers#how-it-works' },
-  { label: 'Solutions', to: '/employers#solutions' },
-]
-
-// Employer-section header — mounted on /employers and its sign-in/signup/
-// password pages instead of the main site Navbar, so employers get a
-// distinct, employer-branded header while browsing that section.
-export default function EmployerNavbar() {
-  const [open, setOpen] = useState(false)
-  const [hidden, setHidden] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const lastY = useRef(0)
-=======
 import { Menu, X } from 'lucide-react'
 import ExplorerButton from '../ui/ExplorerButton'
 
@@ -36,41 +19,21 @@ export default function EmployerNavbar() {
   const [scrolled, setScrolled] = useState(false)
   const progressRef = useRef(null)
   const floating = scrolled || open
->>>>>>> Stashed changes
 
   useEffect(() => {
     function onScroll() {
       const y = window.scrollY
-<<<<<<< Updated upstream
-      setHidden(y > 140 && y > lastY.current)
-      setScrolled(y > 8)
-      lastY.current = y
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-=======
       setScrolled(y > 8)
       const max = document.documentElement.scrollHeight - window.innerHeight
       if (progressRef.current) progressRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
->>>>>>> Stashed changes
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
     <>
-<<<<<<< Updated upstream
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 h-19 bg-[#f7f8fc]/95 backdrop-blur-md border-b border-[#111827]/10 transition-[transform,box-shadow] duration-300 ${
-          hidden ? '-translate-y-full' : 'translate-y-0'
-        } ${scrolled ? 'shadow-[0_1px_2px_rgba(16,42,67,0.04),0_8px_24px_-16px_rgba(16,42,67,0.4)]' : 'shadow-none'}`}
-      >
-        <div className="max-w-7xl mx-auto h-full px-6 md:px-10 flex items-center justify-between gap-6">
-          <Link to="/employers" className="flex items-center gap-2 shrink-0">
-            <img src="/images/logo.png" alt="Mzobs" className="h-14 w-auto object-contain" />
-            <span className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#111827]/65 border-l border-[#111827]/20 pl-2">
-=======
       <header className="fixed top-0 left-0 right-0 z-50 h-19">
         <div
           className={`relative mx-auto flex items-center justify-between gap-6 border transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
@@ -95,25 +58,16 @@ export default function EmployerNavbar() {
               className={`w-auto object-contain transition-[height] duration-500 ${floating ? 'h-11' : 'h-14'}`}
             />
             <span className="hidden sm:inline text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-(--explorer-blue) bg-(--explorer-blue-surface) border border-(--explorer-blue-border) rounded-full px-2.5 py-1">
->>>>>>> Stashed changes
               For Employers
             </span>
           </Link>
 
-<<<<<<< Updated upstream
-          <nav aria-label="Employer" className="hidden lg:flex items-center gap-7">
-=======
           <nav aria-label="Employer" className="hidden lg:flex items-center gap-1">
->>>>>>> Stashed changes
             {EMPLOYER_NAV_LINKS.map((link) => (
               <Link
                 key={link.label}
                 to={link.to}
-<<<<<<< Updated upstream
-                className="text-[13px] font-bold text-[#111827]/65 hover:text-[#4a4ed8] transition-colors"
-=======
                 className="rounded-full px-3.5 py-2 text-[14px] font-semibold text-(--explorer-navy)/75 hover:text-(--explorer-navy) hover:bg-(--explorer-navy)/[0.06] transition-colors"
->>>>>>> Stashed changes
               >
                 {link.label}
               </Link>
@@ -122,25 +76,6 @@ export default function EmployerNavbar() {
 
           <div className="hidden lg:flex items-center gap-3 shrink-0">
             <Link
-<<<<<<< Updated upstream
-              to="/employers/pricing"
-              className="flex items-center gap-1.5 text-[13px] font-bold text-white bg-[#4a4ed8] hover:bg-[#111827] transition-colors duration-200 px-4 py-2 rounded-full"
-            >
-              <Crown size={14} className="fill-white/15" />
-              Subscription
-            </Link>
-            <Link
-              to="/employers/signin"
-              className="text-[13px] font-bold text-[#111827]/75 hover:text-[#4a4ed8] transition-colors px-3 py-2"
-            >
-              Sign in
-            </Link>
-
-          </div>
-
-          <button
-            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full border border-[#111827]/20 text-[#111827]"
-=======
               to="/"
               className="text-[13.5px] font-semibold text-(--explorer-muted) hover:text-(--explorer-navy) transition-colors px-3 py-2"
             >
@@ -159,7 +94,6 @@ export default function EmployerNavbar() {
 
           <button
             className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full border border-(--explorer-border) text-(--explorer-navy)"
->>>>>>> Stashed changes
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle navigation"
             aria-expanded={open}
@@ -185,11 +119,7 @@ export default function EmployerNavbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-<<<<<<< Updated upstream
-              className="lg:hidden fixed top-19 left-0 right-0 bg-[#f7f8fc] border-b border-[#111827]/10 shadow-lg z-40"
-=======
               className="lg:hidden fixed top-19 left-0 right-0 bg-white border-b border-(--explorer-border) shadow-lg z-40"
->>>>>>> Stashed changes
             >
               <div className="p-5 flex flex-col gap-1">
                 {EMPLOYER_NAV_LINKS.map((link) => (
@@ -197,40 +127,22 @@ export default function EmployerNavbar() {
                     key={link.label}
                     to={link.to}
                     onClick={() => setOpen(false)}
-<<<<<<< Updated upstream
-                    className="py-3 text-[14px] font-bold text-[#111827] border-b border-[#111827]/10"
-=======
                     className="py-3 text-[14px] font-semibold text-(--explorer-navy) border-b border-(--explorer-border)"
->>>>>>> Stashed changes
                   >
                     {link.label}
                   </Link>
                 ))}
                 <div className="flex flex-col gap-2 pt-4">
                   <Link
-<<<<<<< Updated upstream
-                    to="/employers/pricing"
-                    onClick={() => setOpen(false)}
-                    className="h-10 flex items-center justify-center gap-1.5 rounded-full bg-[#4a4ed8] text-white text-[13.5px] font-bold"
-                  >
-                    <Crown size={14} className="fill-white/15" /> Subscription
-=======
                     to="/"
                     onClick={() => setOpen(false)}
                     className="h-10 flex items-center justify-center rounded-md border border-(--explorer-border) text-(--explorer-navy) text-[13.5px] font-bold"
                   >
                     Looking for a job?
->>>>>>> Stashed changes
                   </Link>
                   <Link
                     to="/employers/signin"
                     onClick={() => setOpen(false)}
-<<<<<<< Updated upstream
-                    className="h-10 flex items-center justify-center rounded-full border border-[#111827]/20 text-[#111827] text-[13.5px] font-bold"
-                  >
-                    Sign in
-                  </Link>
-=======
                     className="h-10 flex items-center justify-center rounded-md border border-(--explorer-border) text-(--explorer-navy) text-[13.5px] font-bold"
                   >
                     Sign in
@@ -238,7 +150,6 @@ export default function EmployerNavbar() {
                   <ExplorerButton to="/employers/signup" size="md" onClick={() => setOpen(false)}>
                     Post a Job
                   </ExplorerButton>
->>>>>>> Stashed changes
                 </div>
               </div>
             </motion.div>
