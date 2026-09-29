@@ -29,7 +29,7 @@ export const CANDIDATE_JOURNEY_DATA = {
     {
       id: "step-03",
       num: "03",
-      title: "RESUME VERIFICATION",
+      title: "RESUME REVIEW",
       description: "Our team reviews your resume and prepares your profile for relevant hiring opportunities.",
       align: "image-left",
       image: "/images/journey/step-03.png",

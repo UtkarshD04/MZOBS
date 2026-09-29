@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, MapPin, ShieldCheck, TrendingUp, SearchX, RotateCw } from 'lucide-react'
+import { ArrowLeft, MapPin, TrendingUp, SearchX, RotateCw } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import Seo from '../components/Seo'
@@ -91,10 +91,10 @@ export default function CityJobs() {
 
   const featuredJob = jobs[0]
   const compactJobs = jobs.slice(1, 1 + MAX_COMPACT_ROWS)
-  const seoTitle = city ? `${city.city} Jobs — Verified Openings Hiring Now | Mzobs` : 'City Jobs — Mzobs'
+  const seoTitle = city ? `${city.city} Jobs — Openings Hiring Now | Mzobs` : 'City Jobs — Mzobs'
   const seoDescription = city
-    ? `Browse verified job openings in ${city.city}. Real employers, screened listings, updated as new requirements come in.`
-    : 'Browse verified job openings by city on Mzobs.'
+    ? `Browse job openings in ${city.city} from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.`
+    : 'Browse job openings by city on Mzobs.'
 
   return (
     <div className="min-h-screen bg-(--explorer-bg) flex flex-col">
@@ -167,10 +167,9 @@ export default function CityJobs() {
                       <p className="mt-1 text-[22px] font-black text-(--explorer-navy)">{formatSalaryRange(stats.salaryMin, stats.salaryMax) || '—'}</p>
                     </div>
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-wide text-(--explorer-muted)">Verified employers</p>
-                      <p className="mt-1 text-[22px] font-black text-(--explorer-navy) inline-flex items-center gap-1.5">
-                        <ShieldCheck size={17} className="text-(--explorer-teal)" aria-hidden="true" />
-                        {stats.verifiedEmployers}
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-(--explorer-muted)">Top categories</p>
+                      <p className="mt-1 text-[15px] font-black leading-snug text-(--explorer-navy)">
+                        {stats.topCategories?.length ? stats.topCategories.slice(0, 2).join(', ') : '—'}
                       </p>
                     </div>
                     <div>

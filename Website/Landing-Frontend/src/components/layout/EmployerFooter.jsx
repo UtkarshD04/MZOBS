@@ -15,9 +15,9 @@ const SOCIAL_ICONS = {
 // headline) rather than the site-wide cream/navy Footer.
 export default function EmployerFooter() {
   return (
-    <footer className="relative overflow-hidden bg-[#102a43] pt-16 pb-8 px-6 md:px-12">
-      <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#0a6f64] blur-[100px] opacity-60" />
-      <div aria-hidden="true" className="absolute -right-16 bottom-0 h-56 w-56 rounded-full bg-[#0a6f64] blur-[110px] opacity-20" />
+    <footer className="relative overflow-hidden bg-[#111827] pt-16 pb-8 px-6 md:px-12">
+      <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#4a4ed8] blur-[100px] opacity-60" />
+      <div aria-hidden="true" className="absolute -right-16 bottom-0 h-56 w-56 rounded-full bg-[#4a4ed8] blur-[110px] opacity-20" />
 
       <div className="relative max-w-7xl mx-auto space-y-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
@@ -25,7 +25,7 @@ export default function EmployerFooter() {
           <div className="md:col-span-5 space-y-5">
             <Link to="/employers" className="flex items-center gap-2 group w-fit">
               <img src="/images/logo.png" alt="Mzobs" className="h-10 w-auto object-contain brightness-0 invert" />
-              <span className="text-[10px] tracking-[0.18em] text-[#12a594] uppercase font-bold border-l border-white/20 pl-2">
+              <span className="text-[10px] tracking-[0.18em] text-[#20c997] uppercase font-bold border-l border-white/20 pl-2">
                 For Employers
               </span>
             </Link>
@@ -35,13 +35,13 @@ export default function EmployerFooter() {
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-white/20 text-white text-[12px] font-bold hover:border-[#0a6f64] hover:text-[#0a6f64] transition-colors"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-white/20 text-white text-[12px] font-bold hover:border-[#4a4ed8] hover:text-[#4a4ed8] transition-colors"
               >
                 Looking for a job?
               </Link>
               <Link
                 to="/employers/signin"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#0a6f64] text-[#102a43] text-[12px] font-bold hover:bg-[#12a594] transition-colors"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#4a4ed8] text-[#111827] text-[12px] font-bold hover:bg-[#20c997] transition-colors"
               >
                 Employer sign in
               </Link>
@@ -50,11 +50,11 @@ export default function EmployerFooter() {
 
           {/* Menu column */}
           <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-[#e8f8f5]">{FOOTER_DATA.menuTitle}</h4>
+            <h4 className="text-sm font-bold text-[#eeefff]">{FOOTER_DATA.menuTitle}</h4>
             <ul className="space-y-2.5 text-[13px] text-white/55 font-medium">
               {FOOTER_DATA.menuItems.map((item, idx) => (
                 <li key={idx}>
-                  <Link to={item.to} className="hover:text-[#12a594] transition-colors">
+                  <Link to={item.to} className="hover:text-[#20c997] transition-colors">
                     {item.label}
                   </Link>
                 </li>
@@ -64,12 +64,12 @@ export default function EmployerFooter() {
 
           {/* Contact column */}
           <div className="md:col-span-3 space-y-4">
-            <h4 className="text-sm font-bold text-[#e8f8f5]">{FOOTER_DATA.contactTitle}</h4>
+            <h4 className="text-sm font-bold text-[#eeefff]">{FOOTER_DATA.contactTitle}</h4>
             <div className="space-y-2.5 text-[13px] text-white/55 leading-relaxed font-medium">
-              <a href={`tel:${FOOTER_DATA.phone}`} className="block hover:text-[#12a594] transition-colors w-fit">
+              <a href={`tel:${FOOTER_DATA.phone}`} className="block hover:text-[#20c997] transition-colors w-fit">
                 {FOOTER_DATA.phone}
               </a>
-              <a href={`mailto:${FOOTER_DATA.email}`} className="block hover:text-[#12a594] transition-colors w-fit">
+              <a href={`mailto:${FOOTER_DATA.email}`} className="block hover:text-[#20c997] transition-colors w-fit">
                 {FOOTER_DATA.email}
               </a>
               <p className="pt-1">{FOOTER_DATA.address}</p>
@@ -78,7 +78,7 @@ export default function EmployerFooter() {
 
           {/* Socials column */}
           <div className="md:col-span-2 space-y-4">
-            <h4 className="text-sm font-bold text-[#e8f8f5]">{FOOTER_DATA.socialsTitle}</h4>
+            <h4 className="text-sm font-bold text-[#eeefff]">{FOOTER_DATA.socialsTitle}</h4>
             <div className="flex flex-wrap gap-2.5">
               {FOOTER_DATA.socialsItems.map((item, idx) => {
                 const Icon = SOCIAL_ICONS[item.label]
@@ -89,7 +89,7 @@ export default function EmployerFooter() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={item.label}
-                    className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/70 transition-all duration-200 hover:border-[#0a6f64] hover:text-[#0a6f64] hover:-translate-y-0.5"
+                    className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/70 transition-all duration-200 hover:border-[#4a4ed8] hover:text-[#4a4ed8] hover:-translate-y-0.5"
                   >
                     {Icon && <Icon size={14} />}
                   </a>
@@ -104,7 +104,7 @@ export default function EmployerFooter() {
           <div className="flex items-center gap-4">
             {FOOTER_DATA.rightLinks.map((link, i) => (
               <span key={i} className="flex items-center gap-4">
-                <Link to={link.to} className="hover:text-[#12a594] transition-colors">
+                <Link to={link.to} className="hover:text-[#20c997] transition-colors">
                   {link.label}
                 </Link>
                 {i < FOOTER_DATA.rightLinks.length - 1 && <span className="text-white/15">|</span>}

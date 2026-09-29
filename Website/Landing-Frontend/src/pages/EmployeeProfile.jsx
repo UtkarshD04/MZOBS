@@ -387,7 +387,7 @@ export default function EmployeeProfile() {
                       <p className="text-[12.5px] text-white/65 mt-1 max-w-md leading-relaxed">
                         {isPaid
                           ? `${profile.subscription?.paidOn ? `Paid on ${new Date(profile.subscription.paidOn).toLocaleDateString('en-IN')} · ` : ''}One-time payment · valid for life`
-                          : 'Resume verification, mock interviews and priority visibility to verified employers — one-time fee, no renewal.'}
+                          : 'Resume review, mock interviews and priority visibility to employers — one-time fee, no renewal.'}
                       </p>
                     </div>
                   </div>

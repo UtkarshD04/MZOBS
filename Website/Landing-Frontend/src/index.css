@@ -235,8 +235,8 @@
    this design has no dark-mode counterpart to switch to.
 ============================================================ */
 :root {
-  --careers-accent: #3d5c34;
-  --careers-accent-hover: #314a2a;
+  --careers-accent: #5b5fef;
+  --careers-accent-hover: #4a4ed8;
   --careers-bg: #f5f5f5;
   --careers-ink: #000000;
   --careers-text: #595959;
@@ -855,4 +855,212 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .home-theme .hero-aurora { animation: heroAurora 40s linear infinite; }
+}
+
+/* ============================================================
+   MZOBS DESIGN SYSTEM v2 — "Talent × Opportunity × Smarter Hiring"
+   One token set for colour, type, radius, shadow and motion. The
+   redesigned public pages (components/mz/*) read these directly
+   (bg-mz-primary, text-mz-ink, shadow-mz-card ...). The legacy
+   --explorer-* / --jobs-* variables further up are re-pointed at
+   the same values at the end of this block, so every page that
+   still uses them (job detail, auth, employer pages, marketplace
+   filters) picks up the Mzobs palette without being rewritten.
+============================================================ */
+@theme {
+  --color-mz-primary: #5b5fef;
+  --color-mz-primary-strong: #4a4ed8;
+  --color-mz-primary-tint: #eeefff;
+  --color-mz-primary-ring: rgba(91, 95, 239, 0.28);
+  --color-mz-secondary: #7c6cff;
+  --color-mz-accent: #20c997;
+  --color-mz-accent-ink: #0b8a67; /* accent used as small text: passes AA on white */
+  --color-mz-accent-tint: #e4f8f1;
+  --color-mz-bg: #f7f8fc;
+  --color-mz-surface: #ffffff;
+  --color-mz-ink: #111827;
+  --color-mz-ink-2: #344054;
+  --color-mz-muted: #667085;
+  --color-mz-line: #e6e8f0;
+  --color-mz-line-strong: #d5d8e4;
+  --color-mz-dark: #111827;
+  --color-mz-dark-2: #1a2236;
+
+  --font-display: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --radius-mz-sm: 10px;
+  --radius-mz-md: 14px;
+  --radius-mz-lg: 20px;
+  --radius-mz-xl: 28px;
+
+  --shadow-mz-card: 0 1px 2px rgba(17, 24, 39, 0.04), 0 8px 24px -12px rgba(17, 24, 39, 0.12);
+  --shadow-mz-lift: 0 2px 4px rgba(17, 24, 39, 0.04), 0 22px 44px -18px rgba(70, 74, 200, 0.28);
+  --shadow-mz-float: 0 30px 70px -24px rgba(45, 50, 140, 0.38), 0 6px 16px -6px rgba(17, 24, 39, 0.1);
+  --shadow-mz-cta: 0 10px 24px -8px rgba(91, 95, 239, 0.55);
+
+  --ease-mz: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  --mz-gradient: linear-gradient(135deg, #5b5fef 0%, #7c6cff 100%);
+  --mz-gradient-soft: linear-gradient(135deg, rgba(91, 95, 239, 0.1) 0%, rgba(32, 201, 151, 0.08) 100%);
+  --mz-dur-fast: 160ms;
+  --mz-dur: 280ms;
+
+  /* legacy palettes -> Mzobs palette */
+  --explorer-navy: #111827;
+  --explorer-navy-deep: #0b1020;
+  --explorer-muted: #667085;
+  --explorer-blue: #5b5fef;
+  --explorer-blue-hover: #4a4ed8;
+  --explorer-blue-surface: #eeefff;
+  --explorer-blue-border: #ccceff;
+  --explorer-teal: #0b8a67;
+  --explorer-teal-hover: #086f52;
+  --explorer-teal-surface: #e4f8f1;
+  --explorer-teal-border: #b5e6d5;
+  --explorer-bg: #f7f8fc;
+  --explorer-border: #e6e8f0;
+  --explorer-blue-surface-alt: #f3f3ff;
+  --jobs-navy: #111827;
+  --jobs-navy-deep: #0b1020;
+  --jobs-ink-soft: #475467;
+  --jobs-teal: #20c997;
+  --jobs-teal-dark: #4a4ed8;
+  --jobs-teal-tint: #e4f8f1;
+  --jobs-blue: #5b5fef;
+  --jobs-blue-dark: #4a4ed8;
+  --jobs-blue-tint: #eeefff;
+  --jobs-bg-subtle: #f7f8fc;
+  --jobs-border: #e6e8f0;
+  --hero-cta-gradient: linear-gradient(135deg, #5b5fef 0%, #7c6cff 100%);
+  --bubble-teal-rgb: 32, 201, 151;
+  --bubble-blue-rgb: 91, 95, 239;
+  --bubble-navy-rgb: 17, 24, 39;
+}
+
+@layer base {
+  html {
+    background: var(--color-mz-bg);
+    scroll-padding-top: 88px;
+  }
+  body {
+    font-family: var(--font-sans);
+    letter-spacing: -0.005em;
+  }
+}
+
+@layer utilities {
+  .mz-grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(91, 95, 239, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(91, 95, 239, 0.07) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);
+  }
+  .mz-grid-bg-dark {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, #000 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, #000 20%, transparent 75%);
+  }
+  .mz-glass {
+    background: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+  .mz-text-gradient {
+    background-image: var(--mz-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .mz-scroll-x {
+    scrollbar-width: none;
+  }
+  .mz-scroll-x::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes mzFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -8px, 0); }
+}
+@keyframes mzFloatAlt {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, 7px, 0); }
+}
+@keyframes mzPulseRing {
+  0% { transform: scale(0.6); opacity: 0.7; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes mzMarquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes mzDash {
+  to { stroke-dashoffset: -24; }
+}
+@keyframes mzShimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes mzDrift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(30px, -20px, 0) scale(1.08); }
+}
+
+.mz-float { animation: mzFloat 6s ease-in-out infinite; }
+.mz-float-alt { animation: mzFloatAlt 7s ease-in-out infinite; }
+.mz-marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.mz-marquee-track { display: flex; width: max-content; animation: mzMarquee 60s linear infinite; }
+.mz-marquee:hover .mz-marquee-track, .mz-marquee:focus-within .mz-marquee-track { animation-play-state: paused; }
+.mz-skeleton {
+  background: linear-gradient(90deg, #eceef6 25%, #f6f7fb 37%, #eceef6 63%);
+  background-size: 400% 100%;
+  animation: mzShimmer 1.6s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mz-float, .mz-float-alt, .mz-marquee-track, .mz-skeleton { animation: none !important; }
+  .mz-marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+}
+
+/* Entrance for above-the-fold content: pure CSS so it runs before React
+   hydrates (the prerendered hero must never sit invisible waiting for JS). */
+@keyframes mzRise {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.mz-rise { animation: mzRise 0.7s var(--ease-mz) both; animation-delay: var(--d, 0s); }
+@media (prefers-reduced-motion: reduce) { .mz-rise { animation: none; } }
+
+/* Hero brand visual (components/mz/home/HeroVisual.jsx): a glass sculpture
+   that only floats, sways and catches light — slowly enough to go almost
+   unnoticed. Everything stops for prefers-reduced-motion. */
+.mz-sculpt-float { animation: mzSculptFloat 11s ease-in-out infinite; }
+.mz-sculpt-sway { transform-box: fill-box; transform-origin: 50% 90%; animation: mzSculptSway 17s ease-in-out infinite; }
+.mz-sculpt-light { animation: mzSculptLight 9s ease-in-out infinite; }
+.mz-sculpt-light-2 { animation-delay: -4.5s; }
+.mz-sculpt-glow { transform-box: fill-box; transform-origin: center; animation: mzSculptGlow 12s ease-in-out infinite; }
+.mz-sculpt-glow-2 { animation-duration: 15s; animation-delay: -6s; }
+.mz-sculpt-shadow { transform-box: fill-box; transform-origin: center; animation: mzSculptShadow 11s ease-in-out infinite; }
+@keyframes mzSculptFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes mzSculptSway { 0%, 100% { transform: rotate(-0.8deg); } 50% { transform: rotate(0.8deg); } }
+@keyframes mzSculptLight { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.6; } }
+@keyframes mzSculptGlow { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+@keyframes mzSculptShadow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.92); opacity: 0.8; } }
+@media (prefers-reduced-motion: reduce) {
+  .mz-sculpt-float, .mz-sculpt-sway, .mz-sculpt-light, .mz-sculpt-glow, .mz-sculpt-shadow { animation: none; }
+}
+
+/* Barely-there film grain for the hero's background. */
+.mz-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.07 0 0 0 0 0.09 0 0 0 0 0.15 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.05;
 }

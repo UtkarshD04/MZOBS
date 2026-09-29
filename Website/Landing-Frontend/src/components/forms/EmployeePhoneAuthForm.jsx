@@ -542,7 +542,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
             <button type="button" onClick={() => setStep('email')} className="text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors" aria-label="Back">
               <ArrowLeft size={16} />
             </button>
-            <h2 className="text-base font-black text-(--jobs-navy)">Verify your email</h2>
+            <h2 className="text-base font-black text-(--jobs-navy)">Check your email</h2>
           </div>
           <div className="flex items-center justify-between mt-1 mb-5 ml-6">
             <p className="text-[13px] text-(--jobs-ink-soft) break-all">Enter the 6-digit code sent to {email.trim()}</p>
@@ -557,7 +557,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
 
           <div className="flex items-center gap-3 mt-4">
             <SecondaryButton onClick={handleVerifyEmailCode} disabled={emailBusy || emailOtp.length !== 6}>
-              {emailBusy ? 'Verifying...' : 'Verify & continue'}
+              {emailBusy ? 'Checking...' : 'Continue'}
             </SecondaryButton>
             <button
               type="button"
@@ -575,14 +575,14 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
         <motion.form key="emailProfile" {...stepTransition} onSubmit={handleContinueEmailProfile} noValidate>
           <h2 className="text-base font-black text-(--jobs-navy)">Almost there</h2>
           <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5 break-all">
-            {email.trim()} is verified. Add your name and mobile number so employers can reach you.
+            {email.trim()} is confirmed. Add your name and mobile number so employers can reach you.
           </p>
 
           <Field label="Full name">
             <Input icon={User} value={name} onChange={(e) => setName(e.target.value)} placeholder="Ananya Iyer" autoComplete="name" autoFocus />
           </Field>
 
-          <Field label="Mobile number" hint="We will send an OTP to this number to verify it.">
+          <Field label="Mobile number" hint="We will send an OTP to this number to confirm it.">
             <div className="flex gap-2">
               <div className="h-11 px-3.5 flex items-center rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle) text-[13.5px] font-bold text-(--jobs-navy) shrink-0">
                 +91
@@ -617,7 +617,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
             <button type="button" onClick={resetToPhoneStep} className="text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors" aria-label="Back">
               <ArrowLeft size={16} />
             </button>
-            <h2 className="text-base font-black text-(--jobs-navy)">Verify your number</h2>
+            <h2 className="text-base font-black text-(--jobs-navy)">Enter the code</h2>
           </div>
           <div className="flex items-center justify-between mt-1 mb-5 ml-6">
             <p className="text-[13px] text-(--jobs-ink-soft)">Enter the 6-digit code sent to +91 {phone}</p>
@@ -632,7 +632,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
 
           <div className="flex items-center gap-3 mt-4">
             <SecondaryButton onClick={handleVerifyOtp} disabled={verifyingOtp || checkingAccount || otp.length !== 6}>
-              {verifyingOtp || checkingAccount ? 'Verifying...' : 'Verify & continue'}
+              {verifyingOtp || checkingAccount ? 'Checking...' : 'Continue'}
             </SecondaryButton>
             <button
               type="button"

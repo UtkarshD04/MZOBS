@@ -35,14 +35,14 @@ export default function EmployerForgotPasswordForm() {
   if (status === 'success') {
     return (
       <div className="flex flex-col items-center justify-center text-center py-6">
-        <div className="w-14 h-14 rounded-full bg-[#DDE6DF] text-[#246B5A] flex items-center justify-center mb-4">
+        <div className="w-14 h-14 rounded-full bg-[#DDE6DF] text-[#4a4ed8] flex items-center justify-center mb-4">
           <CheckCircle2 size={26} />
         </div>
         <h3 className="font-serif text-lg font-bold text-[#20251F]">Check your email</h3>
         <p className="text-[13.5px] text-[#526051] mt-1.5 max-w-xs">
           If an account exists for <strong>{email}</strong>, we've sent a link to reset your password. It expires in 30 minutes.
         </p>
-        <Link to="/employers/signin" className="text-xs font-bold text-[#526051] hover:text-[#246B5A] transition-colors mt-6">
+        <Link to="/employers/signin" className="text-xs font-bold text-[#526051] hover:text-[#4a4ed8] transition-colors mt-6">
           Back to sign in
         </Link>
       </div>

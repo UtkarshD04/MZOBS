@@ -24,47 +24,47 @@ export default function EmployerTalentRadarSection() {
 
   return (
     <section ref={ref} className="relative overflow-hidden bg-[#F1EDE5] py-16 md:py-24 px-6 md:px-12">
-      <div aria-hidden="true" className="absolute -right-24 top-1/2 -translate-y-1/2 h-80 w-80 rounded-full bg-[#bfdbfe]/50 blur-[90px]" />
+      <div aria-hidden="true" className="absolute -right-24 top-1/2 -translate-y-1/2 h-80 w-80 rounded-full bg-[#ccceff]/50 blur-[90px]" />
       <div className="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
         <FadeInView>
-          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#0a6f64]">Talent Radar</span>
-          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#102a43] tracking-tight leading-tight">
+          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#4a4ed8]">Talent Radar</span>
+          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#111827] tracking-tight leading-tight">
             Discover talent before you need to hire.
           </h2>
-          <p className="mt-3 max-w-md text-[15px] text-[#102a43]/70 leading-relaxed">
+          <p className="mt-3 max-w-md text-[15px] text-[#111827]/70 leading-relaxed">
             Save the kind of talent you may need next and let Mzobs surface relevant profiles as they become available.
           </p>
         </FadeInView>
 
         <FadeInView delay={0.1}>
           <div className="relative max-w-md ml-auto">
-            <div className="rounded-[28px] border border-[#102a43] bg-white p-6 sm:p-7 sm:pb-16 shadow-[8px_10px_0_#102a43]">
+            <div className="rounded-[28px] border border-[#111827] bg-white p-6 sm:p-7 sm:pb-16 shadow-[8px_10px_0_#111827]">
               <div className="flex items-center justify-between">
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#0a6f64]">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#4a4ed8]">
                   <Radar size={13} /> Talent Watch
                 </span>
                 <span data-radar-ping className="relative flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#0a6f64] opacity-60" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#0a6f64]" />
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#4a4ed8] opacity-60" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#4a4ed8]" />
                 </span>
               </div>
-              <h3 className="mt-4 text-[17px] font-bold text-[#102a43]">Senior React Developer</h3>
-              <p className="mt-1 text-[13px] text-[#51697e]">3–5 years · Bengaluru · ₹8–12 LPA</p>
-              <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#DCECE3] px-3 py-1.5 text-[12px] font-bold text-[#0a6f64]">
+              <h3 className="mt-4 text-[17px] font-bold text-[#111827]">Senior React Developer</h3>
+              <p className="mt-1 text-[13px] text-[#667085]">3–5 years · Bengaluru · ₹8–12 LPA</p>
+              <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#DCECE3] px-3 py-1.5 text-[12px] font-bold text-[#4a4ed8]">
                 <Check size={13} /> Watching
               </span>
             </div>
 
-            <div data-radar-notification className="mt-4 rounded-2xl border border-[#102a43]/15 bg-[#102a43] p-4 sm:p-5 sm:absolute sm:-bottom-6 sm:left-1/2 sm:-translate-x-1/2 sm:w-[110%] shadow-[0_18px_35px_-16px_rgba(16,42,67,0.5)]">
+            <div data-radar-notification className="mt-4 rounded-2xl border border-[#111827]/15 bg-[#111827] p-4 sm:p-5 sm:absolute sm:-bottom-6 sm:left-1/2 sm:-translate-x-1/2 sm:w-[110%] shadow-[0_18px_35px_-16px_rgba(16,42,67,0.5)]">
               <div className="flex items-start gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#0a6f64] text-white">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#4a4ed8] text-white">
                   <Sparkles size={15} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-[13px] font-bold text-white">New talent found</p>
                   <p className="text-[12px] text-white/70 mt-0.5">96% Match · Available in 18 days</p>
                 </div>
-                <span className="inline-flex items-center gap-1 text-[11.5px] font-bold text-[#bfdbfe] shrink-0">
+                <span className="inline-flex items-center gap-1 text-[11.5px] font-bold text-[#ccceff] shrink-0">
                   View candidate <ArrowRight size={12} />
                 </span>
               </div>

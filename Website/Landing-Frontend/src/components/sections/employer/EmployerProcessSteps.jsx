@@ -17,14 +17,14 @@ const STEPS = [
 
 function RequirementFragment() {
   return (
-    <div className="rounded-xl border border-[#102a43]/10 bg-[#e8f8f5] p-4">
+    <div className="rounded-xl border border-[#111827]/10 bg-[#eeefff] p-4">
       <div className="flex items-center justify-between text-[12.5px]">
-        <span className="text-[#51697e] font-medium">Role</span>
-        <span className="text-[#102a43] font-semibold">Backend Engineer</span>
+        <span className="text-[#667085] font-medium">Role</span>
+        <span className="text-[#111827] font-semibold">Backend Engineer</span>
       </div>
       <div className="mt-2 flex items-center justify-between text-[12.5px]">
-        <span className="text-[#51697e] font-medium">Experience</span>
-        <span className="text-[#102a43] font-semibold">3–5 years</span>
+        <span className="text-[#667085] font-medium">Experience</span>
+        <span className="text-[#111827] font-semibold">3–5 years</span>
       </div>
     </div>
   )
@@ -37,12 +37,12 @@ function DiscoverFragment() {
     { initials: 'AG', match: '89%' },
   ]
   return (
-    <div className="rounded-xl border border-[#102a43]/10 bg-[#e8f8f5] p-4 space-y-2">
+    <div className="rounded-xl border border-[#111827]/10 bg-[#eeefff] p-4 space-y-2">
       {rows.map((r) => (
         <div key={r.initials} className="flex items-center gap-2.5">
-          <span className="w-6 h-6 rounded-full bg-[#bfdbfe] text-[#102a43] text-[9.5px] font-bold flex items-center justify-center shrink-0">{r.initials}</span>
+          <span className="w-6 h-6 rounded-full bg-[#ccceff] text-[#111827] text-[9.5px] font-bold flex items-center justify-center shrink-0">{r.initials}</span>
           <span className="h-1.5 flex-1 rounded-full bg-white" />
-          <span className="text-[9.5px] font-bold text-[#0a6f64] shrink-0">{r.match}</span>
+          <span className="text-[9.5px] font-bold text-[#4a4ed8] shrink-0">{r.match}</span>
         </div>
       ))}
     </div>
@@ -55,15 +55,15 @@ function UnderstandFragment() {
     { label: 'Location', value: 100 },
   ]
   return (
-    <div className="rounded-xl border border-[#102a43]/10 bg-[#e8f8f5] p-4 space-y-2.5">
+    <div className="rounded-xl border border-[#111827]/10 bg-[#eeefff] p-4 space-y-2.5">
       {rows.map((r) => (
         <div key={r.label}>
           <div className="flex items-center justify-between text-[10.5px] mb-1">
-            <span className="text-[#51697e] font-medium">{r.label}</span>
-            <span className="text-[#102a43] font-bold">{r.value}%</span>
+            <span className="text-[#667085] font-medium">{r.label}</span>
+            <span className="text-[#111827] font-bold">{r.value}%</span>
           </div>
           <div className="h-1.5 w-full rounded-full bg-white overflow-hidden">
-            <div className="h-full rounded-full bg-[#0a6f64]" style={{ width: `${r.value}%` }} />
+            <div className="h-full rounded-full bg-[#4a4ed8]" style={{ width: `${r.value}%` }} />
           </div>
         </div>
       ))}
@@ -74,10 +74,10 @@ function UnderstandFragment() {
 function ShortlistFragment() {
   const cols = ['Applied', 'Shortlisted', 'Interview']
   return (
-    <div className="rounded-xl border border-[#102a43]/10 bg-[#e8f8f5] p-4 grid grid-cols-3 gap-2">
+    <div className="rounded-xl border border-[#111827]/10 bg-[#eeefff] p-4 grid grid-cols-3 gap-2">
       {cols.map((c, i) => (
         <div key={c} className="rounded-lg bg-[#F1EDE5] p-2">
-          <span className="text-[9px] font-bold text-[#51697e] uppercase tracking-wide">{c}</span>
+          <span className="text-[9px] font-bold text-[#667085] uppercase tracking-wide">{c}</span>
           <div className={`mt-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-[#F36D4C]/25' : i === 1 ? 'bg-[#F36D4C]/55' : 'bg-[#F36D4C]'}`} />
         </div>
       ))}
@@ -87,13 +87,13 @@ function ShortlistFragment() {
 
 function InterviewFragment() {
   return (
-    <div className="rounded-xl border border-[#102a43]/10 bg-[#e8f8f5] p-4 flex items-center gap-3">
-      <span className="grid h-9 w-9 place-items-center rounded-lg bg-[#bfdbfe] text-[#102a43] shrink-0">
+    <div className="rounded-xl border border-[#111827]/10 bg-[#eeefff] p-4 flex items-center gap-3">
+      <span className="grid h-9 w-9 place-items-center rounded-lg bg-[#ccceff] text-[#111827] shrink-0">
         <CalendarCheck size={16} />
       </span>
       <div>
-        <p className="text-[12px] font-semibold text-[#102a43]">Technical round</p>
-        <p className="text-[10.5px] text-[#51697e]">Thu, 3:30 PM · Confirmed</p>
+        <p className="text-[12px] font-semibold text-[#111827]">Technical round</p>
+        <p className="text-[10.5px] text-[#667085]">Thu, 3:30 PM · Confirmed</p>
       </div>
     </div>
   )
@@ -101,11 +101,11 @@ function InterviewFragment() {
 
 function HireFragment() {
   return (
-    <div className="rounded-xl border border-[#102a43]/10 bg-[#e8f8f5] p-4 flex items-center justify-between">
-      <span className="flex items-center gap-2 text-[12px] font-semibold text-[#102a43]">
-        <Sparkles size={14} className="text-[#0a6f64]" /> Offer accepted
+    <div className="rounded-xl border border-[#111827]/10 bg-[#eeefff] p-4 flex items-center justify-between">
+      <span className="flex items-center gap-2 text-[12px] font-semibold text-[#111827]">
+        <Sparkles size={14} className="text-[#4a4ed8]" /> Offer accepted
       </span>
-      <span className="text-[9.5px] font-bold uppercase tracking-wide text-[#0a6f64] bg-[#DCECE3] rounded-full px-2 py-1">Hired</span>
+      <span className="text-[9.5px] font-bold uppercase tracking-wide text-[#4a4ed8] bg-[#DCECE3] rounded-full px-2 py-1">Hired</span>
     </div>
   )
 }
@@ -114,11 +114,11 @@ export default function EmployerProcessSteps() {
   const storyRef = useRef(null)
   useStoryProgress(storyRef)
   return (
-    <section ref={storyRef} id="how-it-works" className="relative overflow-hidden bg-[#102a43] py-20 md:py-28 px-6 md:px-12">
-      <div aria-hidden="true" className="absolute -right-28 top-10 h-72 w-72 rounded-full bg-[#0a6f64] blur-[90px] opacity-70" />
+    <section ref={storyRef} id="how-it-works" className="relative overflow-hidden bg-[#111827] py-20 md:py-28 px-6 md:px-12">
+      <div aria-hidden="true" className="absolute -right-28 top-10 h-72 w-72 rounded-full bg-[#4a4ed8] blur-[90px] opacity-70" />
       <div className="max-w-7xl mx-auto">
         <FadeInView className="max-w-xl">
-          <h2 className="font-sans text-3xl sm:text-4xl md:text-[48px] font-bold text-[#e8f8f5] tracking-tight leading-tight">A clearer path from role to right person.</h2>
+          <h2 className="font-sans text-3xl sm:text-4xl md:text-[48px] font-bold text-[#eeefff] tracking-tight leading-tight">A clearer path from role to right person.</h2>
           <p className="mt-3 text-[15px] text-white/60 leading-relaxed">From requirement to right person — one continuous Mzobs experience.</p>
         </FadeInView>
 
@@ -127,9 +127,9 @@ export default function EmployerProcessSteps() {
           <span data-story-line className="hidden xl:block absolute origin-left top-[22px] left-[4%] right-[4%] h-px scale-x-0 bg-[#B9D6CC]" aria-hidden="true" />
           {STEPS.map((step) => (
             <div data-story-card key={step.num} className="relative">
-              <span className="text-[15px] font-bold text-[#B9D6CC] bg-[#102a43] pr-3">{step.num}</span>
+              <span className="text-[15px] font-bold text-[#B9D6CC] bg-[#111827] pr-3">{step.num}</span>
               <span className="ml-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white/40">{step.tag}</span>
-              <h3 className="mt-3 text-[15px] font-bold text-[#e8f8f5] leading-snug">{step.title}</h3>
+              <h3 className="mt-3 text-[15px] font-bold text-[#eeefff] leading-snug">{step.title}</h3>
               <p className="mt-2 text-[12.5px] text-white/60 leading-relaxed">{step.desc}</p>
               <div className="mt-4">
                 <step.Fragment />

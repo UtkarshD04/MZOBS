@@ -4,7 +4,7 @@ import Reveal from '../../ui/Reveal'
 import SplitText from '../../ui/SplitText'
 import CountUp from '../../ui/CountUp'
 import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
-import { WHO_WE_ARE_DATA } from '../../../lib/content'
+import { useLiveStatRows } from '../../../lib/useLiveStats'
 
 const TINTS = ['bg-[var(--careers-tint-blue)]', 'bg-[var(--careers-tint-sage)]', 'bg-[var(--careers-tint-sand)]', 'bg-[var(--careers-tint-rose)]']
 
@@ -27,7 +27,11 @@ function StatNumber({ number }) {
   )
 }
 
+// Live, database-backed numbers only (see useLiveStatRows); the section
+// renders nothing until they load, rather than a placeholder figure.
 export default function StatsTimeline() {
+  const stats = useLiveStatRows()
+  if (!stats.length) return null
   return (
     <section className="bg-[#F5F5F5] py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-7xl mx-auto space-y-10">
@@ -37,8 +41,8 @@ export default function StatsTimeline() {
           </h2>
         </Reveal>
 
-        <StaggerGroup className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {WHO_WE_ARE_DATA.stats.map((stat, i) => (
+        <StaggerGroup className="grid sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+          {stats.map((stat, i) => (
             <StaggerItem key={stat.label} className="h-full">
               <div className={`rounded-3xl p-6 h-full flex flex-col justify-between min-h-[190px] border border-black/[0.04] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg ${TINTS[i % TINTS.length]}`}>
                 <StatNumber number={stat.number} />

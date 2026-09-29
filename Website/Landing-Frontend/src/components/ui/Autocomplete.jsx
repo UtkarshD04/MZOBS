@@ -46,6 +46,7 @@ export default function Autocomplete({
   icon,
   label,
   searchActionLabel,
+  onInputChange,
   className = '',
 }) {
   const [open, setOpen] = useState(false)
@@ -117,6 +118,7 @@ export default function Autocomplete({
   function handleChange(e) {
     const next = e.target.value
     setInputValue(next)
+    onInputChange?.(next)
     setOpen(true)
     scheduleFetch(next)
   }
@@ -125,6 +127,7 @@ export default function Autocomplete({
     if (tags.some((t) => t.value.toLowerCase() === item.value.toLowerCase())) return
     onAddTag(item)
     setInputValue('')
+    onInputChange?.('')
     setActiveIndex(-1)
     // Keep the dropdown open on the "popular defaults" list so picking
     // several titles/cities in a row doesn't mean re-opening it each time.
@@ -190,7 +193,7 @@ export default function Autocomplete({
           return (
             <span
               key={`${tag.kind ?? 'tag'}-${tag.value}-${i}`}
-              className="inline-flex items-center gap-1 h-7 pl-2 pr-1 rounded-md bg-(--explorer-teal-surface) text-(--explorer-teal-hover) text-[13px] font-semibold"
+              className="inline-flex items-center gap-1 h-7 pl-2 pr-1 rounded-md bg-(--explorer-blue-surface) text-(--explorer-blue-hover) text-[13px] font-semibold"
             >
               {Icon && <Icon size={11} className="shrink-0" aria-hidden="true" />}
               <span className="max-w-32 truncate">{tag.value}</span>
@@ -198,7 +201,7 @@ export default function Autocomplete({
                 type="button"
                 onClick={() => onRemoveTag(i)}
                 aria-label={`Remove ${tag.value}`}
-                className="flex items-center justify-center w-4.5 h-4.5 rounded hover:bg-(--explorer-teal)/20 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--explorer-teal) shrink-0"
+                className="flex items-center justify-center w-4.5 h-4.5 rounded hover:bg-(--explorer-blue)/20 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-(--explorer-blue) shrink-0"
               >
                 <X size={11} aria-hidden="true" />
               </button>
@@ -260,7 +263,7 @@ export default function Autocomplete({
                   className={`flex items-center justify-between gap-3 mx-1.5 px-2.5 py-2 rounded-md text-[13.5px] ${
                     tagged
                       ? 'opacity-40 cursor-default'
-                      : `cursor-pointer ${active ? 'bg-(--explorer-teal-surface) text-(--explorer-teal-hover)' : 'text-(--explorer-navy) hover:bg-(--explorer-teal-surface)/60'}`
+                      : `cursor-pointer ${active ? 'bg-(--explorer-blue-surface) text-(--explorer-blue-hover)' : 'text-(--explorer-navy) hover:bg-(--explorer-blue-surface)/60'}`
                   }`}
                 >
                   <span className="flex items-center gap-2 min-w-0">
@@ -283,7 +286,7 @@ export default function Autocomplete({
                 onClick={addTypedText}
                 onMouseEnter={() => setActiveIndex(items.length)}
                 className={`flex items-center gap-2 mx-1.5 mt-1 px-2.5 py-2 rounded-md cursor-pointer text-[13.5px] font-bold border-t border-(--explorer-border) ${
-                  activeIndex === items.length ? 'bg-(--explorer-teal-surface) text-(--explorer-teal-hover)' : 'text-(--explorer-teal) hover:bg-(--explorer-teal-surface)/60'
+                  activeIndex === items.length ? 'bg-(--explorer-blue-surface) text-(--explorer-blue-hover)' : 'text-(--explorer-blue) hover:bg-(--explorer-blue-surface)/60'
                 }`}
               >
                 <Plus size={14} className="shrink-0" aria-hidden="true" />

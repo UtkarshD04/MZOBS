@@ -35,7 +35,7 @@ function validate(form, hasGoogle, acceptedTerms, phoneVerified) {
   }
   if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
   else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
-  else if (!phoneVerified) errors.phone = 'Please verify your phone number via OTP.'
+  else if (!phoneVerified) errors.phone = 'Please confirm your phone number with the OTP.'
   if (!form.companyName.trim()) errors.companyName = 'Please enter your company name.'
   if (!form.industry.trim()) errors.industry = 'Please enter your industry.'
   if (!form.size) errors.size = 'Please select a company size.'
@@ -229,7 +229,7 @@ export default function EmployerSignupForm() {
         </div>
         {phoneVerified && (
           <div className="flex items-center gap-1.5 mt-1.5 text-xs font-semibold text-[var(--careers-tint-sage-ink)]">
-            <CheckCircle2 size={13} /> Phone verified
+            <CheckCircle2 size={13} /> Phone confirmed
           </div>
         )}
         {errors.phone && <span className="text-xs text-red mt-1 block">{errors.phone}</span>}
@@ -245,7 +245,7 @@ export default function EmployerSignupForm() {
               disabled={verifyingOtp || otp.length !== 6}
               className="h-9 px-4 rounded-lg text-[13px] font-bold text-white bg-[var(--careers-accent)] hover:bg-[var(--careers-accent-hover)] disabled:opacity-50 transition-colors"
             >
-              {verifyingOtp ? 'Verifying...' : 'Verify'}
+              {verifyingOtp ? 'Checking...' : 'Confirm'}
             </button>
             <button
               type="button"

@@ -100,3 +100,13 @@ export async function fetchPlatformStats({ signal } = {}) {
   if (!res.ok) throw new Error('Failed to load platform stats')
   return res.json()
 }
+
+// Real, live "which companies are hiring right now" — see Backend's
+// getPublicHiringCompanies/hiringCompanies.js. A company only appears here if
+// it has at least one live public job this instant. Returns
+// `{ companies: [{ id, name, logo, verified, activeJobs, categories, locations, workModes }], total }`.
+export async function fetchHiringCompanies({ signal } = {}) {
+  const res = await fetch(`${PUBLIC_JOBS_API_URL}/hiring-companies`, { signal })
+  if (!res.ok) throw new Error('Failed to load hiring companies')
+  return res.json()
+}

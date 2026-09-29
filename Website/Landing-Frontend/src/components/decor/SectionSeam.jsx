@@ -19,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger)
 // other interactive/decorative motion (HeroBubbleField, the rails, the
 // employer section) — it's a one-shot scroll-scrub, not a looping effect.
 
-const BLUE = '#2563EB'
+const BLUE = '#5b5fef'
 const PURPLE = '#6C5CF0'
 const TEAL = '#0B7A6D'
 const NAVY = '#0F2338'
@@ -107,10 +107,10 @@ function LocationMotif() {
     <svg data-seam-a className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z"
-        stroke={alpha('#1D4ED8', 0.55)}
+        stroke={alpha('#4a4ed8', 0.55)}
         strokeWidth="1.5"
       />
-      <circle cx="12" cy="9.5" r="2.25" stroke={alpha('#1D4ED8', 0.55)} strokeWidth="1.5" />
+      <circle cx="12" cy="9.5" r="2.25" stroke={alpha('#4a4ed8', 0.55)} strokeWidth="1.5" />
     </svg>
   )
 }

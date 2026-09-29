@@ -46,7 +46,7 @@ export default function EmployerResetPasswordForm() {
         <p className="text-sm text-[#526051]">
           This reset link is missing or invalid. Please request a new one.
         </p>
-        <Link to="/employers/forgot-password" className="inline-block mt-4 text-xs font-bold text-[#526051] hover:text-[#246B5A] transition-colors">
+        <Link to="/employers/forgot-password" className="inline-block mt-4 text-xs font-bold text-[#526051] hover:text-[#4a4ed8] transition-colors">
           Request a new link
         </Link>
       </div>
@@ -56,7 +56,7 @@ export default function EmployerResetPasswordForm() {
   if (status === 'success') {
     return (
       <div className="flex flex-col items-center justify-center text-center py-6">
-        <div className="w-14 h-14 rounded-full bg-[#DDE6DF] text-[#246B5A] flex items-center justify-center mb-4">
+        <div className="w-14 h-14 rounded-full bg-[#DDE6DF] text-[#4a4ed8] flex items-center justify-center mb-4">
           <CheckCircle2 size={26} />
         </div>
         <h3 className="font-serif text-lg font-bold text-[#20251F]">Password reset</h3>

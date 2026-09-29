@@ -86,7 +86,7 @@ export default function EmployerSigninForm() {
       </Field>
 
       <div className="flex justify-end -mt-2 mb-4">
-        <Link to="/employers/forgot-password" className="text-xs font-bold text-[#526051] hover:text-[#246B5A] transition-colors">
+        <Link to="/employers/forgot-password" className="text-xs font-bold text-[#526051] hover:text-[#4a4ed8] transition-colors">
           Forgot password?
         </Link>
       </div>

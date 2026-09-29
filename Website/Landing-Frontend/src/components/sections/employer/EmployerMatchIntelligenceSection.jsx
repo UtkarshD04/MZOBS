@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { Briefcase, MapPin, ShieldCheck, Wallet } from 'lucide-react'
+import { Briefcase, MapPin, UserCheck, Wallet } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { FadeInView } from './employerMotion'
@@ -32,68 +32,68 @@ export default function EmployerMatchIntelligenceSection() {
   }, [])
 
   return (
-    <section ref={ref} className="bg-[#e8f8f5] py-16 md:py-24 px-6 md:px-12">
+    <section ref={ref} className="bg-[#eeefff] py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-7xl mx-auto">
         <FadeInView className="max-w-2xl">
-          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#0a6f64]">Match Intelligence</span>
-          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#102a43] tracking-tight leading-tight">
+          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#4a4ed8]">Match Intelligence</span>
+          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#111827] tracking-tight leading-tight">
             Don't just find a candidate. Understand the match.
           </h2>
-          <p className="mt-3 text-[15px] text-[#102a43]/70 leading-relaxed">
+          <p className="mt-3 text-[15px] text-[#111827]/70 leading-relaxed">
             Mzobs brings context behind every recommendation, so recruiters can see where a candidate fits — and where they don't.
           </p>
         </FadeInView>
 
         <div className="mt-12 grid lg:grid-cols-2 gap-6 items-stretch">
           <FadeInView delay={0.05}>
-            <div className="h-full rounded-[28px] border border-[#102a43]/15 bg-white p-6 sm:p-8">
+            <div className="h-full rounded-[28px] border border-[#111827]/15 bg-white p-6 sm:p-8">
               <div className="flex items-start gap-4">
-                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#bfdbfe] text-[15px] font-extrabold text-[#102a43]">RS</span>
+                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#ccceff] text-[15px] font-extrabold text-[#111827]">RS</span>
                 <div>
-                  <p className="flex items-center gap-1.5 text-[15px] font-bold text-[#102a43]">
-                    Rahul Sharma <ShieldCheck size={14} className="text-[#0a6f64]" />
+                  <p className="flex items-center gap-1.5 text-[15px] font-bold text-[#111827]">
+                    Rahul Sharma
                   </p>
-                  <p className="text-[13px] text-[#51697e]">Senior Python Developer</p>
+                  <p className="text-[13px] text-[#667085]">Senior Python Developer</p>
                 </div>
               </div>
-              <div className="mt-6 grid grid-cols-2 gap-4 text-[12.5px] text-[#51697e]">
-                <span className="flex items-center gap-2"><MapPin size={14} className="text-[#0a6f64]" /> Bengaluru</span>
-                <span className="flex items-center gap-2"><Briefcase size={14} className="text-[#0a6f64]" /> 4 years experience</span>
-                <span className="flex items-center gap-2"><Wallet size={14} className="text-[#0a6f64]" /> ₹22 LPA expected</span>
-                <span className="flex items-center gap-2"><ShieldCheck size={14} className="text-[#0a6f64]" /> Profile verified</span>
+              <div className="mt-6 grid grid-cols-2 gap-4 text-[12.5px] text-[#667085]">
+                <span className="flex items-center gap-2"><MapPin size={14} className="text-[#4a4ed8]" /> Bengaluru</span>
+                <span className="flex items-center gap-2"><Briefcase size={14} className="text-[#4a4ed8]" /> 4 years experience</span>
+                <span className="flex items-center gap-2"><Wallet size={14} className="text-[#4a4ed8]" /> ₹22 LPA expected</span>
+                <span className="flex items-center gap-2"><UserCheck size={14} className="text-[#4a4ed8]" /> Profile complete</span>
               </div>
-              <div className="mt-6 pt-6 border-t border-[#102a43]/10 flex flex-wrap gap-1.5">
+              <div className="mt-6 pt-6 border-t border-[#111827]/10 flex flex-wrap gap-1.5">
                 {['Python', 'FastAPI', 'AWS', 'PostgreSQL', 'Docker'].map((s) => (
-                  <span key={s} className="text-[11.5px] font-medium px-2.5 py-1 rounded-full bg-[#F1EDE5] text-[#51697e]">{s}</span>
+                  <span key={s} className="text-[11.5px] font-medium px-2.5 py-1 rounded-full bg-[#F1EDE5] text-[#667085]">{s}</span>
                 ))}
               </div>
-              <p className="mt-5 text-[11px] text-[#51697e]/70">Illustrative candidate profile — product preview, not a real person.</p>
+              <p className="mt-5 text-[11px] text-[#667085]/70">Illustrative candidate profile — product preview, not a real person.</p>
             </div>
           </FadeInView>
 
           <FadeInView delay={0.12}>
-            <div className="h-full rounded-[28px] border border-[#102a43]/15 bg-white p-6 sm:p-8">
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#51697e] mb-4">Match Intelligence</p>
+            <div className="h-full rounded-[28px] border border-[#111827]/15 bg-white p-6 sm:p-8">
+              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#667085] mb-4">Match Intelligence</p>
               <div className="flex flex-col gap-3.5">
                 {DIMENSIONS.map((d) => (
                   <div key={d.key}>
                     <div className="flex items-center justify-between text-[13px] mb-1.5">
-                      <span className="font-medium text-[#102a43]">{d.key} Match</span>
-                      <span className="font-bold text-[#102a43]">{d.value}%</span>
+                      <span className="font-medium text-[#111827]">{d.key} Match</span>
+                      <span className="font-bold text-[#111827]">{d.value}%</span>
                     </div>
                     <div className="h-2 w-full rounded-full bg-[#F1EDE5] overflow-hidden">
-                      <div data-mi-bar className="h-full rounded-full bg-[#0a6f64] origin-left" style={{ width: `${d.value}%` }} />
+                      <div data-mi-bar className="h-full rounded-full bg-[#4a4ed8] origin-left" style={{ width: `${d.value}%` }} />
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div data-mi-explain className="mt-6 pt-5 border-t border-[#102a43]/10">
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#51697e] mb-2">Why Mzobs recommended this profile</p>
-                <p className="text-[13.5px] text-[#102a43] leading-relaxed">
+              <div data-mi-explain className="mt-6 pt-5 border-t border-[#111827]/10">
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#667085] mb-2">Why Mzobs recommended this profile</p>
+                <p className="text-[13.5px] text-[#111827] leading-relaxed">
                   "This candidate closely matches the technical requirements, has 4 years of backend experience and is based in Bengaluru."
                 </p>
-                <p className="mt-4 text-[11.5px] text-[#51697e]/80 leading-relaxed">
+                <p className="mt-4 text-[11.5px] text-[#667085]/80 leading-relaxed">
                   Match Intelligence is decision support, not an automated hiring decision — every recommendation is something you can check for yourself.
                 </p>
               </div>

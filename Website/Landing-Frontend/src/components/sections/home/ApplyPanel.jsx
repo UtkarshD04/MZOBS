@@ -136,7 +136,7 @@ function SignupPrompt({ job, onCreateAccount }) {
   return (
     <div className="rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle) p-4">
       <p className="text-[13px] text-(--jobs-ink-soft) leading-relaxed">
-        New to Mzobs? Create a free account — you'll verify your phone, then come straight back to apply for{' '}
+        New to Mzobs? Create a free account — you'll confirm your phone, then come straight back to apply for{' '}
         <span className="font-semibold text-(--jobs-navy)">{job.title}</span>.
       </p>
       <button
@@ -309,7 +309,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
 
       {!OTP_CONFIGURED ? null : phoneToken ? (
         <p className="flex items-center gap-1.5 mb-3 text-[12.5px] font-semibold text-(--jobs-teal-dark)">
-          <CheckCircle2 size={14} className="shrink-0" aria-hidden="true" /> Mobile number verified
+          <CheckCircle2 size={14} className="shrink-0" aria-hidden="true" /> Mobile number confirmed
         </p>
       ) : otpSent ? (
         <div className="mb-3">
@@ -324,7 +324,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
           />
           <div className="flex items-center gap-3">
             <button type="button" className={otpButtonClass} onClick={handleVerifyOtp} disabled={verifyingOtp || otp.length !== 6}>
-              {verifyingOtp ? 'Verifying…' : 'Verify'}
+              {verifyingOtp ? 'Checking…' : 'Confirm'}
             </button>
             <button
               type="button"
@@ -452,7 +452,7 @@ export default function ApplyPanel({ job, onClose }) {
           <>
             <h3 className="font-extrabold text-lg text-(--jobs-navy) leading-snug">Create your free account</h3>
             <p className="mt-1.5 text-[13px] text-(--jobs-ink-soft)">
-              Verify your phone and you're set up to apply to <span className="font-semibold text-(--jobs-navy)">{job.title}</span> right here.
+              Confirm your phone and you're set up to apply to <span className="font-semibold text-(--jobs-navy)">{job.title}</span> right here.
             </p>
             <div className="mt-5">
               <InlineSignupForm onSuccess={handleLoggedIn} onSwitchToLogin={() => setAuthMode('login')} />
@@ -510,7 +510,7 @@ export default function ApplyPanel({ job, onClose }) {
           <div>
             <h3 className="font-extrabold text-lg text-(--jobs-navy) leading-snug">Resume under review</h3>
             <p className="mt-1.5 text-[13px] text-(--jobs-ink-soft) leading-relaxed">
-              Your resume is with the Mzobs team for verification. Once it's approved you'll be able to apply to {job.title} — check back shortly.
+              Your resume is with the Mzobs team for review. Once it's approved you'll be able to apply to {job.title} — check back shortly.
             </p>
           </div>
         </div>
@@ -528,10 +528,10 @@ export default function ApplyPanel({ job, onClose }) {
         </h3>
         <p className="mt-1.5 text-[13px] text-(--jobs-ink-soft) leading-relaxed">
           {resumeStatus === 'changes'
-            ? "Mzobs asked for a few changes before this can be verified — upload an updated version."
+            ? "Mzobs asked for a few changes before this can be approved — upload an updated version."
             : resumeStatus === 'rejected'
               ? 'Your last upload was rejected. Upload a new resume to try again.'
-              : "PDF or Word, up to 5MB. Mzobs verifies it before you're eligible to apply."}
+              : "PDF or Word, up to 5MB. Mzobs reviews it before you're eligible to apply."}
         </p>
         <label className="mt-4 flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-(--jobs-border) bg-(--jobs-bg-subtle) px-4 py-8 text-center cursor-pointer hover:border-(--jobs-teal-dark) transition-colors">
           <FileUp size={22} className="text-(--jobs-ink-soft)" aria-hidden="true" />
@@ -570,7 +570,7 @@ export default function ApplyPanel({ job, onClose }) {
       <BackRow onBack={onClose}>Back to job details</BackRow>
       <h3 className="font-extrabold text-lg text-(--jobs-navy) leading-snug">You're ready to apply</h3>
       <p className="mt-1.5 text-[13px] text-(--jobs-ink-soft) leading-relaxed">
-        Your application goes to the Mzobs hiring team, not directly to {job.company}. We screen you against the requirement and forward your verified
+        Your application goes to the Mzobs hiring team, not directly to {job.company}. We match you against the requirement and forward your
         resume if you're shortlisted.
       </p>
       {applyError && (

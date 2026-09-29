@@ -30,7 +30,7 @@ const NEVER_CHARGED = [
 const WHY_PREMIUM = [
   {
     icon: FileCheck,
-    title: 'Verified by real recruiters',
+    title: 'Reviewed by real recruiters',
     desc: 'Your resume is checked and structured by our team, not left to a bot.',
     bg: 'bg-(--jobs-teal-tint)',
     text: 'text-(--jobs-teal-dark)',
@@ -45,7 +45,7 @@ const WHY_PREMIUM = [
   {
     icon: Users,
     title: 'In front of real employers',
-    desc: 'Every company on Mzobs is vetted — no fake listings, no ghost jobs.',
+    desc: 'Your profile is put in front of companies actively hiring on Mzobs.',
     bg: 'bg-amber-50',
     text: 'text-amber-700',
   },

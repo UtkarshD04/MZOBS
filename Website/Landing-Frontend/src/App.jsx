@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import ScrollToTop from './components/layout/ScrollToTop'
-import CursorDot from './components/ui/CursorDot'
+import { ToastProvider } from './components/mz/Toast'
 import ScrollToTopButton from './components/ui/ScrollToTopButton'
 import Home from './pages/Home'
 // Everything below stays a regular (eager) import because server.js/
@@ -49,7 +49,7 @@ const Ally = lazy(() => import('./pages/Ally'))
 function RouteFallback() {
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 rounded-full border-[3px] border-(--jobs-border) border-t-(--jobs-blue) animate-spin" />
+      <div className="w-8 h-8 rounded-full border-[3px] border-mz-line border-t-mz-primary animate-spin" />
     </div>
   )
 }
@@ -59,9 +59,8 @@ export default function App() {
   const prefersReducedMotion = useReducedMotion()
 
   return (
-    <>
+    <ToastProvider>
       <ScrollToTop />
-      <CursorDot />
       <ScrollToTopButton />
       {/* No AnimatePresence/exit animation — the old page unmounts the
           instant the route changes (no ~350ms wait for an exit transition
@@ -106,7 +105,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </motion.div>
-    </>
+    </ToastProvider>
   )
 }
 

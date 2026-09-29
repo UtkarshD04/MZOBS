@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, ArrowRight, Users, Building2, Bookmark, Share2, Check, TrendingUp, ShieldCheck } from 'lucide-react'
+import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, ArrowRight, Users, Building2, Bookmark, Share2, Check, TrendingUp } from 'lucide-react'
 import ApplyPanel from './ApplyPanel'
 import ExplorerButton from '../../ui/ExplorerButton'
 import { isJobSaved, toggleJobSaved } from '../../../lib/savedJobs'
@@ -20,9 +20,11 @@ const DESCRIPTION_PREVIEW_CHARS = 320
 // opportunity" nav at the bottom; the standalone mobile page omits them and
 // the section just doesn't render. `stickyActions` is set by that mobile
 // page to pin the Apply row to the bottom of the viewport.
-export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = false }) {
+// `initialApplyOpen` opens straight into the apply form — set when the visitor
+// arrived from a job card's "Apply" button rather than its title.
+export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = false, initialApplyOpen = false }) {
   const [copied, setCopied] = useState(false)
-  const [applyOpen, setApplyOpen] = useState(false)
+  const [applyOpen, setApplyOpen] = useState(initialApplyOpen && !job.applyUrl)
   const [saved, setSaved] = useState(() => isJobSaved(job))
   const [descExpanded, setDescExpanded] = useState(false)
 
@@ -130,7 +132,7 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
           />
         </div>
 
-        <TrustRow icon={<ShieldCheck size={14} aria-hidden="true" />}>
+        <TrustRow icon={<Users size={14} aria-hidden="true" />}>
           Applications are reviewed by MZOBS before being shared with the employer.
         </TrustRow>
 

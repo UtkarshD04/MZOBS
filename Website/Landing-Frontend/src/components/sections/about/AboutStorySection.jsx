@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, ShieldCheck, Users } from 'lucide-react'
+import { ArrowRight, Sparkles, Users } from 'lucide-react'
 import Reveal from '../../ui/Reveal'
 import ParallaxImage from '../../ui/ParallaxImage'
 import FloatingElement from '../../ui/FloatingElement'
 import SplitText from '../../ui/SplitText'
 import { OUR_VISION_DATA } from '../../../lib/content'
 
-const BADGE_ICONS = { ShieldCheck, Users }
+const BADGE_ICONS = { Sparkles, Users }
 
 export default function AboutStorySection() {
   return (
