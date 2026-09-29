@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Menu, X, LogOut, User } from 'lucide-react'
+import { Menu, X, LogOut, User, ChevronDown } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
 import { CLIENT_ONLY_ROUTES } from '../../lib/routes'
 import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange } from '../../lib/employeeSession'
@@ -25,6 +25,7 @@ export default function Navbar() {
   // doesn't exist during SSR. The real value is picked up right after mount
   // in the effect below instead.
   const [session, setSession] = useState(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const floating = scrolled || open
 
   useEffect(() => {
@@ -98,26 +99,81 @@ export default function Navbar() {
             />
           </Link>
 
-          <nav aria-label="Primary" className="hidden lg:flex items-center gap-1" onMouseLeave={() => setHoverLink(null)}>
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                to={link.to}
-                onMouseEnter={() => setHoverLink(link.label)}
-                onFocus={() => setHoverLink(link.label)}
-                onBlur={() => setHoverLink(null)}
-                className="relative rounded-full px-3.5 py-2 text-[14px] font-semibold text-(--jobs-navy)/75 transition-colors hover:text-(--jobs-navy)"
-              >
-                {hoverLink === link.label && (
-                  <motion.span
-                    layoutId="nav-hover-pill"
-                    className="absolute inset-0 rounded-full bg-(--jobs-navy)/[0.07] ring-1 ring-(--jobs-navy)/[0.05]"
-                    transition={{ type: 'spring', stiffness: 520, damping: 38 }}
-                  />
-                )}
-                <span className="relative">{link.label}</span>
-              </Link>
-            ))}
+          <nav
+            aria-label="Primary"
+            className="hidden lg:flex items-center gap-1"
+            onMouseLeave={() => {
+              setHoverLink(null)
+              setDropdownOpen(false)
+            }}
+          >
+            {NAV_LINKS.map((link) =>
+              link.children ? (
+                <div key={link.label} className="relative" onMouseEnter={() => { setHoverLink(link.label); setDropdownOpen(true) }}>
+                  <button
+                    type="button"
+                    aria-haspopup="true"
+                    aria-expanded={dropdownOpen && hoverLink === link.label}
+                    className="relative flex items-center gap-1 rounded-full px-3.5 py-2 text-[14px] font-semibold text-(--jobs-navy)/75 transition-colors hover:text-(--jobs-navy)"
+                  >
+                    {hoverLink === link.label && (
+                      <motion.span
+                        layoutId="nav-hover-pill"
+                        className="absolute inset-0 rounded-full bg-(--jobs-navy)/[0.07] ring-1 ring-(--jobs-navy)/[0.05]"
+                        transition={{ type: 'spring', stiffness: 520, damping: 38 }}
+                      />
+                    )}
+                    <span className="relative">{link.label}</span>
+                    <ChevronDown
+                      size={14}
+                      className={`relative transition-transform duration-200 ${dropdownOpen && hoverLink === link.label ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {dropdownOpen && hoverLink === link.label && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute left-0 top-full pt-2 w-48"
+                      >
+                        <div className="rounded-xl border border-(--jobs-border) bg-white py-1.5 shadow-[0_12px_32px_-14px_rgba(16,42,67,0.3)]">
+                          {link.children.map((child) => (
+                            <Link
+                              key={child.label}
+                              to={child.to}
+                              className="block px-4 py-2.5 text-[13.5px] font-semibold text-(--jobs-navy)/75 hover:bg-(--jobs-navy)/[0.05] hover:text-(--jobs-navy) transition-colors"
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  onMouseEnter={() => { setHoverLink(link.label); setDropdownOpen(false) }}
+                  onFocus={() => setHoverLink(link.label)}
+                  onBlur={() => setHoverLink(null)}
+                  className="relative rounded-full px-3.5 py-2 text-[14px] font-semibold text-(--jobs-navy)/75 transition-colors hover:text-(--jobs-navy)"
+                >
+                  {hoverLink === link.label && (
+                    <motion.span
+                      layoutId="nav-hover-pill"
+                      className="absolute inset-0 rounded-full bg-(--jobs-navy)/[0.07] ring-1 ring-(--jobs-navy)/[0.05]"
+                      transition={{ type: 'spring', stiffness: 520, damping: 38 }}
+                    />
+                  )}
+                  <span className="relative">{link.label}</span>
+                </Link>
+              )
+            )}
           </nav>
 
           <div className="hidden lg:flex items-center gap-3 shrink-0">
@@ -186,16 +242,34 @@ export default function Navbar() {
               className="lg:hidden fixed top-19 left-0 right-0 bg-white border-b border-(--jobs-border) shadow-lg z-40"
             >
               <div className="p-5 flex flex-col gap-1">
-                {NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.label}
-                    to={link.to}
-                    onClick={() => setOpen(false)}
-                    className="py-3 text-[14px] font-semibold text-(--jobs-navy) border-b border-(--jobs-border)"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {NAV_LINKS.map((link) =>
+                  link.children ? (
+                    <div key={link.label} className="border-b border-(--jobs-border)">
+                      <span className="block pt-3 text-[14px] font-semibold text-(--jobs-navy)">{link.label}</span>
+                      <div className="pb-2">
+                        {link.children.map((child) => (
+                          <Link
+                            key={child.label}
+                            to={child.to}
+                            onClick={() => setOpen(false)}
+                            className="block py-2 pl-3 text-[13.5px] font-semibold text-(--jobs-navy)/70"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      key={link.label}
+                      to={link.to}
+                      onClick={() => setOpen(false)}
+                      className="py-3 text-[14px] font-semibold text-(--jobs-navy) border-b border-(--jobs-border)"
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                )}
                 <div className="flex flex-col gap-2 pt-4">
                   {session ? (
                     <>

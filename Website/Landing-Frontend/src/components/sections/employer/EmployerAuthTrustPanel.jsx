@@ -2,7 +2,6 @@ import { TRUSTED_LOGOS_DATA } from '../../../lib/content'
 import { FadeInLoad } from './employerMotion'
 
 export default function EmployerAuthTrustPanel({ delay = 0.34 }) {
-  const stats = useLiveStatRows().slice(0, 2)
   return (
     <FadeInLoad delay={delay} className="mt-10">
       <div>
