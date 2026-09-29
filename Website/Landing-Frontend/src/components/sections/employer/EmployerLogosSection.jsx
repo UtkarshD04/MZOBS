@@ -3,17 +3,10 @@ import { TRUSTED_LOGOS_DATA } from '../../../lib/content'
 
 export default function EmployerLogosSection() {
   return (
-<<<<<<< Updated upstream
-    <section id="companies" className="bg-[#f7f8fc] py-16 md:py-20 px-6 md:px-12">
-      <div className="max-w-6xl mx-auto">
-        <FadeInView className="text-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-[#111827] tracking-tight">
-=======
     <section id="companies" className="bg-(--explorer-bg) py-16 md:py-20 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
         <FadeInView className="text-center">
           <h2 className="text-xl sm:text-2xl font-bold text-(--explorer-navy) tracking-tight">
->>>>>>> Stashed changes
             {TRUSTED_LOGOS_DATA.title}
           </h2>
         </FadeInView>
@@ -21,11 +14,7 @@ export default function EmployerLogosSection() {
         <FadeInView delay={0.1} className="mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-8 sm:gap-x-14">
           {TRUSTED_LOGOS_DATA.logos.map((logo) => (
             <div key={logo.name} className="group relative">
-<<<<<<< Updated upstream
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-2.5 py-1 rounded-md bg-[#111827] text-white text-[11px] font-semibold opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none">
-=======
               <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-2.5 py-1 rounded-md bg-(--explorer-navy) text-white text-[11px] font-semibold opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none">
->>>>>>> Stashed changes
                 {logo.name}
               </div>
               <img
