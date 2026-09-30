@@ -50,9 +50,14 @@ const initialLoader = document.getElementById('initial-loader')
 
 // Prerendered/SSR'd routes ship real markup inside #root — hydrate it.
 // Everything else (plain `npm run dev`, or the client-only SPA shell
-// server.js serves for auth/dashboard routes) starts from an empty root,
-// so hydrating there would just log a mismatch warning for no benefit.
-if (container.hasChildNodes()) {
+// server.js serves for auth/dashboard routes) starts from an empty root
+// containing only the literal `<!--app-html-->` placeholder comment from
+// index.html — `hasChildNodes()` counts that comment as a child, so it was
+// always true and hydrateRoot ran against non-matching content on every
+// single page load, discarding and rebuilding the whole tree (a visible
+// flash — the navbar included — right after first paint). Checking for an
+// actual Element child instead of any child node fixes that.
+if (container.firstElementChild) {
   // Real content is already on screen — the static loader in index.html
   // would only ever cover it for a single paint, so drop it now.
   initialLoader?.remove()
