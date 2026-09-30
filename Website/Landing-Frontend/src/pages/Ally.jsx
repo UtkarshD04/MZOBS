@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Users, Briefcase, Network, Compass, Award, ScrollText, CalendarDays, BookOpen, Gift, Check, User } from 'lucide-react'
+import { ArrowRight, Users, Briefcase, Network, Compass, Award, ScrollText, CalendarDays, BookOpen, Gift, Check, X, User } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import { submitAllyApplication } from '../lib/ally'
 import './ally.css'
@@ -47,12 +47,16 @@ const JOURNEY = ['Apply', 'Get selected', 'Get your Ally ID', 'Build your campus
 
 const FAQ = [
   ['What is a Mzobs Ally?', 'A Mzobs Ally is a student representative who helps connect their community with meaningful career opportunities, hiring initiatives, events and the Mzobs ecosystem.'],
+  ['Who can apply?', 'The Mzobs Ally program is open to 3rd and 4th year students — that is, students who have completed at least 4 semesters (for 8-semester/4-year courses) or the equivalent for your course length. 1st and 2nd year students are not eligible yet.'],
   ['What will I actually do?', 'You’ll discover opportunities worth sharing, bring students into the Mzobs ecosystem, create campus conversations and activities, and spread opportunities across your campus.'],
   ['How do I apply?', 'Fill in the application below — about you, your campus, your experience and why Mzobs. It takes a few minutes and you can move back and forth between steps.'],
   ['What do I get as an Ally?', 'Early access to opportunities and events, a network of students, recruiters and professionals, recognition for your contribution, and room to build communication and leadership skills.'],
 ]
 
 const STEPS = ['About you', 'Your campus', 'Your experience', 'Why Mzobs', 'Finish']
+
+const ELIGIBLE_LIST = ['Currently in your 3rd year', 'Currently in your 4th / final year', 'At least 4 semesters completed (8-semester courses) or the equivalent for your course length']
+const INELIGIBLE_LIST = ['1st year students', '2nd year students', 'Fewer than 4 semesters completed']
 
 const jaali = (c) => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'><path d='M13 1 25 13 13 25 1 13Z' fill='none' stroke='${c}' stroke-width='1'/><circle cx='13' cy='13' r='1.4' fill='${c}'/></svg>`)}")`
 
@@ -139,7 +143,15 @@ function Pass({ name, college, city, hoverFlip = true }) {
 
 /* ---------------------------------------------------------------- application */
 
-const EMPTY = { name: '', email: '', phone: '', college: '', city: '', course: '', experience: '', involvement: '', why: '' }
+const EMPTY = { name: '', email: '', phone: '', college: '', city: '', course: '', year: '', experience: '', involvement: '', why: '' }
+
+// Structured year-of-study options — the eligibility rule (3rd/4th year
+// only, i.e. at least 4 semesters completed for 8-semester courses) is
+// enforced against this select instead of parsing free text, so it can't be
+// bypassed by odd phrasing in the course field.
+const YEAR_OPTIONS = ['1st year', '2nd year', '3rd year', '4th year / final year']
+const ELIGIBLE_YEARS = new Set(['3rd year', '4th year / final year'])
+const YEAR_INELIGIBLE_MSG = 'Mzobs Ally is open to 3rd and 4th year students only (minimum 4 semesters completed for 8-semester courses) — 1st and 2nd year students aren’t eligible yet.'
 
 function validate(step, f) {
   const e = {}
@@ -151,19 +163,28 @@ function validate(step, f) {
   if (step === 1) {
     if (!f.college.trim()) e.college = 'Add your college'
     if (!f.city.trim()) e.city = 'Add your city'
-    if (!f.course.trim()) e.course = 'Add your course and year'
+    if (!f.course.trim()) e.course = 'Add your course'
+    if (!f.year) e.year = 'Select your year of study'
+    else if (!ELIGIBLE_YEARS.has(f.year)) e.year = YEAR_INELIGIBLE_MSG
   }
   if (step === 2 && f.experience.trim().length < 10) e.experience = 'Share a line or two — even small things count'
   if (step === 3 && f.why.trim().length < 20) e.why = 'Tell us a little more (a couple of sentences)'
   return e
 }
 
-function Field({ label, error, name, f, set, textarea, ...rest }) {
-  const Tag = textarea ? 'textarea' : 'input'
+function Field({ label, error, name, f, set, textarea, select, options, ...rest }) {
+  const Tag = textarea ? 'textarea' : select ? 'select' : 'input'
   return (
     <label className={`cm-field ${error ? 'err' : ''} ${textarea ? 'full' : ''}`}>
       <span>{label}</span>
-      <Tag value={f[name]} onChange={(e) => set(name, e.target.value)} aria-invalid={!!error} {...rest} />
+      {select ? (
+        <select value={f[name]} onChange={(e) => set(name, e.target.value)} aria-invalid={!!error} {...rest}>
+          <option value="" disabled>Select…</option>
+          {options.map((o) => <option key={o} value={o}>{o}</option>)}
+        </select>
+      ) : (
+        <Tag value={f[name]} onChange={(e) => set(name, e.target.value)} aria-invalid={!!error} {...rest} />
+      )}
       {error && <div className="cm-err" role="alert">{error}</div>}
     </label>
   )
@@ -202,6 +223,7 @@ function ApplicationForm({ f, set }) {
         college: f.college.trim(),
         city: f.city.trim(),
         course: f.course.trim(),
+        year: f.year,
         experience: f.experience.trim(),
         involvement: f.involvement.trim(),
         why: f.why.trim(),
@@ -250,10 +272,12 @@ function ApplicationForm({ f, set }) {
           {step === 1 && (
             <>
               <h3>Your campus</h3><p className="s">Where will you be representing Mzobs?</p>
+              <p className="s" style={{ marginTop: -6 }}>Open to 3rd and 4th year students only — at least 4 semesters completed (for 8-semester courses) or the equivalent for your course length.</p>
               <div className="cm-fgrid">
                 <div className="full"><Field label="College / university" name="college" f={f} set={set} error={errors.college} placeholder="Your college" autoFocus /></div>
                 <Field label="City" name="city" f={f} set={set} error={errors.city} placeholder="City" />
-                <Field label="Course & year" name="course" f={f} set={set} error={errors.course} placeholder="e.g. B.Tech, 2nd year" />
+                <Field label="Course" name="course" f={f} set={set} error={errors.course} placeholder="e.g. B.Tech" />
+                <Field select label="Year of study" name="year" f={f} set={set} error={errors.year} options={YEAR_OPTIONS} />
               </div>
             </>
           )}
@@ -278,7 +302,7 @@ function ApplicationForm({ f, set }) {
             <>
               <h3>Finish</h3><p className="s">Check everything, then send it in.</p>
               <dl className="cm-review">
-                {[['Name', f.name], ['Email', f.email], ['Phone', f.phone], ['Campus', `${f.college}, ${f.city}`], ['Course', f.course], ['Experience', f.experience], ['Involvement', f.involvement], ['Why Mzobs', f.why]].map(([k, v]) => (
+                {[['Name', f.name], ['Email', f.email], ['Phone', f.phone], ['Campus', `${f.college}, ${f.city}`], ['Course', f.course], ['Year', f.year], ['Experience', f.experience], ['Involvement', f.involvement], ['Why Mzobs', f.why]].map(([k, v]) => (
                   <div key={k}><dt>{k}</dt><dd>{v || '—'}</dd></div>
                 ))}
               </dl>
@@ -382,6 +406,7 @@ export default function Ally() {
               <span className="cm-line"><span><span className="cm-accent" style={{ display: 'inline' }}>Ally.</span></span></span>
             </h1>
             <p className="cm-lead cm-rv" style={{ '--d': '0.3s', marginTop: 30 }}>Carry opportunities. Connect talent. Become the connection between Mzobs and your student community — discover opportunities, spread awareness, build your network and create real impact.</p>
+            <p className="cm-eyebrow cm-rv" style={{ '--d': '0.36s', marginTop: 14 }}>Open to 3rd &amp; 4th year students · minimum 4 semesters completed</p>
             <div className="cm-hero-cta cm-rv" style={{ '--d': '0.42s' }}>
               <a href="#apply" onClick={go('apply')} className="cm-btn cm-btn-primary">Become a Mzobs Ally <ArrowRight size={16} /></a>
               <a href="#why" onClick={go('why')} className="cm-btn cm-btn-ghost">Explore the Ally network</a>
@@ -407,6 +432,35 @@ export default function Ally() {
                 <p>{p}</p>
               </Rv>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* eligibility */}
+      <section className="cm-sec" id="eligibility" style={{ paddingTop: 0 }}>
+        <div className="cm-wrap">
+          <Rv as="p" className="cm-eyebrow">Eligibility</Rv>
+          <Rv as="h2" d={0.06} className="cm-h2">Who can apply.</Rv>
+          <Rv as="p" d={0.12} className="cm-lead" style={{ marginTop: 22, maxWidth: '38ch' }}>
+            The Mzobs Ally program is currently open to senior students only — 3rd and 4th year, with at least 4 semesters completed.
+          </Rv>
+          <div className="cm-elig">
+            <Rv className="cm-elig-col cm-elig-yes" d={0.1}>
+              <h3><Check size={18} strokeWidth={2.6} /> Eligible</h3>
+              <ul>
+                {ELIGIBLE_LIST.map((t) => (
+                  <li key={t}><Check size={15} strokeWidth={2.4} />{t}</li>
+                ))}
+              </ul>
+            </Rv>
+            <Rv className="cm-elig-col cm-elig-no" d={0.18}>
+              <h3><X size={18} strokeWidth={2.6} /> Not eligible yet</h3>
+              <ul>
+                {INELIGIBLE_LIST.map((t) => (
+                  <li key={t}><X size={15} strokeWidth={2.4} />{t}</li>
+                ))}
+              </ul>
+            </Rv>
           </div>
         </div>
       </section>
