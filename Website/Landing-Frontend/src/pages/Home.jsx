@@ -4,8 +4,6 @@ import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import Hero from '../components/mz/home/Hero'
-import SmarterHiringSection from '../components/mz/home/SmarterHiringSection'
-import HowItWorks from '../components/mz/home/HowItWorks'
 import JobMarketplace from '../components/sections/home/JobMarketplace'
 import MatchSection from '../components/mz/home/MatchSection'
 import CategorySection from '../components/mz/home/CategorySection'
@@ -13,8 +11,6 @@ import CityMapSection from '../components/mz/home/CityMapSection'
 import RecommendedForYou from '../components/sections/home/RecommendedForYou'
 import CompaniesSection from '../components/mz/home/CompaniesSection'
 import CampusSection from '../components/mz/home/CampusSection'
-import WhySection from '../components/mz/home/WhySection'
-import FinalCTA from '../components/mz/home/FinalCTA'
 
 // q and location are each a *list* of terms (searched as OR) — the hero
 // search box stages several titles/skills/companies or cities as tags. Single-
@@ -52,8 +48,6 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero filters={jobFilters} onSearch={applyJobFilters} />
-        <SmarterHiringSection />
-        <HowItWorks />
         <JobMarketplace external={jobFilters} />
         <MatchSection />
         <CategorySection onSelect={applyJobFilters} />
@@ -62,8 +56,6 @@ export default function Home() {
         <RecommendedForYou />
         <CompaniesSection onSelect={applyJobFilters} />
         <CampusSection />
-        <WhySection />
-        <FinalCTA />
       </main>
       <Footer />
     </div>

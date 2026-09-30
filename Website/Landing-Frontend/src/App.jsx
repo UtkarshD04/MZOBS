@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import ScrollToTop from './components/layout/ScrollToTop'
@@ -57,6 +57,15 @@ function RouteFallback() {
 export default function App() {
   const location = useLocation()
   const prefersReducedMotion = useReducedMotion()
+  // The very first render has to match the server-rendered/prerendered
+  // markup exactly (no inline opacity style framer-motion would add for an
+  // `initial={{ opacity: 0 }}` enter transition), or React discards the
+  // whole prerendered tree on hydration mismatch and re-renders from
+  // scratch client-side — a visible flash where the page (navbar included)
+  // disappears and redraws. So the fade-in only kicks in for route changes
+  // that happen *after* hydration, never for the first paint.
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => setHydrated(true), [])
 
   return (
     <ToastProvider>
@@ -70,7 +79,7 @@ export default function App() {
           "animate" state, no transition run at all). */}
       <motion.div
         key={location.pathname}
-        initial={prefersReducedMotion ? false : { opacity: 0 }}
+        initial={!hydrated || prefersReducedMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.18, ease: 'easeOut' }}
       >
