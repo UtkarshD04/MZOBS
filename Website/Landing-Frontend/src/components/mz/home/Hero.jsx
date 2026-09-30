@@ -25,9 +25,9 @@ export default function Hero({ filters, onSearch }) {
             </p>
 
             <h1 id="hero-title" style={{ '--d': '0.05s' }} className="mz-rise mt-5 text-[clamp(28px,8.6vw,40px)] font-bold leading-[1.06] tracking-[-0.035em] text-mz-ink sm:text-[52px] lg:text-[54px] xl:text-[60px]">
-              <span className="whitespace-nowrap">Where Talent Meets</span>
+              <span className="whitespace-nowrap">You Dream. We Connect.</span>
               <br />
-              <span className="mz-text-gradient">Real Opportunity.</span>
+              <span className="mz-text-gradient">You Grow.</span>
             </h1>
 
             <p style={{ '--d': '0.1s' }} className="mz-rise mt-5 max-w-[500px] text-[17px] leading-relaxed text-mz-muted sm:text-[18px]">

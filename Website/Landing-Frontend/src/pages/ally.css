@@ -203,6 +203,22 @@
 @media (max-width: 900px) { .cm-ben { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .cm-ben { grid-template-columns: 1fr; } }
 
+/* eligibility — two columns, eligible vs not */
+.cm-elig { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 32px); margin-top: clamp(36px, 5vw, 56px); }
+@media (max-width: 720px) { .cm-elig { grid-template-columns: 1fr; } }
+.cm-elig-col { border-radius: 20px; padding: clamp(22px, 3vw, 30px); border: 1px solid var(--cm-line); }
+.cm-elig-col h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 18px; font-size: 15px; font-weight: 800; letter-spacing: 0.02em; }
+.cm-elig-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.cm-elig-col li { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; line-height: 1.4; color: var(--cm-ink); }
+.cm-elig-col li svg { flex: none; margin-top: 2px; }
+.cm-elig-yes { background: var(--cm-mint); }
+.cm-elig-yes h3 { color: var(--cm-teal-deep); }
+.cm-elig-yes li svg { color: var(--cm-teal); }
+.cm-elig-no { background: var(--cm-surface); }
+.cm-elig-no h3 { color: #a83a3a; }
+.cm-elig-no li { color: var(--cm-muted); }
+.cm-elig-no li svg { color: #c85c5c; }
+
 /* pass section */
 .cm-passgrid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 6vw, 90px); align-items: center; }
 @media (max-width: 900px) { .cm-passgrid { grid-template-columns: 1fr; } }
@@ -217,7 +233,7 @@
 .cm-field::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--cm-teal); transform: scaleX(0); transform-origin: left; transition: transform 0.4s var(--cm-ease); }
 .cm-field:focus-within::after { transform: scaleX(1); }
 .cm-field:focus-within > span { color: var(--cm-teal-deep); }
-.cm-field.err input, .cm-field.err textarea { border-color: #d64545; }
+.cm-field.err input, .cm-field.err textarea, .cm-field.err select { border-color: #d64545; }
 .cm-err { font-size: 12.5px; color: #c23a3a; margin-top: 6px; }
 
 /* FAQ */

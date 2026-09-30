@@ -1010,6 +1010,12 @@
   from { background-position: 200% 0; }
   to { background-position: -200% 0; }
 }
+/* One-shot diagonal light sweep for a hovered card — not a loading shimmer,
+   so it's a single pass (not infinite) and only ever runs on :hover. */
+@keyframes mzCardSheen {
+  from { transform: translateX(-130%) skewX(-12deg); }
+  to { transform: translateX(230%) skewX(-12deg); }
+}
 @keyframes mzDrift {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
   50% { transform: translate3d(30px, -20px, 0) scale(1.08); }
