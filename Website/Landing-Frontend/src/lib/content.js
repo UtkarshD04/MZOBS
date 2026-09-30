@@ -20,9 +20,7 @@ import {
   Megaphone,
   PenTool,
   Headset,
-  Globe,
-  CalendarCheck,
-  Send
+  Globe
 } from 'lucide-react'
 import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 
