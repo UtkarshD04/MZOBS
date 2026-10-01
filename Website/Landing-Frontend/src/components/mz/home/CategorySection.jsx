@@ -37,7 +37,7 @@ export default function CategorySection({ onSelect }) {
   const keywordCounts = useKeywordCategoryCounts()
 
   return (
-    <section id="categories" aria-labelledby="categories-title" className="bg-mz-bg py-20 lg:py-28">
+    <section id="categories" aria-labelledby="categories-title" className="bg-mz-bg mz-section">
       <Container>
         <SectionHead id="categories-title" eyebrow="Explore by category" title="Find your field.">
           Ten areas where companies are hiring on Mzobs &mdash; counts are live.

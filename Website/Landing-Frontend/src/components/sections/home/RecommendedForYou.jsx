@@ -649,7 +649,7 @@ export default function RecommendedForYou() {
   const deckJobs = signedIn ? (jobs?.length ? jobs.map(toDeckJob) : []) : sampleJobs
 
   return (
-    <section className="overflow-x-clip px-6 py-16 md:px-10 md:py-24" style={{ backgroundColor: PAPER }}>
+    <section className="overflow-x-clip mz-section px-6 md:px-10" style={{ backgroundColor: PAPER }}>
       <div className="mx-auto max-w-[1240px]">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
           <div ref={headRef}>

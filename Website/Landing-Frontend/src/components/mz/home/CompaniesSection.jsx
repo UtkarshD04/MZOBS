@@ -59,7 +59,7 @@ export default function CompaniesSection({ onSelect }) {
   const industryCount = new Set(list.map((c) => c.industry).filter(Boolean)).size
 
   return (
-    <section id="companies" aria-labelledby="companies-title" className="relative overflow-hidden bg-white py-20 lg:py-28">
+    <section id="companies" aria-labelledby="companies-title" className="relative overflow-hidden bg-white mz-section">
       <Container>
         <SectionHead id="companies-title" eyebrow="Companies" title="Companies hiring through Mzobs">
           {`${list.length} verified partner${list.length === 1 ? '' : 's'}${industryCount > 0 ? ` across ${industryCount} industr${industryCount === 1 ? 'y' : 'ies'}` : ''}.`}

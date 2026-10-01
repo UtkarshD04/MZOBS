@@ -6,7 +6,7 @@ export function Field({ label, optional, hint, children, className }) {
   return (
     <div className={cn('flex flex-col gap-[7px] mb-4', className)}>
       {label && (
-        <label className="text-[12.5px] font-bold text-black tracking-tight">
+        <label className="text-[12.5px] font-semibold text-[#111827] tracking-tight">
           {label} {optional && <span className="font-medium text-[#9E9E9E] ml-1">(optional)</span>}
         </label>
       )}
@@ -17,7 +17,7 @@ export function Field({ label, optional, hint, children, className }) {
 }
 
 export const inputClass =
-  'h-11 px-4 rounded-xl border border-[#C9C9C9] bg-white text-black text-[13.5px] font-medium w-full transition-all duration-150 outline-none placeholder:text-[#9E9E9E] hover:border-[#a8a8a8] focus:border-[var(--careers-accent)] focus:ring-[3px] focus:ring-[var(--careers-accent)]/12'
+  'h-12 px-4 rounded-xl border border-[#111827]/15 bg-white text-[#111827] text-[14px] font-medium w-full transition-all duration-150 outline-none placeholder:text-[#9aa0b4] hover:border-[#4a4ed8]/50 focus:border-[#4a4ed8] focus:ring-[3px] focus:ring-[#4a4ed8]/15'
 
 // `icon` renders a leading glyph (a lucide-react component) inside the
 // field — the common "icon + input" look most premium SaaS forms use
@@ -27,7 +27,7 @@ export function Input({ icon: Icon, className, ...props }) {
   if (!Icon) return input
   return (
     <div className="relative">
-      <Icon size={16} strokeWidth={1.8} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9E9E9E] pointer-events-none" />
+      <Icon size={16} strokeWidth={1.8} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8a90a8] pointer-events-none" />
       {input}
     </div>
   )
@@ -36,11 +36,11 @@ export function Input({ icon: Icon, className, ...props }) {
 export function Select({ icon: Icon, className, children, ...props }) {
   return (
     <div className="relative">
-      {Icon && <Icon size={16} strokeWidth={1.8} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9E9E9E] pointer-events-none" />}
+      {Icon && <Icon size={16} strokeWidth={1.8} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8a90a8] pointer-events-none" />}
       <select className={cn(inputClass, 'appearance-none pr-9', Icon && 'pl-10', className)} {...props}>
         {children}
       </select>
-      <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9E9E9E] pointer-events-none" />
+      <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8a90a8] pointer-events-none" />
     </div>
   )
 }
@@ -54,7 +54,7 @@ export function SubmitButton({ children, className, ...props }) {
     <button
       type="submit"
       className={cn(
-        'w-full h-12 inline-flex items-center justify-center gap-2 rounded-full bg-[var(--careers-accent)] text-white text-sm font-bold shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_20px_-8px_var(--careers-accent)] hover:bg-[var(--careers-accent-hover)] hover:shadow-[0_1px_2px_rgba(0,0,0,0.06),0_10px_24px_-8px_var(--careers-accent)] active:scale-[0.985] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:active:scale-100',
+        'w-full py-3.5 inline-flex items-center justify-center gap-2 rounded-full border border-[#111827] bg-[#4a4ed8] text-white text-[15px] font-bold shadow-[4px_5px_0_#111827] hover:bg-[#5b5fef] hover:-translate-x-px hover:-translate-y-px hover:shadow-[5px_6px_0_#111827] active:translate-x-[3px] active:translate-y-[4px] active:shadow-[1px_1px_0_#111827] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0',
         className
       )}
       {...props}

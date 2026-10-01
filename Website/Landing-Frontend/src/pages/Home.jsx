@@ -10,6 +10,7 @@ import CategorySection from '../components/mz/home/CategorySection'
 import CityMapSection from '../components/mz/home/CityMapSection'
 import RecommendedForYou from '../components/sections/home/RecommendedForYou'
 import CompaniesSection from '../components/mz/home/CompaniesSection'
+import NetworkSection from '../components/mz/home/NetworkSection'
 import CampusSection from '../components/mz/home/CampusSection'
 
 // q and location are each a *list* of terms (searched as OR) — the hero
@@ -55,6 +56,7 @@ export default function Home() {
         {/* Signed-in candidates only (renders nothing otherwise) */}
         <RecommendedForYou />
         <CompaniesSection onSelect={applyJobFilters} />
+        <NetworkSection />
         <CampusSection />
       </main>
       <Footer />
