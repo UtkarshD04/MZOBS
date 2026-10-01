@@ -99,7 +99,7 @@ function MatchPanel() {
 
 export default function MatchSection() {
   return (
-    <section id="matching" aria-labelledby="match-title" className="relative overflow-hidden bg-white py-20 lg:py-28">
+    <section id="matching" aria-labelledby="match-title" className="relative overflow-hidden bg-white mz-section">
       <Container>
         <div className="grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
           <div>

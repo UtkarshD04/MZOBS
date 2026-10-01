@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users, Globe, MapPin } from 'lucide-react'
+import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users } from 'lucide-react'
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
 import OtpInput from '../ui/OtpInput'
 import TermsConsent from '../ui/TermsConsent'
@@ -20,8 +20,6 @@ const initialForm = {
   companyName: '',
   industry: '',
   size: '',
-  website: '',
-  hq: '',
 }
 
 function validate(form, hasGoogle, acceptedTerms, phoneVerified) {
@@ -39,14 +37,12 @@ function validate(form, hasGoogle, acceptedTerms, phoneVerified) {
   if (!form.companyName.trim()) errors.companyName = 'Please enter your company name.'
   if (!form.industry.trim()) errors.industry = 'Please enter your industry.'
   if (!form.size) errors.size = 'Please select a company size.'
-  if (!form.website.trim()) errors.website = 'Please enter your company website.'
-  if (!form.hq.trim()) errors.hq = 'Please enter your headquarters city.'
   if (!acceptedTerms) errors.terms = 'Please accept the Terms & Conditions and Privacy Policy to create an account.'
   return errors
 }
 
 function SectionLabel({ children }) {
-  return <div className="text-[11px] font-bold tracking-wide uppercase text-[#9E9E9E] pb-2 mb-1 border-b border-[#e0e0e0]">{children}</div>
+  return <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.14em] uppercase text-[#4a4ed8] pb-2.5 mb-3 border-b border-[#111827]/10"><span className="h-1.5 w-1.5 rounded-full bg-[#4a4ed8]" />{children}</div>
 }
 
 export default function EmployerSignupForm() {
@@ -166,8 +162,6 @@ export default function EmployerSignupForm() {
             phone: form.phone,
             industry: form.industry,
             size: form.size,
-            website: form.website,
-            hq: form.hq,
             phoneToken,
           })
         : await signupEmployer({ ...form, phoneToken })
@@ -221,7 +215,7 @@ export default function EmployerSignupForm() {
               type="button"
               onClick={handleSendOtp}
               disabled={sendingOtp || form.phone.replace(/\D/g, '').length !== 10}
-              className="shrink-0 h-11 px-4 rounded-xl text-[13px] font-bold text-white bg-[var(--careers-accent)] hover:bg-[var(--careers-accent-hover)] disabled:opacity-50 transition-colors"
+              className="shrink-0 h-11 px-4 rounded-xl text-[13px] font-bold text-white bg-[#4a4ed8] hover:bg-[#5b5fef] disabled:opacity-50 transition-colors"
             >
               {sendingOtp ? 'Sending...' : otpStep === 'sent' ? 'Resend' : 'Send OTP'}
             </button>
@@ -243,7 +237,7 @@ export default function EmployerSignupForm() {
               type="button"
               onClick={handleVerifyOtp}
               disabled={verifyingOtp || otp.length !== 6}
-              className="h-9 px-4 rounded-lg text-[13px] font-bold text-white bg-[var(--careers-accent)] hover:bg-[var(--careers-accent-hover)] disabled:opacity-50 transition-colors"
+              className="h-9 px-4 rounded-lg text-[13px] font-bold text-white bg-[#4a4ed8] hover:bg-[#5b5fef] disabled:opacity-50 transition-colors"
             >
               {verifyingOtp ? 'Checking...' : 'Confirm'}
             </button>
@@ -288,7 +282,7 @@ export default function EmployerSignupForm() {
       </div>
 
       <Field label="Company name">
-        <Input icon={Building2} value={form.companyName} onChange={(e) => update('companyName', e.target.value)} placeholder="Acme Technologies" />
+        <Input icon={Building2} value={form.companyName} onChange={(e) => update('companyName', e.target.value)} placeholder="Company name" />
         {errors.companyName && <span className="text-xs text-red mt-1 block">{errors.companyName}</span>}
       </Field>
 
@@ -309,17 +303,6 @@ export default function EmployerSignupForm() {
             ))}
           </Select>
           {errors.size && <span className="text-xs text-red mt-1 block">{errors.size}</span>}
-        </Field>
-      </div>
-
-      <div className="grid sm:grid-cols-2 gap-x-4">
-        <Field label="Website">
-          <Input icon={Globe} value={form.website} onChange={(e) => update('website', e.target.value)} placeholder="acme.com" />
-          {errors.website && <span className="text-xs text-red mt-1 block">{errors.website}</span>}
-        </Field>
-        <Field label="Headquarters city">
-          <Input icon={MapPin} value={form.hq} onChange={(e) => update('hq', e.target.value)} placeholder="Bengaluru" />
-          {errors.hq && <span className="text-xs text-red mt-1 block">{errors.hq}</span>}
         </Field>
       </div>
 

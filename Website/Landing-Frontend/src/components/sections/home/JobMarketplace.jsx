@@ -216,7 +216,7 @@ export default function JobMarketplace({ external }) {
   const primaryPill = 'inline-flex h-10 items-center gap-1.5 rounded-full bg-mz-primary px-5 text-[13.5px] font-semibold text-white hover:bg-mz-primary-strong'
 
   return (
-    <section id="latest-jobs" aria-labelledby="jobs-title" className="relative scroll-mt-20 bg-mz-bg py-20 lg:py-28">
+    <section id="latest-jobs" aria-labelledby="jobs-title" className="relative scroll-mt-20 bg-mz-bg mz-section">
       <Container className="max-w-[1320px]">
         <SectionHead
           id="jobs-title"

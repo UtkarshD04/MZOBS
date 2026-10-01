@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Briefcase, CalendarCheck2, Sparkles } from 'lucide-react'
+import { Briefcase, CalendarCheck2, ShieldCheck, Sparkles } from 'lucide-react'
 import Seo from '../components/Seo'
 import EmployerNavbar from '../components/layout/EmployerNavbar'
 import EmployerFooter from '../components/layout/EmployerFooter'
@@ -62,7 +62,10 @@ export default function EmployerSignup() {
           {/* Right: signup card */}
           <FadeInLoad delay={0.18} className="lg:col-span-6">
             <div className="bg-[#eeefff] rounded-[28px] border border-[#111827]/10 shadow-[10px_12px_0_#111827] p-7 sm:p-9">
-              <h2 className="font-sans text-2xl font-bold text-[#111827]">Create your employer account</h2>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#4a4ed8]/25 bg-white px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#4a4ed8] mb-4">
+                <ShieldCheck size={12} /> Mzobs for employers
+              </span>
+              <h2 className="font-sans text-[26px] tracking-tight font-bold text-[#111827]">Create your employer account</h2>
               <p className="text-[13.5px] text-[#667085] mt-1 mb-6">
                 Already have one?{' '}
                 <Link to="/employers/signin" className="font-bold text-[#111827] hover:text-[#4a4ed8] transition-colors">
@@ -71,6 +74,8 @@ export default function EmployerSignup() {
               </p>
 
               <EmployerSignupForm />
+
+              <p className="mt-6 pt-5 border-t border-[#111827]/10 text-center text-[12px] text-[#667085]">Free to start · No credit card · No sales call</p>
             </div>
           </FadeInLoad>
         </div>

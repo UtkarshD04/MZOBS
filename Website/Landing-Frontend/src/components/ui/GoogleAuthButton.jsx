@@ -5,9 +5,9 @@ import { GOOGLE_CLIENT_ID } from '../../lib/config'
 export function OrDivider({ label = 'or' }) {
   return (
     <div className="flex items-center gap-3 my-4">
-      <div className="h-px flex-1 bg-[#e0e0e0]" />
-      <span className="text-[11px] font-bold uppercase tracking-wide text-[#9E9E9E]">{label}</span>
-      <div className="h-px flex-1 bg-[#e0e0e0]" />
+      <div className="h-px flex-1 bg-[#111827]/10" />
+      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#667085]">{label}</span>
+      <div className="h-px flex-1 bg-[#111827]/10" />
     </div>
   )
 }

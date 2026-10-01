@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Briefcase, CalendarCheck2, Sparkles } from 'lucide-react'
+import { Briefcase, CalendarCheck2, ShieldCheck, Sparkles } from 'lucide-react'
 import Seo from '../components/Seo'
 import EmployerNavbar from '../components/layout/EmployerNavbar'
 import EmployerFooter from '../components/layout/EmployerFooter'
@@ -58,7 +58,10 @@ export default function EmployerSignin() {
           {/* Right: signin card */}
           <FadeInLoad delay={0.18} className="lg:col-span-6">
             <div className="bg-[#eeefff] rounded-[28px] border border-[#111827]/10 shadow-[10px_12px_0_#111827] p-7 sm:p-9">
-              <h2 className="font-sans text-2xl font-bold text-[#111827]">Sign in to your portal</h2>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#4a4ed8]/25 bg-white px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#4a4ed8] mb-4">
+                <ShieldCheck size={12} /> Mzobs for employers
+              </span>
+              <h2 className="font-sans text-[26px] tracking-tight font-bold text-[#111827]">Sign in to your portal</h2>
               <p className="text-[13.5px] text-[#667085] mt-1 mb-6">
                 New to Mzobs?{' '}
                 <Link to="/employers/signup" className="font-bold text-[#111827] hover:text-[#4a4ed8] transition-colors">
@@ -67,6 +70,8 @@ export default function EmployerSignin() {
               </p>
 
               <EmployerSigninForm />
+
+              <p className="mt-6 pt-5 border-t border-[#111827]/10 text-center text-[12px] text-[#667085]">Secured sign-in · Your data stays private</p>
             </div>
           </FadeInLoad>
         </div>

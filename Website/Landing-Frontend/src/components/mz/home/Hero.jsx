@@ -7,7 +7,7 @@ export default function Hero({ filters, onSearch }) {
   const reduce = useReducedMotion()
   const drift = (s, dir = '') => (reduce ? 'none' : `mzDrift ${s}s ease-in-out infinite ${dir}`)
   return (
-    <section id="job-search" aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-mz-bg pb-16 pt-[108px] sm:pt-[128px] lg:pb-24 lg:pt-[140px]">
+    <section id="job-search" aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-mz-bg pb-10 pt-[96px] sm:pt-[108px] lg:pb-14 lg:pt-[116px]">
       {/* ambient light: three faint washes and a whisper of grain, no grid */}
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div className="absolute -left-56 -top-24 h-[520px] w-[520px] rounded-full bg-mz-secondary/10 blur-[130px]" style={{ animation: drift(24) }} />
