@@ -51,7 +51,7 @@ export default function Home() {
         <JobMarketplace external={jobFilters} />
         <MatchSection />
         <CategorySection onSelect={applyJobFilters} />
-        <CityMapSection onSelect={applyJobFilters} />
+        <CityMapSection />
         {/* Signed-in candidates only (renders nothing otherwise) */}
         <RecommendedForYou />
         <CompaniesSection onSelect={applyJobFilters} />
