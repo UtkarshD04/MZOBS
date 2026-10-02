@@ -164,6 +164,10 @@ app.use((req, res, next) => {
   next()
 })
 
+// /about was folded into /our-story — permanent redirect so old links and
+// search results land on the one page that's left.
+app.get('/about', (req, res) => res.redirect(301, '/our-story'))
+
 // Prerendered public static pages (written by scripts/prerender.js) — plain
 // file sends, no per-request render cost.
 for (const route of Object.keys(STATIC_PAGE_SEO)) {

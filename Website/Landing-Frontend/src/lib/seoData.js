@@ -49,10 +49,6 @@ export const STATIC_PAGE_SEO = {
       ],
     },
   },
-  '/about': {
-    title: 'Who We Are — Mzobs',
-    description: 'Learn about Mzobs, the AI-powered hiring marketplace connecting talent with real opportunity.',
-  },
   '/our-story': {
     title: 'Our Story — Mzobs',
     description: 'How Mzobs began and where it is headed — the story behind the platform.',

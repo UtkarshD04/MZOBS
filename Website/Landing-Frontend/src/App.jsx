@@ -9,14 +9,13 @@ import Home from './pages/Home'
 // scripts/prerender.js call entry-server.jsx's render() — a synchronous
 // renderToString — for these: JobDetail and the catch-all (NotFound, or
 // CityJobs for an unknown city — see server.js) are rendered per-request,
-// and About/OurStory/Contact/PrivacyPolicy/TermsOfService/
+// and OurStory/Contact/PrivacyPolicy/TermsOfService/
 // CityJobs are rendered at build time by prerender.js. renderToString
 // doesn't wait for React.lazy's dynamic import, so any component it can
 // reach has to already be loaded — see the comment on CLIENT_ONLY_ROUTES in
 // lib/routes.js for the routes that don't have this constraint.
 import JobDetail from './pages/JobDetail'
 import CityJobs from './pages/CityJobs'
-import About from './pages/About'
 import OurStory from './pages/OurStory'
 import Contact from './pages/Contact'
 import PrivacyPolicy from './pages/PrivacyPolicy'
@@ -89,7 +88,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/jobs/city/:citySlug" element={<CityJobs />} />
             <Route path="/jobs/:id" element={<JobDetail />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/about" element={<Navigate to="/our-story" replace />} />
             <Route path="/our-story" element={<OurStory />} />
             <Route path="/contact" element={<Contact />} />
             <Route path={CLIENT_ONLY_ROUTES.employeeProfile} element={<EmployeeProfile />} />
