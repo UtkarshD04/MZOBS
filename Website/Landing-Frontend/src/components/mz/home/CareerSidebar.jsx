@@ -36,17 +36,17 @@ function useCandidateState(token) {
 function Row({ icon: Icon, title, status, to, onClick }) {
   const inner = (
     <>
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-mz-primary-tint text-mz-primary-strong">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#E8F7F4] text-[#078B7D]">
         <Icon size={16} aria-hidden="true" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[14px] font-semibold text-mz-ink">{title}</span>
+        <span className="block text-[14px] font-semibold text-[#123B5D]">{title}</span>
         {status && <span className="block truncate text-[12.5px] text-mz-muted">{status}</span>}
       </span>
-      <ChevronRight size={16} className="shrink-0 text-mz-muted transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-mz-primary" aria-hidden="true" />
+      <ChevronRight size={16} className="shrink-0 text-mz-muted transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#078B7D]" aria-hidden="true" />
     </>
   )
-  const cls = 'group flex w-full items-center gap-3 rounded-[10px] px-2 py-2.5 text-left transition-colors hover:bg-mz-bg focus-visible:outline-2 focus-visible:outline-mz-primary'
+  const cls = 'group flex w-full items-center gap-3 rounded-[10px] px-2 py-2.5 text-left transition-colors duration-200 hover:bg-[#E8F7F4]/60 focus-visible:outline-2 focus-visible:outline-[#078B7D]'
   return (
     <li>
       {onClick ? (
@@ -101,32 +101,39 @@ export default function CareerSidebar() {
 
   return (
     <aside aria-labelledby="career-tools-title" className="lg:sticky lg:top-20">
-      <div className="rounded-[12px] border border-mz-line bg-white p-4 sm:p-5">
-        <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-mz-muted">Your MZOBS</p>
-        <h2 id="career-tools-title" className="mt-1 text-[17px] font-bold text-mz-ink">
-          {signedIn ? `Build your next move, ${session.employee?.name?.split(' ')[0] ?? 'there'}` : 'Build your next move'}
-        </h2>
-        {!signedIn && (
-          <p className="mt-1 text-[13.5px] leading-relaxed text-mz-muted">Sign in to keep your profile, resume and applications in one place.</p>
-        )}
+      <div className="rounded-[16px] bg-gradient-to-br from-[#12A89D]/45 via-[#F0EDFF]/70 to-[#078B7D]/35 p-[1.5px] shadow-[0_18px_40px_-24px_rgba(18,59,93,0.3)]">
+        <div className="relative overflow-hidden rounded-[14.5px] bg-gradient-to-br from-white to-[#EFF9F7] p-4 sm:p-5">
+          <span className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#12A89D]/10 blur-2xl" aria-hidden="true" />
 
-        <ul className="-mx-2 mt-3">
-          {rows.map((r) => <Row key={r.title} {...r} />)}
-        </ul>
+          <p className="relative flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-mz-muted">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#12A89D] shadow-[0_0_8px_2px_rgba(18,168,157,0.45)]" aria-hidden="true" />
+            Your MZOBS
+          </p>
+          <h2 id="career-tools-title" className="relative mt-1 text-[17px] font-bold text-[#123B5D]">
+            {signedIn ? `Build your next move, ${session.employee?.name?.split(' ')[0] ?? 'there'}` : 'Build your next move'}
+          </h2>
+          {!signedIn && (
+            <p className="relative mt-1 text-[13.5px] leading-relaxed text-mz-muted">Sign in to keep your profile, resume and applications in one place.</p>
+          )}
 
-        {!signedIn && (
-          <div className="mt-3 flex items-center gap-3 border-t border-mz-line pt-4">
-            <Link
-              to="/employees/signup"
-              className="mz-btn-teal inline-flex h-10 flex-1 items-center justify-center rounded-[10px] bg-mz-primary px-4 text-[14px] font-semibold text-white transition-colors hover:bg-mz-primary-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
-            >
-              Create free account
-            </Link>
-            <Link to="/employees/signin" className="text-[14px] font-semibold text-mz-primary-strong hover:underline">
-              Sign in
-            </Link>
-          </div>
-        )}
+          <ul className="relative -mx-2 mt-3">
+            {rows.map((r) => <Row key={r.title} {...r} />)}
+          </ul>
+
+          {!signedIn && (
+            <div className="relative mt-3 flex items-center gap-3 border-t border-[#DCE5EC] pt-4">
+              <Link
+                to="/employees/signup"
+                className="inline-flex h-10 flex-1 items-center justify-center rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] px-4 text-[14px] font-semibold text-white shadow-[0_8px_18px_-8px_rgba(7,139,125,0.55)] transition-shadow duration-200 hover:shadow-[0_10px_22px_-8px_rgba(7,139,125,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D]"
+              >
+                Create free account
+              </Link>
+              <Link to="/employees/signin" className="text-[14px] font-semibold text-[#123B5D] hover:underline">
+                Sign in
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
     </aside>
   )

@@ -238,8 +238,8 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
   const showError = !loading && loadError
   const showEmpty = !loading && !refreshing && !loadError && jobs.length === 0
 
-  const control = 'h-9 rounded-[10px] border border-mz-line bg-white text-[13.5px] font-medium text-mz-ink outline-none transition-colors hover:border-mz-line-strong focus-visible:border-mz-primary focus-visible:ring-2 focus-visible:ring-mz-primary/25'
-  const tealBtn = 'mz-btn-teal inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-mz-primary px-4 text-[13.5px] font-semibold text-white transition-colors hover:bg-mz-primary-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary'
+  const control = 'h-9 rounded-[10px] border border-[#DCE5EC] bg-white text-[13.5px] font-medium text-mz-ink outline-none transition-colors hover:border-[#12A89D]/50 focus-visible:border-[#078B7D] focus-visible:ring-2 focus-visible:ring-[#078B7D]/25'
+  const tealBtn = 'inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] px-4 text-[13.5px] font-semibold text-white shadow-[0_6px_16px_-8px_rgba(7,139,125,0.55)] transition-[transform,box-shadow] duration-200 hover:-translate-y-px hover:shadow-[0_10px_22px_-8px_rgba(7,139,125,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D]'
 
   const sheetMotion = desktopPanel
     ? { initial: { x: '100%', y: 0 }, animate: { x: 0, y: 0 }, exit: { x: '100%', y: 0 } }
@@ -289,8 +289,8 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
                 type="button"
                 onClick={() => setFilterState((prev) => ({ ...prev, tracks: c.key ? toggleIn(prev.tracks, c.key) : [] }))}
                 aria-pressed={active}
-                className={`-mb-px shrink-0 border-b-2 px-2.5 pb-2.5 pt-1 text-[13.5px] font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-mz-primary ${
-                  active ? 'border-mz-primary text-mz-primary-strong' : 'border-transparent text-mz-muted hover:text-mz-ink'
+                className={`-mb-px shrink-0 rounded-t-[8px] border-b-[3px] px-3 pb-2.5 pt-1 text-[13.5px] font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[#078B7D] ${
+                  active ? 'border-[#078B7D] bg-[#E8F7F4]/70 text-[#078B7D]' : 'border-transparent text-mz-muted hover:text-[#12304A]'
                 }`}
               >
                 {c.label}
@@ -318,7 +318,7 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
               type="button"
               onClick={() => (chip.clearTerm ? setTerms((list) => list.filter((x) => x !== chip.clearTerm)) : setFilterState((prev) => chip.clear(prev)))}
               aria-label={`Remove filter ${chip.label}`}
-              className="inline-flex h-7 items-center gap-1.5 rounded-[8px] bg-mz-primary-tint pl-2.5 pr-2 text-[12.5px] font-medium text-mz-primary-strong transition-colors hover:bg-white hover:ring-1 hover:ring-mz-primary focus-visible:outline-2 focus-visible:outline-mz-primary"
+              className="inline-flex h-7 items-center gap-1.5 rounded-[8px] bg-[#E8F7F4] pl-2.5 pr-2 text-[12.5px] font-semibold text-[#078B7D] transition-colors hover:bg-white hover:ring-1 hover:ring-[#078B7D] focus-visible:outline-2 focus-visible:outline-[#078B7D]"
             >
               {chip.label}
               <X size={12} aria-hidden="true" />
@@ -353,9 +353,9 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
           </div>
         ) : (
           <ul className={`flex flex-col gap-3 transition-opacity duration-150 ${refreshing ? 'opacity-60' : ''}`} aria-busy={refreshing || undefined}>
-            {jobs.map((job) => (
+            {jobs.map((job, index) => (
               <li key={job.id ?? `${job.title}-${job.company}`}>
-                <JobListItem job={job} onOpen={onOpenJob} selected={selectedId != null && job.id === selectedId} />
+                <JobListItem job={job} index={index} onOpen={onOpenJob} selected={selectedId != null && job.id === selectedId} />
               </li>
             ))}
           </ul>
@@ -406,7 +406,7 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
                 </p>
                 <div className="flex items-center gap-1">
                 {activeFilterCount > 0 && (
-                  <button type="button" onClick={clearFilters} className="rounded-[8px] px-2.5 py-1.5 text-[13px] font-semibold text-mz-primary-strong hover:bg-mz-primary-tint">
+                  <button type="button" onClick={clearFilters} className="rounded-[8px] px-2.5 py-1.5 text-[13px] font-semibold text-[#078B7D] hover:bg-[#E8F7F4]">
                     Clear all
                   </button>
                 )}
@@ -428,7 +428,7 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
                 <button
                   type="button"
                   onClick={() => setFiltersOpen(false)}
-                  className="mz-btn-teal inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] bg-mz-primary text-[14.5px] font-semibold text-white hover:bg-mz-primary-strong"
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] text-[14.5px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(7,139,125,0.5)] transition-shadow hover:shadow-[0_10px_24px_-8px_rgba(7,139,125,0.6)]"
                 >
                   {refreshing ? (
                     <>
