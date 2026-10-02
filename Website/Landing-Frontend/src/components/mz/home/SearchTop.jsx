@@ -45,8 +45,11 @@ export default function SearchTop({ filters, onSearch }) {
     <section
       id="job-search"
       aria-labelledby="search-title"
-      className="relative overflow-hidden border-b border-[#DCE5EC] bg-gradient-to-b from-white via-white to-[#EEF5FA] pb-7 pt-[88px] sm:pb-8 sm:pt-[96px]"
+      className="relative overflow-hidden border-b border-[#DCE5EC] bg-gradient-to-br from-white via-[#E3F3FF] to-[#CFF1E9] pb-7 pt-[88px] sm:pb-8 sm:pt-[96px]"
     >
+      <div className="pointer-events-none absolute -right-16 -top-24 h-80 w-80 rounded-full bg-[#12A89D]/35 blur-2xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute -left-24 bottom-[-40px] h-64 w-64 rounded-full bg-[#9b8cf0]/30 blur-2xl" aria-hidden="true" />
+
       <Container className="relative">
         <h1 id="search-title" className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-[#12304A] sm:text-[32px]">
           Your ambition deserves the right job.
