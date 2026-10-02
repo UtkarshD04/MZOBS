@@ -76,7 +76,8 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
     })
   }, [external])
 
-  const withTerms = (params) => ({ ...params, q: terms })
+  // Urgent-hiring roles have their own section (UrgentHiringSection), so they're left out of this feed.
+  const withTerms = (params) => ({ ...params, q: terms, urgent: 'exclude' })
 
   // "Nearest to me": we ask (in our own dialog) BEFORE the browser prompt.
   const [coords, setCoords] = useState(null)
