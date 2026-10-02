@@ -14,7 +14,14 @@ import { useApp } from '../../lib/appContext'
 import { usePaymentsQuery, useRecordSubscriptionPaymentMutation } from '../../hooks/usePayments'
 import { fmtINR } from '../../lib/utils'
 
-const TABS = ['All', 'Employer invoices', 'Candidate subscriptions', 'Outstanding']
+// 'Paid subscriptions' is the candidate subscriptions that have actually been paid — no due ones.
+const TABS = [
+  { label: 'All', match: () => true },
+  { label: 'Employer invoices', match: (p) => p.type === 'employer' },
+  { label: 'Candidate subscriptions', match: (p) => p.type === 'candidate' },
+  { label: 'Paid subscriptions', match: (p) => p.type === 'candidate' && p.status === 'paid' },
+  { label: 'Outstanding', match: (p) => p.status !== 'paid' },
+]
 
 export default function Payments() {
   const app = useApp()
@@ -22,12 +29,7 @@ export default function Payments() {
   const { data: payments = [], isLoading, isError, refetch } = usePaymentsQuery()
   const recordSubscription = useRecordSubscriptionPaymentMutation()
 
-  const rows = useMemo(() => {
-    if (tab === 1) return payments.filter((p) => p.type === 'employer')
-    if (tab === 2) return payments.filter((p) => p.type === 'candidate')
-    if (tab === 3) return payments.filter((p) => p.status !== 'paid')
-    return payments
-  }, [payments, tab])
+  const rows = useMemo(() => payments.filter(TABS[tab].match), [payments, tab])
 
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
@@ -110,7 +112,7 @@ export default function Payments() {
       )}
 
       <StaggerItem className="mb-4">
-        <PillTabs items={TABS} active={tab} onChange={setTab} />
+        <PillTabs items={TABS.map((t) => t.label)} active={tab} onChange={setTab} />
       </StaggerItem>
 
       <StaggerItem>
