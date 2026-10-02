@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, BadgeCheck, Bookmark, BookmarkCheck, Briefcase, MapPin, Monitor } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Bookmark, BookmarkCheck, Briefcase, MapPin, Monitor, Zap } from 'lucide-react'
 import { CompanyLogo } from './primitives'
 import { jobPath, postedLabel } from './JobCard'
 import { isJobSaved, toggleJobSaved } from '../../lib/savedJobs'
@@ -74,6 +74,11 @@ export default function JobListItem({ job, onOpen, selected = false }) {
             <span className="truncate">{job.company}</span>
             {job.verified && (
               <BadgeCheck size={14} className="shrink-0 text-mz-primary" aria-label="Verified employer" role="img" />
+            )}
+            {job.instantHiring && (
+              <span className="ml-1 inline-flex shrink-0 items-center gap-0.5 rounded bg-amber-100 px-1.5 py-0.5 text-[11px] font-semibold text-amber-800">
+                <Zap size={11} strokeWidth={2.6} aria-hidden="true" /> Urgent
+              </span>
             )}
           </p>
 

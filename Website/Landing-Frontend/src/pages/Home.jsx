@@ -5,6 +5,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import { Container } from '../components/mz/primitives'
 import SearchTop from '../components/mz/home/SearchTop'
+import UrgentHiringSection from '../components/mz/home/UrgentHiringSection'
 import JobMarketplace from '../components/sections/home/JobMarketplace'
 import CareerSidebar from '../components/mz/home/CareerSidebar'
 import JobSidePanel from '../components/mz/home/JobSidePanel'
@@ -82,6 +83,8 @@ export default function Home() {
             </div>
           </Container>
         </div>
+
+        <UrgentHiringSection />
 
         <CategorySection onSelect={applyJobFilters} />
         <CompaniesSection onSelect={applyJobFilters} />

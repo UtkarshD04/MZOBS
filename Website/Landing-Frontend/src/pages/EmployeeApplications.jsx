@@ -18,6 +18,7 @@ const STATUS = {
   screening: { label: 'Under review', tone: 'progress' },
   shortlisted: { label: 'Shortlisted', tone: 'progress' },
   shared: { label: 'Shared with employer', tone: 'progress' },
+  viewed: { label: 'Viewed by employer', tone: 'progress' },
   interview: { label: 'Interview', tone: 'progress' },
   selected: { label: 'Selected', tone: 'good' },
   rejected: { label: 'Not selected', tone: 'closed' },
@@ -32,10 +33,12 @@ const TONE = {
 // Same rule as the backend's WITHDRAWABLE_STATUSES.
 const WITHDRAWABLE = ['new', 'screening', 'shortlisted', 'shared']
 
-// The progress line under each application. `shared` sits on the shortlist
-// step (it is the shortlist being sent to the employer).
-const STEPS = ['Applied', 'Review', 'Shortlisted', 'Interview', 'Decision']
-const STEP_OF = { new: 0, screening: 1, shortlisted: 2, shared: 2, interview: 3, selected: 4 }
+// The progress line under each application. `shared` is set the moment you
+// apply (the resume is delivered to the employer straight away), so it sits on
+// the second step, which reads "Sent" until the employer opens the profile and
+// "Viewed" after — Shortlisted is only reached when the employer shortlists.
+const stepLabels = (app) => ['Applied', app.employerViewedOn ? 'Viewed' : 'Sent', 'Shortlisted', 'Interview', 'Decision']
+const STEP_OF = { new: 0, screening: 1, shared: 1, shortlisted: 2, interview: 3, selected: 4 }
 
 const TABS = [
   { key: 'all', label: 'All', match: () => true },
@@ -49,8 +52,8 @@ const dateFmt = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short
 const dateTimeFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
 const fmtDate = (d) => (d ? dateFmt.format(new Date(d)) : '')
 
-function StatusBadge({ status }) {
-  const s = STATUS[status] ?? { label: status, tone: 'neutral' }
+function StatusBadge({ status, viewed }) {
+  const s = STATUS[status === 'shared' && viewed ? 'viewed' : status] ?? { label: status, tone: 'neutral' }
   return <span className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[12px] font-semibold ${TONE[s.tone]}`}>{s.label}</span>
 }
 
@@ -65,7 +68,7 @@ function Progress({ app }) {
   const closed = app.status === 'rejected' || app.status === 'withdrawn'
   return (
     <ol className="mt-4 flex items-center" aria-label="Application progress">
-      {STEPS.map((label, i) => {
+      {stepLabels(app).map((label, i, steps) => {
         const done = i <= reached
         const current = !closed && i === reached
         return (
@@ -84,7 +87,7 @@ function Progress({ app }) {
                 <span className="sr-only">{done ? ' (reached)' : ''}</span>
               </span>
             </span>
-            {i < STEPS.length - 1 && <span className={`mx-1 mb-4 h-0.5 flex-1 rounded ${i < reached ? (closed ? 'bg-[#C9CED6]' : 'bg-mz-primary') : 'bg-mz-line'}`} aria-hidden="true" />}
+            {i < steps.length - 1 && <span className={`mx-1 mb-4 h-0.5 flex-1 rounded ${i < reached ? (closed ? 'bg-[#C9CED6]' : 'bg-mz-primary') : 'bg-mz-line'}`} aria-hidden="true" />}
           </li>
         )
       })}
@@ -97,7 +100,9 @@ function ApplicationCard({ app, onWithdraw, withdrawing }) {
   const [confirming, setConfirming] = useState(false)
   const job = app.job
   const company = job?.company?.name ?? ''
-  const history = [...(app.statusHistory ?? [])].sort((a, b) => new Date(b.changedOn) - new Date(a.changedOn))
+  const history = [...(app.statusHistory ?? []), ...(app.employerViewedOn ? [{ status: 'viewed', changedOn: app.employerViewedOn }] : [])].sort(
+    (a, b) => new Date(b.changedOn) - new Date(a.changedOn)
+  )
   const meta = [
     { icon: MapPin, text: job?.location?.split(',')[0] },
     { icon: Monitor, text: job?.workMode },
@@ -121,7 +126,7 @@ function ApplicationCard({ app, onWithdraw, withdrawing }) {
               </h3>
               {company && <p className="mt-0.5 text-[13.5px] text-mz-ink-2">{company}</p>}
             </div>
-            <StatusBadge status={app.status} />
+            <StatusBadge status={app.status} viewed={!!app.employerViewedOn} />
           </div>
           <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-mz-muted">
             {meta.map(({ icon: Icon, text }) => (

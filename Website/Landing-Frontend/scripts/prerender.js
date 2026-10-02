@@ -45,7 +45,7 @@ const { render } = await import(pathToFileURL(SERVER_ENTRY).href)
 async function fetchInitialHomeData() {
   try {
     const [jobsRes, categories, hotCities] = await Promise.all([
-      fetch(`${PUBLIC_JOBS_API_URL}?sort=newest&limit=12&page=1`).then(async (r) => (r.ok ? { jobs: await r.json(), total: Number(r.headers.get('X-Total-Count')) } : Promise.reject(r.status))),
+      fetch(`${PUBLIC_JOBS_API_URL}?sort=newest&limit=12&page=1&urgent=exclude`).then(async (r) => (r.ok ? { jobs: await r.json(), total: Number(r.headers.get('X-Total-Count')) } : Promise.reject(r.status))),
       fetch(`${PUBLIC_JOBS_API_URL}/categories`).then((r) => (r.ok ? r.json() : Promise.reject(r.status))),
       fetch(`${PUBLIC_JOBS_API_URL}/hot-cities`).then((r) => (r.ok ? r.json() : Promise.reject(r.status))),
     ])
