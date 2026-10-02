@@ -39,6 +39,7 @@ export const NAV_LINKS = [
       { label: 'Our Story', to: '/our-story' },
       { label: 'Mzobs Ally', to: '/ally' },
       { label: 'Associate with Mzobs', to: '/associate', hideWhenSignedIn: true },
+      { label: 'Add Your Campus', to: '/add-your-campus' },
     ],
   },
 ]

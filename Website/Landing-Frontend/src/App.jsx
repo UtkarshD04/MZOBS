@@ -44,6 +44,7 @@ const EmployerResetPassword = lazy(() => import('./pages/EmployerResetPassword')
 const Ally = lazy(() => import('./pages/Ally'))
 const Associate = lazy(() => import('./pages/Associate'))
 const AssociateApply = lazy(() => import('./pages/AssociateApply'))
+const CampusPartner = lazy(() => import('./pages/CampusPartner'))
 
 // Only ever visible for the fraction of a second a lazy route's chunk takes
 // to fetch (and never at all for the eager/SSR'd routes above) — deliberately
@@ -111,6 +112,7 @@ export default function App() {
             <Route path={CLIENT_ONLY_ROUTES.ally} element={<Ally />} />
             <Route path={CLIENT_ONLY_ROUTES.associate} element={<Associate />} />
             <Route path={CLIENT_ONLY_ROUTES.associateApply} element={<AssociateApply />} />
+            <Route path={CLIENT_ONLY_ROUTES.campusPartner} element={<CampusPartner />} />
             <Route path={CLIENT_ONLY_ROUTES.allyLegacy} element={<Navigate to={CLIENT_ONLY_ROUTES.ally} replace />} />
             <Route path={CLIENT_ONLY_ROUTES.dootLegacy} element={<Navigate to={CLIENT_ONLY_ROUTES.ally} replace />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />

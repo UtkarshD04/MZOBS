@@ -35,6 +35,9 @@ export const ASSOCIATES_API_URL = import.meta.env.VITE_ASSOCIATES_API_URL || `${
 
 export const ALLY_API_URL = import.meta.env.VITE_CAMPUS_MANTRI_API_URL || `${API_ORIGIN}/api/campus-mantri`
 
+// Same Backend — "Add Your Campus" partnership requests from colleges/universities.
+export const CAMPUS_PARTNER_API_URL = import.meta.env.VITE_CAMPUS_PARTNER_API_URL || `${API_ORIGIN}/api/campus-partners`
+
 // Same Backend — public, unauthenticated feed of jobs admin/ops have
 // approved and pushed live, for the home page's "Latest jobs" section.
 export const PUBLIC_JOBS_API_URL = import.meta.env.VITE_PUBLIC_JOBS_API_URL ?? 'http://localhost:4000/api/jobs'
