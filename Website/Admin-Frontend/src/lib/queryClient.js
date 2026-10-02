@@ -25,6 +25,7 @@ export const queryKeys = {
   resumeStats: ['resumeStats'],
   mockInterviewStats: ['mockInterviewStats'],
   applications: (filters) => ['applications', filters],
+  associates: (filters) => ['associates', filters],
   subscriptionTrend: (range) => ['subscriptionTrend', range],
   employerRevenueTrend: (range) => ['employerRevenueTrend', range],
   coupons: ['coupons'],

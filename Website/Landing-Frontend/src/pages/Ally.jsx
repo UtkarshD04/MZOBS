@@ -413,14 +413,11 @@ export default function Ally() {
 
         <div className="cm-wrap cm-hero-grid">
           <div>
-            <p className="cm-eyebrow cm-rv" style={{ '--d': '0s' }}>Mzobs Community <span className="cm-deva">· सहयोगी</span></p>
             <h1 className="cm-h1">
               <span className="cm-line"><span>Meet the</span></span>
               <span className="cm-line"><span>Mzobs</span></span>
               <span className="cm-line"><span><span className="cm-accent" style={{ display: 'inline' }}>Ally.</span></span></span>
             </h1>
-            <p className="cm-lead cm-rv" style={{ '--d': '0.3s', marginTop: 30 }}>Carry opportunities. Connect talent. Become the connection between Mzobs and your student community — discover opportunities, spread awareness, build your network and create real impact.</p>
-            <p className="cm-eyebrow cm-rv" style={{ '--d': '0.36s', marginTop: 14 }}>Open to 3rd &amp; 4th year students · minimum 4 semesters completed</p>
             <div className="cm-hero-cta cm-rv" style={{ '--d': '0.42s' }}>
               <a href="#apply-form" onClick={go('apply-form')} className="cm-btn cm-btn-primary">Apply for Ally <ArrowRight size={16} /></a>
               <a href="#why" onClick={go('why')} className="cm-btn cm-btn-ghost">Explore the Ally network</a>

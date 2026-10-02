@@ -18,6 +18,7 @@ import PostJob from './pages/ops/PostJob'
 import Shortlisted from './pages/ops/Shortlisted'
 import Queries from './pages/ops/Queries'
 import PremiumServices from './pages/ops/PremiumServices'
+import Associates from './pages/ops/Associates'
 import Payments from './pages/ops/Payments'
 import Team from './pages/ops/Team'
 import SendNotification from './pages/ops/SendNotification'
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="resumes" element={<Resumes />} />
             <Route path="shortlisted" element={<Shortlisted />} />
             <Route path="premium-services" element={<PremiumServices />} />
+            <Route path="associates" element={<Associates />} />
             <Route element={<RequireAdmin />}>
               <Route path="hr-contacts" element={<HRContacts />} />
               <Route path="companies" element={<Companies />} />

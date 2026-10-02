@@ -38,6 +38,7 @@ export const NAV_LINKS = [
     children: [
       { label: 'Our Story', to: '/our-story' },
       { label: 'Mzobs Ally', to: '/ally' },
+      { label: 'Associate with Mzobs', to: '/associate', hideWhenSignedIn: true },
     ],
   },
 ]

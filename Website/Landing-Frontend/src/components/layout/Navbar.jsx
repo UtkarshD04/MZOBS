@@ -29,6 +29,11 @@ export default function Navbar() {
   // The employer link is for hiring teams — hide it on the student-facing Ally
   // page and whenever a candidate is signed in.
   const showEmployer = pathname !== CLIENT_ONLY_ROUTES.ally && !session?.token
+  // Menu items flagged hideWhenSignedIn (e.g. "Associate with Mzobs", for placement
+  // companies) don't belong in a signed-in candidate's menu.
+  const navLinks = NAV_LINKS.map((link) =>
+    link.children ? { ...link, children: link.children.filter((c) => !(c.hideWhenSignedIn && session?.token)) } : link
+  )
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 4)
@@ -67,7 +72,7 @@ export default function Navbar() {
           </Link>
 
           <nav aria-label="Primary" className="hidden flex-1 items-center gap-0.5 lg:flex">
-            {NAV_LINKS.map((link) =>
+            {navLinks.map((link) =>
               link.children ? (
                 <div
                   key={link.label}
@@ -171,7 +176,7 @@ export default function Navbar() {
               className="fixed inset-x-0 top-16 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto border-b border-(--jobs-border) bg-white shadow-lg lg:hidden"
             >
               <div className="flex flex-col px-5 pb-5 pt-2">
-                {NAV_LINKS.map((link) =>
+                {navLinks.map((link) =>
                   link.children ? (
                     <div key={link.label} className="border-b border-(--jobs-border)">
                       <span className="block pt-3 text-[14px] font-semibold text-(--jobs-navy)">{link.label}</span>

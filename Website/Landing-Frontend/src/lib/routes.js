@@ -21,6 +21,8 @@ export const CLIENT_ONLY_ROUTES = {
   employerForgotPassword: '/employers/forgot-password',
   employerResetPassword: '/employers/reset-password',
   ally: '/ally',
+  associate: '/associate',
+  associateApply: '/associate/apply',
   // old links — redirect to /ally (see App.jsx)
   allyLegacy: '/campus-mantri',
   dootLegacy: '/doot',

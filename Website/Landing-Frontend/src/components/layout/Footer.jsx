@@ -46,6 +46,7 @@ const LINK_GROUPS = [
     title: 'Company',
     links: [
       { label: 'Our story', to: '/our-story' },
+      { label: 'Associate with Mzobs', to: '/associate' },
       { label: 'Contact', to: '/contact' },
       { label: 'Careers', href: `mailto:${CONTACT_EMAIL}?subject=Careers%20at%20Mzobs` },
     ],
