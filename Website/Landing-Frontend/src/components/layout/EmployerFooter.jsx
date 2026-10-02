@@ -33,7 +33,7 @@ const LINK_GROUPS = [
   {
     title: 'Company',
     links: [
-      { label: 'Who we are', to: '/about' },
+      { label: 'Our story', to: '/our-story' },
       { label: 'Our story', to: '/our-story' },
       { label: 'Contact us', to: '/contact' },
     ],

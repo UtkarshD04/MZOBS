@@ -38,7 +38,6 @@ export const NAV_LINKS = [
     children: [
       { label: 'Our Story', to: '/our-story' },
       { label: 'Mzobs Ally', to: '/ally' },
-      { label: 'About', to: '/about' },
     ],
   },
 ]
@@ -548,7 +547,7 @@ export const FOOTER_DATA = {
   menuItems: [
     { label: "Home", to: "/" },
     { label: "Services", to: "/#services" },
-    { label: "Who We Are", to: "/about" },
+    { label: "Our Story", to: "/our-story" },
     { label: "Contact", to: "/contact" },
   ],
   socialsTitle: "Socials",
