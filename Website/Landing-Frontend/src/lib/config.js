@@ -30,6 +30,9 @@ export const EMPLOYEE_API_URL = import.meta.env.VITE_EMPLOYEE_API_URL ?? 'http:/
 export const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL ?? 'http://localhost:4000/api/contact'
 
 // Same Backend — Mzobs Ally applications (shown in the Operations portal).
+// Same Backend — "Associate with Mzobs" requests from placement companies (shown in the Mzobs portal).
+export const ASSOCIATES_API_URL = import.meta.env.VITE_ASSOCIATES_API_URL || `${API_ORIGIN}/api/associates`
+
 export const ALLY_API_URL = import.meta.env.VITE_CAMPUS_MANTRI_API_URL || `${API_ORIGIN}/api/campus-mantri`
 
 // Same Backend — public, unauthenticated feed of jobs admin/ops have

@@ -24,6 +24,7 @@ export const queryKeys = {
   premiumServices: (filters) => ['premiumServices', filters],
   premiumServiceStats: ['premiumServiceStats'],
   premiumPlan: ['premiumPlan'],
+  associates: (filters) => ['associates', filters],
   payments: (filters) => ['payments', filters],
   resumeStats: ['resumeStats'],
   notifications: ['notifications'],
