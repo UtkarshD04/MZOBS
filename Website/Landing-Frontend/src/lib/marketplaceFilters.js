@@ -14,6 +14,7 @@ export const MARKETPLACE_DEFAULTS = {
   salary: [], // ranges: '0-3' | '3-6' | ...
   location: [], // city labels
   company: [], // company ids
+  skills: [], // exact skill names (from the skills facet)
   postedWithin: '', // '1' | '3' | '7' | '15' | '30'
 }
 
@@ -49,6 +50,7 @@ export function filterParams(state, search) {
     employmentType: state.jobTypes,
     track: state.tracks,
     company: state.company,
+    skills: state.skills,
     postedWithin: state.postedWithin,
   }
 }
@@ -73,6 +75,7 @@ export function countMarketplaceFilters(state) {
     state.salary.length +
     state.location.length +
     state.company.length +
+    state.skills.length +
     (state.postedWithin ? 1 : 0)
   )
 }
@@ -92,6 +95,7 @@ export function marketplaceChips(state, { companyNameOf } = {}) {
   }
   multi('salary', state.salary, salaryLabel)
   multi('location', state.location, (v) => v)
+  multi('skills', state.skills, (v) => v)
   multi('company', state.company, (v) => companyNameOf?.(v) ?? 'Company')
   if (state.postedWithin) chips.push({ id: 'postedWithin', label: postedWithinLabel(state.postedWithin), clear: (s) => ({ ...s, postedWithin: '' }) })
   return chips

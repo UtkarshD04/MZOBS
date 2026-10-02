@@ -32,7 +32,7 @@ import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 export const NAV_LINKS = [
   { label: 'Find Jobs', to: '/#latest-jobs' },
   { label: 'Companies', to: '/#companies' },
-  { label: 'Campuses', to: '/#campuses' },
+  { label: 'Premium', to: '/employees/subscription' },
   {
     label: 'Resources',
     children: [
@@ -681,26 +681,6 @@ export const EMPLOYEE_FEATURES = [
     image: "/images/new_images/emp_feature_4.jpg"
   }
 ]
-
-export const EMPLOYEE_PRICING_DATA = {
-  badge: "One-Time Fee",
-  titlePrefix: "Unlock Every Premium Feature For ",
-  titleHighlight: "₹99",
-  titleSuffix: ", Once",
-  desc: "No monthly fee, no renewal, no surprise charges. Pay ₹99 one time and keep lifetime access to everything below.",
-  price: "₹99",
-  priceNote: "Paid once, valid for life",
-  perks: [
-    "Lifetime access to profile matching & placement tools",
-    "Expert resume review by our recruitment team",
-    "Mock interview practice with real feedback",
-    "Smart skill categorisation to match you to relevant roles",
-    "Your resume placed in front of employers who are hiring"
-  ],
-  reassurance: "You're never charged again — not to apply, not to get shortlisted, not to get placed.",
-  ctaText: "Get Premium Access",
-  ctaHref: "/employees/signup"
-}
 
 export const EMPLOYER_FEATURES = [
   {

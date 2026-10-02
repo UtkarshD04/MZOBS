@@ -4,7 +4,8 @@ import ApplyPanel from './ApplyPanel'
 import ExplorerButton from '../../ui/ExplorerButton'
 import { isJobSaved, toggleJobSaved } from '../../../lib/savedJobs'
 import { Avatar, NewBadge, BulletList, TagList, FactTile, SectionHeading, Divider, IconButton, TrustRow } from './jobCardPrimitives'
-import { jobHref, initialsOf } from '../../../lib/jobCardHelpers'
+import { initialsOf } from '../../../lib/jobCardHelpers'
+import { jobPath } from '../../mz/JobCard'
 
 const DESCRIPTION_PREVIEW_CHARS = 320
 
@@ -32,10 +33,10 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
   const descriptionIsLong = (job.description?.length ?? 0) > DESCRIPTION_PREVIEW_CHARS
 
   // Native share sheet where supported (mobile browsers), otherwise falls
-  // back to copying the apply link so the button still does something useful
-  // on desktop.
+  // back to copying the job page's link so the button still does something
+  // useful on desktop.
   async function shareJob() {
-    const url = jobHref(job)
+    const url = `${window.location.origin}${jobPath(job)}`
     try {
       if (navigator.share) {
         await navigator.share({ title: job.title, text: `${job.title} at ${job.company}`, url })

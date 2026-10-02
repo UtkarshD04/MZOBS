@@ -237,12 +237,24 @@ function ApplicationForm({ f, set }) {
     }
   }
 
+  // Live Ally ID preview — fills in from the form as the applicant types.
+  const card = (
+    <aside className="cm-form-pass" aria-label="Your Ally ID preview">
+      <p className="cm-eyebrow">Your Ally ID</p>
+      <div className="cm-stage"><Pass name={f.name} college={f.college} city={f.city} hoverFlip={false} /></div>
+      <p className="s">Fills in as you apply · tap to flip · preview only, not an issued ID</p>
+    </aside>
+  )
+
   if (done) {
     return (
-      <div className="cm-panel cm-ok" ref={top}>
-        <div className="tick"><Check size={30} strokeWidth={2.4} /></div>
-        <h3>Application received</h3>
-        <p className="s" style={{ margin: '8px auto 0', maxWidth: '26rem' }}>Thank you, {f.name.split(' ')[0]}. The Mzobs team will be in touch on {f.email}.</p>
+      <div className="cm-form-wrap" ref={top}>
+        <div className="cm-panel cm-ok">
+          <div className="tick"><Check size={30} strokeWidth={2.4} /></div>
+          <h3>Application received</h3>
+          <p className="s" style={{ margin: '8px auto 0', maxWidth: '26rem' }}>Thank you, {f.name.split(' ')[0]}. The Mzobs team will be in touch on {f.email}.</p>
+        </div>
+        {card}
       </div>
     )
   }
@@ -318,6 +330,8 @@ function ApplicationForm({ f, set }) {
           </button>
         </div>
       </form>
+
+      {card}
     </div>
   )
 }
@@ -408,7 +422,7 @@ export default function Ally() {
             <p className="cm-lead cm-rv" style={{ '--d': '0.3s', marginTop: 30 }}>Carry opportunities. Connect talent. Become the connection between Mzobs and your student community — discover opportunities, spread awareness, build your network and create real impact.</p>
             <p className="cm-eyebrow cm-rv" style={{ '--d': '0.36s', marginTop: 14 }}>Open to 3rd &amp; 4th year students · minimum 4 semesters completed</p>
             <div className="cm-hero-cta cm-rv" style={{ '--d': '0.42s' }}>
-              <a href="#apply" onClick={go('apply')} className="cm-btn cm-btn-primary">Become a Mzobs Ally <ArrowRight size={16} /></a>
+              <a href="#apply-form" onClick={go('apply-form')} className="cm-btn cm-btn-primary">Apply for Ally <ArrowRight size={16} /></a>
               <a href="#why" onClick={go('why')} className="cm-btn cm-btn-ghost">Explore the Ally network</a>
             </div>
           </div>
@@ -553,23 +567,6 @@ export default function Ally() {
               <Rv key={label} d={(i % 3) * 0.07} className="cm-b"><Icon size={22} strokeWidth={1.6} /><span>{label}</span></Rv>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* digital pass */}
-      <section className="cm-sec" id="pass" style={{ paddingTop: 0 }}>
-        <div className="cm-wrap cm-passgrid">
-          <div>
-            <Rv as="p" className="cm-eyebrow">Your pass</Rv>
-            <Rv as="h2" d={0.06} className="cm-h2">Your Ally ID.</Rv>
-            <Rv as="p" d={0.12} className="cm-lead" style={{ marginTop: 22 }}>Preview how your pass could look. Hover — or tap — to flip it. This is a visual preview only, not an issued ID.</Rv>
-            <div className="cm-fields">
-              <label className="cm-field"><span>Your name</span><input value={f.name} onChange={(e) => set('name', e.target.value)} placeholder="Your name" /></label>
-              <label className="cm-field"><span>Your college</span><input value={f.college} onChange={(e) => set('college', e.target.value)} placeholder="Your college" /></label>
-              <label className="cm-field"><span>City</span><input value={f.city} onChange={(e) => set('city', e.target.value)} placeholder="City" /></label>
-            </div>
-          </div>
-          <Rv className="cm-stage" style={{ minHeight: 360 }}><Pass name={f.name} college={f.college} city={f.city} /></Rv>
         </div>
       </section>
 

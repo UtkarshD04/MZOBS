@@ -1,52 +1,40 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X, LogOut, User, ChevronDown } from 'lucide-react'
 import { NAV_LINKS } from '../../lib/content'
 import { CLIENT_ONLY_ROUTES } from '../../lib/routes'
-import { getEmployeeSession, clearEmployeeSession, onEmployeeSessionChange } from '../../lib/employeeSession'
+import { clearEmployeeSession } from '../../lib/employeeSession'
+import { useEmployeeSession } from '../../lib/useEmployeeSession'
 import { subscribeToWebPush, unsubscribeFromWebPush } from '../../lib/webPush'
 import EmployeeAuthModal from '../forms/EmployeeAuthModal'
 
+const linkCls =
+  'rounded-[8px] px-3 py-2 text-[14px] font-semibold text-(--jobs-navy)/75 transition-colors hover:bg-(--jobs-navy)/[0.05] hover:text-(--jobs-navy) focus-visible:outline-2 focus-visible:outline-(--jobs-teal-dark)'
+const mobileLinkCls = 'block border-b border-(--jobs-border) py-3 text-left text-[14px] font-semibold text-(--jobs-navy)'
+
 // Sitewide header — same on every route, including Home, so it never
-// visibly changes when navigating (e.g. clicking "For Employers").
+// visibly changes when navigating. A plain white bar with a hairline border;
+// it only picks up a faint shadow once the page scrolls under it.
 export default function Navbar() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  // The Mzobs Ally page is for students — the employer call-to-action doesn't belong there.
-  const showEmployer = pathname !== CLIENT_ONLY_ROUTES.ally
   const [open, setOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [hoverLink, setHoverLink] = useState(null)
-  const progressRef = useRef(null)
-  // Starts null (not read from localStorage here) so the server-rendered/
-  // prerendered markup and the client's first paint match — localStorage
-  // doesn't exist during SSR. The real value is picked up right after mount
-  // in the effect below instead.
-  const [session, setSession] = useState(null)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-  const floating = scrolled || open
+  const [dropdownOpen, setDropdownOpen] = useState(null)
+  // Read after mount (see useEmployeeSession), so the prerendered markup and
+  // the first client paint match.
+  const { session } = useEmployeeSession()
+  // The employer link is for hiring teams — hide it on the student-facing Ally
+  // page and whenever a candidate is signed in.
+  const showEmployer = pathname !== CLIENT_ONLY_ROUTES.ally && !session?.token
 
   useEffect(() => {
-    function onScroll() {
-      const y = window.scrollY
-      setScrolled(y > 8)
-      // Reading-progress hairline along the bottom of the floating bar.
-      const max = document.documentElement.scrollHeight - window.innerHeight
-      if (progressRef.current) progressRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`
-    }
+    const onScroll = () => setScrolled(window.scrollY > 4)
     window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  // Navbar is mounted once for the whole app (see comment above), so it
-  // won't naturally re-render when EmployeeSign{in,up}Form saves a session
-  // after navigating back to "/" — this picks that change up explicitly.
-  useEffect(() => {
-    setSession(getEmployeeSession())
-    return onEmployeeSessionChange(() => setSession(getEmployeeSession()))
   }, [])
 
   // Registers this browser for push notifications once there's an account to
@@ -64,156 +52,97 @@ export default function Navbar() {
     navigate('/')
   }
 
-  function goToProfile() {
-    navigate('/employees/profile')
-  }
+  const firstName = session?.employee?.name?.split(' ')[0] ?? 'there'
 
   return (
     <>
-      {/* Transparent at the top of the page; once you scroll it condenses into a
-          floating frosted "island" with a reading-progress hairline along its
-          bottom edge. */}
       <header
-        className="fixed top-0 left-0 right-0 z-50 h-19"
+        className={`fixed inset-x-0 top-0 z-50 h-16 border-b border-(--jobs-border) bg-white transition-shadow duration-200 ${
+          scrolled || open ? 'shadow-[0_1px_8px_rgba(22,50,79,0.06)]' : ''
+        }`}
       >
-        <div
-          className={`relative mx-auto flex items-center justify-between gap-6 border transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            floating
-              ? 'mt-2 h-[60px] w-[calc(100%-24px)] max-w-[1080px] rounded-full border-white/70 bg-white/55 px-5 shadow-[0_12px_32px_-14px_rgba(16,42,67,0.3)] backdrop-blur-xl backdrop-saturate-150 md:px-7'
-              : 'h-full w-full max-w-7xl border-transparent px-6 md:px-10'
-          }`}
-        >
-          <span
-            ref={progressRef}
-            className={`pointer-events-none absolute bottom-0 left-8 right-8 h-[2px] origin-left rounded-full transition-opacity duration-300 ${
-              floating ? 'opacity-100' : 'opacity-0'
-            }`}
-            style={{ backgroundImage: 'var(--hero-cta-gradient)', transform: 'scaleX(0)' }}
-            aria-hidden="true"
-          />
-          <Link to="/" className="flex items-center shrink-0">
-            <img
-              src="/images/logo.png"
-              alt="Mzobs"
-              className={`w-auto object-contain transition-[height] duration-500 ${floating ? 'h-11' : 'h-14'}`}
-            />
+        <div className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="flex shrink-0 items-center">
+            <img src="/images/logo.png" alt="Mzobs" className="h-10 w-auto object-contain" />
           </Link>
 
-          <nav
-            aria-label="Primary"
-            className="hidden lg:flex items-center gap-1"
-            onMouseLeave={() => {
-              setHoverLink(null)
-              setDropdownOpen(false)
-            }}
-          >
+          <nav aria-label="Primary" className="hidden flex-1 items-center gap-0.5 lg:flex">
             {NAV_LINKS.map((link) =>
               link.children ? (
-                <div key={link.label} className="relative" onMouseEnter={() => { setHoverLink(link.label); setDropdownOpen(true) }}>
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => setDropdownOpen(link.label)}
+                  onMouseLeave={() => setDropdownOpen(null)}
+                >
                   <button
                     type="button"
                     aria-haspopup="true"
-                    aria-expanded={dropdownOpen && hoverLink === link.label}
-                    className="relative flex items-center gap-1 rounded-full px-3.5 py-2 text-[14px] font-semibold text-(--jobs-navy)/75 transition-colors hover:text-(--jobs-navy)"
+                    aria-expanded={dropdownOpen === link.label}
+                    onClick={() => setDropdownOpen((v) => (v === link.label ? null : link.label))}
+                    className={`${linkCls} flex items-center gap-1`}
                   >
-                    {hoverLink === link.label && (
-                      <motion.span
-                        layoutId="nav-hover-pill"
-                        className="absolute inset-0 rounded-full bg-(--jobs-navy)/[0.07] ring-1 ring-(--jobs-navy)/[0.05]"
-                        transition={{ type: 'spring', stiffness: 520, damping: 38 }}
-                      />
-                    )}
-                    <span className="relative">{link.label}</span>
-                    <ChevronDown
-                      size={14}
-                      className={`relative transition-transform duration-200 ${dropdownOpen && hoverLink === link.label ? 'rotate-180' : ''}`}
-                    />
+                    {link.label}
+                    <ChevronDown size={14} className={`transition-transform duration-200 ${dropdownOpen === link.label ? 'rotate-180' : ''}`} aria-hidden="true" />
                   </button>
-
-                  <AnimatePresence>
-                    {dropdownOpen && hoverLink === link.label && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute left-0 top-full pt-2 w-48"
-                      >
-                        <div className="rounded-xl border border-(--jobs-border) bg-white py-1.5 shadow-[0_12px_32px_-14px_rgba(16,42,67,0.3)]">
-                          {link.children.map((child) => (
-                            <Link
-                              key={child.label}
-                              to={child.to}
-                              className="block px-4 py-2.5 text-[13.5px] font-semibold text-(--jobs-navy)/75 hover:bg-(--jobs-navy)/[0.05] hover:text-(--jobs-navy) transition-colors"
-                            >
-                              {child.label}
-                            </Link>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {dropdownOpen === link.label && (
+                    <div className="absolute left-0 top-full w-48 pt-1.5">
+                      <div className="rounded-[10px] border border-(--jobs-border) bg-white py-1.5 shadow-[0_8px_24px_-12px_rgba(22,50,79,0.25)]">
+                        {link.children.map((child) => (
+                          <Link
+                            key={child.label}
+                            to={child.to}
+                            onClick={() => setDropdownOpen(null)}
+                            className="block px-4 py-2 text-[13.5px] font-semibold text-(--jobs-navy)/75 transition-colors hover:bg-(--jobs-navy)/[0.05] hover:text-(--jobs-navy)"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
-                <Link
-                  key={link.label}
-                  to={link.to}
-                  onMouseEnter={() => { setHoverLink(link.label); setDropdownOpen(false) }}
-                  onFocus={() => setHoverLink(link.label)}
-                  onBlur={() => setHoverLink(null)}
-                  className="relative rounded-full px-3.5 py-2 text-[14px] font-semibold text-(--jobs-navy)/75 transition-colors hover:text-(--jobs-navy)"
-                >
-                  {hoverLink === link.label && (
-                    <motion.span
-                      layoutId="nav-hover-pill"
-                      className="absolute inset-0 rounded-full bg-(--jobs-navy)/[0.07] ring-1 ring-(--jobs-navy)/[0.05]"
-                      transition={{ type: 'spring', stiffness: 520, damping: 38 }}
-                    />
-                  )}
-                  <span className="relative">{link.label}</span>
+                <Link key={link.label} to={link.to} className={linkCls}>
+                  {link.label}
                 </Link>
               )
             )}
+            {session && (
+              <Link to="/employees/applications" className={linkCls}>
+                My applications
+              </Link>
+            )}
+            {showEmployer && (
+              <Link to="/employers" className={linkCls}>
+                For Employers
+              </Link>
+            )}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <div className="hidden shrink-0 items-center gap-1 lg:flex">
             {session ? (
               <>
-                <button
-                  onClick={goToProfile}
-                  className="flex items-center gap-1.5 text-[13.5px] font-semibold text-(--jobs-navy) hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
-                  title="View profile"
-                >
-                  <User size={15} /> Hi, {session.employee?.name?.split(' ')[0] ?? 'there'}
-                </button>
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center gap-1.5 text-[13.5px] font-semibold text-(--jobs-navy)/75 hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
-                >
-                  <LogOut size={15} /> Sign out
+                <Link to="/employees/profile" className={`${linkCls} flex items-center gap-1.5 text-(--jobs-navy)`} title="View profile">
+                  <User size={15} aria-hidden="true" /> Hi, {firstName}
+                </Link>
+                <button type="button" onClick={handleSignOut} className={`${linkCls} flex items-center gap-1.5`}>
+                  <LogOut size={15} aria-hidden="true" /> Sign out
                 </button>
               </>
             ) : (
               <button
                 type="button"
                 onClick={() => setAuthModalOpen(true)}
-                className="text-[13.5px] font-semibold text-(--jobs-navy) hover:text-(--jobs-teal-dark) transition-colors px-3 py-2"
+                className="h-9 rounded-[10px] border border-(--jobs-border) px-4 text-[14px] font-semibold text-(--jobs-navy) transition-colors hover:border-(--jobs-teal-dark) hover:text-(--jobs-teal-dark) focus-visible:outline-2 focus-visible:outline-(--jobs-teal-dark)"
               >
                 Sign in
               </button>
             )}
-            {!session && showEmployer && (
-              <Link
-                to="/employers"
-                className="text-[13.5px] font-bold text-white bg-(--jobs-navy) hover:bg-(--jobs-teal-dark) transition-colors px-4 py-2.5 rounded-lg"
-              >
-                Employer
-              </Link>
-            )}
           </div>
 
           <button
-            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg border border-(--jobs-border) text-(--jobs-navy)"
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-(--jobs-border) text-(--jobs-navy) lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle navigation"
             aria-expanded={open}
@@ -230,63 +159,62 @@ export default function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 top-19 bg-black/30 z-40"
+              className="fixed inset-0 top-16 z-40 bg-black/25 lg:hidden"
               onClick={() => setOpen(false)}
               aria-hidden="true"
             />
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="lg:hidden fixed top-19 left-0 right-0 bg-white border-b border-(--jobs-border) shadow-lg z-40"
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.18 }}
+              className="fixed inset-x-0 top-16 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto border-b border-(--jobs-border) bg-white shadow-lg lg:hidden"
             >
-              <div className="p-5 flex flex-col gap-1">
+              <div className="flex flex-col px-5 pb-5 pt-2">
                 {NAV_LINKS.map((link) =>
                   link.children ? (
                     <div key={link.label} className="border-b border-(--jobs-border)">
                       <span className="block pt-3 text-[14px] font-semibold text-(--jobs-navy)">{link.label}</span>
                       <div className="pb-2">
                         {link.children.map((child) => (
-                          <Link
-                            key={child.label}
-                            to={child.to}
-                            onClick={() => setOpen(false)}
-                            className="block py-2 pl-3 text-[13.5px] font-semibold text-(--jobs-navy)/70"
-                          >
+                          <Link key={child.label} to={child.to} onClick={() => setOpen(false)} className="block py-2 pl-3 text-[13.5px] font-semibold text-(--jobs-navy)/70">
                             {child.label}
                           </Link>
                         ))}
                       </div>
                     </div>
                   ) : (
-                    <Link
-                      key={link.label}
-                      to={link.to}
-                      onClick={() => setOpen(false)}
-                      className="py-3 text-[14px] font-semibold text-(--jobs-navy) border-b border-(--jobs-border)"
-                    >
+                    <Link key={link.label} to={link.to} onClick={() => setOpen(false)} className={mobileLinkCls}>
                       {link.label}
                     </Link>
                   )
                 )}
+                {session && (
+                  <Link to="/employees/applications" onClick={() => setOpen(false)} className={mobileLinkCls}>
+                    My applications
+                  </Link>
+                )}
+                {showEmployer && (
+                  <Link to="/employers" onClick={() => setOpen(false)} className={mobileLinkCls}>
+                    For Employers
+                  </Link>
+                )}
                 <div className="flex flex-col gap-2 pt-4">
                   {session ? (
                     <>
-                      <button
-                        onClick={() => {
-                          setOpen(false)
-                          goToProfile()
-                        }}
-                        className="h-10 flex items-center justify-center gap-1.5 rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"
+                      <Link
+                        to="/employees/profile"
+                        onClick={() => setOpen(false)}
+                        className="flex h-10 items-center justify-center gap-1.5 rounded-[10px] border border-(--jobs-border) text-[13.5px] font-bold text-(--jobs-navy)"
                       >
-                        <User size={15} /> Hi, {session.employee?.name?.split(' ')[0] ?? 'there'}
-                      </button>
+                        <User size={15} aria-hidden="true" /> Hi, {firstName}
+                      </Link>
                       <button
+                        type="button"
                         onClick={handleSignOut}
-                        className="h-10 flex items-center justify-center gap-1.5 rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"
+                        className="flex h-10 items-center justify-center gap-1.5 rounded-[10px] border border-(--jobs-border) text-[13.5px] font-bold text-(--jobs-navy)"
                       >
-                        <LogOut size={15} /> Sign out
+                        <LogOut size={15} aria-hidden="true" /> Sign out
                       </button>
                     </>
                   ) : (
@@ -296,19 +224,10 @@ export default function Navbar() {
                         setOpen(false)
                         setAuthModalOpen(true)
                       }}
-                      className="h-10 flex items-center justify-center rounded-lg border border-(--jobs-border) text-(--jobs-navy) text-[13.5px] font-bold"
+                      className="flex h-10 items-center justify-center rounded-[10px] border border-(--jobs-border) text-[13.5px] font-bold text-(--jobs-navy)"
                     >
                       Sign in
                     </button>
-                  )}
-                  {!session && showEmployer && (
-                    <Link
-                      to="/employers"
-                      onClick={() => setOpen(false)}
-                      className="h-10 flex items-center justify-center rounded-lg bg-(--jobs-navy) text-white text-[13.5px] font-bold"
-                    >
-                      Employer
-                    </Link>
                   )}
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { Building2 } from 'lucide-react'
-import { Container, SectionHead, initials } from '../primitives'
+import { Container, initials } from '../primitives'
 import { useCompanyJobCounts } from '../../../lib/useHomeData'
 import { COMPANIES_HIRING_DATA } from '../../../lib/content'
 
@@ -56,17 +56,14 @@ export default function CompaniesSection({ onSelect }) {
   const counts = useCompanyJobCounts(COMPANY_NAMES)
   const list = COMPANIES_HIRING_DATA.map((c) => ({ ...c, id: c.name, activeJobs: counts[c.name] ?? null }))
   const loop = list.length >= 5
-  const industryCount = new Set(list.map((c) => c.industry).filter(Boolean)).size
 
   return (
-    <section id="companies" aria-labelledby="companies-title" className="relative overflow-hidden bg-white mz-section">
+    <section id="companies" aria-labelledby="companies-title" className="relative scroll-mt-20 overflow-hidden border-t border-mz-line bg-white py-10 lg:py-12">
       <Container>
-        <SectionHead id="companies-title" eyebrow="Companies" title="Companies hiring through Mzobs">
-          {`${list.length} verified partner${list.length === 1 ? '' : 's'}${industryCount > 0 ? ` across ${industryCount} industr${industryCount === 1 ? 'y' : 'ies'}` : ''}.`}
-        </SectionHead>
+        <h2 id="companies-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Companies hiring through MZOBS</h2>
       </Container>
 
-      <div className="mt-14">
+      <div className="mt-6">
         {loop ? (
           <div className="mz-marquee py-3">
             <ul className="mz-marquee-track gap-8 pl-4" style={{ animationDuration: `${Math.max(10, list.length * 2.5)}s` }}>

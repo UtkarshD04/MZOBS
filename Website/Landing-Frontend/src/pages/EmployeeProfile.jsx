@@ -162,7 +162,7 @@ export default function EmployeeProfile() {
   useEffect(() => {
     const session = getEmployeeSession()
     if (!session?.token) {
-      navigate('/employees/signin?redirect=%2Femployees%2Fprofile')
+      navigate('/employees/signin?next=%2Femployees%2Fprofile')
       return
     }
     setToken(session.token)
@@ -242,7 +242,7 @@ export default function EmployeeProfile() {
           {!loading && error && (
             <div className="max-w-lg mx-auto py-24">
               <p className="text-[14px] font-semibold text-red-600">{error}</p>
-              <Link to="/employees/signin?redirect=%2Femployees%2Fprofile" className="inline-block mt-4 text-[13.5px] font-bold text-(--jobs-blue-dark) hover:underline">
+              <Link to="/employees/signin?next=%2Femployees%2Fprofile" className="inline-block mt-4 text-[13.5px] font-bold text-(--jobs-blue-dark) hover:underline">
                 Sign in again
               </Link>
             </div>

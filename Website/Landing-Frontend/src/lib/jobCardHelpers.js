@@ -1,5 +1,3 @@
-import { EMPLOYEE_APP_URL } from './config'
-
 // Non-component helpers shared between the "Latest jobs" list/inline detail
 // panel (LatestJobs.jsx, desktop) and the standalone job description page
 // (pages/JobDetail.jsx, mobile) — split out of jobCardPrimitives.jsx (which
@@ -43,15 +41,4 @@ const AVATAR_TONES = [
 export function toneForCompany(name) {
   const code = (name || '').split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0)
   return AVATAR_TONES[code % AVATAR_TONES.length]
-}
-
-// Deep-links straight to this job's apply flow in the dashboard app (see
-// JobMatching.jsx, which opens the apply modal for a matching `?jobId=`) —
-// same "click apply on the listing, land in the apply flow" pattern as
-// Indeed/Naukri. Falls back to a title search for the curated sample data,
-// which has no real id to link to.
-export function jobHref(job) {
-  if (job.applyUrl) return job.applyUrl
-  if (job.id) return `${EMPLOYEE_APP_URL}/app/jobs?jobId=${encodeURIComponent(job.id)}`
-  return `${EMPLOYEE_APP_URL}/app/jobs?q=${encodeURIComponent(job.title)}`
 }
