@@ -17,6 +17,7 @@ import Requirements from './pages/ops/Requirements'
 import PostJob from './pages/ops/PostJob'
 import Shortlisted from './pages/ops/Shortlisted'
 import Queries from './pages/ops/Queries'
+import PremiumServices from './pages/ops/PremiumServices'
 import Payments from './pages/ops/Payments'
 import Team from './pages/ops/Team'
 import SendNotification from './pages/ops/SendNotification'
@@ -35,6 +36,7 @@ export default function App() {
             <Route index element={<Overview />} />
             <Route path="resumes" element={<Resumes />} />
             <Route path="shortlisted" element={<Shortlisted />} />
+            <Route path="premium-services" element={<PremiumServices />} />
             <Route element={<RequireAdmin />}>
               <Route path="hr-contacts" element={<HRContacts />} />
               <Route path="companies" element={<Companies />} />
