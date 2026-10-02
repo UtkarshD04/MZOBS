@@ -1016,10 +1016,6 @@
   from { transform: translateX(-130%) skewX(-12deg); }
   to { transform: translateX(230%) skewX(-12deg); }
 }
-@keyframes mzDrift {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(30px, -20px, 0) scale(1.08); }
-}
 
 .mz-float { animation: mzFloat 6s ease-in-out infinite; }
 .mz-float-alt { animation: mzFloatAlt 7s ease-in-out infinite; }
@@ -1046,33 +1042,77 @@
 .mz-rise { animation: mzRise 0.7s var(--ease-mz) both; animation-delay: var(--d, 0s); }
 @media (prefers-reduced-motion: reduce) { .mz-rise { animation: none; } }
 
-/* Hero brand visual (components/mz/home/HeroVisual.jsx): a glass sculpture
-   that only floats, sways and catches light — slowly enough to go almost
-   unnoticed. Everything stops for prefers-reduced-motion. */
-.mz-sculpt-float { animation: mzSculptFloat 11s ease-in-out infinite; }
-.mz-sculpt-sway { transform-box: fill-box; transform-origin: 50% 90%; animation: mzSculptSway 17s ease-in-out infinite; }
-.mz-sculpt-light { animation: mzSculptLight 9s ease-in-out infinite; }
-.mz-sculpt-light-2 { animation-delay: -4.5s; }
-.mz-sculpt-glow { transform-box: fill-box; transform-origin: center; animation: mzSculptGlow 12s ease-in-out infinite; }
-.mz-sculpt-glow-2 { animation-duration: 15s; animation-delay: -6s; }
-.mz-sculpt-shadow { transform-box: fill-box; transform-origin: center; animation: mzSculptShadow 11s ease-in-out infinite; }
-@keyframes mzSculptFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-@keyframes mzSculptSway { 0%, 100% { transform: rotate(-0.8deg); } 50% { transform: rotate(0.8deg); } }
-@keyframes mzSculptLight { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.6; } }
-@keyframes mzSculptGlow { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
-@keyframes mzSculptShadow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.92); opacity: 0.8; } }
-@media (prefers-reduced-motion: reduce) {
-  .mz-sculpt-float, .mz-sculpt-sway, .mz-sculpt-light, .mz-sculpt-glow, .mz-sculpt-shadow { animation: none; }
-}
-
-/* Barely-there film grain for the hero's background. */
-.mz-grain {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.07 0 0 0 0 0.09 0 0 0 0 0.15 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.05;
-}
-
 /* Standard vertical rhythm for every home-page section: change here to resize all of them. */
 :root { --mz-section-y: 48px; --mz-section-gap: 32px; }
 @media (min-width: 1024px) { :root { --mz-section-y: 64px; } }
 .mz-section { padding-block: var(--mz-section-y); }
 .mz-section-end { padding-bottom: var(--mz-section-y); }
+
+/* ============================================================
+   Homepage (/) palette — the job-first careers layout runs on the
+   MZOBS teal system. Scoped to .mz-home (Home.jsx's root) by
+   re-pointing the same tokens every mz-* / legacy utility reads, so
+   other pages keep their current palette until they're redesigned.
+============================================================ */
+.mz-home {
+  --color-mz-primary: #0b7a6d;
+  --color-mz-primary-strong: #075f55;
+  --color-mz-primary-tint: #e7f5f1;
+  --color-mz-primary-ring: rgba(11, 122, 109, 0.28);
+  --color-mz-secondary: #0b7a6d;
+  --color-mz-accent: #0b7a6d;
+  --color-mz-accent-ink: #075f55;
+  --color-mz-accent-tint: #e7f5f1;
+  --color-mz-bg: #f7f9fc;
+  --color-mz-ink: #16324f;
+  --color-mz-ink-2: #2c4560;
+  --color-mz-muted: #66768a;
+  --color-mz-line: #e6eaf0;
+  --color-mz-line-strong: #d3dae3;
+  --shadow-mz-card: 0 1px 2px rgba(22, 50, 79, 0.04);
+  --shadow-mz-lift: 0 6px 16px -10px rgba(22, 50, 79, 0.22);
+  --shadow-mz-cta: none;
+  --mz-gradient: linear-gradient(#0b7a6d, #0b7a6d);
+  --hero-cta-gradient: linear-gradient(#0b7a6d, #0b7a6d);
+  --jobs-navy: #16324f;
+  --jobs-teal-dark: #075f55;
+  --jobs-border: #e6eaf0;
+  --explorer-navy: #16324f;
+  --explorer-muted: #66768a;
+  --explorer-blue: #0b7a6d;
+  --explorer-blue-hover: #075f55;
+  --explorer-blue-surface: #e7f5f1;
+  --explorer-blue-border: #b8d6d0;
+  --explorer-bg: #f7f9fc;
+  --explorer-border: #e6eaf0;
+}
+.mz-home ::selection { background: #e7f5f1; }
+.mz-home :focus-visible { outline-color: #0b7a6d; }
+
+/* Primary teal action: one restrained light pass on hover (not a loop),
+   a clear focus ring, and nothing at all under reduced motion. */
+.mz-btn-teal {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.mz-btn-teal::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 50%;
+  z-index: -1;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  transform: translateX(-120%) skewX(-12deg);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mz-btn-teal:hover::after { animation: mzCardSheen 0.7s ease-out 1; }
+}
+
+/* Horizontal scroll rows: fade the trailing edge so a row that continues
+   off-screen reads as scrollable rather than cropped. */
+.mz-fade-end {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+}

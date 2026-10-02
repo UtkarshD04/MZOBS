@@ -19,6 +19,7 @@ const LINK_GROUPS = [
       { label: 'Find jobs', to: '/#latest-jobs' },
       { label: 'Create profile', to: '/employees/signup' },
       { label: 'Candidate login', to: '/employees/signin' },
+      { label: 'Mzobs Premium', to: '/employees/subscription' },
       { label: 'Mzobs Ally', to: '/ally' },
     ],
   },
@@ -35,9 +36,10 @@ const LINK_GROUPS = [
     title: 'Explore',
     links: [
       { label: 'Categories', to: '/#categories' },
-      { label: 'Cities', to: '/#cities' },
-      { label: 'Companies', to: '/#companies' },
+      { label: 'Companies hiring', to: '/#companies' },
       { label: 'Campus', to: '/#campuses' },
+      { label: 'Jobs matching your profile', to: '/employees/recommended' },
+      { label: 'Your profile', to: '/employees/profile' },
     ],
   },
   {

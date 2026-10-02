@@ -391,6 +391,7 @@ export default function ApplyPanel({ job, onClose }) {
   const [uploadError, setUploadError] = useState('')
   const [applyStatus, setApplyStatus] = useState('idle') // idle | submitting | applied
   const [applyError, setApplyError] = useState('')
+  const [limitReached, setLimitReached] = useState(false)
 
   function loadProfile(activeToken) {
     setProfileLoading(true)
@@ -434,11 +435,13 @@ export default function ApplyPanel({ job, onClose }) {
   async function handleApply() {
     setApplyStatus('submitting')
     setApplyError('')
+    setLimitReached(false)
     try {
       await applyToJob(token, job.id)
       setApplyStatus('applied')
     } catch (err) {
       setApplyError(err.message)
+      setLimitReached(err.code === 'FREE_APPLICATION_LIMIT_REACHED')
       setApplyStatus('idle')
     }
   }
@@ -576,6 +579,11 @@ export default function ApplyPanel({ job, onClose }) {
       {applyError && (
         <div className="mt-3 rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle) p-3.5">
           <p className="text-[12.5px] text-red-600">{applyError}</p>
+          {limitReached && (
+            <a href="/employees/subscription" className="mt-1.5 inline-block text-[12.5px] font-bold text-(--jobs-teal-dark) hover:underline">
+              See what Premium includes →
+            </a>
+          )}
         </div>
       )}
       <button type="button" onClick={handleApply} disabled={applyStatus === 'submitting'} className={`${primaryButtonClass} mt-4`}>

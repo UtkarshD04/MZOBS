@@ -1,5 +1,5 @@
 import { Building, GraduationCap, Megaphone } from 'lucide-react'
-import { Container, Reveal, SectionHead, Button } from '../primitives'
+import { Container, Reveal, Button } from '../primitives'
 
 const CARDS = [
   {
@@ -24,21 +24,17 @@ const CARDS = [
 
 export default function CampusSection() {
   return (
-    <section id="campuses" aria-labelledby="campus-title" className="relative overflow-hidden bg-mz-bg py-14 lg:py-18">
+    <section id="campuses" aria-labelledby="campus-title" className="relative scroll-mt-20 overflow-hidden border-t border-mz-line bg-mz-bg py-10 lg:py-12">
       <Container>
-        <SectionHead
-          id="campus-title"
-          eyebrow="Campus network"
-          title={<>From Campus to <span className="mz-text-gradient">Career.</span></>}
-          align="center"
-        >
-          Mzobs works with colleges to give students a direct route from the classroom to their first job.
-        </SectionHead>
+        <h2 id="campus-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">
+          From Campus to <span className="text-mz-primary">Career.</span>
+        </h2>
+        <p className="mt-1 text-[14px] text-mz-muted">Mzobs works with colleges to give students a direct route from the classroom to their first job.</p>
 
-        <ul className="mt-8 grid gap-4 md:grid-cols-4">
+        <ul className="mt-6 grid gap-4 md:grid-cols-4">
           <Reveal
             as="li"
-            className="flex flex-col items-center justify-center rounded-2xl p-5 text-center text-white shadow-mz-cta"
+            className="flex flex-col items-center justify-center rounded-2xl p-5 text-center text-white"
             style={{ backgroundImage: 'var(--mz-gradient)' }}
           >
             <span className="text-[32px] font-extrabold leading-none tracking-[-0.02em]">100+</span>
@@ -57,7 +53,7 @@ export default function CampusSection() {
                 style={{ backgroundImage: 'var(--mz-gradient)' }}
                 aria-hidden="true"
               />
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-mz-cta" style={{ backgroundImage: 'var(--mz-gradient)' }}>
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl text-white" style={{ backgroundImage: 'var(--mz-gradient)' }}>
                 <Icon size={19} aria-hidden="true" />
               </span>
               <h3 className="mt-4 text-[17px] font-semibold tracking-[-0.015em] text-mz-ink">{title}</h3>
