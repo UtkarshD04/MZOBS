@@ -59,15 +59,10 @@ function Instructions({ onNext }) {
   return (
     <>
       <div className="border border-mz-line-strong">
-        <div className="grid items-center sm:grid-cols-[minmax(0,0.45fr)_minmax(0,1fr)]">
-          <div className="px-6 py-8 text-center sm:py-10">
-            <p className="text-[18px] font-bold uppercase leading-tight text-mz-ink sm:text-[20px]">Become a part of</p>
-            <p className="my-1 text-[34px] font-extrabold leading-none tracking-tight text-mz-primary sm:text-[40px]">Mzobs</p>
-            <p className="text-[18px] font-bold uppercase leading-tight text-mz-ink sm:text-[20px]">Network</p>
-          </div>
-          <div className="hidden h-full bg-mz-primary-tint/60 p-4 sm:block">
-            <img src="/images/aboutimage.png" alt="" className="mx-auto h-full max-h-[190px] w-auto object-contain" />
-          </div>
+        <div className="bg-mz-primary-tint/50 px-6 py-8 text-center sm:py-10">
+          <p className="text-[18px] font-bold uppercase leading-tight text-mz-ink sm:text-[20px]">Become a part of</p>
+          <p className="my-1 text-[34px] font-extrabold leading-none tracking-tight text-mz-primary sm:text-[44px]">Mzobs</p>
+          <p className="text-[18px] font-bold uppercase leading-tight text-mz-ink sm:text-[20px]">Network</p>
         </div>
 
         <div className="border-t border-mz-line-strong px-5 py-6 sm:px-8">
