@@ -137,14 +137,9 @@ export default function Navbar() {
                 My applications
               </Link>
             )}
-            {showEmployer && (
-              <Link to="/employers" className={linkCls}>
-                For Employers
-              </Link>
-            )}
           </nav>
 
-          <div className="hidden shrink-0 items-center gap-1 lg:flex">
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
             {session ? (
               <>
                 <Link to="/employees/profile" className={`${linkCls} flex items-center gap-1.5 text-(--jobs-navy)`} title="View profile">
@@ -155,13 +150,20 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <button
-                type="button"
-                onClick={() => setAuthModalOpen(true)}
-                className="h-9 rounded-[10px] border border-(--jobs-border) px-4 text-[14px] font-semibold text-(--jobs-navy) transition-colors hover:border-(--jobs-teal-dark) hover:text-(--jobs-teal-dark) focus-visible:outline-2 focus-visible:outline-(--jobs-teal-dark)"
-              >
-                Sign in
-              </button>
+              <>
+                {showEmployer && (
+                  <Link to="/employers" className="flex h-9 items-center justify-center whitespace-nowrap rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] px-4 text-[14px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(7,139,125,0.55)] transition-shadow hover:shadow-[0_12px_26px_-8px_rgba(7,139,125,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D]">
+                    For Employers
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setAuthModalOpen(true)}
+                  className="h-9 whitespace-nowrap rounded-[10px] bg-[#A3124A] px-4 text-[14px] font-semibold text-white shadow-[0_6px_16px_-8px_rgba(163,18,74,0.7)] transition-colors hover:bg-[#7F0E3A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A3124A]"
+                >
+                  Sign in
+                </button>
+              </>
             )}
           </div>
 
@@ -218,11 +220,6 @@ export default function Navbar() {
                     My applications
                   </Link>
                 )}
-                {showEmployer && (
-                  <Link to="/employers" onClick={() => setOpen(false)} className={mobileLinkCls}>
-                    For Employers
-                  </Link>
-                )}
                 <div className="flex flex-col gap-2 pt-4">
                   {session ? (
                     <>
@@ -242,16 +239,23 @@ export default function Navbar() {
                       </button>
                     </>
                   ) : (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setOpen(false)
-                        setAuthModalOpen(true)
-                      }}
-                      className="flex h-10 items-center justify-center rounded-[10px] border border-(--jobs-border) text-[13.5px] font-bold text-(--jobs-navy)"
-                    >
-                      Sign in
-                    </button>
+                    <>
+                      {showEmployer && (
+                        <Link to="/employers" onClick={() => setOpen(false)} className="flex h-10 items-center justify-center rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] text-[13.5px] font-bold text-white">
+                          For Employers
+                        </Link>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpen(false)
+                          setAuthModalOpen(true)
+                        }}
+                        className="flex h-10 items-center justify-center rounded-[10px] bg-[#A3124A] text-[13.5px] font-bold text-white"
+                      >
+                        Sign in
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
