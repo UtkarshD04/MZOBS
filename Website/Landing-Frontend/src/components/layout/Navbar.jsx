@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X, LogOut, User, ChevronDown } from 'lucide-react'
@@ -22,6 +22,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const progressRef = useRef(null)
   const [dropdownOpen, setDropdownOpen] = useState(null)
   // Read after mount (see useEmployeeSession), so the prerendered markup and
   // the first client paint match.
@@ -36,7 +37,13 @@ export default function Navbar() {
   )
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 4)
+    const onScroll = () => {
+      const y = window.scrollY
+      setScrolled(y > 4)
+      // Reading-progress hairline along the bottom of the floating bar.
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
     return () => window.removeEventListener('scroll', onScroll)
@@ -61,12 +68,24 @@ export default function Navbar() {
 
   return (
     <>
-      <header
-        className={`fixed inset-x-0 top-0 z-50 h-16 border-b border-(--jobs-border) bg-white transition-shadow duration-200 ${
-          scrolled || open ? 'shadow-[0_1px_8px_rgba(22,50,79,0.06)]' : ''
-        }`}
-      >
-        <div className="mx-auto flex h-full w-full max-w-[1200px] items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
+      {/* Transparent at the top of the page; once you scroll (or open the mobile
+          menu) it condenses into a floating frosted "island". */}
+      <header className="fixed inset-x-0 top-0 z-50 h-16">
+        <div
+          className={`relative mx-auto flex items-center justify-between gap-6 border transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            scrolled || open
+              ? 'mt-1.5 h-[52px] w-[calc(100%-24px)] max-w-[1080px] rounded-full border-white/70 bg-white/55 px-5 shadow-[0_12px_32px_-14px_rgba(16,42,67,0.3)] backdrop-blur-xl backdrop-saturate-150 md:px-7'
+              : 'h-full w-full max-w-[1200px] border-transparent px-4 sm:px-6 lg:px-8'
+          }`}
+        >
+          <span
+            ref={progressRef}
+            className={`pointer-events-none absolute bottom-0 left-8 right-8 h-[2px] origin-left rounded-full transition-opacity duration-300 ${
+              scrolled || open ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ backgroundImage: 'var(--hero-cta-gradient)', transform: 'scaleX(0)' }}
+            aria-hidden="true"
+          />
           <Link to="/" className="flex shrink-0 items-center">
             <img src="/images/logo.png" alt="Mzobs" className="h-10 w-auto object-contain" />
           </Link>
