@@ -1,14 +1,7 @@
 import { useEffect } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
-import CampusHero from '../components/campus-partner/CampusHero'
-import WhyCampuses from '../components/campus-partner/WhyCampuses'
-import CampusJourneySteps from '../components/campus-partner/CampusJourneySteps'
-import CampusBento from '../components/campus-partner/CampusBento'
-import CampusFlowVisual from '../components/campus-partner/CampusFlowVisual'
-import CampusForm from '../components/campus-partner/CampusForm'
-import CampusNetworkCTA from '../components/campus-partner/CampusNetworkCTA'
-import CampusFinalCTA from '../components/campus-partner/CampusFinalCTA'
+import CampusRegister from '../components/campus-partner/CampusRegister'
 
 export default function CampusPartner() {
   useEffect(() => {
@@ -21,14 +14,7 @@ export default function CampusPartner() {
     <div className="mz-home min-h-screen bg-mz-bg font-sans text-mz-ink antialiased">
       <Navbar />
       <main>
-        <CampusHero />
-        <WhyCampuses />
-        <CampusJourneySteps />
-        <CampusBento />
-        <CampusFlowVisual />
-        <CampusForm />
-        <CampusNetworkCTA />
-        <CampusFinalCTA />
+        <CampusRegister />
       </main>
       <Footer />
     </div>
