@@ -8,16 +8,16 @@ const trackCount = (c, key) => (c ? (c.tracks?.[key] ?? 0) : undefined)
 // Each row's `params` is exactly the search a click runs, and its count is
 // the real number of live jobs for that same search.
 const CATEGORIES = [
-  { key: 'tech', title: 'Technology', icon: FaLaptop, params: { track: 'tech' }, count: (c) => trackCount(c, 'tech') },
-  { key: 'analytics', title: 'Data & Analytics', icon: FaAtom, params: { track: 'analytics' }, count: (c) => trackCount(c, 'analytics') },
-  { key: 'ai', title: 'AI & ML', icon: FaRobot, params: { q: KEYWORD_CATEGORIES.ai }, count: (c, k) => k.ai },
-  { key: 'cyber', title: 'Cybersecurity', icon: FaShieldHalved, params: { q: KEYWORD_CATEGORIES.cyber }, count: (c, k) => k.cyber },
-  { key: 'design', title: 'Design', icon: FaPenRuler, params: { track: 'design' }, count: (c) => trackCount(c, 'design') },
-  { key: 'marketing', title: 'Marketing', icon: FaChartPie, params: { track: 'marketing' }, count: (c) => trackCount(c, 'marketing') },
-  { key: 'sales', title: 'Sales', icon: FaTags, params: { track: 'sales' }, count: (c) => trackCount(c, 'sales') },
-  { key: 'finance', title: 'Finance', icon: FaBuildingColumns, params: { q: ['Finance', 'Accounting'] }, count: (c) => (c ? (c.finance ?? 0) : undefined) },
-  { key: 'hr', title: 'HR', icon: FaUser, params: { track: 'hr' }, count: (c) => trackCount(c, 'hr') },
-  { key: 'ops', title: 'Operations', icon: FaGlobe, params: { track: 'ops' }, count: (c) => trackCount(c, 'ops') },
+  { key: 'tech', title: 'Technology', icon: FaLaptop, tone: '#0b7a6d', params: { track: 'tech' }, count: (c) => trackCount(c, 'tech') },
+  { key: 'analytics', title: 'Data & Analytics', icon: FaAtom, tone: '#5b5fef', params: { track: 'analytics' }, count: (c) => trackCount(c, 'analytics') },
+  { key: 'ai', title: 'AI & ML', icon: FaRobot, tone: '#a21caf', params: { q: KEYWORD_CATEGORIES.ai }, count: (c, k) => k.ai },
+  { key: 'cyber', title: 'Cybersecurity', icon: FaShieldHalved, tone: '#102a43', params: { q: KEYWORD_CATEGORIES.cyber }, count: (c, k) => k.cyber },
+  { key: 'design', title: 'Design', icon: FaPenRuler, tone: '#e11d74', params: { track: 'design' }, count: (c) => trackCount(c, 'design') },
+  { key: 'marketing', title: 'Marketing', icon: FaChartPie, tone: '#ea580c', params: { track: 'marketing' }, count: (c) => trackCount(c, 'marketing') },
+  { key: 'sales', title: 'Sales', icon: FaTags, tone: '#0891b2', params: { track: 'sales' }, count: (c) => trackCount(c, 'sales') },
+  { key: 'finance', title: 'Finance', icon: FaBuildingColumns, tone: '#15803d', params: { q: ['Finance', 'Accounting'] }, count: (c) => (c ? (c.finance ?? 0) : undefined) },
+  { key: 'hr', title: 'HR', icon: FaUser, tone: '#7c3aed', params: { track: 'hr' }, count: (c) => trackCount(c, 'hr') },
+  { key: 'ops', title: 'Operations', icon: FaGlobe, tone: '#b45309', params: { track: 'ops' }, count: (c) => trackCount(c, 'ops') },
 ]
 
 function CountText({ value, loading }) {
@@ -37,7 +37,7 @@ export default function CategorySection({ onSelect }) {
         <p className="mt-1 text-[14px] text-mz-muted">Live opening counts. Pick one to filter the job feed.</p>
 
         <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
-          {CATEGORIES.map(({ key, title, icon: Icon, params, count }) => {
+          {CATEGORIES.map(({ key, title, icon: Icon, tone, params, count }) => {
             const value = count(counts, keywordCounts)
             return (
               <li key={key}>
@@ -46,7 +46,9 @@ export default function CategorySection({ onSelect }) {
                   onClick={() => onSelect?.({ q: [], location: [], experience: '', ...params })}
                   className="group flex h-full w-full flex-col items-center justify-center gap-3 rounded-[18px] border border-mz-line bg-white px-3 py-7 text-center transition-colors duration-150 hover:bg-mz-bg hover:border-mz-line-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
                 >
-                  <Icon size={26} className="text-(--jobs-navy)" aria-hidden="true" />
+                  <span className="flex h-12 w-12 items-center justify-center rounded-[14px] text-white shadow-[0_8px_18px_-8px_var(--tone)] transition-transform duration-150 group-hover:scale-110" style={{ background: tone, '--tone': tone }}>
+                    <Icon size={22} aria-hidden="true" />
+                  </span>
                   <span className="block">
                     <span className="block text-[15px] font-semibold text-mz-ink">{title}</span>
                     <span className="mt-0.5 block text-[12.5px] text-mz-muted">
