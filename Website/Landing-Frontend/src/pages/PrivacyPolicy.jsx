@@ -584,7 +584,7 @@ const SECTIONS = [
       },
       { p: 'Where such information is retained, Mzobs will restrict its use to the purposes for which retention is necessary.' },
       {
-        p: 'Employer accounts: to delete an employer account and its company data, write to us at the contact address below from the email registered on the account. We may ask you to verify your identity first. Subscription, invoice and payment records are retained as described above, and candidate information that you already received may remain with you under your own obligations as an employer.',
+        p: 'Employer accounts: you can delete your employer account yourself in the Mzobs Employer app under Settings → Delete account, or write to us at the contact address below from the email registered on the account. Deleting removes your name, email, phone number and support tickets. If you are the only person on the company account, the company is closed too: its open jobs are closed and its profile is cleared. If you are the only admin and your team still has members, remove them or make another member an admin first. Subscription, invoice and payment records, and the hiring history of candidates you contacted or unlocked, are retained as described above, and candidate information that you already received may remain with you under your own obligations as an employer.',
       },
     ],
   },
