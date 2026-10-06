@@ -9,6 +9,7 @@ import UrgentHiringSection from '../components/mz/home/UrgentHiringSection'
 import JobMarketplace from '../components/sections/home/JobMarketplace'
 import CareerSidebar from '../components/mz/home/CareerSidebar'
 import JobSidePanel from '../components/mz/home/JobSidePanel'
+import RecommendedCard from '../components/mz/home/RecommendedCard'
 import CategorySection from '../components/mz/home/CategorySection'
 import CompaniesSection from '../components/mz/home/CompaniesSection'
 import CampusSection from '../components/mz/home/CampusSection'
@@ -90,6 +91,7 @@ export default function Home() {
         <CompaniesSection onSelect={applyJobFilters} />
         <CampusSection />
         <EmployerStrip />
+        <RecommendedCard />
       </main>
       <Footer />
     </div>
