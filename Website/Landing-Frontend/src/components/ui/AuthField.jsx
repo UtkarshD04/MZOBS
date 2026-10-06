@@ -17,7 +17,7 @@ export function Field({ label, optional, hint, children, className }) {
 }
 
 export const inputClass =
-  'h-12 px-4 rounded-xl border border-[#111827]/15 bg-white text-[#111827] text-[14px] font-medium w-full transition-all duration-150 outline-none placeholder:text-[#9aa0b4] hover:border-[#4a4ed8]/50 focus:border-[#4a4ed8] focus:ring-[3px] focus:ring-[#4a4ed8]/15'
+  'h-12 px-4 rounded-xl border border-[#111827]/15 bg-white text-[#111827] text-[14px] font-medium w-full transition-all duration-150 outline-none placeholder:text-[#9aa0b4] hover:border-[#075f55]/50 focus:border-[#075f55] focus:ring-[3px] focus:ring-[#075f55]/15'
 
 // `icon` renders a leading glyph (a lucide-react component) inside the
 // field — the common "icon + input" look most premium SaaS forms use
@@ -54,7 +54,7 @@ export function SubmitButton({ children, className, ...props }) {
     <button
       type="submit"
       className={cn(
-        'w-full py-3.5 inline-flex items-center justify-center gap-2 rounded-full border border-[#111827] bg-[#4a4ed8] text-white text-[15px] font-bold shadow-[4px_5px_0_#111827] hover:bg-[#5b5fef] hover:-translate-x-px hover:-translate-y-px hover:shadow-[5px_6px_0_#111827] active:translate-x-[3px] active:translate-y-[4px] active:shadow-[1px_1px_0_#111827] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0',
+        'w-full py-3.5 inline-flex items-center justify-center gap-2 rounded-full border border-[#111827] bg-[#075f55] text-white text-[15px] font-bold shadow-[4px_5px_0_#111827] hover:bg-[#0b7a6d] hover:-translate-x-px hover:-translate-y-px hover:shadow-[5px_6px_0_#111827] active:translate-x-[3px] active:translate-y-[4px] active:shadow-[1px_1px_0_#111827] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0',
         className
       )}
       {...props}

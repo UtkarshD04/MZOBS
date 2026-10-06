@@ -34,7 +34,7 @@ export function initialsOf(name) {
 const AVATAR_TONES = [
   'bg-(--explorer-blue-surface) text-(--explorer-blue)',
   'bg-(--explorer-bg) text-(--explorer-navy)',
-  'bg-[#EEF2FF] text-[#4338CA]',
+  'bg-[#EEF2FF] text-[#075f55]',
   'bg-[#FEF3E8] text-[#B45309]',
 ]
 

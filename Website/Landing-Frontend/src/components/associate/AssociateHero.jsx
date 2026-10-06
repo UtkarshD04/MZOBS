@@ -19,7 +19,7 @@ function FloatBadge({ icon: Icon, label, className = '', delay = 0, slow = false
       transition={{ duration: 0.6, delay }}
       className={`assoc-glass ${slow ? 'assoc-floating-slow' : 'assoc-floating'} absolute flex items-center gap-1.5 rounded-full px-3 py-1.5 shadow-[0_8px_24px_-8px_rgba(16,24,40,0.18)] ${className}`}
     >
-      <Icon size={13} className="shrink-0 text-[#2563EB]" aria-hidden="true" />
+      <Icon size={13} className="shrink-0 text-[#0b7a6d]" aria-hidden="true" />
       <span className="whitespace-nowrap text-[11.5px] font-bold text-[#101828]">{label}</span>
     </motion.div>
   )
@@ -46,24 +46,24 @@ function EntityCard({ icon: Icon, title, lines, tone, className = '' }) {
 export default function AssociateHero() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#EFF6FF] via-[#F8FAFC] to-[#F8FAFC] pb-16 pt-24 sm:pt-28 lg:pb-24 lg:pt-32">
-      <div className="assoc-blob assoc-drift -left-24 -top-24 h-[420px] w-[420px] bg-[#4F46E5]/20" aria-hidden="true" />
+      <div className="assoc-blob assoc-drift -left-24 -top-24 h-[420px] w-[420px] bg-[#0b7a6d]/20" aria-hidden="true" />
       <div className="assoc-blob assoc-drift right-[-10%] top-10 h-[360px] w-[360px] bg-[#0F8F83]/14" aria-hidden="true" style={{ animationDelay: '3s' }} />
       <div className="mz-grid-bg absolute inset-0 opacity-70" aria-hidden="true" />
 
       <Container className="relative grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
         {/* Left — copy */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#EEF2FF] px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-wide text-[#4F46E5]">
+          <span className="inline-flex items-center gap-2 rounded-full bg-[#EEF2FF] px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-wide text-[#0b7a6d]">
             <Sparkles size={13} aria-hidden="true" />
             Partner with Mzobs
           </span>
 
           <h1 className="mt-5 text-[38px] font-extrabold leading-[1.08] tracking-[-0.025em] text-[#101828] sm:text-[48px] lg:text-[56px]">
             Become an{' '}
-            <span className="bg-gradient-to-r from-[#2563EB] to-[#6366F1] bg-clip-text text-transparent">Associate.</span>
+            <span className="bg-gradient-to-r from-[#0b7a6d] to-[#0b7a6d] bg-clip-text text-transparent">Associate.</span>
             <br />
             Grow with{' '}
-            <span className="bg-gradient-to-r from-[#6366F1] to-[#0F8F83] bg-clip-text text-transparent">Mzobs.</span>
+            <span className="bg-gradient-to-r from-[#0b7a6d] to-[#0F8F83] bg-clip-text text-transparent">Mzobs.</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-[17px] font-semibold leading-relaxed text-[#344054] sm:text-[18.5px]">
@@ -76,7 +76,7 @@ export default function AssociateHero() {
           <div className="mt-8 flex flex-wrap items-center gap-3.5">
             <Link
               to={CLIENT_ONLY_ROUTES.associateApply}
-              className="group inline-flex h-[50px] items-center gap-2 rounded-full bg-gradient-to-r from-[#2563EB] to-[#4F46E5] px-6 text-[15px] font-bold text-white shadow-[0_14px_30px_-10px_rgba(37,99,235,0.55)] transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]"
+              className="group inline-flex h-[50px] items-center gap-2 rounded-full bg-gradient-to-r from-[#0b7a6d] to-[#0b7a6d] px-6 text-[15px] font-bold text-white shadow-[0_14px_30px_-10px_rgba(11, 122, 109,0.55)] transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b7a6d]"
             >
               Become an Associate
               <ArrowRight size={17} className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
@@ -84,7 +84,7 @@ export default function AssociateHero() {
             <a
               href="#how-it-works"
               onClick={scrollToHowItWorks}
-              className="inline-flex h-[50px] items-center rounded-full border border-[#D5D8E4] bg-white px-6 text-[15px] font-bold text-[#101828] transition-colors hover:border-[#2563EB] hover:text-[#2563EB] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]"
+              className="inline-flex h-[50px] items-center rounded-full border border-[#D5D8E4] bg-white px-6 text-[15px] font-bold text-[#101828] transition-colors hover:border-[#0b7a6d] hover:text-[#0b7a6d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b7a6d]"
             >
               How It Works
             </a>
@@ -109,12 +109,12 @@ export default function AssociateHero() {
           <FloatBadge icon={Building2} label="Growing Network" className="right-0 top-0 sm:right-4 sm:top-4" delay={0.5} slow />
 
           <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full" aria-hidden="true">
-            <line className="assoc-line" x1="200" y1="200" x2="90" y2="130" stroke="#4F46E5" strokeWidth="1.5" opacity="0.5" />
-            <line className="assoc-line" x1="200" y1="200" x2="310" y2="130" stroke="#2563EB" strokeWidth="1.5" opacity="0.5" />
+            <line className="assoc-line" x1="200" y1="200" x2="90" y2="130" stroke="#0b7a6d" strokeWidth="1.5" opacity="0.5" />
+            <line className="assoc-line" x1="200" y1="200" x2="310" y2="130" stroke="#0b7a6d" strokeWidth="1.5" opacity="0.5" />
             <line className="assoc-line" x1="200" y1="200" x2="200" y2="320" stroke="#0F8F83" strokeWidth="1.5" opacity="0.5" />
           </svg>
 
-          <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-[#2563EB] to-[#4F46E5] text-[17px] font-extrabold text-white shadow-[0_18px_40px_-12px_rgba(37,99,235,0.55)]">
+          <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-[#0b7a6d] to-[#0b7a6d] text-[17px] font-extrabold text-white shadow-[0_18px_40px_-12px_rgba(11, 122, 109,0.55)]">
             Mzobs
           </div>
 
@@ -122,14 +122,14 @@ export default function AssociateHero() {
             icon={User}
             title="Candidate Profile"
             lines={['70%', '45%']}
-            tone={{ bg: '#EEF2FF', ink: '#4F46E5' }}
+            tone={{ bg: '#EEF2FF', ink: '#0b7a6d' }}
             className="absolute left-0 top-[18%]"
           />
           <EntityCard
             icon={Building2}
             title="Employer"
             lines={['60%', '40%']}
-            tone={{ bg: '#EFF6FF', ink: '#2563EB' }}
+            tone={{ bg: '#EFF6FF', ink: '#0b7a6d' }}
             className="absolute right-0 top-[14%]"
           />
           <EntityCard

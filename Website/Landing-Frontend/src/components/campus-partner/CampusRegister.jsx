@@ -53,7 +53,7 @@ function Chip({ icon: Icon, eyebrow, title, accent, calm, delay = 0 }) {
       transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay }}
       className="flex min-w-0 flex-1 flex-col items-center gap-2 text-center"
     >
-      <span className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-[0_8px_20px_-10px_rgba(7,59,58,0.35)] ring-1 ${accent ? 'text-[#7C6CFF] ring-[#7C6CFF]/20' : 'text-[#0F8B7D] ring-[#0F8B7D]/15'}`}>
+      <span className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-[0_8px_20px_-10px_rgba(7,59,58,0.35)] ring-1 ${accent ? 'text-[#0f8b7d] ring-[#0f8b7d]/20' : 'text-[#0F8B7D] ring-[#0F8B7D]/15'}`}>
         <Icon size={21} aria-hidden="true" />
       </span>
       <span>
@@ -72,7 +72,7 @@ function PreviewCard({ calm }) {
       transition={{ duration: 0.9, delay: 0.3, ease }}
       className="relative mx-auto mt-9 w-full max-w-[580px]"
     >
-      <div className="absolute -inset-6 rounded-[40px] bg-[radial-gradient(ellipse_at_50%_60%,rgba(124,108,255,0.18),transparent_70%)] blur-xl" aria-hidden="true" />
+      <div className="absolute -inset-6 rounded-[40px] bg-[radial-gradient(ellipse_at_50%_60%,rgba(15, 139, 125,0.18),transparent_70%)] blur-xl" aria-hidden="true" />
       <motion.div
         animate={calm ? undefined : { y: [0, -4, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
@@ -112,7 +112,7 @@ export default function CampusRegister() {
     <>
       <section className="relative overflow-hidden bg-gradient-to-b from-[#E6F5F1] via-[#F1F4FB] to-[#F8FAFC] pb-8 pt-24 sm:pt-28">
         <div className="pointer-events-none absolute -left-32 top-10 h-[380px] w-[380px] rounded-full bg-[#0F8B7D]/[0.16] blur-3xl" aria-hidden="true" />
-        <div className="pointer-events-none absolute -right-32 top-24 h-[420px] w-[420px] rounded-full bg-[#7C6CFF]/[0.16] blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -right-32 top-24 h-[420px] w-[420px] rounded-full bg-[#0f8b7d]/[0.16] blur-3xl" aria-hidden="true" />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(#073B3A_1px,transparent_1px)] [background-size:26px_26px] opacity-[0.045]" aria-hidden="true" />
         <Container className="relative">
           <div className="mx-auto max-w-[700px] text-center">
@@ -120,7 +120,7 @@ export default function CampusRegister() {
               For Campuses
             </motion.p>
             <motion.h1 {...rise(0.08)} className="mt-3 text-[38px] font-extrabold leading-[1.05] tracking-[-0.035em] text-[#073B3A] sm:text-[52px] lg:text-[58px]">
-              Bring Your <span className="bg-gradient-to-r from-[#0F8B7D] to-[#7C6CFF] bg-clip-text text-transparent">Campus</span>
+              Bring Your <span className="bg-gradient-to-r from-[#0F8B7D] to-[#0f8b7d] bg-clip-text text-transparent">Campus</span>
               <br /> to Mzobs.
             </motion.h1>
             <motion.p {...rise(0.16)} className="mx-auto mt-4 max-w-[500px] text-[15.5px] leading-relaxed text-mz-ink-2 sm:text-[17px]">
@@ -158,7 +158,7 @@ export default function CampusRegister() {
           <motion.div {...reveal} className="mx-auto max-w-[1000px]">
             <p className="text-center text-[11.5px] font-bold uppercase tracking-[0.24em] text-[#0F8B7D]">What your campus gets</p>
             <h2 className="mx-auto mt-2 max-w-[560px] text-center text-[26px] font-extrabold tracking-tight text-[#073B3A] sm:text-[32px]">
-              Everything students need, <span className="text-[#7C6CFF]">in one place.</span>
+              Everything students need, <span className="text-[#0f8b7d]">in one place.</span>
             </h2>
             <div className="mt-9 grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
               {BENEFITS.map(({ title, text, icon: Icon }) => (
@@ -184,7 +184,7 @@ export default function CampusRegister() {
             <ol className="mt-9 grid gap-8 sm:grid-cols-3">
               {STEPS.map(({ title, text }, i) => (
                 <li key={title} className="text-center sm:text-left">
-                  <span className="text-[34px] font-extrabold leading-none tracking-tight text-[#7C6CFF]/70">0{i + 1}</span>
+                  <span className="text-[34px] font-extrabold leading-none tracking-tight text-[#0f8b7d]/70">0{i + 1}</span>
                   <p className="mt-2 text-[16px] font-bold text-[#073B3A]">{title}</p>
                   <p className="mt-1 text-[13.5px] leading-relaxed text-mz-muted">{text}</p>
                 </li>

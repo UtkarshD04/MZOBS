@@ -10,7 +10,7 @@ import FloatingQuickNav from '../components/ui/FloatingQuickNav'
 
 const INK = '#073B3A'
 const TEAL = '#0F8B7D'
-const VIOLET = '#7C6CFF'
+const VIOLET = '#0f8b7d'
 const ease = [0.22, 1, 0.36, 1]
 
 const Serif = ({ children, color }) => (
@@ -36,11 +36,11 @@ function BrokenLinkVisual() {
 function GapVisual() {
   return (
     <div className="flex items-center" aria-hidden="true">
-      <span className={`${chipBase} bg-white text-[#4a3fb5]`}><User size={16} /></span>
-      <span className="ml-1 h-[3px] w-10 rounded-full bg-[#7C6CFF]" />
+      <span className={`${chipBase} bg-white text-[#075f55]`}><User size={16} /></span>
+      <span className="ml-1 h-[3px] w-10 rounded-full bg-[#0f8b7d]" />
       <span className="w-8" />
-      <span className="mr-1 h-[3px] w-10 rounded-full bg-[#7C6CFF]/35" />
-      <span className={`${chipBase} bg-white text-[#4a3fb5]`}><Building2 size={16} /></span>
+      <span className="mr-1 h-[3px] w-10 rounded-full bg-[#0f8b7d]/35" />
+      <span className={`${chipBase} bg-white text-[#075f55]`}><Building2 size={16} /></span>
     </div>
   )
 }
@@ -81,7 +81,7 @@ const CHAPTERS = [
     label: 'The gap',
     bg: '#DCEBFF',
     text: '#241a66',
-    sub: '#4a3fb5',
+    sub: '#075f55',
     accent: VIOLET,
     nodeIcon: Puzzle,
     heading: <>There was a gap between talent and <Serif>opportunity.</Serif></>,
@@ -115,7 +115,7 @@ const CHAPTERS = [
     bg: '#2B2A6B',
     text: '#ffffff',
     sub: 'rgba(255,255,255,0.74)',
-    accent: '#A99CFF',
+    accent: '#5fd0c2',
     nodeIcon: null,
     heading: <>So we started <Serif>building.</Serif></>,
     body: 'Mzobs brings talent and employers closer through verified opportunities, better signals and a more transparent hiring experience.',
@@ -339,7 +339,7 @@ export default function OurStory() {
   const [active, setActive] = useState(-1)
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] font-sans antialiased selection:bg-[#EEEAFE]" style={{ color: INK }}>
+    <div className="min-h-screen bg-[#FFFFFF] font-sans antialiased selection:bg-[#e7f5f1]" style={{ color: INK }}>
       <Seo path="/our-story" {...STATIC_PAGE_SEO['/our-story']} />
       <Navbar />
 

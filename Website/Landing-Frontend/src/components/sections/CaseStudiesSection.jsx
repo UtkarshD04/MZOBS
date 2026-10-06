@@ -14,7 +14,7 @@ export default function CaseStudiesSection() {
           <SectionBadge label={CASE_STUDIES_DATA.badge} />
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
             {CASE_STUDIES_DATA.titlePrefix}
-            <span className="font-serif italic font-normal text-blue-950">
+            <span className="font-serif italic font-normal text-teal-950">
               {CASE_STUDIES_DATA.titleItalic}
             </span>
             {CASE_STUDIES_DATA.titleSuffix}
@@ -44,7 +44,7 @@ export default function CaseStudiesSection() {
                 {item.tags.map((tag, idx) => (
                   <span
                     key={idx}
-                    className="px-3.5 py-1.5 rounded-full bg-blue-600/90 backdrop-blur-md text-white font-bold text-[10px] tracking-wider uppercase shadow-sm"
+                    className="px-3.5 py-1.5 rounded-full bg-teal-600/90 backdrop-blur-md text-white font-bold text-[10px] tracking-wider uppercase shadow-sm"
                   >
                     {tag}
                   </span>

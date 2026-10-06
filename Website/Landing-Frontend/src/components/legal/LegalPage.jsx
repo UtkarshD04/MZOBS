@@ -54,7 +54,7 @@ function Blocks({ blocks }) {
 
 export default function LegalPage({ seoPath, label, titleLead, titleAccent, lastUpdated, effectiveDate, intro, sections, seeAlso }) {
   return (
-    <div className="min-h-screen bg-white text-(--explorer-navy) font-sans antialiased selection:bg-blue-200">
+    <div className="min-h-screen bg-white text-(--explorer-navy) font-sans antialiased selection:bg-teal-200">
       <Seo path={seoPath} {...STATIC_PAGE_SEO[seoPath]} />
       <Navbar />
 

@@ -10,7 +10,7 @@ const BADGE_SIZE = 160
 // Fallback tone (initials color only, bubble stays plain white) for a
 // company with no logo — picked deterministically per company name so the
 // same company always lands on the same tone.
-const MONOGRAM_TONES = ['#4338CA', '#0F766E', '#B4530A', '#1A63B8', '#B23A72', '#6D28D9']
+const MONOGRAM_TONES = ['#075f55', '#0F766E', '#B4530A', '#1A63B8', '#B23A72', '#6D28D9']
 
 function CompanyBadge({ company, onSelect }) {
   const jobsLabel =

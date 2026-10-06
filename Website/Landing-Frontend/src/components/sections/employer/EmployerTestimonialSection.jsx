@@ -7,7 +7,7 @@ export default function EmployerTestimonialSection() {
   return (
     <section className="bg-[#f7f8fc] py-16 md:py-20 px-6 md:px-12">
       <FadeInView className="max-w-3xl mx-auto text-center">
-        <span className="inline-flex items-center justify-center h-11 w-11 rounded-full bg-[#eeefff] text-[#4a4ed8] mb-6">
+        <span className="inline-flex items-center justify-center h-11 w-11 rounded-full bg-[#e7f5f1] text-[#075f55] mb-6">
           <Quote size={20} />
         </span>
         <p className="text-xl sm:text-2xl font-semibold text-[#111827] leading-snug tracking-tight">"{t.quote}"</p>

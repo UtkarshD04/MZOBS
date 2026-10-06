@@ -60,7 +60,7 @@ export default function Contact() {
                 <a
                   href={c.href}
                   {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  className="group flex items-start gap-4 h-full bg-white border border-(--explorer-border) rounded-xl p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.3)] transition-all duration-200 hover:border-(--explorer-blue-border) hover:shadow-[0_14px_32px_-16px_rgba(37,99,235,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+                  className="group flex items-start gap-4 h-full bg-white border border-(--explorer-border) rounded-xl p-5 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.3)] transition-all duration-200 hover:border-(--explorer-blue-border) hover:shadow-[0_14px_32px_-16px_rgba(11, 122, 109,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
                 >
                   <span className="w-11 h-11 shrink-0 rounded-lg bg-(--explorer-blue-surface) text-(--explorer-blue) flex items-center justify-center">
                     <c.icon size={19} strokeWidth={1.8} />

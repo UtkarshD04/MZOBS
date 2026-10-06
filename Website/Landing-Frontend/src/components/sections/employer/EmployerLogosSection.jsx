@@ -67,7 +67,7 @@ export default function EmployerLogosSection() {
           {logos.map((logo) => (
             <div
               key={logo.name}
-              className="group relative flex h-28 flex-col items-center justify-center gap-2.5 overflow-hidden rounded-2xl border border-(--explorer-border) bg-white p-4 shadow-[0_2px_10px_-4px_rgba(16,42,67,0.10)] transition-[transform,box-shadow,border-color] duration-[280ms] ease-out motion-safe:md:hover:-translate-y-1.5 md:hover:border-(--explorer-blue) md:hover:shadow-[0_20px_36px_-16px_rgba(91,95,239,0.38)]"
+              className="group relative flex h-28 flex-col items-center justify-center gap-2.5 overflow-hidden rounded-2xl border border-(--explorer-border) bg-white p-4 shadow-[0_2px_10px_-4px_rgba(16,42,67,0.10)] transition-[transform,box-shadow,border-color] duration-[280ms] ease-out motion-safe:md:hover:-translate-y-1.5 md:hover:border-(--explorer-blue) md:hover:shadow-[0_20px_36px_-16px_rgba(11, 122, 109,0.38)]"
             >
               {/* Static top accent — always on, gives each card structure at rest */}
               <span
@@ -95,7 +95,7 @@ export default function EmployerLogosSection() {
         </div>
 
         <div ref={ctaRef} className="mt-9 flex justify-center">
-          <span className="group inline-flex items-center gap-2.5 rounded-full bg-(--explorer-blue) px-5 py-2.5 text-[13.5px] font-semibold text-white shadow-[0_14px_28px_-14px_rgba(91,95,239,0.6)] transition-all duration-[280ms] ease-out motion-safe:hover:-translate-y-0.5 hover:bg-(--explorer-blue-hover) hover:shadow-[0_18px_34px_-14px_rgba(91,95,239,0.7)]">
+          <span className="group inline-flex items-center gap-2.5 rounded-full bg-(--explorer-blue) px-5 py-2.5 text-[13.5px] font-semibold text-white shadow-[0_14px_28px_-14px_rgba(11, 122, 109,0.6)] transition-all duration-[280ms] ease-out motion-safe:hover:-translate-y-0.5 hover:bg-(--explorer-blue-hover) hover:shadow-[0_18px_34px_-14px_rgba(11, 122, 109,0.7)]">
             <Building2 size={15} aria-hidden="true" />
             {logos.length}+ companies hiring on Mzobs
             <ArrowUpRight

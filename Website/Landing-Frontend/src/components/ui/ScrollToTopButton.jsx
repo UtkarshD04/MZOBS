@@ -38,7 +38,7 @@ export default function ScrollToTopButton() {
           whileHover={{ y: -3 }}
           whileTap={{ scale: 0.9 }}
           transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-          className="fixed right-5 bottom-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-(--explorer-blue) text-white shadow-[0_1px_2px_rgba(37,99,235,0.16),0_10px_20px_-10px_rgba(37,99,235,0.55)] hover:bg-(--explorer-blue-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+          className="fixed right-5 bottom-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-(--explorer-blue) text-white shadow-[0_1px_2px_rgba(11, 122, 109,0.16),0_10px_20px_-10px_rgba(11, 122, 109,0.55)] hover:bg-(--explorer-blue-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
         >
           <ArrowUp size={20} aria-hidden="true" />
         </motion.button>

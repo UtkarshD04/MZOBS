@@ -4,7 +4,7 @@
 const TONES = {
   navy: 'bg-(--jobs-navy) text-white',
   teal: 'bg-(--jobs-teal-dark) text-white',
-  violet: 'bg-violet-600 text-white',
+  violet: 'bg-teal-600 text-white',
   amber: 'bg-amber-500 text-white',
 }
 

@@ -9,14 +9,14 @@ function LogoSvg({ variant }) {
     case 1:
       return (
         <div className="flex items-center gap-2 font-bold text-slate-800 text-sm tracking-tight">
-          <div className="w-5 h-5 rounded-md bg-blue-900 flex items-center justify-center text-white text-[10px]">S</div>
+          <div className="w-5 h-5 rounded-md bg-teal-900 flex items-center justify-center text-white text-[10px]">S</div>
           <span>Logoipsum</span>
         </div>
       )
     case 2:
       return (
         <div className="flex items-center gap-2 font-semibold text-slate-800 text-sm">
-          <div className="w-5 h-5 rounded-full border-2 border-blue-900 flex items-center justify-center text-[9px] font-bold text-blue-900">+</div>
+          <div className="w-5 h-5 rounded-full border-2 border-teal-900 flex items-center justify-center text-[9px] font-bold text-teal-900">+</div>
           <span>logo <span className="font-bold">ipsum</span></span>
         </div>
       )
@@ -30,7 +30,7 @@ function LogoSvg({ variant }) {
     case 4:
       return (
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-blue-950" />
+          <div className="w-5 h-5 rounded-full bg-teal-950" />
           <span className="font-bold text-slate-900 text-sm">logoipsum</span>
         </div>
       )
@@ -43,7 +43,7 @@ function LogoSvg({ variant }) {
     case 6:
       return (
         <div className="flex items-center gap-2 font-bold text-slate-800 text-sm">
-          <div className="w-4 h-4 rotate-45 border-2 border-blue-900 bg-blue-100" />
+          <div className="w-4 h-4 rotate-45 border-2 border-teal-900 bg-teal-100" />
           <span>logoipsum</span>
         </div>
       )
@@ -51,10 +51,10 @@ function LogoSvg({ variant }) {
       return (
         <div className="flex items-center gap-2 text-slate-900 text-sm font-medium">
           <div className="grid grid-cols-2 gap-0.5 w-4 h-4">
-            <div className="bg-blue-900 rounded-xs" />
-            <div className="bg-blue-600 rounded-xs" />
-            <div className="bg-blue-400 rounded-xs" />
-            <div className="bg-blue-900 rounded-xs" />
+            <div className="bg-teal-900 rounded-xs" />
+            <div className="bg-teal-600 rounded-xs" />
+            <div className="bg-teal-400 rounded-xs" />
+            <div className="bg-teal-900 rounded-xs" />
           </div>
           <span className="font-bold">logoipsum</span>
         </div>
@@ -63,8 +63,8 @@ function LogoSvg({ variant }) {
     default:
       return (
         <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
-          <div className="w-5 h-5 rounded-full border-2 border-blue-900 flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-blue-900" />
+          <div className="w-5 h-5 rounded-full border-2 border-teal-900 flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-teal-900" />
           </div>
           <span>Logoipsum</span>
         </div>

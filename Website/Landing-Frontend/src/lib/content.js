@@ -169,7 +169,7 @@ export const COMPANY_WORKFLOW_DATA = {
       title: "Post The Requirement",
       desc: "Share the role, must-have skills and budget — live in minutes, not weeks.",
       bg: "#cfe8fb",
-      accent: "#2563eb"
+      accent: "#0b7a6d"
     },
     {
       num: "02",

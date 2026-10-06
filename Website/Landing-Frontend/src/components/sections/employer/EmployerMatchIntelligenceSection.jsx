@@ -32,10 +32,10 @@ export default function EmployerMatchIntelligenceSection() {
   }, [])
 
   return (
-    <section ref={ref} className="bg-[#eeefff] py-16 md:py-24 px-6 md:px-12">
+    <section ref={ref} className="bg-[#e7f5f1] py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-7xl mx-auto">
         <FadeInView className="max-w-2xl">
-          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#4a4ed8]">Match Intelligence</span>
+          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#075f55]">Match Intelligence</span>
           <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#111827] tracking-tight leading-tight">
             Don't just find a candidate. Understand the match.
           </h2>
@@ -48,7 +48,7 @@ export default function EmployerMatchIntelligenceSection() {
           <FadeInView delay={0.05}>
             <div className="h-full rounded-[28px] border border-[#111827]/15 bg-white p-6 sm:p-8">
               <div className="flex items-start gap-4">
-                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#ccceff] text-[15px] font-extrabold text-[#111827]">RS</span>
+                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#b8d6d0] text-[15px] font-extrabold text-[#111827]">RS</span>
                 <div>
                   <p className="flex items-center gap-1.5 text-[15px] font-bold text-[#111827]">
                     Rahul Sharma
@@ -57,10 +57,10 @@ export default function EmployerMatchIntelligenceSection() {
                 </div>
               </div>
               <div className="mt-6 grid grid-cols-2 gap-4 text-[12.5px] text-[#667085]">
-                <span className="flex items-center gap-2"><MapPin size={14} className="text-[#4a4ed8]" /> Bengaluru</span>
-                <span className="flex items-center gap-2"><Briefcase size={14} className="text-[#4a4ed8]" /> 4 years experience</span>
-                <span className="flex items-center gap-2"><Wallet size={14} className="text-[#4a4ed8]" /> ₹22 LPA expected</span>
-                <span className="flex items-center gap-2"><UserCheck size={14} className="text-[#4a4ed8]" /> Profile complete</span>
+                <span className="flex items-center gap-2"><MapPin size={14} className="text-[#075f55]" /> Bengaluru</span>
+                <span className="flex items-center gap-2"><Briefcase size={14} className="text-[#075f55]" /> 4 years experience</span>
+                <span className="flex items-center gap-2"><Wallet size={14} className="text-[#075f55]" /> ₹22 LPA expected</span>
+                <span className="flex items-center gap-2"><UserCheck size={14} className="text-[#075f55]" /> Profile complete</span>
               </div>
               <div className="mt-6 pt-6 border-t border-[#111827]/10 flex flex-wrap gap-1.5">
                 {['Python', 'FastAPI', 'AWS', 'PostgreSQL', 'Docker'].map((s) => (
@@ -82,7 +82,7 @@ export default function EmployerMatchIntelligenceSection() {
                       <span className="font-bold text-[#111827]">{d.value}%</span>
                     </div>
                     <div className="h-2 w-full rounded-full bg-[#F1EDE5] overflow-hidden">
-                      <div data-mi-bar className="h-full rounded-full bg-[#4a4ed8] origin-left" style={{ width: `${d.value}%` }} />
+                      <div data-mi-bar className="h-full rounded-full bg-[#075f55] origin-left" style={{ width: `${d.value}%` }} />
                     </div>
                   </div>
                 ))}

@@ -15,21 +15,21 @@ const PERKS = [
 
 export default function EmployerSignin() {
   return (
-    <div className="min-h-screen bg-white text-[#111827] font-sans antialiased selection:bg-blue-200">
+    <div className="min-h-screen bg-white text-[#111827] font-sans antialiased selection:bg-teal-200">
       <Seo path="/employers/signin" title="Employer Sign In — Mzobs" noindex />
       <EmployerNavbar />
 
       <section id="home" className="relative overflow-hidden pt-[76px]">
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#4a4ed8]" />
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[#075f55]" />
         <div aria-hidden="true" className="absolute left-[45%] top-20 h-[500px] w-[500px] rounded-full border border-[#111827]/10 pointer-events-none" />
-        <div aria-hidden="true" className="absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-[#ccceff]/60 blur-3xl pointer-events-none" />
+        <div aria-hidden="true" className="absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-[#b8d6d0]/60 blur-3xl pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-24 grid lg:grid-cols-12 gap-12 items-center">
           {/* Left: pitch */}
           <div className="lg:col-span-6">
             <FadeInLoad delay={0.08}>
               <h1 className="mt-6 font-sans text-[42px] sm:text-5xl md:text-[60px] font-bold leading-[0.96] tracking-[-0.04em] text-[#111827]">
-                Welcome Back To Your <em className="font-sans font-normal text-[#4a4ed8]">Hiring</em> Portal.
+                Welcome Back To Your <em className="font-sans font-normal text-[#075f55]">Hiring</em> Portal.
               </h1>
             </FadeInLoad>
 
@@ -43,7 +43,7 @@ export default function EmployerSignin() {
               <ul className="mt-8 space-y-4">
                 {PERKS.map((perk, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-white border border-[#111827]/10 flex items-center justify-center text-[#4a4ed8] shrink-0">
+                    <div className="w-9 h-9 rounded-lg bg-white border border-[#111827]/10 flex items-center justify-center text-[#075f55] shrink-0">
                       <perk.icon size={17} strokeWidth={1.8} />
                     </div>
                     <p className="text-sm text-[#667085] leading-relaxed pt-1.5">{perk.text}</p>
@@ -57,14 +57,14 @@ export default function EmployerSignin() {
 
           {/* Right: signin card */}
           <FadeInLoad delay={0.18} className="lg:col-span-6">
-            <div className="bg-[#eeefff] rounded-[28px] border border-[#111827]/10 shadow-[10px_12px_0_#111827] p-7 sm:p-9">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#4a4ed8]/25 bg-white px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#4a4ed8] mb-4">
+            <div className="bg-[#e7f5f1] rounded-[28px] border border-[#111827]/10 shadow-[10px_12px_0_#111827] p-7 sm:p-9">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#075f55]/25 bg-white px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#075f55] mb-4">
                 <ShieldCheck size={12} /> Mzobs for employers
               </span>
               <h2 className="font-sans text-[26px] tracking-tight font-bold text-[#111827]">Sign in to your portal</h2>
               <p className="text-[13.5px] text-[#667085] mt-1 mb-6">
                 New to Mzobs?{' '}
-                <Link to="/employers/signup" className="font-bold text-[#111827] hover:text-[#4a4ed8] transition-colors">
+                <Link to="/employers/signup" className="font-bold text-[#111827] hover:text-[#075f55] transition-colors">
                   Create a free account
                 </Link>
               </p>

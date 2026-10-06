@@ -1,7 +1,7 @@
 /* Scoped styling for the "Become an Associate" page only — gradients,
    glassmorphism, floating cards and network-line motion that Tailwind's
    utilities don't cover directly. Brand palette per the Associate page
-   brief: deep navy #101828, blue #2563EB, indigo #4F46E5, teal #0F8F83. */
+   brief: deep navy #101828, blue #0b7a6d, indigo #0b7a6d, teal #0F8F83. */
 
 .assoc-glass {
   background: rgba(255, 255, 255, 0.68);

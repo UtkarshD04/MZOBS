@@ -257,7 +257,7 @@ export default function EmployeeProfile() {
   const isPaid = profile.subscription?.status === 'paid'
 
   return (
-    <div className="min-h-screen bg-(--jobs-bg-subtle) text-(--jobs-navy) font-sans antialiased selection:bg-blue-200">
+    <div className="min-h-screen bg-(--jobs-bg-subtle) text-(--jobs-navy) font-sans antialiased selection:bg-teal-200">
       <Seo path="/employees/profile" title="My Profile — Mzobs" noindex />
       <Navbar />
 

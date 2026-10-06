@@ -9,7 +9,7 @@ const trackCount = (c, key) => (c ? (c.tracks?.[key] ?? 0) : undefined)
 // the real number of live jobs for that same search.
 const CATEGORIES = [
   { key: 'tech', title: 'Technology', icon: FaLaptop, tone: '#0b7a6d', params: { track: 'tech' }, count: (c) => trackCount(c, 'tech') },
-  { key: 'analytics', title: 'Data & Analytics', icon: FaAtom, tone: '#5b5fef', params: { track: 'analytics' }, count: (c) => trackCount(c, 'analytics') },
+  { key: 'analytics', title: 'Data & Analytics', icon: FaAtom, tone: '#4d7c0f', params: { track: 'analytics' }, count: (c) => trackCount(c, 'analytics') },
   { key: 'ai', title: 'AI & ML', icon: FaRobot, tone: '#a21caf', params: { q: KEYWORD_CATEGORIES.ai }, count: (c, k) => k.ai },
   { key: 'cyber', title: 'Cybersecurity', icon: FaShieldHalved, tone: '#102a43', params: { q: KEYWORD_CATEGORIES.cyber }, count: (c, k) => k.cyber },
   { key: 'design', title: 'Design', icon: FaPenRuler, tone: '#e11d74', params: { track: 'design' }, count: (c) => trackCount(c, 'design') },

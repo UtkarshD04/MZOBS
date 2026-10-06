@@ -28,7 +28,7 @@ export default function ApproachSteps({ eyebrow = 'OUR APPROACH', title, subtitl
                       />
                     )}
                     {Icon && (
-                      <div className="absolute top-3 left-3 w-8 h-8 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all">
+                      <div className="absolute top-3 left-3 w-8 h-8 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-xs flex items-center justify-center text-teal-900 group-hover:bg-teal-900 group-hover:text-white transition-all">
                         <Icon size={16} />
                       </div>
                     )}
@@ -38,7 +38,7 @@ export default function ApproachSteps({ eyebrow = 'OUR APPROACH', title, subtitl
                   </div>
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-[14.5px] font-bold text-slate-900 group-hover:text-blue-900 transition-colors">{s.title}</h3>
+                      <h3 className="text-[14.5px] font-bold text-slate-900 group-hover:text-teal-900 transition-colors">{s.title}</h3>
                       <p className="text-[13px] text-slate-600 mt-1.5 leading-relaxed">{s.desc}</p>
                     </div>
                   </div>

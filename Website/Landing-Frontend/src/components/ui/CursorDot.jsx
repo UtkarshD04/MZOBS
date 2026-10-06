@@ -51,7 +51,7 @@ export default function CursorDot() {
   return (
     <motion.div
       aria-hidden="true"
-      className="hidden lg:block fixed top-0 left-0 w-2 h-2 rounded-full bg-[#5b5fef] pointer-events-none z-[9999] mix-blend-multiply"
+      className="hidden lg:block fixed top-0 left-0 w-2 h-2 rounded-full bg-[#0b7a6d] pointer-events-none z-[9999] mix-blend-multiply"
       style={{ x: springX, y: springY, translateX: '-50%', translateY: '-50%' }}
     />
   )

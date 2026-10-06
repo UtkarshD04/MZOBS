@@ -27,8 +27,8 @@ export default function PartnerFit() {
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {TYPES.map(({ icon: Icon, title }, i) => (
               <Reveal as="li" key={title} delay={i * 0.08}>
-                <div className="group flex h-full flex-col gap-3 rounded-[18px] border border-[#E6E8F0] bg-[#F8FAFC] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#2563EB]/40 hover:bg-white hover:shadow-[0_20px_40px_-20px_rgba(37,99,235,0.25)]">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-[11px] bg-[#EEF2FF] text-[#2563EB] transition-colors duration-300 group-hover:bg-gradient-to-br group-hover:from-[#2563EB] group-hover:to-[#4F46E5] group-hover:text-white">
+                <div className="group flex h-full flex-col gap-3 rounded-[18px] border border-[#E6E8F0] bg-[#F8FAFC] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#0b7a6d]/40 hover:bg-white hover:shadow-[0_20px_40px_-20px_rgba(11, 122, 109,0.25)]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-[11px] bg-[#EEF2FF] text-[#0b7a6d] transition-colors duration-300 group-hover:bg-gradient-to-br group-hover:from-[#0b7a6d] group-hover:to-[#0b7a6d] group-hover:text-white">
                     <Icon size={18} aria-hidden="true" />
                   </span>
                   <span className="text-[14.5px] font-bold leading-snug text-[#101828]">{title}</span>

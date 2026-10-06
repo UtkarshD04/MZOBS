@@ -42,7 +42,7 @@ function validate(form, hasGoogle, acceptedTerms, phoneVerified) {
 }
 
 function SectionLabel({ children }) {
-  return <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.14em] uppercase text-[#4a4ed8] pb-2.5 mb-3 border-b border-[#111827]/10"><span className="h-1.5 w-1.5 rounded-full bg-[#4a4ed8]" />{children}</div>
+  return <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.14em] uppercase text-[#075f55] pb-2.5 mb-3 border-b border-[#111827]/10"><span className="h-1.5 w-1.5 rounded-full bg-[#075f55]" />{children}</div>
 }
 
 export default function EmployerSignupForm() {
@@ -215,7 +215,7 @@ export default function EmployerSignupForm() {
               type="button"
               onClick={handleSendOtp}
               disabled={sendingOtp || form.phone.replace(/\D/g, '').length !== 10}
-              className="shrink-0 h-11 px-4 rounded-xl text-[13px] font-bold text-white bg-[#4a4ed8] hover:bg-[#5b5fef] disabled:opacity-50 transition-colors"
+              className="shrink-0 h-11 px-4 rounded-xl text-[13px] font-bold text-white bg-[#075f55] hover:bg-[#0b7a6d] disabled:opacity-50 transition-colors"
             >
               {sendingOtp ? 'Sending...' : otpStep === 'sent' ? 'Resend' : 'Send OTP'}
             </button>
@@ -237,7 +237,7 @@ export default function EmployerSignupForm() {
               type="button"
               onClick={handleVerifyOtp}
               disabled={verifyingOtp || otp.length !== 6}
-              className="h-9 px-4 rounded-lg text-[13px] font-bold text-white bg-[#4a4ed8] hover:bg-[#5b5fef] disabled:opacity-50 transition-colors"
+              className="h-9 px-4 rounded-lg text-[13px] font-bold text-white bg-[#075f55] hover:bg-[#0b7a6d] disabled:opacity-50 transition-colors"
             >
               {verifyingOtp ? 'Checking...' : 'Confirm'}
             </button>

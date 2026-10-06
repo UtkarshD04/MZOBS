@@ -43,13 +43,13 @@ function QueryCard() {
       <p data-tl-query className="mt-3 text-[15px] sm:text-[16px] leading-relaxed text-[#111827]">
         "Python developer with 2–4 years of experience, strong FastAPI and AWS skills, based in Bengaluru and available within 30 days."
       </p>
-      <button type="button" className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#111827] px-5 h-11 text-[13.5px] font-bold text-[#eeefff] transition-transform duration-200 hover:-translate-y-1">
+      <button type="button" className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#111827] px-5 h-11 text-[13.5px] font-bold text-[#e7f5f1] transition-transform duration-200 hover:-translate-y-1">
         <Sparkles size={15} /> Find Talent
       </button>
 
       <div className="mt-6 pt-6 border-t border-[#111827]/10 flex flex-wrap gap-2">
         {CHIPS.map((chip) => (
-          <span data-tl-chip key={chip} className="inline-flex items-center rounded-full bg-[#DCECE3] px-3.5 py-1.5 text-[12.5px] font-bold text-[#4a4ed8]">
+          <span data-tl-chip key={chip} className="inline-flex items-center rounded-full bg-[#DCECE3] px-3.5 py-1.5 text-[12.5px] font-bold text-[#075f55]">
             {chip}
           </span>
         ))}
@@ -62,7 +62,7 @@ function CandidateRow({ candidate, expanded, onToggle }) {
   return (
     <div className="rounded-2xl border border-[#111827]/12 bg-white overflow-hidden">
       <button type="button" onClick={onToggle} aria-expanded={expanded} className="w-full flex items-center gap-3.5 p-4 text-left">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#ccceff] text-[12px] font-extrabold text-[#111827]">{candidate.initials}</span>
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#b8d6d0] text-[12px] font-extrabold text-[#111827]">{candidate.initials}</span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-[13.5px] font-bold text-[#111827] truncate">{candidate.name}</p>
@@ -71,7 +71,7 @@ function CandidateRow({ candidate, expanded, onToggle }) {
           <p className="text-[11.5px] text-[#667085]/80 mt-0.5 truncate">{candidate.skills}</p>
         </div>
         <div className="text-right shrink-0">
-          <span className="inline-block rounded-full bg-[#DCECE3] px-2.5 py-1 text-[11px] font-extrabold text-[#4a4ed8]">{candidate.match}% Match</span>
+          <span className="inline-block rounded-full bg-[#DCECE3] px-2.5 py-1 text-[11px] font-extrabold text-[#075f55]">{candidate.match}% Match</span>
           <p className="text-[10.5px] text-[#667085] mt-1.5">{candidate.availability}</p>
         </div>
       </button>
@@ -87,15 +87,15 @@ function CandidateRow({ candidate, expanded, onToggle }) {
                   <span className="font-bold text-[#111827]">{d.value}%</span>
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-[#F1EDE5] overflow-hidden">
-                  <div className="h-full rounded-full bg-[#4a4ed8]" style={{ width: `${d.value}%` }} />
+                  <div className="h-full rounded-full bg-[#075f55]" style={{ width: `${d.value}%` }} />
                 </div>
               </div>
             ))}
           </div>
           <div className="mt-4 flex flex-col gap-1.5 text-[12px] text-[#111827]">
-            <span className="flex items-center gap-1.5"><Check size={13} className="text-[#4a4ed8]" /> Strong FastAPI experience</span>
-            <span className="flex items-center gap-1.5"><Check size={13} className="text-[#4a4ed8]" /> Relevant backend experience</span>
-            <span className="flex items-center gap-1.5"><Check size={13} className="text-[#4a4ed8]" /> Bengaluru based</span>
+            <span className="flex items-center gap-1.5"><Check size={13} className="text-[#075f55]" /> Strong FastAPI experience</span>
+            <span className="flex items-center gap-1.5"><Check size={13} className="text-[#075f55]" /> Relevant backend experience</span>
+            <span className="flex items-center gap-1.5"><Check size={13} className="text-[#075f55]" /> Bengaluru based</span>
           </div>
           <p className="mt-3 text-[11.5px] text-[#667085]">Potential gap: notice period slightly above preferred range.</p>
         </div>
@@ -127,7 +127,7 @@ export default function EmployerTalentLensSection() {
     <section id="talent-lens" className="bg-white py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-7xl mx-auto">
         <FadeInView className="max-w-xl">
-          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#4a4ed8]">Talent Lens</span>
+          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#075f55]">Talent Lens</span>
           <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#111827] tracking-tight leading-tight">
             Find the right people, beyond the keywords.
           </h2>

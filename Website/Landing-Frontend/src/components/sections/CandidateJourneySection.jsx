@@ -24,7 +24,7 @@ export default function CandidateJourneySection() {
           <defs>
             <linearGradient id="mzobsRibbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#1C2B4E" stopOpacity="0.8" />
-              <stop offset="25%" stopColor="#3B82F6" stopOpacity="0.7" />
+              <stop offset="25%" stopColor="#0b7a6d" stopOpacity="0.7" />
               <stop offset="55%" stopColor="#A855F7" stopOpacity="0.6" />
               <stop offset="80%" stopColor="#EC4899" stopOpacity="0.5" />
               <stop offset="100%" stopColor="#F97316" stopOpacity="0.7" />
@@ -77,7 +77,7 @@ export default function CandidateJourneySection() {
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-bold text-[#0A1128] tracking-tight uppercase leading-tight">
             FROM PROFILE TO{' '}
-            <span className="font-serif italic font-normal text-blue-900 capitalize px-1">
+            <span className="font-serif italic font-normal text-teal-900 capitalize px-1">
               Opportunity
             </span>
           </h2>

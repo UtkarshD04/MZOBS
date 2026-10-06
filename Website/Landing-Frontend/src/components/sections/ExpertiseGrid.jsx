@@ -28,7 +28,7 @@ export default function ExpertiseGrid({
           ) : (
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
               {SERVICES_DATA.titlePrefix}
-              <span className="font-serif italic font-normal text-blue-950">
+              <span className="font-serif italic font-normal text-teal-950">
                 {SERVICES_DATA.titleItalic}
               </span>
             </h2>
@@ -67,7 +67,7 @@ export default function ExpertiseGrid({
 
                           {/* Icon overlay on top right */}
                           {Icon && (
-                            <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-sm flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all duration-300">
+                            <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/80 shadow-sm flex items-center justify-center text-teal-900 group-hover:bg-teal-900 group-hover:text-white transition-all duration-300">
                               <Icon size={18} strokeWidth={1.8} />
                             </div>
                           )}
@@ -76,7 +76,7 @@ export default function ExpertiseGrid({
 
                       <div className="p-5 flex-1 flex flex-col justify-between">
                         <div>
-                          <h3 className="text-base font-bold text-[#0B1220] mb-1.5 group-hover:text-blue-900 transition-colors">
+                          <h3 className="text-base font-bold text-[#0B1220] mb-1.5 group-hover:text-teal-900 transition-colors">
                             {service.title}
                           </h3>
                           <p className="text-xs text-slate-600 leading-relaxed">

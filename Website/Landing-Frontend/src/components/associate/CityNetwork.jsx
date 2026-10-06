@@ -21,7 +21,7 @@ const NODES = CITIES.map((city, i) => {
 export default function CityNetwork() {
   return (
     <section className="relative overflow-hidden bg-[#101828] py-16 text-white lg:py-24">
-      <div className="assoc-blob assoc-drift left-1/4 top-0 h-[360px] w-[360px] bg-[#2563EB]/20" aria-hidden="true" />
+      <div className="assoc-blob assoc-drift left-1/4 top-0 h-[360px] w-[360px] bg-[#0b7a6d]/20" aria-hidden="true" />
       <div className="assoc-blob assoc-drift right-1/4 bottom-0 h-[320px] w-[320px] bg-[#0F8F83]/18" aria-hidden="true" style={{ animationDelay: '4s' }} />
       <div className="mz-grid-bg-dark absolute inset-0" aria-hidden="true" />
 
@@ -43,15 +43,15 @@ export default function CityNetwork() {
                 y1={CENTER}
                 x2={node.x}
                 y2={node.y}
-                stroke="#6366F1"
+                stroke="#0b7a6d"
                 strokeWidth="1.3"
                 opacity="0.45"
               />
             ))}
           </svg>
 
-          <div className="assoc-node-glow absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4F46E5]/40 blur-xl" aria-hidden="true" />
-          <div className="absolute left-1/2 top-1/2 flex h-[72px] w-[72px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-[#2563EB] to-[#4F46E5] text-[13px] font-extrabold shadow-[0_18px_40px_-12px_rgba(37,99,235,0.6)]">
+          <div className="assoc-node-glow absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#0b7a6d]/40 blur-xl" aria-hidden="true" />
+          <div className="absolute left-1/2 top-1/2 flex h-[72px] w-[72px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-[#0b7a6d] to-[#0b7a6d] text-[13px] font-extrabold shadow-[0_18px_40px_-12px_rgba(11, 122, 109,0.6)]">
             Mzobs
           </div>
 
@@ -61,7 +61,7 @@ export default function CityNetwork() {
               className={`assoc-glass-dark absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full px-3 py-1.5 ${i % 2 === 0 ? 'assoc-floating' : 'assoc-floating-slow'}`}
               style={{ left: `${(node.x / 400) * 100}%`, top: `${(node.y / 400) * 100}%`, animationDelay: `${i * 0.3}s` }}
             >
-              <MapPin size={12} className="shrink-0 text-[#2563EB]" aria-hidden="true" />
+              <MapPin size={12} className="shrink-0 text-[#0b7a6d]" aria-hidden="true" />
               <span className="whitespace-nowrap text-[11.5px] font-bold text-white">{node.city}</span>
             </div>
           ))}

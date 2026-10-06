@@ -17,7 +17,7 @@ export default function NetworkStats() {
         <Reveal className="assoc-glass grid grid-cols-2 gap-4 rounded-3xl p-5 shadow-[0_30px_60px_-24px_rgba(16,24,40,0.22)] sm:p-7 lg:grid-cols-4 lg:gap-6">
           {ITEMS.map(({ icon: Icon, title, desc }, i) => (
             <div key={title} className={`flex items-start gap-3 ${i % 2 === 1 ? 'border-l border-[#101828]/[0.06] pl-4' : ''} ${i >= 2 ? 'lg:border-l lg:pl-4' : ''}`}>
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-gradient-to-br from-[#2563EB] to-[#4F46E5] text-white">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-gradient-to-br from-[#0b7a6d] to-[#0b7a6d] text-white">
                 <Icon size={18} aria-hidden="true" />
               </span>
               <span className="min-w-0">

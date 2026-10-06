@@ -22,7 +22,7 @@ const SIZE_CLASSES = {
 
 const VARIANT_CLASSES = {
   primary:
-    'explorer-btn-primary bg-(--explorer-blue) text-white shadow-[0_1px_2px_rgba(37,99,235,0.16),0_10px_20px_-10px_rgba(37,99,235,0.55)] hover:bg-(--explorer-blue-hover) hover:shadow-[0_1px_2px_rgba(37,99,235,0.2),0_14px_26px_-10px_rgba(29,78,216,0.55)]',
+    'explorer-btn-primary bg-(--explorer-blue) text-white shadow-[0_1px_2px_rgba(11, 122, 109,0.16),0_10px_20px_-10px_rgba(11, 122, 109,0.55)] hover:bg-(--explorer-blue-hover) hover:shadow-[0_1px_2px_rgba(11, 122, 109,0.2),0_14px_26px_-10px_rgba(29,78,216,0.55)]',
   secondary:
     'bg-white text-(--explorer-navy) border border-(--explorer-border) hover:bg-(--explorer-blue-surface) hover:border-(--explorer-blue-border) hover:text-(--explorer-blue)',
 }

@@ -102,7 +102,7 @@ export default function HelpSearchHero({ faqs, onSelectFaq, onGoToContact }) {
           <div ref={containerRef} className="relative text-left">
             <div
               className={`relative flex items-center gap-3 bg-white rounded-2xl border px-5 h-14 transition-[border-color,box-shadow] duration-200 ${
-                focused ? 'border-(--explorer-blue) shadow-[0_16px_36px_-16px_rgba(37,99,235,0.35)]' : 'border-(--explorer-border) shadow-[0_10px_28px_-16px_rgba(18,50,74,0.18)]'
+                focused ? 'border-(--explorer-blue) shadow-[0_16px_36px_-16px_rgba(11, 122, 109,0.35)]' : 'border-(--explorer-border) shadow-[0_10px_28px_-16px_rgba(18,50,74,0.18)]'
               }`}
             >
               <Search size={19} className="text-(--explorer-muted) shrink-0" aria-hidden="true" />

@@ -20,7 +20,7 @@ export default function TestimonialsSection({ title, items }) {
           ) : (
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
               {TESTIMONIALS_DATA.titlePrefix}
-              <span className="font-serif italic font-normal text-blue-950">
+              <span className="font-serif italic font-normal text-teal-950">
                 {TESTIMONIALS_DATA.titleItalic}
               </span>
               {TESTIMONIALS_DATA.titleSuffix}

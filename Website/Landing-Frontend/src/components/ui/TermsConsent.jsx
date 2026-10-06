@@ -3,8 +3,8 @@
 // must keep its submit action blocked until `checked` is true. Links open in a
 // new tab so the half-filled signup form isn't lost.
 const TONES = {
-  jobs: { text: 'text-(--jobs-ink-soft)', link: 'text-(--jobs-navy) hover:text-(--jobs-blue-dark)', accent: 'accent-[#5b5fef]' },
-  careers: { text: 'text-[#595959]', link: 'text-black hover:text-(--careers-accent)', accent: 'accent-[#5b5fef]' },
+  jobs: { text: 'text-(--jobs-ink-soft)', link: 'text-(--jobs-navy) hover:text-(--jobs-blue-dark)', accent: 'accent-[#0b7a6d]' },
+  careers: { text: 'text-[#595959]', link: 'text-black hover:text-(--careers-accent)', accent: 'accent-[#0b7a6d]' },
 }
 
 export default function TermsConsent({ checked, onChange, error, tone = 'jobs', className = '' }) {

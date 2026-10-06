@@ -7,8 +7,8 @@ import { CLIENT_ONLY_ROUTES } from '../../lib/routes'
 export default function AssociateCTA() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-[#101828] via-[#17213a] to-[#1e2a5e] py-16 text-white lg:py-24">
-      <div className="assoc-blob assoc-drift -left-20 top-0 h-[320px] w-[320px] bg-[#2563EB]/35" aria-hidden="true" />
-      <div className="assoc-blob assoc-drift right-0 bottom-0 h-[300px] w-[300px] bg-[#4F46E5]/30" aria-hidden="true" style={{ animationDelay: '2.5s' }} />
+      <div className="assoc-blob assoc-drift -left-20 top-0 h-[320px] w-[320px] bg-[#0b7a6d]/35" aria-hidden="true" />
+      <div className="assoc-blob assoc-drift right-0 bottom-0 h-[300px] w-[300px] bg-[#0b7a6d]/30" aria-hidden="true" style={{ animationDelay: '2.5s' }} />
       {[...Array(6)].map((_, i) => (
         <span
           key={i}
@@ -28,7 +28,7 @@ export default function AssociateCTA() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
             <Link
               to={CLIENT_ONLY_ROUTES.associateApply}
-              className="group inline-flex h-[50px] items-center gap-2 rounded-full bg-gradient-to-r from-[#2563EB] to-[#4F46E5] px-6 text-[15px] font-bold text-white shadow-[0_16px_34px_-10px_rgba(37,99,235,0.6)] transition-transform duration-200 hover:-translate-y-0.5"
+              className="group inline-flex h-[50px] items-center gap-2 rounded-full bg-gradient-to-r from-[#0b7a6d] to-[#0b7a6d] px-6 text-[15px] font-bold text-white shadow-[0_16px_34px_-10px_rgba(11, 122, 109,0.6)] transition-transform duration-200 hover:-translate-y-0.5"
             >
               Become an Associate
               <ArrowRight size={17} className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />

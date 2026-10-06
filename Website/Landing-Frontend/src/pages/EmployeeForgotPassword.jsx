@@ -9,7 +9,7 @@ import EmployeeForgotPasswordForm from '../components/forms/EmployeeForgotPasswo
 
 export default function EmployeeForgotPassword() {
   return (
-    <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-blue-200">
+    <div className="min-h-screen bg-white text-black font-sans antialiased selection:bg-teal-200">
       <Seo path="/employees/forgot-password" title="Forgot Password — Mzobs" noindex />
       <Navbar />
 

@@ -21,11 +21,11 @@ function CollegeCount({ data, active }) {
   return (
     <div className="relative mx-auto flex aspect-square w-full max-w-[460px] items-center justify-center">
       {/* Soft concentric rings */}
-      <span className="absolute inset-[4%] rounded-full border border-[#5b5fef]/15" aria-hidden="true" />
+      <span className="absolute inset-[4%] rounded-full border border-[#0b7a6d]/15" aria-hidden="true" />
       <span className="absolute inset-[16%] rounded-full border border-[#6D5DFB]/20" aria-hidden="true" />
       <span className="absolute inset-[28%] rounded-full bg-[radial-gradient(circle,rgba(109,93,251,.16),transparent_70%)]" aria-hidden="true" />
       <div className="campus-glass relative z-10 flex w-[78%] flex-col items-center rounded-[32px] px-6 py-10 text-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#5b5fef] text-white shadow-[0_12px_24px_-10px_rgba(37,99,235,.7)]">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0b7a6d] text-white shadow-[0_12px_24px_-10px_rgba(11, 122, 109,.7)]">
           <GraduationCap size={24} aria-hidden="true" />
         </span>
         <p className="campus-accent mt-5 text-[84px] font-black leading-none tracking-[-0.04em] sm:text-[104px]" aria-label={`${data.count}+ ${data.statLabel}`}>
@@ -52,7 +52,7 @@ function MagneticCta({ to, children }) {
   function onLeave() { x.set(0); y.set(0) }
   return (
     <motion.div ref={ref} style={{ x, y }} onMouseMove={onMove} onMouseLeave={onLeave} className="inline-block">
-      <Link to={to} className="group/cta relative inline-flex rounded-full p-[1.5px] shadow-[0_16px_36px_-14px_rgba(37,99,235,0.6)] motion-safe:transition-shadow hover:shadow-[0_20px_46px_-12px_rgba(109,93,251,0.6)]">
+      <Link to={to} className="group/cta relative inline-flex rounded-full p-[1.5px] shadow-[0_16px_36px_-14px_rgba(11, 122, 109,0.6)] motion-safe:transition-shadow hover:shadow-[0_20px_46px_-12px_rgba(109,93,251,0.6)]">
         <span className="campus-cta-border absolute inset-0 rounded-full" aria-hidden="true" />
         <span className="relative inline-flex items-center gap-2.5 rounded-full bg-[#16324F] px-6 py-3 text-[14.5px] font-bold text-white">
           {children}
@@ -82,10 +82,10 @@ export default function CampusNetwork() {
         className="absolute inset-0 -z-10 rounded-b-[50%_44px]"
         style={{
           background:
-            'radial-gradient(ellipse 55% 45% at 85% 20%, rgba(37,99,235,.09), transparent 70%), radial-gradient(ellipse 45% 40% at 10% 90%, rgba(53,191,163,.11), transparent 70%), radial-gradient(ellipse 40% 30% at 45% 0%, rgba(255,247,235,.9), transparent 70%), #F7F9FC',
+            'radial-gradient(ellipse 55% 45% at 85% 20%, rgba(11, 122, 109,.09), transparent 70%), radial-gradient(ellipse 45% 40% at 10% 90%, rgba(53,191,163,.11), transparent 70%), radial-gradient(ellipse 40% 30% at 45% 0%, rgba(255,247,235,.9), transparent 70%), #F7F9FC',
         }}
       >
-        <motion.div className="absolute inset-0 rounded-b-[50%_44px]" style={{ opacity: tint, background: 'linear-gradient(180deg, rgba(37,99,235,.03) 0%, rgba(109,93,251,.07) 55%, rgba(53,191,163,.07) 100%)' }} />
+        <motion.div className="absolute inset-0 rounded-b-[50%_44px]" style={{ opacity: tint, background: 'linear-gradient(180deg, rgba(11, 122, 109,.03) 0%, rgba(109,93,251,.07) 55%, rgba(53,191,163,.07) 100%)' }} />
       </div>
 
       <div className="mx-auto grid max-w-7xl items-center gap-10 px-6 md:grid-cols-[0.82fr_1.18fr] md:gap-6 md:px-10 lg:gap-10">
@@ -93,9 +93,9 @@ export default function CampusNetwork() {
         <div className="md:pb-8">
           <motion.p
             initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: EASE }}
-            className="flex items-center gap-2.5 text-[12px] font-bold uppercase tracking-[0.2em] text-[#5b5fef]"
+            className="flex items-center gap-2.5 text-[12px] font-bold uppercase tracking-[0.2em] text-[#0b7a6d]"
           >
-            <span className="h-px w-6 bg-[#5b5fef]" aria-hidden="true" />{d.eyebrow}
+            <span className="h-px w-6 bg-[#0b7a6d]" aria-hidden="true" />{d.eyebrow}
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, delay: 0.08, ease: EASE }}

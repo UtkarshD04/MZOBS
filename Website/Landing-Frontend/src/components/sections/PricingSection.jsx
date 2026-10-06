@@ -61,7 +61,7 @@ function HowItWorks({ steps }) {
             </div>
             <div className="p-5 flex-1 flex flex-col justify-between">
               <div>
-                <h5 className="text-[13.5px] font-bold text-ink group-hover:text-blue-900 transition-colors">{s.title}</h5>
+                <h5 className="text-[13.5px] font-bold text-ink group-hover:text-teal-900 transition-colors">{s.title}</h5>
                 <p className="text-[12.5px] text-ink-secondary mt-1.5 leading-relaxed">{s.desc}</p>
               </div>
             </div>

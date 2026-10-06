@@ -35,7 +35,7 @@ export default function EmployerTalentPoolsSection() {
     <section ref={ref} className="bg-[#EEF1EE] py-16 md:py-20 px-6 md:px-12">
       <div className="max-w-5xl mx-auto">
         <FadeInView className="text-center">
-          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#4a4ed8]">Talent Pools</span>
+          <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#075f55]">Talent Pools</span>
           <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[40px] font-bold text-[#111827] tracking-tight leading-tight">
             Keep promising people close, even when the timing isn't right.
           </h2>

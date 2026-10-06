@@ -97,7 +97,7 @@ export default function JobListItem({ job, index = 0, onOpen, selected = false }
           <ul className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-mz-muted">
             {meta.map(({ icon: Icon, text }) => (
               <li key={text} className="flex items-center gap-1.5">
-                <Icon size={13.5} className={Icon === MapPin ? 'text-[#078B7D]' : Icon === Briefcase ? 'text-[#2563EB]' : ''} aria-hidden="true" />
+                <Icon size={13.5} className={Icon === MapPin ? 'text-[#078B7D]' : Icon === Briefcase ? 'text-[#0b7a6d]' : ''} aria-hidden="true" />
                 {text}
               </li>
             ))}

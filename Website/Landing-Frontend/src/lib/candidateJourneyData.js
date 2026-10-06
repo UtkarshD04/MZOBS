@@ -13,7 +13,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       image: "/images/journey/step-01.png",
       imageAlt: "Candidate starting MZOBS journey with lifetime subscription",
       shapeType: "arch-left",
-      lineAccent: "from-blue-400 via-indigo-300 to-purple-200"
+      lineAccent: "from-teal-400 via-teal-300 to-teal-200"
     },
     {
       id: "step-02",
@@ -24,7 +24,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       image: "/images/journey/step-02.png",
       imageAlt: "Uploading resume digitally on MZOBS candidate portal",
       shapeType: "curve-right",
-      lineAccent: "from-indigo-300 via-sky-300 to-teal-200"
+      lineAccent: "from-teal-300 via-teal-300 to-teal-200"
     },
     {
       id: "step-03",
@@ -35,7 +35,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       image: "/images/journey/step-03.png",
       imageAlt: "Expert reviewing candidate resume and career profile",
       shapeType: "pill-left",
-      lineAccent: "from-sky-300 via-violet-300 to-indigo-200"
+      lineAccent: "from-teal-300 via-teal-300 to-teal-200"
     },
     {
       id: "step-04",
@@ -46,7 +46,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       image: "/images/journey/step-04.png",
       imageAlt: "Candidate participating in a structured mock interview session",
       shapeType: "curve-right",
-      lineAccent: "from-violet-300 via-purple-300 to-pink-200"
+      lineAccent: "from-teal-300 via-teal-300 to-pink-200"
     },
     {
       id: "step-05",
@@ -57,7 +57,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       image: "/images/journey/step-05.png",
       imageAlt: "Recruiter categorising candidate skills and technical capabilities on MZOBS portal",
       shapeType: "arch-left",
-      lineAccent: "from-purple-200 via-amber-200 to-orange-200"
+      lineAccent: "from-teal-200 via-amber-200 to-orange-200"
     }
   ],
 

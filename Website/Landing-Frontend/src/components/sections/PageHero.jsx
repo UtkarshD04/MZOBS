@@ -27,10 +27,10 @@ export default function PageHero({
     return (
       <section ref={containerRef} id="home" className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-[#0B1220] pt-28 pb-20 px-6 md:px-12">
         {/* Subtle ambient lighting */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/30 via-[#0B1220] to-[#0B1220] z-0" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-900/30 via-[#0B1220] to-[#0B1220] z-0" />
         
         {/* Floating Ambient Glowing Blobs */}
-        <FloatingElement duration={7} distance={20} className="absolute -top-16 left-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none z-0" />
+        <FloatingElement duration={7} distance={20} className="absolute -top-16 left-1/4 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none z-0" />
         <FloatingElement duration={9} delay={1.5} distance={24} className="absolute bottom-10 right-1/4 w-[400px] h-[400px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none z-0" />
 
         <div className="relative z-10 max-w-7xl mx-auto w-full grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -90,7 +90,7 @@ export default function PageHero({
     <section ref={containerRef} id="home" className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-[#0B1220] pt-28 pb-20 px-6 md:px-12">
       {/* Floating Ambient Glows */}
       <FloatingElement duration={8} distance={20} className="absolute top-1/4 left-10 w-72 h-72 bg-amber-400/10 rounded-full blur-3xl pointer-events-none z-0" />
-      <FloatingElement duration={10} delay={2} distance={24} className="absolute bottom-1/4 right-10 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none z-0" />
+      <FloatingElement duration={10} delay={2} distance={24} className="absolute bottom-1/4 right-10 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none z-0" />
 
       {/* Hero Content Grid */}
       <motion.div style={{ y: textY }} className="relative z-10 max-w-7xl mx-auto w-full grid md:grid-cols-12 gap-8 items-end">

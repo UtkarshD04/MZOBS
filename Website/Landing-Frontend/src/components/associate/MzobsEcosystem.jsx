@@ -26,12 +26,12 @@ export default function MzobsEcosystem() {
         <Reveal delay={0.1} className="relative mx-auto mt-14 aspect-square w-full max-w-[460px]">
           <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full" aria-hidden="true">
             {NODES.map((node) => (
-              <line key={node.label} className="assoc-line" x1="200" y1="200" x2={node.x} y2={node.y} stroke="#4F46E5" strokeWidth="1.4" opacity="0.3" />
+              <line key={node.label} className="assoc-line" x1="200" y1="200" x2={node.x} y2={node.y} stroke="#0b7a6d" strokeWidth="1.4" opacity="0.3" />
             ))}
           </svg>
 
-          <div className="assoc-node-glow absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2563EB]/25 blur-xl" aria-hidden="true" />
-          <div className="absolute left-1/2 top-1/2 flex h-[76px] w-[76px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-[#2563EB] to-[#4F46E5] text-[13px] font-extrabold text-white shadow-[0_18px_40px_-12px_rgba(37,99,235,0.5)]">
+          <div className="assoc-node-glow absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#0b7a6d]/25 blur-xl" aria-hidden="true" />
+          <div className="absolute left-1/2 top-1/2 flex h-[76px] w-[76px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-[#0b7a6d] to-[#0b7a6d] text-[13px] font-extrabold text-white shadow-[0_18px_40px_-12px_rgba(11, 122, 109,0.5)]">
             Mzobs
           </div>
 
@@ -41,7 +41,7 @@ export default function MzobsEcosystem() {
               className={`absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 ${i % 2 === 0 ? 'assoc-floating' : 'assoc-floating-slow'}`}
               style={{ left: `${(x / 400) * 100}%`, top: `${(y / 400) * 100}%`, animationDelay: `${i * 0.25}s` }}
             >
-              <span className="assoc-glass flex h-11 w-11 items-center justify-center rounded-full text-[#2563EB] shadow-[0_12px_26px_-10px_rgba(16,24,40,0.2)]">
+              <span className="assoc-glass flex h-11 w-11 items-center justify-center rounded-full text-[#0b7a6d] shadow-[0_12px_26px_-10px_rgba(16,24,40,0.2)]">
                 <Icon size={18} aria-hidden="true" />
               </span>
               <span className="whitespace-nowrap rounded-full bg-white px-2 py-0.5 text-[11px] font-bold text-[#101828] shadow-sm">{label}</span>

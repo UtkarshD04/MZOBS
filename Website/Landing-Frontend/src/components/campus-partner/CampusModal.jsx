@@ -166,7 +166,7 @@ export default function CampusModal({ open, onClose }) {
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="relative flex max-h-[94vh] w-full max-w-[720px] flex-col overflow-hidden rounded-t-[24px] bg-white shadow-2xl outline-none sm:rounded-[24px]"
           >
-            <span className="h-1 w-full shrink-0 bg-gradient-to-r from-[#0F8B7D] via-[#0F8B7D] to-[#7C6CFF]" aria-hidden="true" />
+            <span className="h-1 w-full shrink-0 bg-gradient-to-r from-[#0F8B7D] via-[#0F8B7D] to-[#0f8b7d]" aria-hidden="true" />
             <button
               type="button"
               onClick={close}

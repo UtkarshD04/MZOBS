@@ -235,8 +235,8 @@
    this design has no dark-mode counterpart to switch to.
 ============================================================ */
 :root {
-  --careers-accent: #5b5fef;
-  --careers-accent-hover: #4a4ed8;
+  --careers-accent: #0b7a6d;
+  --careers-accent-hover: #075f55;
   --careers-bg: #f5f5f5;
   --careers-ink: #000000;
   --careers-text: #595959;
@@ -349,8 +349,8 @@
   --jobs-teal: #12a594;
   --jobs-teal-dark: #0a6f64;
   --jobs-teal-tint: #e8f8f5;
-  --jobs-blue: #2563eb;
-  --jobs-blue-dark: #1d4ed8;
+  --jobs-blue: #0b7a6d;
+  --jobs-blue-dark: #075f55;
   --jobs-blue-tint: #eef6ff;
   --jobs-bg-subtle: #f7f9fb;
   --jobs-border: #e2e8f0;
@@ -380,8 +380,8 @@
      under the Hero, whose CTA/focus states are this same blue (see
      --hero-cta-gradient), so it picks up blue instead of the sitewide teal
      to read as a continuation of the Hero rather than a different section. */
-  --explorer-blue: #2563eb;
-  --explorer-blue-hover: #1d4ed8;
+  --explorer-blue: #0b7a6d;
+  --explorer-blue-hover: #075f55;
   --explorer-blue-surface: #eff6ff;
   --explorer-blue-border: #bfd3fb;
   --explorer-teal: #0b7a6d;
@@ -725,13 +725,13 @@
   -webkit-backdrop-filter: blur(18px) saturate(1.3);
 }
 .campus-accent {
-  background-image: linear-gradient(100deg, #2563eb 0%, #6d5dfb 100%);
+  background-image: linear-gradient(100deg, #0b7a6d 0%, #6d5dfb 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 .campus-cta-border {
-  background: linear-gradient(110deg, #2563eb, #6d5dfb, #35bfa3, #2563eb);
+  background: linear-gradient(110deg, #0b7a6d, #6d5dfb, #35bfa3, #0b7a6d);
   background-size: 300% 100%;
 }
 @keyframes campusBorderFlow { to { background-position: -300% 0; } }
@@ -868,11 +868,11 @@
    filters) picks up the Mzobs palette without being rewritten.
 ============================================================ */
 @theme {
-  --color-mz-primary: #5b5fef;
-  --color-mz-primary-strong: #4a4ed8;
-  --color-mz-primary-tint: #eeefff;
-  --color-mz-primary-ring: rgba(91, 95, 239, 0.28);
-  --color-mz-secondary: #7c6cff;
+  --color-mz-primary: #0b7a6d;
+  --color-mz-primary-strong: #075f55;
+  --color-mz-primary-tint: #e7f5f1;
+  --color-mz-primary-ring: rgba(11, 122, 109, 0.28);
+  --color-mz-secondary: #0f8b7d;
   --color-mz-accent: #20c997;
   --color-mz-accent-ink: #0b8a67; /* accent used as small text: passes AA on white */
   --color-mz-accent-tint: #e4f8f1;
@@ -894,16 +894,16 @@
   --radius-mz-xl: 28px;
 
   --shadow-mz-card: 0 1px 2px rgba(17, 24, 39, 0.04), 0 8px 24px -12px rgba(17, 24, 39, 0.12);
-  --shadow-mz-lift: 0 2px 4px rgba(17, 24, 39, 0.04), 0 22px 44px -18px rgba(70, 74, 200, 0.28);
-  --shadow-mz-float: 0 30px 70px -24px rgba(45, 50, 140, 0.38), 0 6px 16px -6px rgba(17, 24, 39, 0.1);
-  --shadow-mz-cta: 0 10px 24px -8px rgba(91, 95, 239, 0.55);
+  --shadow-mz-lift: 0 2px 4px rgba(17, 24, 39, 0.04), 0 22px 44px -18px rgba(11, 122, 109, 0.28);
+  --shadow-mz-float: 0 30px 70px -24px rgba(7, 59, 58, 0.38), 0 6px 16px -6px rgba(17, 24, 39, 0.1);
+  --shadow-mz-cta: 0 10px 24px -8px rgba(11, 122, 109, 0.55);
 
   --ease-mz: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
-  --mz-gradient: linear-gradient(135deg, #5b5fef 0%, #7c6cff 100%);
-  --mz-gradient-soft: linear-gradient(135deg, rgba(91, 95, 239, 0.1) 0%, rgba(32, 201, 151, 0.08) 100%);
+  --mz-gradient: linear-gradient(135deg, #0b7a6d 0%, #0f8b7d 100%);
+  --mz-gradient-soft: linear-gradient(135deg, rgba(11, 122, 109, 0.1) 0%, rgba(32, 201, 151, 0.08) 100%);
   --mz-dur-fast: 160ms;
   --mz-dur: 280ms;
 
@@ -911,29 +911,29 @@
   --explorer-navy: #111827;
   --explorer-navy-deep: #0b1020;
   --explorer-muted: #667085;
-  --explorer-blue: #5b5fef;
-  --explorer-blue-hover: #4a4ed8;
-  --explorer-blue-surface: #eeefff;
-  --explorer-blue-border: #ccceff;
+  --explorer-blue: #0b7a6d;
+  --explorer-blue-hover: #075f55;
+  --explorer-blue-surface: #e7f5f1;
+  --explorer-blue-border: #b8d6d0;
   --explorer-teal: #0b8a67;
   --explorer-teal-hover: #086f52;
   --explorer-teal-surface: #e4f8f1;
   --explorer-teal-border: #b5e6d5;
   --explorer-bg: #f7f8fc;
   --explorer-border: #e6e8f0;
-  --explorer-blue-surface-alt: #f3f3ff;
+  --explorer-blue-surface-alt: #f0f8f6;
   --jobs-navy: #111827;
   --jobs-navy-deep: #0b1020;
   --jobs-ink-soft: #475467;
   --jobs-teal: #20c997;
-  --jobs-teal-dark: #4a4ed8;
+  --jobs-teal-dark: #075f55;
   --jobs-teal-tint: #e4f8f1;
-  --jobs-blue: #5b5fef;
-  --jobs-blue-dark: #4a4ed8;
-  --jobs-blue-tint: #eeefff;
+  --jobs-blue: #0b7a6d;
+  --jobs-blue-dark: #075f55;
+  --jobs-blue-tint: #e7f5f1;
   --jobs-bg-subtle: #f7f8fc;
   --jobs-border: #e6e8f0;
-  --hero-cta-gradient: linear-gradient(135deg, #5b5fef 0%, #7c6cff 100%);
+  --hero-cta-gradient: linear-gradient(135deg, #0b7a6d 0%, #0f8b7d 100%);
   --bubble-teal-rgb: 32, 201, 151;
   --bubble-blue-rgb: 91, 95, 239;
   --bubble-navy-rgb: 17, 24, 39;
@@ -953,8 +953,8 @@
 @layer utilities {
   .mz-grid-bg {
     background-image:
-      linear-gradient(to right, rgba(91, 95, 239, 0.07) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(91, 95, 239, 0.07) 1px, transparent 1px);
+      linear-gradient(to right, rgba(11, 122, 109, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(11, 122, 109, 0.07) 1px, transparent 1px);
     background-size: 44px 44px;
     -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);
     mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);

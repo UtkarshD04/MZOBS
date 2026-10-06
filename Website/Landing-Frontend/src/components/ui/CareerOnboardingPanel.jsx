@@ -20,7 +20,7 @@ export default function CareerOnboardingPanel() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.4] bg-[radial-gradient(circle,rgba(37,99,235,0.12)_1px,transparent_1px)] bg-size-[22px_22px]"
+        className="pointer-events-none absolute inset-0 opacity-[0.4] bg-[radial-gradient(circle,rgba(11, 122, 109,0.12)_1px,transparent_1px)] bg-size-[22px_22px]"
       />
 
       <img src="/images/logo.png" alt="Mzobs" className="relative h-9 w-auto object-contain" />

@@ -32,7 +32,7 @@ export default function CTABand({
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B1220] via-[#0B1220]/60 to-transparent pointer-events-none" />
 
           {/* Floating Ambient Glowing Shape */}
-          <FloatingElement duration={7} distance={24} className="absolute top-10 right-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none z-0" />
+          <FloatingElement duration={7} distance={24} className="absolute top-10 right-10 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl pointer-events-none z-0" />
 
           {/* Glass Card Overlay Box */}
           <Reveal direction="up" delay={0.15} duration={0.9} scale={0.92} blur className="relative z-10 h-full flex flex-col justify-end p-8 sm:p-14 max-w-3xl space-y-6">

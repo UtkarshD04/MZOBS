@@ -14,7 +14,7 @@ export default function OurGoalSection({ data }) {
           <div className="space-y-6">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight leading-tight">
               {goalData.titlePrefix}
-              <span className="font-serif italic font-normal text-blue-950">
+              <span className="font-serif italic font-normal text-teal-950">
                 {goalData.titleItalic}
               </span>
               {goalData.titleSuffix}

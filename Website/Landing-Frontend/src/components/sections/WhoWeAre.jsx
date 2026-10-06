@@ -19,7 +19,7 @@ export default function WhoWeAre() {
           {WHO_WE_ARE_DATA.stats.map((stat, i) => (
             <StaggerItem key={i}>
               <TiltCard className="bg-white rounded-2xl p-8 border border-slate-200/60 shadow-sm hover:shadow-xl hover:border-slate-300 flex flex-col justify-between h-full">
-                <div className="text-4xl sm:text-5xl font-serif font-normal text-[#0B1220] tracking-tight mb-4 group-hover:text-blue-900 group-hover:scale-105 transition-all">
+                <div className="text-4xl sm:text-5xl font-serif font-normal text-[#0B1220] tracking-tight mb-4 group-hover:text-teal-900 group-hover:scale-105 transition-all">
                   {stat.number}
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
