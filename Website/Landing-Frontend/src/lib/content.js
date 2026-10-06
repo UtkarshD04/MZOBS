@@ -215,7 +215,7 @@ export const FAQ_DATA = {
   items: [
     {
       q: "What is Mzobs?",
-      a: "Mzobs is an AI-powered hiring marketplace — job seekers discover roles matched to their skills, and employers discover candidates ranked by fit for their requirement."
+      a: "Mzobs is a trusted hiring marketplace — job seekers discover roles matched to their skills, and employers discover candidates ranked by fit for their requirement."
     },
     {
       q: "Is Mzobs free for job seekers?",
@@ -301,7 +301,7 @@ export const OUR_VISION_DATA = {
   titleSuffix: ".",
   desc: "Not just faster hiring — smarter hiring. Talent matched to relevant opportunities, inside one hiring ecosystem both sides can rely on.",
   badges: [
-    { icon: "Sparkles", text: "AI-powered matching" },
+    { icon: "Sparkles", text: "Verified, trusted listings" },
     { icon: "Users", text: "Matched, not just listed" }
   ],
   ctaText: "Get in touch",
@@ -543,7 +543,7 @@ export const CTA_BAND_DATA = {
 
 export const FOOTER_DATA = {
   logoSub: "HIRING PLATFORM",
-  desc: "Mzobs is an AI-powered hiring marketplace — Talent × Opportunity × Smarter Hiring. Discover jobs, find quality talent and hire in one simple workflow.",
+  desc: "Mzobs is where verified talent meets trusted opportunity—connecting people, skills, and employers to build better careers and better hiring.",
   ctaText: "Contact Us",
   menuTitle: "Menu",
   menuItems: [

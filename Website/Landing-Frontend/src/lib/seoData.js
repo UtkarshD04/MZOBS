@@ -25,7 +25,7 @@ export const STATIC_PAGE_SEO = {
   '/': {
     title: 'Mzobs — Talent × Opportunity × Smarter Hiring',
     description:
-      'Discover jobs from top employers across India, get AI-powered matches on your skills and experience, and move from profile to offer faster. Employers find quality talent and hire in one pipeline.',
+      'Discover jobs from top employers across India, get matched to roles that fit your skills and experience, and move from profile to offer faster. Employers find quality talent and hire in one pipeline.',
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
