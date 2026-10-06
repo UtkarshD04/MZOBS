@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import LegalPage from '../components/legal/LegalPage'
 
-const LAST_UPDATED = 'September 19, 2026'
+const LAST_UPDATED = 'October 6, 2026'
 const PRIVACY_EMAIL = 'support@mzobs.com'
 
 const linkCls = 'text-(--explorer-blue) font-bold hover:underline'
@@ -13,9 +13,12 @@ const DATA_CATEGORIES = [
   ['Professional information', 'Skills, education, experience, CTC, notice period', 'Recruitment'],
   ['Resume/documents', 'CV, employment documents', 'Job applications and employer review'],
   ['Application information', 'Jobs applied for, status', 'Recruitment workflow'],
-  ['Employer information', 'Company and recruiter information', 'Employer services'],
+  ['Employer information', 'Company, recruiter and team-member information', 'Employer services'],
   ['Communication data', 'Messages, support requests', 'Communication and support'],
   ['Location', 'Approximate/precise device location when permission is granted', 'Near Me / job discovery'],
+  ['Profile visibility and employer access', 'Open-to-opportunities setting, records of employers opening resumes or contact details', 'Employer search, audit and abuse prevention'],
+  ['Employer outreach', 'Emails/SMS sent to candidates through the portal', 'Recruitment communication and audit'],
+  ['Forms and enquiries', 'Contact, associate and “Customize plan” submissions', 'Responding and follow-up'],
   ['Payment information', 'Order ID, payment ID, amount, status', 'Payment processing and records'],
   ['Notification information', 'Push token', 'Notifications'],
   ['Technical information', 'Application/session/security information', 'Security and service functionality'],
@@ -30,9 +33,10 @@ const SECTIONS = [
       { p: 'This Privacy Policy applies to information processed through:' },
       {
         ul: [
-          'The Mzobs Android mobile application',
+          'The Mzobs mobile applications, including the Mzobs candidate app and the Mzobs Employer app',
           'The Mzobs website and web application',
           'Mzobs candidate and employer portals',
+          'Forms on our website, such as the contact, “Customize plan” and associate forms',
           'Mzobs APIs and backend services',
           'Job applications, recruitment and hiring workflows',
           'Communications and support services associated with Mzobs',
@@ -119,6 +123,9 @@ const SECTIONS = [
       {
         p: 'Supported resume/document formats may include PDF, DOC, and DOCX, subject to the current limits and functionality of the Services. Resumes are stored in private cloud object storage operated through Amazon Web Services (AWS) S3. Mzobs uses access-controlled mechanisms, including authenticated access and time-limited access mechanisms, to provide authorized access to resumes.',
       },
+      {
+        p: 'The Mzobs team may review an uploaded resume to check that it is genuine and readable, and to mark it as verified. Verified resumes may be shown to employers as described under “Who can find your profile”.',
+      },
       { p: 'You should not upload documents containing information that is unrelated to your employment application.' },
     ],
   },
@@ -142,6 +149,35 @@ const SECTIONS = [
     ],
   },
   {
+    title: 'Who can find your profile',
+    blocks: [
+      {
+        p: 'Employers do not only see candidates who apply to their jobs. Employers with an active Mzobs plan can search the Mzobs candidate database by skills, experience, location, notice period and similar filters. Your profile can appear in those searches only when all of the following are true:',
+      },
+      {
+        ul: [
+          'Your account is active',
+          'Your “open to opportunities” setting is switched on',
+          'Your resume has been verified by Mzobs',
+        ],
+      },
+      {
+        p: 'In search results your email address, phone number and resume are hidden. An employer can reveal them only by spending a CV credit on your profile, one item at a time, and each time an employer opens your resume or private contact details Mzobs records it in an access log. Employers can also email or SMS candidates from the Mzobs portal; those messages are logged and limited in number per candidate.',
+      },
+      {
+        p: 'You can stop appearing in employer searches at any time by turning off “open to opportunities” in your profile settings. This does not remove applications you have already sent to employers.',
+      },
+    ],
+  },
+  {
+    title: 'Candidate subscription and premium services',
+    blocks: [
+      {
+        p: 'Some candidate features are paid. If you buy the candidate subscription or request a premium service (for example a human-assisted service or a mock interview), we process the details of your request, any date or time you choose, the status of the request, payment details (see “Payment information”) and the summary or material we deliver to you. Requests are handled by the Mzobs operations team, who can see these details so that they can carry out the service.',
+      },
+    ],
+  },
+  {
     title: 'Employer information',
     blocks: [
       { p: 'If you use Mzobs as an employer, recruiter, or organization representative, we may collect:' },
@@ -152,11 +188,29 @@ const SECTIONS = [
           'Job role/designation and employer profile information',
           'Job postings and hiring requirements',
           'Candidate interaction information and interview and hiring information',
-          'Payment and subscription information',
+          'Payment and subscription information, including the employer plan you choose and CV credits you buy or use',
+          'Details you submit through a “Customize plan” enquiry (name, company name, phone number and email)',
+          'Details of colleagues you add to your company account (name, email, role) and the actions they take on the account',
+          'Candidates whose contact details or resumes you unlock, view or download',
           'Other information voluntarily provided in connection with employer services',
         ],
       },
       { p: 'Employers may also provide information about their organization for verification and hiring purposes.' },
+    ],
+  },
+  {
+    title: 'Employer plans, CV credits and plan enquiries',
+    blocks: [
+      { p: 'Employers can subscribe to an annual employer plan on the Mzobs website or in the Mzobs Employer app, and may use CV credits to unlock candidate contact details. In connection with this we may process:' },
+      {
+        ul: [
+          'The plan you select, its price, GST and invoice details, validity dates and renewal status',
+          'CV credit purchases, balances and the candidates you unlock, so that credits are charged correctly and your usage history can be shown to you',
+          'Your mobile number, where you subscribe without first creating an account, so that an employer account can be created for you and you can be contacted about it',
+        ],
+      },
+      { p: 'If you choose “Customize plan” on the website or in the Mzobs Employer app, we collect the name, company name, phone number and email address you enter in the form, and note whether the request came from the website or the app.' },
+      { p: 'This information is shared with the Mzobs operations team, who use it only to contact you about a suitable plan, give you a quote and follow up on your request. We do not use it to publish anything about you or to sell it to third parties. You may ask us to delete an enquiry by writing to the contact address below.' },
     ],
   },
   {
@@ -178,6 +232,7 @@ const SECTIONS = [
           'Sender and recipient identifiers',
           'Message timestamps and notification information',
           'Other information necessary to deliver and maintain communications',
+          'For emails and SMS that employers send to candidates from the portal: the channel, subject, full text, delivery status and any delivery error',
         ],
       },
       {
@@ -186,19 +241,30 @@ const SECTIONS = [
     ],
   },
   {
-    title: 'Customer support',
+    title: 'AI-assisted candidate search',
     blocks: [
-      { p: 'When you contact Mzobs support or submit a support request, we may collect:' },
+      {
+        p: 'The employer portal and the Mzobs Employer app can turn a plain-English search or a pasted job description into search filters. When an employer uses this feature, the text they type or paste is sent to our AI service provider, Groq, which returns the filters. We do not send candidate profiles, resumes or contact details to the AI provider for this feature, and the result is used only to run the search. Employers should not paste personal information about individuals into the search box.',
+      },
+    ],
+  },
+  {
+    title: 'Support, contact and partnership forms',
+    blocks: [
+      { p: 'When you contact Mzobs support, use the contact form, or submit a form such as “Associate with Mzobs” or “Customize plan”, we may collect:' },
       {
         ul: [
           'Name, email address and phone number',
           'Account information and support request details',
+          'For the contact form: your role (job seeker, employer or other), subject and message',
+          'For the associate form: company name, contact person, city, website and a description of the company',
+          'For the “Customize plan” form: company name and whether the request came from the website or the app',
           'Attachments or information voluntarily submitted with the request',
           'Communications between you and Mzobs',
           'Technical information necessary to investigate the issue',
         ],
       },
-      { p: 'We use this information to respond to support requests, investigate technical issues, resolve complaints, prevent abuse, maintain service quality, and protect the security of the platform.' },
+      { p: 'We use this information to respond to your request, follow up with a quote or partnership discussion, investigate technical issues, resolve complaints, prevent abuse, maintain service quality, and protect the security of the platform.' },
     ],
   },
   {
@@ -255,7 +321,7 @@ const SECTIONS = [
         ],
       },
       {
-        p: 'Push notifications may be delivered through third-party notification infrastructure, including Expo Push Service and Firebase Cloud Messaging (FCM). You can manage notification permissions through your device settings.',
+        p: 'Push notifications may be delivered through third-party notification infrastructure, including Expo Push Service and Firebase Cloud Messaging (FCM). The Mzobs website may also offer browser (web) push notifications if you allow them in your browser. You can manage notification permissions through your device or browser settings, and switch off categories of notifications in your Mzobs notification preferences where offered.',
       },
     ],
   },
@@ -373,6 +439,13 @@ const SECTIONS = [
       {
         p: 'When you apply for a job or otherwise choose to participate in an employer recruitment process, relevant candidate information may be shared with the employer or recruiter. This may include your name, contact information where applicable, city/state/pincode, skills, education, work experience, employment information, compensation information where provided, professional links, resume, application information, interview information, and other profile information relevant to the recruitment process. You should review the information in your profile before applying for jobs.',
       },
+      {
+        p: 'Once an employer has received candidate information, the employer may independently process it for legitimate recruitment and employment purposes and may keep it in line with its own legal obligations and privacy policies. Mzobs does not control how an independent employer uses information after it has lawfully received it, except as required by our agreements, applicable law or platform controls.',
+      },
+      { h: 'With the Mzobs team' },
+      {
+        p: 'Mzobs staff, including our operations team, can access account, profile, resume, application, payment and request information to the extent needed for verification, support, premium services and platform safety. Staff access is limited to authorised team members.',
+      },
       { h: 'With service providers' },
       {
         p: 'We may use trusted third-party service providers that process information on our behalf, including providers supporting cloud storage, database infrastructure, authentication, SMS/OTP delivery, payment processing, email delivery, push notifications, hosting, security, and other infrastructure required to operate Mzobs. These providers receive only the information reasonably necessary to provide their services.',
@@ -392,6 +465,7 @@ const SECTIONS = [
           'Amazon Web Services (AWS S3): private storage of uploaded resumes and documents',
           'MongoDB / MongoDB Atlas: storing application, account, profile, job, communication, and related platform data',
           'Razorpay: payment processing and transaction-related services',
+          'Groq: converting employers’ typed search text into search filters (AI-assisted search)',
           'MSG91: phone OTP and applicable transactional SMS delivery',
           'Google: Google authentication where a user chooses Google Sign-In',
           'Expo Push Service / Firebase Cloud Messaging: delivering push notifications',
@@ -436,18 +510,10 @@ const SECTIONS = [
         ],
       },
       {
+        p: 'Uploaded resumes are not intended to be publicly accessible. Mzobs uses authenticated and authorization-controlled mechanisms, including time-limited URLs and application authorization tokens, to provide access to resumes, and records when an employer opens a resume or private contact details. A resume is not publicly accessible merely because an authorized employer can open it. If you believe that your resume or another document has been accessed without authorization, contact us immediately.',
+      },
+      {
         p: 'No method of electronic storage or transmission is completely secure. Therefore, while we take reasonable measures to protect information, we cannot guarantee absolute security.',
-      },
-    ],
-  },
-  {
-    title: 'Resume and file security',
-    blocks: [
-      {
-        p: 'Uploaded resumes are not intended to be publicly accessible. Mzobs uses authenticated and authorization-controlled mechanisms to provide access to resumes. Resume access may use time-limited URLs or application authorization tokens.',
-      },
-      {
-        p: 'You should not assume that a resume uploaded to Mzobs is publicly accessible merely because it is available to an authorized employer. If you believe that your resume or another document has been accessed without authorization, contact us immediately.',
       },
     ],
   },
@@ -465,6 +531,8 @@ const SECTIONS = [
           'Applications: may be retained to provide application history, recruitment functionality, dispute resolution, security, and legitimate record-keeping.',
           'Messages: may be retained as necessary for communication functionality, security, dispute handling, abuse prevention, and legitimate operational purposes.',
           'Payment records: certain payment and transaction records may be retained after account deletion where necessary for taxation, accounting, fraud prevention, dispute resolution, legal compliance, or other legitimate obligations.',
+          'Employer access and outreach records: records of which employer opened a resume or contact detail, and emails/SMS sent to candidates through the portal, may be kept for audit, abuse-prevention and dispute purposes.',
+          'Forms and enquiries: contact, associate and “Customize plan” submissions are kept for as long as needed to respond and follow up, and for reasonable business records afterwards.',
           'Interview and offer records: certain recruitment records may be retained after account deletion where necessary for recruitment records, contractual, legal, dispute-resolution, security, or legitimate business purposes.',
         ],
       },
@@ -515,6 +583,9 @@ const SECTIONS = [
         ],
       },
       { p: 'Where such information is retained, Mzobs will restrict its use to the purposes for which retention is necessary.' },
+      {
+        p: 'Employer accounts: to delete an employer account and its company data, write to us at the contact address below from the email registered on the account. We may ask you to verify your identity first. Subscription, invoice and payment records are retained as described above, and candidate information that you already received may remain with you under your own obligations as an employer.',
+      },
     ],
   },
   {
@@ -529,13 +600,21 @@ const SECTIONS = [
     ],
   },
   {
-    title: 'Information shared with employers',
+    title: 'Your rights and choices',
     blocks: [
+      { p: 'Subject to applicable law, you can:' },
       {
-        p: 'When you apply for a job, information may be shared with the employer so that the employer can evaluate your application. After an employer receives candidate information, the employer may independently process that information for legitimate recruitment and employment purposes. Employers may retain information according to their own legal obligations and privacy policies.',
+        ul: [
+          'Access and review the personal information in your account, and ask what we hold about you',
+          'Correct or update information that is inaccurate or incomplete, through your account or by contacting support',
+          'Ask us to delete your personal information or account (see “Account deletion”)',
+          'Withdraw consent for optional processing, such as location, notifications or appearing in employer searches (“open to opportunities”)',
+          'Opt out of non-essential notifications through device, browser or Mzobs notification settings',
+          'Raise a complaint or grievance about how your information is handled',
+        ],
       },
       {
-        p: 'Mzobs does not control how an independent employer processes information after it has lawfully received it, except to the extent required by our agreements, applicable law, or platform controls.',
+        p: 'To use these rights, write to the contact address below. We may ask for reasonable verification before acting, so that your information is not changed or disclosed to the wrong person, and we may be unable to act on a request where the law requires us to keep the information.',
       },
     ],
   },
@@ -559,7 +638,7 @@ const SECTIONS = [
     title: 'Data from children',
     blocks: [
       {
-        p: 'Mzobs is a recruitment and employment platform and is not intended for children. We do not knowingly request or intentionally collect personal information from children where prohibited by applicable law.',
+        p: 'Mzobs is a recruitment and employment platform and is not intended for anyone under 18 years of age. We do not knowingly request or intentionally collect personal information from children where prohibited by applicable law.',
       },
       {
         p: 'If you believe that a child has provided personal information to Mzobs without appropriate authorization, please contact us so that we can investigate and take appropriate action.',
@@ -603,14 +682,6 @@ const SECTIONS = [
     blocks: [
       {
         p: 'Some service providers used by Mzobs may process or store information in countries or locations outside your state or country. Where information is transferred to third-party infrastructure providers, Mzobs takes reasonable steps to use service providers with appropriate security and data protection practices. The privacy laws applicable to such processing may differ from those in your jurisdiction.',
-      },
-    ],
-  },
-  {
-    title: 'Data accuracy and profile control',
-    blocks: [
-      {
-        p: 'You may review and update certain information through your Mzobs account. If information is inaccurate, incomplete, or outdated, you may update it where the relevant functionality is available or contact Mzobs support for assistance. Mzobs may request reasonable verification before making certain account or personal-information changes.',
       },
     ],
   },
@@ -669,6 +740,17 @@ const SECTIONS = [
             {PRIVACY_EMAIL}
           </a>
         </p>
+        <p>
+          <span className={strongCls}>Grievance Officer:</span> Grievance Officer, Mesho Solutions, at{' '}
+          <a href={`mailto:${PRIVACY_EMAIL}`} className={linkCls}>
+            {PRIVACY_EMAIL}
+          </a>{' '}
+          (write “Privacy grievance” in the subject line)
+        </p>
+        <p className="mt-3">
+          We aim to acknowledge privacy requests and grievances promptly and to resolve them within the time required by
+          applicable law.
+        </p>
         <p className="mt-3">
           For account deletion requests, please use the account deletion mechanism available through the Mzobs
           website/application or contact the email address above. When contacting us regarding an account, we may
@@ -689,6 +771,9 @@ const SECTIONS = [
         p: 'By using Mzobs, you acknowledge that you have read this Privacy Policy and understand how Mzobs processes information as described above.',
       },
       {
+        p: 'We process personal information because you give it to us and ask us to provide the Services (for example, applying to a job or subscribing to a plan), because you have consented (for example, to location access, notifications or appearing in employer searches), because it is needed to keep the platform safe, or because the law requires it.',
+      },
+      {
         p: 'Where applicable law requires consent for a particular processing activity, Mzobs will seek the appropriate consent or provide the applicable choice mechanism. You may withdraw optional permissions through your device or account settings where supported. Withdrawal of a permission may affect functionality that depends on that permission.',
       },
     ],
@@ -697,7 +782,7 @@ const SECTIONS = [
     title: 'Governing law',
     blocks: [
       {
-        p: 'This Privacy Policy shall be interpreted in accordance with applicable laws and regulations. Nothing in this Privacy Policy is intended to limit any rights that you may have under applicable privacy, consumer protection, data protection, or other laws.',
+        p: 'This Privacy Policy is governed by the laws of India, including, to the extent applicable, the Information Technology Act, 2000 and the rules made under it and the Digital Personal Data Protection Act, 2023. It shall be interpreted in accordance with applicable laws and regulations. Nothing in this Privacy Policy is intended to limit any rights that you may have under applicable privacy, consumer protection, data protection, or other laws.',
       },
     ],
   },
@@ -739,8 +824,6 @@ const SECTIONS = [
   },
 ]
 
-
-
 export default function PrivacyPolicy() {
   return (
     <LegalPage
@@ -766,6 +849,16 @@ export default function PrivacyPolicy() {
             (collectively, the &ldquo;Services&rdquo;). By creating an account, accessing, or using the Services, you
             acknowledge that you have read and understood this Privacy Policy.
           </p>
+          <div className={boxCls}>
+            <p className={`${strongCls} mb-2`}>At a glance</p>
+            <ul className="list-disc space-y-1 pl-5">
+              <li>We do not sell your personal information.</li>
+              <li>Candidates: employers see your details when you apply, or when your verified profile is found in their search. Your phone, email and resume stay hidden until an employer unlocks them.</li>
+              <li>You can switch off “open to opportunities” to stop appearing in employer searches.</li>
+              <li>Employers: your plan, credits, team and enquiry details are used to run your account and to contact you.</li>
+              <li>You can ask to access, correct or delete your information at any time.</li>
+            </ul>
+          </div>
         </>
       }
     />
