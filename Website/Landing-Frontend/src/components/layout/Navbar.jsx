@@ -152,14 +152,14 @@ export default function Navbar() {
             ) : (
               <>
                 {showEmployer && (
-                  <Link to="/employers" className="flex h-9 items-center justify-center whitespace-nowrap rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] px-4 text-[14px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(7,139,125,0.55)] transition-shadow hover:shadow-[0_12px_26px_-8px_rgba(7,139,125,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D]">
+                  <Link to="/employers" className="explorer-btn-primary flex h-9 items-center justify-center whitespace-nowrap rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] px-4 text-[14px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(7,139,125,0.55)] transition-shadow hover:shadow-[0_12px_26px_-8px_rgba(7,139,125,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D]">
                     For Employers
                   </Link>
                 )}
                 <button
                   type="button"
                   onClick={() => setAuthModalOpen(true)}
-                  className="h-9 whitespace-nowrap rounded-[10px] bg-[#A3124A] px-4 text-[14px] font-semibold text-white shadow-[0_6px_16px_-8px_rgba(163,18,74,0.7)] transition-colors hover:bg-[#7F0E3A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A3124A]"
+                  className="explorer-btn-primary h-9 whitespace-nowrap rounded-[10px] bg-[#A3124A] px-4 text-[14px] font-semibold text-white shadow-[0_6px_16px_-8px_rgba(163,18,74,0.7)] transition-colors hover:bg-[#7F0E3A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A3124A]"
                 >
                   Sign in
                 </button>
@@ -241,7 +241,7 @@ export default function Navbar() {
                   ) : (
                     <>
                       {showEmployer && (
-                        <Link to="/employers" onClick={() => setOpen(false)} className="flex h-10 items-center justify-center rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] text-[13.5px] font-bold text-white">
+                        <Link to="/employers" onClick={() => setOpen(false)} className="explorer-btn-primary flex h-10 items-center justify-center rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] text-[13.5px] font-bold text-white">
                           For Employers
                         </Link>
                       )}
@@ -251,7 +251,7 @@ export default function Navbar() {
                           setOpen(false)
                           setAuthModalOpen(true)
                         }}
-                        className="flex h-10 items-center justify-center rounded-[10px] bg-[#A3124A] text-[13.5px] font-bold text-white"
+                        className="explorer-btn-primary flex h-10 items-center justify-center rounded-[10px] bg-[#A3124A] text-[13.5px] font-bold text-white"
                       >
                         Sign in
                       </button>
