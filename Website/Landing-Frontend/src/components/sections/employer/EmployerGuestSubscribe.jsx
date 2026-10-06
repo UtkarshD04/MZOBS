@@ -13,7 +13,7 @@ const inputClass =
 // see guestSubscribeSignup in Backend/src/controllers/authController.js.
 // There's no email/company-name form here by design; those get filled in
 // later from the dashboard's Company Profile page.
-export default function EmployerGuestSubscribe({ open, onClose }) {
+export default function EmployerGuestSubscribe({ open, onClose, plan }) {
   const [step, setStep] = useState('phone') // phone | paying | success
   const [phone, setPhone] = useState('')
 
@@ -55,7 +55,7 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
   async function startPayment() {
     setPayError('')
     try {
-      const order = await createGuestSubscriptionOrder()
+      const order = await createGuestSubscriptionOrder(plan?.code)
       const signupResult = order.mock
         ? await guestSubscribeSignup({ phone, mockOrderId: order.orderId })
         : await (async () => {
@@ -175,7 +175,7 @@ export default function EmployerGuestSubscribe({ open, onClose }) {
                   <CheckCircle2 size={28} className="text-(--explorer-blue)" />
                 </div>
                 <h3 className="font-sans text-2xl font-bold text-(--explorer-navy)">You're subscribed.</h3>
-                <p className="text-[13px] text-(--explorer-muted) mt-1.5">Your MZOBS Employer Annual plan is active. Save these details to sign in later:</p>
+                <p className="text-[13px] text-(--explorer-muted) mt-1.5">Your {plan?.name ?? 'MZOBS Employer Annual'} plan is active. Save these details to sign in later:</p>
 
                 <div className="mt-5 rounded-2xl border border-(--explorer-navy)/12 bg-(--explorer-teal-surface) p-4 text-left">
                   <div className="text-[11px] font-semibold uppercase tracking-wide text-(--explorer-muted)">Login email</div>

@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { GraduationCap, LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, IndianRupee, UserCog, Send, Sparkles, Handshake } from 'lucide-react'
+import { GraduationCap, LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, IndianRupee, UserCog, Send, Sparkles, Handshake, SlidersHorizontal } from 'lucide-react'
 import { useApp } from '../../../lib/appContext'
 import { cn } from '../../../lib/utils'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
@@ -57,6 +57,7 @@ export default function OpsSidebar() {
     { to: '/app/premium-services', label: 'Premium services', icon: Sparkles },
     { to: '/app/associates', label: 'Associates', icon: Handshake },
     { to: '/app/campus-requests', label: 'Campus Requests', icon: GraduationCap },
+    { to: '/app/plan-enquiries', label: 'Plan enquiries', icon: SlidersHorizontal },
     { to: '/app/notifications/send', label: 'Send Notification', icon: Send },
   ]
 

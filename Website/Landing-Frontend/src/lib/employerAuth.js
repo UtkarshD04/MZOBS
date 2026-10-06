@@ -46,8 +46,13 @@ export function verifyEmployerPhoneWidget({ phone, accessToken }) {
 
 // The pricing-page "pay, no signup form" flow: order first (no account
 // needed yet)...
-export function createGuestSubscriptionOrder() {
-  return postJSON('/subscription/guest-order', {})
+export function createGuestSubscriptionOrder(planCode) {
+  return postJSON('/subscription/guest-order', { planCode })
+}
+
+// The "Customize plan" form — lands in the Operations portal's Plan enquiries page.
+export function submitPlanEnquiry({ name, companyName, phone, email }) {
+  return postJSON('/plan-enquiries', { name, companyName, phone, email, source: 'website' })
 }
 
 // ...then this single call both settles the payment and creates the

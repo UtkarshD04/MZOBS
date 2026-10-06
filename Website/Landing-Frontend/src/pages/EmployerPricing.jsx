@@ -1,21 +1,12 @@
-import { CheckCircle2, ShieldCheck, IndianRupee, RefreshCcw, FileCheck2, ChevronDown } from 'lucide-react'
+import { ShieldCheck, RefreshCcw, FileCheck2, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import Seo from '../components/Seo'
 import { STATIC_PAGE_SEO } from '../lib/seoData'
 import EmployerNavbar from '../components/layout/EmployerNavbar'
 import EmployerFooter from '../components/layout/EmployerFooter'
 import EmployerCTABand from '../components/sections/employer/EmployerCTABand'
-import EmployerGuestSubscribe from '../components/sections/employer/EmployerGuestSubscribe'
+import EmployerPlanCards from '../components/sections/employer/EmployerPlanCards'
 import { FadeInLoad, FadeInView } from '../components/sections/employer/employerMotion'
-import { PLAN, totalAmount, fmtINR } from '../lib/employerPricingPlan'
-
-const FEATURES = [
-  'Unlimited job postings for a full year — no per-job fee',
-  'Unlimited viewing & downloading of resumes for candidates who apply to your jobs',
-  'Full applicant details — contact info, resume, profile — for your own applicants',
-  'Shortlist, message, reject and track every application from one dashboard',
-  'GST invoice provided for every payment',
-]
 
 const HIGHLIGHTS = [
   { icon: ShieldCheck, title: 'One-time annual payment', desc: 'No auto-renewal, no hidden charges — MZOBS never charges your card without your action.' },
@@ -26,7 +17,7 @@ const HIGHLIGHTS = [
 const FAQS = [
   {
     q: 'How many jobs can I post?',
-    a: 'As many as you need. Once your MZOBS Employer Annual plan is active, job postings are unlimited for the full year — there is no per-job charge.',
+    a: 'As many as you need. Once any MZOBS Employer annual plan is active, job postings are unlimited for the full year — there is no per-job charge.',
   },
   {
     q: 'Which candidates can I see resumes for?',
@@ -38,7 +29,7 @@ const FAQS = [
   },
   {
     q: 'How do I subscribe?',
-    a: 'Confirm your mobile number and pay right from this page — no signup form. Your account, already on the active plan, is ready the moment payment goes through.',
+    a: 'Pick a plan, confirm your mobile number and pay right from this page — no signup form. Your account, already on the active plan, is ready the moment payment goes through.',
   },
 ]
 
@@ -65,7 +56,6 @@ function FaqItem({ item, isOpen, onToggle }) {
 
 export default function EmployerPricing() {
   const [openFaq, setOpenFaq] = useState(0)
-  const [subscribeOpen, setSubscribeOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-(--explorer-bg) text-(--explorer-navy) font-sans antialiased selection:bg-(--explorer-blue-surface)">
@@ -78,49 +68,18 @@ export default function EmployerPricing() {
         <FadeInLoad className="relative max-w-2xl mx-auto text-center">
           <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-(--explorer-blue)">Simple, transparent pricing</span>
           <h1 className="mt-3 font-sans text-4xl sm:text-5xl md:text-[56px] font-bold text-(--explorer-navy) tracking-tight leading-[1.02]">
-            One plan. Everything you need to hire.
+            Pick the plan that fits your hiring.
           </h1>
           <p className="mt-5 text-[15px] sm:text-base text-(--explorer-muted) leading-relaxed max-w-xl mx-auto">
-            No tiers to compare, no add-ons to negotiate. A single annual plan unlocks unlimited job postings and full
-            access to your applicants' resumes.
+            Every annual plan unlocks unlimited job postings and full access to your applicants' resumes. Need something
+            different? Customize a plan and our team will call you.
           </p>
         </FadeInLoad>
       </section>
 
-      {/* Pricing card */}
+      {/* Plans */}
       <section className="px-6 md:px-12 pb-20 md:pb-28">
-        <FadeInView className="relative max-w-lg mx-auto">
-          <div className="rounded-[28px] border border-(--explorer-border) bg-white shadow-[0_30px_60px_-30px_rgba(16,50,79,0.35)] p-8 sm:p-10">
-            <div className="text-[11.5px] font-semibold tracking-wide uppercase text-(--explorer-muted)">{PLAN.name}</div>
-
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-sans text-5xl font-bold tracking-tight text-(--explorer-navy)">{fmtINR(PLAN.baseAmount)}</span>
-              <span className="text-[13px] text-(--explorer-muted)">+ {PLAN.gstRatePercent}% GST / year</span>
-            </div>
-            <div className="mt-1.5 text-[12.5px] text-(--explorer-muted)/90">
-              Total {fmtINR(totalAmount)} — billed once, no surprises at checkout
-            </div>
-
-            <ul className="mt-7 flex flex-col gap-3">
-              {FEATURES.map((f) => (
-                <li key={f} className="flex items-start gap-2.5 text-[13.5px] text-(--explorer-navy)/85 leading-relaxed">
-                  <CheckCircle2 size={17} className="text-(--explorer-blue) mt-0.5 flex-shrink-0" /> {f}
-                </li>
-              ))}
-            </ul>
-
-            <button
-              type="button"
-              onClick={() => setSubscribeOpen(true)}
-              className="explorer-btn-primary mt-8 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 min-h-[46px] rounded-md bg-(--explorer-blue) text-white text-sm font-bold transition-all duration-200 hover:-translate-y-0.5 hover:bg-(--explorer-blue-hover)"
-            >
-              <IndianRupee size={15} /> Start Hiring
-            </button>
-            <p className="mt-3 text-center text-[12px] text-(--explorer-muted)">
-              Just verify your mobile number and pay — your account is created for you.
-            </p>
-          </div>
-        </FadeInView>
+        <EmployerPlanCards />
 
         <div className="mt-14 max-w-4xl mx-auto grid sm:grid-cols-3 gap-4">
           {HIGHLIGHTS.map((h, i) => (
@@ -154,8 +113,6 @@ export default function EmployerPricing() {
 
       <EmployerCTABand />
       <EmployerFooter />
-
-      <EmployerGuestSubscribe open={subscribeOpen} onClose={() => setSubscribeOpen(false)} />
     </div>
   )
 }

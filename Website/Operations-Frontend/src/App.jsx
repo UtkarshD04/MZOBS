@@ -20,6 +20,7 @@ import Queries from './pages/ops/Queries'
 import PremiumServices from './pages/ops/PremiumServices'
 import Associates from './pages/ops/Associates'
 import CampusRequests from './pages/ops/CampusRequests'
+import PlanEnquiries from './pages/ops/PlanEnquiries'
 import Payments from './pages/ops/Payments'
 import Team from './pages/ops/Team'
 import SendNotification from './pages/ops/SendNotification'
@@ -41,6 +42,7 @@ export default function App() {
             <Route path="premium-services" element={<PremiumServices />} />
             <Route path="associates" element={<Associates />} />
             <Route path="campus-requests" element={<CampusRequests />} />
+            <Route path="plan-enquiries" element={<PlanEnquiries />} />
             <Route element={<RequireAdmin />}>
               <Route path="hr-contacts" element={<HRContacts />} />
               <Route path="companies" element={<Companies />} />
