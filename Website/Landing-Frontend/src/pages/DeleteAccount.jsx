@@ -33,6 +33,24 @@ const KEPT = [
   'Details an employer already holds because your application was shared with them — these are anonymized on our side, and we cannot delete copies held by the employer',
 ]
 
+const EMPLOYER_STEPS = [
+  'Open the Mzobs Employer app and sign in.',
+  'Go to Settings and tap “Delete account”.',
+  'Type DELETE to confirm and tap “Delete permanently”.',
+]
+
+const EMPLOYER_DELETED = [
+  'Your name, email address and phone number',
+  'Your support tickets and push notification tokens',
+  'If you are the only user on the company account: the company profile is cleared, open jobs are closed and the account is blocked',
+]
+
+const EMPLOYER_KEPT = [
+  'Plan, subscription, invoice and payment records — kept for tax and accounting requirements',
+  'The hiring history of candidates you contacted or unlocked (unlocks, interviews, offers) — kept for audit and dispute resolution',
+  'Records we are legally required to retain',
+]
+
 function StepList({ title, steps }) {
   return (
     <div>
@@ -83,7 +101,7 @@ export default function DeleteAccount() {
           </span>
           <h1 className="mt-5 text-[32px] sm:text-[42px] font-extrabold leading-[1.1] tracking-tight text-balance">Delete your Mzobs account</h1>
           <p className="mt-4 text-[16px] text-(--explorer-navy)/75 font-medium leading-relaxed max-w-2xl mx-auto">
-            You can ask us to delete your Mzobs account and the personal data linked to it, from the app or from this page. Deletion is permanent and cannot
+            You can ask us to delete your Mzobs account (candidate or employer) and the personal data linked to it, from the app or from this page. Deletion is permanent and cannot
             be undone.
           </p>
         </Reveal>
@@ -107,6 +125,22 @@ export default function DeleteAccount() {
           <div className="grid sm:grid-cols-2 gap-4">
             <DataList title="What we delete" items={DELETED} tone="deleted" />
             <DataList title="What we may keep" items={KEPT} tone="kept" />
+          </div>
+          <div id="employers" className="bg-white border border-(--explorer-border) rounded-xl p-6 sm:p-7 space-y-6">
+            <h2 className="text-xl font-extrabold tracking-tight">Employer accounts (Mzobs Employer app)</h2>
+            <StepList title="In the Mzobs Employer app" steps={EMPLOYER_STEPS} />
+            <p className="text-[13.5px] text-(--explorer-muted) leading-relaxed">
+              Cannot open the app? Email{' '}
+              <a href="mailto:support@mzobs.com" className="text-(--explorer-blue) font-bold hover:underline">
+                support@mzobs.com
+              </a>{' '}
+              from the email address registered on your employer account with the subject “Delete employer account”, and we will verify and delete it. If you are
+              the only admin and your team still has members, remove them or make another member an admin first. Deletion is permanent.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <DataList title="What we delete" items={EMPLOYER_DELETED} tone="deleted" />
+              <DataList title="What we may keep" items={EMPLOYER_KEPT} tone="kept" />
+            </div>
           </div>
           <p className="text-[13px] text-(--explorer-muted) leading-relaxed">
             Where records must be kept, we limit access to them and use them only for the reason they are kept, for as long as the applicable law requires. See
