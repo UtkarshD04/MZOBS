@@ -55,10 +55,7 @@ export default function RecommendedCard() {
         <div className="relative overflow-hidden rounded-[28px] border border-mz-primary/15 bg-gradient-to-br from-[#E7F5F1] via-white to-[#FBEBB0]/45 p-6 shadow-[0_30px_60px_-36px_rgba(11,122,109,0.4)] sm:p-9 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-12 lg:p-12">
           <span className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-mz-primary/10 blur-3xl" aria-hidden="true" />
           <div className="relative">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.1em] text-mz-primary-strong shadow-sm">
-              <Sparkles size={14} aria-hidden="true" /> Recommended for you
-            </p>
-            <h2 id="recommended-title" className="mt-4 text-[28px] font-extrabold leading-[1.1] tracking-[-0.025em] text-mz-ink sm:text-[36px]">
+            <h2 id="recommended-title" className="text-[28px] font-extrabold leading-[1.1] tracking-[-0.025em] text-mz-ink sm:text-[36px]">
               Jobs that fit your profile
             </h2>
             <ul className="mt-5 space-y-2.5">
