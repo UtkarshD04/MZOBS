@@ -25,9 +25,9 @@ function BrokenLinkVisual() {
   return (
     <div className="flex items-center gap-2" aria-hidden="true">
       <span className={`${chipBase} bg-white text-[#E76F51]`}><User size={16} /></span>
-      <span className="h-px w-8 border-t-2 border-dashed border-[#E76F51]/50" />
-      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#E76F51]">no reply</span>
-      <span className="h-px w-8 border-t-2 border-dashed border-[#E76F51]/50" />
+      <span className="h-px w-8 border-t-2 border-dashed border-[#1F2A37]/40" />
+      <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#1F2A37]/70">no reply</span>
+      <span className="h-px w-8 border-t-2 border-dashed border-[#1F2A37]/40" />
       <span className={`${chipBase} bg-white text-[#7a3b2c]`}><Building2 size={16} /></span>
     </div>
   )
@@ -63,7 +63,7 @@ const CHAPTERS = [
   {
     num: '01',
     label: 'The problem',
-    bg: '#FFE4DC',
+    bg: '#FFF1C2',
     text: '#4a2218',
     sub: '#7a3b2c',
     accent: '#E76F51',
@@ -79,7 +79,7 @@ const CHAPTERS = [
   {
     num: '02',
     label: 'The gap',
-    bg: '#EEEAFE',
+    bg: '#DCEBFF',
     text: '#241a66',
     sub: '#4a3fb5',
     accent: VIOLET,
@@ -95,7 +95,7 @@ const CHAPTERS = [
   {
     num: '03',
     label: 'The idea',
-    bg: '#DDF5EF',
+    bg: '#FFDDE8',
     text: INK,
     sub: '#2f6f69',
     accent: TEAL,
@@ -112,12 +112,12 @@ const CHAPTERS = [
   {
     num: '04',
     label: 'Mzobs',
-    bg: INK,
+    bg: '#2B2A6B',
     text: '#ffffff',
     sub: 'rgba(255,255,255,0.74)',
     accent: '#A99CFF',
     nodeIcon: null,
-    heading: <>So we started <Serif color="#A99CFF">building.</Serif></>,
+    heading: <>So we started <Serif>building.</Serif></>,
     body: 'Mzobs brings talent and employers closer through verified opportunities, better signals and a more transparent hiring experience.',
     principles: [
       ['For Talent', 'Better opportunities'],
@@ -131,12 +131,12 @@ const CHAPTERS = [
   {
     num: '05',
     label: 'What’s next',
-    bg: '#F3F1FF',
+    bg: '#D9F4E8',
     text: INK,
     sub: '#3d5654',
     accent: VIOLET,
     nodeIcon: ArrowRight,
-    heading: <>We’re still <Serif color={VIOLET}>building.</Serif></>,
+    heading: <>We’re still <Serif>building.</Serif></>,
     body: 'Because better hiring isn’t something you finish. It’s something you keep improving.',
     punch: 'And this is only the beginning.',
     x: 40,
@@ -166,10 +166,10 @@ function NodeDot({ c, state }) {
   const on = state !== 'future'
   return (
     <span
-      className="flex h-[52px] w-[52px] items-center justify-center rounded-full border-[3px] bg-[#F7F8FC] transition-all duration-700"
+      className="flex h-[52px] w-[52px] items-center justify-center rounded-full border-[3px] bg-[#FFFFFF] transition-all duration-700"
       style={{
         borderColor: on ? c.nodeColor : 'rgba(7,59,58,0.15)',
-        background: state === 'active' ? c.nodeColor : '#F7F8FC',
+        background: state === 'active' ? c.nodeColor : '#FFFFFF',
         color: state === 'active' ? '#fff' : on ? c.nodeColor : 'rgba(7,59,58,0.3)',
         transform: state === 'active' ? 'scale(1.12)' : 'scale(1)',
         boxShadow: state === 'active' ? `0 0 0 7px ${c.nodeColor}26` : 'none',
@@ -180,41 +180,44 @@ function NodeDot({ c, state }) {
   )
 }
 
+const BOLD_BG = { '01': '#FBD3DE', '02': '#FBEBB0', '03': '#CDE3CC', '04': '#D0E4F7', '05': '#E3DAF8' }
+const CARD_INK = '#1F2A37'
+
 function ChapterCard({ c, state, seen }) {
   const { Visual } = c
   return (
     <motion.article
       initial={{ opacity: 0, y: 24, scale: 0.97 }}
-      animate={seen ? { opacity: state === 'past' ? 0.62 : 1, y: 0, scale: 1 } : undefined}
+      animate={seen ? { opacity: state === 'past' ? 0.88 : 1, y: 0, scale: 1 } : undefined}
       transition={{ duration: 0.9, ease }}
       className={`relative overflow-hidden rounded-[26px] shadow-[0_2px_4px_rgba(7,59,58,0.06),0_26px_50px_-28px_rgba(7,59,58,0.45)] ${c.small ? 'p-6 md:p-8' : 'p-6 md:p-9'}`}
-      style={{ background: c.bg, color: c.text }}
+      style={{ background: BOLD_BG[c.num], color: CARD_INK }}
     >
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -bottom-6 -right-2 select-none text-[150px] font-extrabold leading-none tracking-[-0.06em] md:text-[190px]"
-        style={{ color: c.accent, opacity: 0.09 }}
+        style={{ color: CARD_INK, opacity: 0.06 }}
       >
         {c.num}
       </span>
       <div className="relative">
-        <p className="text-[12px] font-bold uppercase tracking-[0.2em]" style={{ color: c.num === '04' ? c.accent : c.sub }}>
+        <p className="text-[12px] font-bold uppercase tracking-[0.2em]" style={{ color: 'rgba(31,42,55,0.62)' }}>
           {c.num} / {c.label}
         </p>
         <h2 className={`mt-2.5 font-extrabold leading-[1.1] tracking-[-0.025em] ${c.small ? 'text-[24px] md:text-[28px]' : 'text-[24px] md:text-[30px]'}`}>{c.heading}</h2>
-        <p className="mt-3 text-[14.5px] leading-[1.65] md:text-[15px]" style={{ color: c.sub }}>{c.body}</p>
+        <p className="mt-3 text-[14.5px] leading-[1.65] md:text-[15px]" style={{ color: 'rgba(31,42,55,0.78)' }}>{c.body}</p>
 
         {c.punch && (
-          <p className="mt-4 border-l-2 pl-3.5 font-serif text-[18px] italic leading-snug md:text-[20px]" style={{ borderColor: c.accent, color: c.punchColor ?? c.text }}>
+          <p className="mt-4 border-l-2 pl-3.5 font-serif text-[18px] italic leading-snug md:text-[20px]" style={{ borderColor: 'rgba(31,42,55,0.35)', color: CARD_INK }}>
             {c.punch}
           </p>
         )}
         {c.principles && (
-          <div className="mt-5 grid gap-3 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-white/20">
+          <div className="mt-5 grid gap-3 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-[#1F2A37]/15">
             {c.principles.map(([who, what]) => (
               <div key={who} className="sm:px-3 sm:first:pl-0 sm:last:pr-0">
-                <p className="text-[13.5px] font-bold text-white">{who}</p>
-                <p className="mt-0.5 text-[12.5px] text-white/70">{what}</p>
+                <p className="text-[13.5px] font-bold text-[#1F2A37]">{who}</p>
+                <p className="mt-0.5 text-[12.5px] text-[#1F2A37]/70">{what}</p>
               </div>
             ))}
           </div>
@@ -336,7 +339,7 @@ export default function OurStory() {
   const [active, setActive] = useState(-1)
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] font-sans antialiased selection:bg-[#EEEAFE]" style={{ color: INK }}>
+    <div className="min-h-screen bg-[#FFFFFF] font-sans antialiased selection:bg-[#EEEAFE]" style={{ color: INK }}>
       <Seo path="/our-story" {...STATIC_PAGE_SEO['/our-story']} />
       <Navbar />
 
