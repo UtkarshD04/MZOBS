@@ -23,7 +23,7 @@ export function canonicalPath(path) {
 // scripts/prerender.js.
 export const STATIC_PAGE_SEO = {
   '/': {
-    title: 'Mzobs | Talent × Opportunity × Smarter Hiring',
+    title: 'Mzobs | Talent × Opportunity × Smart Hiring',
     description:
       'Discover jobs from top employers across India, get matched to roles that fit your skills and experience, and move from profile to offer faster. Employers find quality talent and hire in one pipeline.',
     jsonLd: {
