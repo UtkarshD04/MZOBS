@@ -42,7 +42,7 @@ export default function AllCities() {
   }, [liveCities])
 
   return (
-    <div className="min-h-screen bg-(--explorer-bg) flex flex-col">
+    <div className="min-h-screen bg-(--explorer-teal-surface) flex flex-col">
       <Seo
         path="/jobs/cities"
         title="Jobs by City: All Locations Hiring | Mzobs"
@@ -50,15 +50,19 @@ export default function AllCities() {
       />
       <Navbar />
 
-      <div className="flex-1 max-w-6xl w-full mx-auto px-6 md:px-10 pt-28 pb-12">
-        <ExplorerTextLink to="/#hot-jobs-by-city" arrow={false} className="w-fit mb-4">
-          <ArrowLeft size={14} aria-hidden="true" /> Back to home
-        </ExplorerTextLink>
-        <h1 className="text-3xl sm:text-4xl font-black text-(--explorer-navy) tracking-tight">All locations</h1>
-        <p className="mt-2 text-[15px] text-(--explorer-muted)">Pick a city to see the jobs hiring there right now.</p>
+      <header className="bg-gradient-to-br from-(--explorer-navy-deep) to-(--explorer-teal) pt-28 pb-10">
+        <div className="max-w-6xl mx-auto px-6 md:px-10">
+          <ExplorerTextLink to="/#hot-jobs-by-city" arrow={false} className="w-fit mb-4 text-white/85 hover:text-white">
+            <ArrowLeft size={14} aria-hidden="true" /> Back to home
+          </ExplorerTextLink>
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">All locations</h1>
+          <p className="mt-2 text-[15px] text-white/80">Pick a city to see the jobs hiring there right now.</p>
+        </div>
+      </header>
 
+      <div className="flex-1 max-w-6xl w-full mx-auto px-6 md:px-10 py-10">
         {loadError && (
-          <div className="mt-6 flex flex-col items-center gap-2.5 rounded-xl border border-dashed border-(--explorer-border) bg-white py-8 px-6 text-center">
+          <div className="mb-6 flex flex-col items-center gap-2.5 rounded-xl border border-dashed border-(--explorer-border) bg-white py-8 px-6 text-center">
             <SearchX size={22} className="text-(--explorer-muted)" aria-hidden="true" />
             <p className="text-[13.5px] text-(--explorer-muted)">Couldn't load live opening counts right now.</p>
             <ExplorerButton size="sm" onClick={() => setRetryToken((n) => n + 1)}>
@@ -67,7 +71,7 @@ export default function AllCities() {
           </div>
         )}
 
-        <Reveal direction="up" duration={0.5} className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <Reveal direction="up" duration={0.5} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {cities.map(({ meta, openings }) => (
             <Link
               key={meta.slug}
