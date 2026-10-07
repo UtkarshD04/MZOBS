@@ -89,8 +89,8 @@ export default function Home() {
 
         <CategorySection onSelect={applyJobFilters} />
         <HotJobsByCity />
-        <CompaniesSection onSelect={applyJobFilters} />
         <CampusSection />
+        <CompaniesSection onSelect={applyJobFilters} />
         <EmployerStrip />
       </main>
       <Footer />
