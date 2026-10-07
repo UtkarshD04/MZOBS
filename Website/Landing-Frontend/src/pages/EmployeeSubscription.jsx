@@ -92,7 +92,7 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
           <p className="text-[13px] text-mz-muted">Free, no card needed</p>
         </div>
         <ul className="mt-4 flex-1 space-y-2 text-[14px] text-mz-ink-2">
-          {['Browse every job, unlimited', `Apply to your first ${limit} jobs`, 'Create your profile and upload a resume', 'Basic job matching and application tracking'].map((t) => (
+          {['Browse every job with no limits', `Apply to your first ${limit} jobs`, 'Create your profile and upload your resume', 'Get basic job matching and application tracking'].map((t) => (
             <li key={t} className="flex gap-2">
               <Check size={16} className="mt-0.5 shrink-0 text-mz-ink-2" aria-hidden="true" />
               {t}
@@ -140,7 +140,7 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
           <p className="text-[13px] text-mz-muted">{isPaid ? `Paid once${paidOn ? ` on ${dateFmt.format(new Date(paidOn))}` : ''} · valid for life` : 'Paid once, valid for life. No renewals.'}</p>
         </div>
         <ul className="mt-4 flex-1 space-y-2 text-[14px] text-mz-ink">
-          {['Unlimited job applications', 'Human CV enhancement and an ATS score', 'Live technical, behavioural and HR mock interviews', '1 to 1 HR & career coaching with a personal roadmap', 'Premium visibility to recruiters'].map((t) => (
+          {['Get unlimited job applications', 'Receive human CV enhancement and an ATS score', 'Attend live technical, behavioural, and HR mock interviews', 'Experience one to one HR and career coaching with a personal roadmap', 'Gain premium visibility to recruiters'].map((t) => (
             <li key={t} className="flex gap-2">
               <Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />
               {t}
@@ -634,7 +634,7 @@ export default function EmployeeSubscription() {
           <header className="max-w-2xl">
             <h1 className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-mz-ink sm:text-[32px]">Choose how you want to grow</h1>
             <p className="mt-2 text-[15px] leading-relaxed text-mz-muted">
-              Start free with Mzobs Basic. Upgrade once to Mzobs Premium for unlimited applications and hands-on help from the MZOBS team, from your CV to your offer.
+              Start free with Mzobs Basic. Upgrade to Mzobs Premium to get unlimited applications and hands-on support from our team, from your CV to your final offer.
             </p>
           </header>
 
