@@ -69,12 +69,10 @@ export function CityVisual({ city, landmark, imageUrl, zoomOnHover = true, eager
   )
 }
 
-// The destinations are chosen live from real opening counts — a city only
-// appears when it genuinely has openings right now (the same real-demand-only
-// rule CategoryGrid applies to categories). If no city has any (empty/local
-// database) all of them show, so the section is never blank.
+// Every city shows, hottest first, with its real live opening count (0 when
+// it has none) — so the section is never reduced to a single city.
 // HOT_CITIES_DATA.cities supplies the display metadata (photo/state/landmark).
-const MAX_FEATURED_CITIES = 9
+const MAX_FEATURED_CITIES = 12
 const COLUMNS = 3
 
 function CityCardSkeleton() {
@@ -108,7 +106,7 @@ function CityCard({ meta, stats, onOpen }) {
         </p>
         <h3 className="mt-0.5 text-[17px] font-black leading-tight tracking-tight text-white">{meta.city}</h3>
         <p className="mt-1 flex items-center gap-1 text-[12.5px] font-bold text-white/90">
-          {openings > 0 ? `${openings.toLocaleString('en-IN')}+ open ${openings === 1 ? 'role' : 'roles'}` : 'Explore jobs'}
+          {openings > 0 ? `${openings.toLocaleString('en-IN')}+` : 0} open {openings === 1 ? 'role' : 'roles'}
           <ArrowRight size={12} className="motion-safe:transition-transform motion-safe:duration-300 group-hover:translate-x-1" aria-hidden="true" />
         </p>
       </div>
@@ -171,12 +169,11 @@ export default function HotJobsByCity() {
   // Joins display metadata with live stats by slug, ranked hottest-first.
   const destinations = useMemo(() => {
     if (!liveCities) return []
-    const anyLive = liveCities.some((c) => c.byFilter?.all?.openings > 0)
     return liveCities
       .map((c) => {
         const meta = HOT_CITIES_DATA.cities.find((m) => m.slug === c.slug)
         const stats = c.byFilter?.all
-        if (!meta || !stats || (anyLive && stats.openings <= 0)) return null
+        if (!meta || !stats) return null
         return { meta, stats }
       })
       .filter(Boolean)
