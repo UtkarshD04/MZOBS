@@ -77,7 +77,7 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
   const finalFee = payment.coupon?.finalAmount ?? fee
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2">
       {/* Basic */}
       <section aria-labelledby="plan-basic" className="flex flex-col rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
         <div className="flex items-center justify-between gap-2">
@@ -115,29 +115,6 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
             Create free account
           </Link>
         )}
-      </section>
-
-      {/* Plus — display only; no backend plan or payment is wired to it yet */}
-      <section aria-labelledby="plan-plus" className="flex flex-col rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
-        <div className="flex items-center justify-between gap-2">
-          <h2 id="plan-plus" className="text-[17px] font-bold text-mz-ink">Plus</h2>
-          <span className="rounded-full bg-mz-bg px-2.5 py-1 text-[12px] font-semibold text-mz-ink-2 ring-1 ring-mz-line">One-time payment</span>
-        </div>
-        <div className="mt-3">
-          <Price amount={499} />
-          <p className="text-[13px] text-mz-muted">Paid once. No renewals.</p>
-        </div>
-        <ul className="mt-4 flex-1 space-y-2 text-[14px] text-mz-ink-2">
-          {['Everything in Basic', 'Apply to more jobs than the free limit', 'Human CV review and an ATS score', 'Priority support'].map((t) => (
-            <li key={t} className="flex gap-2">
-              <Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />
-              {t}
-            </li>
-          ))}
-        </ul>
-        <button type="button" disabled className={`${outlineBtn} mt-5 cursor-not-allowed opacity-60`}>
-          Coming soon
-        </button>
       </section>
 
       {/* Premium */}
