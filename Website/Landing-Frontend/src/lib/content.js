@@ -895,8 +895,8 @@ export const HOT_CITIES_DATA = {
       slug: "delhi-ncr",
       state: "Delhi",
       landmark: "India Gate",
-      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/India_Gate_in_the_Evening.jpg?width=1200",
-      imageAttribution: "Incredible India Portal / Wikimedia Commons (CC0)"
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/India_Gate_on_an_evening.jpg?width=1200",
+      imageAttribution: "Deepak TL / Wikimedia Commons (CC BY-SA 4.0)"
     },
     {
       city: "Hyderabad",
