@@ -267,7 +267,7 @@ app.get('/jobs/:id', async (req, res) => {
 
   if (unavailable) {
     const headHtml = buildHeadHtml({
-      title: 'Job — Mzobs',
+      title: 'Job | Mzobs',
       description: 'This page is temporarily unavailable.',
       canonical: `${SITE_URL}${canonicalPath(req.path)}`,
     })
@@ -280,7 +280,7 @@ app.get('/jobs/:id', async (req, res) => {
 
   if (!job) {
     const headHtml = buildHeadHtml({
-      title: 'Job — Mzobs',
+      title: 'Job | Mzobs',
       description: 'This job is no longer available.',
       canonical: `${SITE_URL}${canonicalPath(req.path)}`,
       noindex: true,
@@ -320,7 +320,7 @@ app.get('*', (req, res) => {
     // the real page so there's content immediately, but with a genuine 404
     // and noindex rather than the 200 that was getting read as a soft 404.
     const headHtml = buildHeadHtml({
-      title: 'Page Not Found — Mzobs',
+      title: 'Page Not Found | Mzobs',
       description: "The page you're looking for doesn't exist or may have moved.",
       canonical: `${SITE_URL}${canonicalPath(req.path)}`,
       noindex: true,
@@ -336,8 +336,8 @@ app.get('*', (req, res) => {
   // shell and let entry-client.jsx render it.
   const noindex = NOINDEX_PREFIXES.some((prefix) => req.path.startsWith(prefix))
   const headHtml = buildHeadHtml({
-    title: 'Mzobs — Careers & Hiring Platform',
-    description: 'Mzobs connects verified job seekers with employers hiring — one platform for candidates and companies.',
+    title: 'Mzobs | Careers & Hiring Platform',
+    description: 'Mzobs connects verified job seekers with employers hiring, one platform for candidates and companies.',
     canonical: `${SITE_URL}${canonicalPath(req.path)}`,
     noindex,
   })

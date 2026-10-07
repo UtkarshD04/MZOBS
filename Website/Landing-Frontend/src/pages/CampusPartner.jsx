@@ -6,7 +6,7 @@ import CampusRegister from '../components/campus-partner/CampusRegister'
 export default function CampusPartner() {
   useEffect(() => {
     const prev = document.title
-    document.title = 'Add Your Campus — Mzobs'
+    document.title = 'Add Your Campus | Mzobs'
     return () => { document.title = prev }
   }, [])
 

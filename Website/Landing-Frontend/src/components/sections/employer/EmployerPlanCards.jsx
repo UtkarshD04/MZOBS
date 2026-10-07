@@ -6,7 +6,7 @@ import EmployerPlanEnquiry from './EmployerPlanEnquiry'
 import { GST_RATE_PERCENT, PLANS, fmtINR, totalAmount } from '../../../lib/employerPricingPlan'
 
 const CORE_FEATURES = [
-  'Unlimited job postings for a full year — no per-job fee',
+  'Unlimited job postings for a full year, no per-job fee',
   "Unlimited resumes for candidates who apply to your jobs",
   'Shortlist, message, reject and track every application',
   'GST invoice provided for every payment',
@@ -49,7 +49,7 @@ export default function EmployerPlanCards() {
                 <span className="font-sans text-4xl font-bold tracking-tight text-(--explorer-navy)">{fmtINR(plan.baseAmount)}</span>
                 <span className="text-[12.5px] text-(--explorer-muted)">+ {GST_RATE_PERCENT}% GST / year</span>
               </div>
-              <div className="mt-1.5 text-[12px] text-(--explorer-muted)/90">Total {fmtINR(totalAmount(plan.baseAmount))} — billed once</div>
+              <div className="mt-1.5 text-[12px] text-(--explorer-muted)/90">Total {fmtINR(totalAmount(plan.baseAmount))}, billed once</div>
 
               <Features items={[...CORE_FEATURES, ...plan.extras]} />
 

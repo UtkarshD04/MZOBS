@@ -10,7 +10,7 @@ export default function FinalCTA() {
         <Reveal className="mx-auto max-w-lg text-center">
           <h2 className="text-[24px] font-extrabold tracking-[-0.02em] text-[#101828] sm:text-[30px]">Let&rsquo;s connect opportunities, together.</h2>
           <p className="mt-3 text-[14.5px] leading-relaxed text-[#475467]">
-            Your network, our opportunities — one application starts the conversation.
+            Your network, our opportunities, one application starts the conversation.
           </p>
           <Link
             to={CLIENT_ONLY_ROUTES.associateApply}

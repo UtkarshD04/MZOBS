@@ -393,7 +393,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
                 <UploadCloud size={20} className="text-(--jobs-ink-soft) shrink-0" />
                 <div>
                   <p className="text-[13px] font-semibold text-(--jobs-navy)">Click to upload your CV</p>
-                  <p className="text-[11.5px] text-(--jobs-ink-soft)">PDF, DOC or DOCX — up to 5MB</p>
+                  <p className="text-[11.5px] text-(--jobs-ink-soft)">PDF, DOC or DOCX, up to 5MB</p>
                 </div>
                 <input type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={handleResumeChange} />
               </label>

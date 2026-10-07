@@ -231,7 +231,7 @@ export default function EmployeeProfile() {
   if (loading || error || !profile) {
     return (
       <div className="min-h-screen bg-(--jobs-bg-subtle) text-(--jobs-navy) font-sans antialiased">
-        <Seo path="/employees/profile" title="My Profile — Mzobs" noindex />
+        <Seo path="/employees/profile" title="My Profile | Mzobs" noindex />
         <Navbar />
         <div className="pt-32 pb-16 px-6 text-center">
           {loading && (
@@ -258,7 +258,7 @@ export default function EmployeeProfile() {
 
   return (
     <div className="min-h-screen bg-(--jobs-bg-subtle) text-(--jobs-navy) font-sans antialiased selection:bg-teal-200">
-      <Seo path="/employees/profile" title="My Profile — Mzobs" noindex />
+      <Seo path="/employees/profile" title="My Profile | Mzobs" noindex />
       <Navbar />
 
       <section className="pt-28 pb-16 px-6 md:px-10">
@@ -383,11 +383,11 @@ export default function EmployeeProfile() {
                       {isPaid ? <ShieldCheck size={19} className="text-(--jobs-teal)" /> : <CreditCard size={19} className="text-white/80" />}
                     </div>
                     <div>
-                      <p className="text-[14.5px] font-black">{isPaid ? 'Placement Support Programme — active' : `Unlock premium for ₹${profile.subscription?.amount ?? 99}`}</p>
+                      <p className="text-[14.5px] font-black">{isPaid ? 'Placement Support Programme, active' : `Unlock premium for ₹${profile.subscription?.amount ?? 499}`}</p>
                       <p className="text-[12.5px] text-white/65 mt-1 max-w-md leading-relaxed">
                         {isPaid
                           ? `${profile.subscription?.paidOn ? `Paid on ${new Date(profile.subscription.paidOn).toLocaleDateString('en-IN')} · ` : ''}One-time payment · valid for life`
-                          : 'Resume review, mock interviews and priority visibility to employers — one-time fee, no renewal.'}
+                          : 'Resume review, mock interviews and priority visibility to employers, one-time fee, no renewal.'}
                       </p>
                     </div>
                   </div>
@@ -440,7 +440,7 @@ export default function EmployeeProfile() {
                       <UploadCloud size={18} className="text-(--jobs-ink-soft) shrink-0" />
                       <div>
                         <p className="text-[12.5px] font-semibold">{profile.resume?.file ? 'Upload a new version' : 'Click to upload your CV'}</p>
-                        <p className="text-[11px] text-(--jobs-ink-soft)">PDF, DOC or DOCX — up to 5MB</p>
+                        <p className="text-[11px] text-(--jobs-ink-soft)">PDF, DOC or DOCX, up to 5MB</p>
                       </div>
                       <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={handleResumeChange} />
                     </label>
@@ -578,7 +578,7 @@ export default function EmployeeProfile() {
                     {profile.education.map((edu, i) => (
                       <li key={i} className="text-[13.5px]">
                         <span className="font-bold">{edu.degree}</span>
-                        {edu.institute && <span className="text-(--jobs-ink-soft)"> — {edu.institute}</span>}
+                        {edu.institute && <span className="text-(--jobs-ink-soft)">, {edu.institute}</span>}
                         {edu.year && <span className="text-(--jobs-ink-soft)"> · {edu.year}</span>}
                       </li>
                     ))}
@@ -699,7 +699,7 @@ export default function EmployeeProfile() {
                         ))}
                       </ul>
                     ) : profile.experience !== 'experienced' ? (
-                      <Empty>Fresher — no work history added.</Empty>
+                      <Empty>Fresher, no work history added.</Empty>
                     ) : null}
                   </>
                 )}
@@ -814,10 +814,10 @@ export default function EmployeeProfile() {
                       <Field label="Notice period">
                         <Input value={draft.noticePeriod} onChange={(e) => setDraft({ ...draft, noticePeriod: e.target.value })} placeholder="e.g. Immediate, 30 days" />
                       </Field>
-                      <Field label="Expected salary — min">
+                      <Field label="Expected salary, min">
                         <Input type="number" min="0" value={draft.expectedSalaryMin} onChange={(e) => setDraft({ ...draft, expectedSalaryMin: e.target.value })} />
                       </Field>
-                      <Field label="Expected salary — max">
+                      <Field label="Expected salary, max">
                         <Input type="number" min="0" value={draft.expectedSalaryMax} onChange={(e) => setDraft({ ...draft, expectedSalaryMax: e.target.value })} />
                       </Field>
                     </div>
@@ -894,31 +894,31 @@ export default function EmployeeProfile() {
                   <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-[13px]">
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Preferred role</dt>
-                      <dd className="font-semibold mt-0.5">{profile.preferredRole || '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.preferredRole || '-'}</dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Expected salary</dt>
                       <dd className="font-semibold mt-0.5">
                         {profile.expectedSalaryMin || profile.expectedSalaryMax
-                          ? `₹${profile.expectedSalaryMin ?? '—'} – ₹${profile.expectedSalaryMax ?? '—'}`
-                          : '—'}
+                          ? `₹${profile.expectedSalaryMin ?? '-'} – ₹${profile.expectedSalaryMax ?? '-'}`
+                          : '-'}
                       </dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Preferred locations</dt>
-                      <dd className="font-semibold mt-0.5">{profile.preferredLocations?.length ? profile.preferredLocations.join(', ') : '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.preferredLocations?.length ? profile.preferredLocations.join(', ') : '-'}</dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Work mode</dt>
-                      <dd className="font-semibold mt-0.5">{profile.workModePreference?.length ? profile.workModePreference.join(', ') : '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.workModePreference?.length ? profile.workModePreference.join(', ') : '-'}</dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Job type</dt>
-                      <dd className="font-semibold mt-0.5">{profile.jobTypePreference?.length ? profile.jobTypePreference.join(', ') : '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.jobTypePreference?.length ? profile.jobTypePreference.join(', ') : '-'}</dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Notice period</dt>
-                      <dd className="font-semibold mt-0.5">{profile.noticePeriod || '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.noticePeriod || '-'}</dd>
                     </div>
                   </dl>
                 )}
@@ -1053,23 +1053,23 @@ export default function EmployeeProfile() {
                   <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-[13px]">
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Date of birth</dt>
-                      <dd className="font-semibold mt-0.5">{profile.dob || '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.dob || '-'}</dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Gender</dt>
-                      <dd className="font-semibold mt-0.5">{profile.gender || '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.gender || '-'}</dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Marital status</dt>
-                      <dd className="font-semibold mt-0.5">{profile.maritalStatus || '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.maritalStatus || '-'}</dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Current CTC</dt>
-                      <dd className="font-semibold mt-0.5">{profile.currentCtc || '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.currentCtc || '-'}</dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Pincode</dt>
-                      <dd className="font-semibold mt-0.5">{profile.pincode || '—'}</dd>
+                      <dd className="font-semibold mt-0.5">{profile.pincode || '-'}</dd>
                     </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Open to relocation</dt>

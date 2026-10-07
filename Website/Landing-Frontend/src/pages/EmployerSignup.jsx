@@ -16,7 +16,7 @@ const PERKS = [
 export default function EmployerSignup() {
   return (
     <div className="min-h-screen bg-white text-[#111827] font-sans antialiased selection:bg-teal-200">
-      <Seo path="/employers/signup" title="Create Your Employer Account — Mzobs" noindex />
+      <Seo path="/employers/signup" title="Create Your Employer Account | Mzobs" noindex />
       <EmployerNavbar />
 
       <section id="home" className="relative overflow-hidden pt-[76px]">
@@ -35,7 +35,7 @@ export default function EmployerSignup() {
 
             <FadeInLoad delay={0.16}>
               <p className="mt-6 text-base sm:text-lg text-[#667085] max-w-md leading-relaxed">
-                Create your free employer account and share your first requirement in minutes — no sales call required.
+                Create your free employer account and share your first requirement in minutes, no sales call required.
               </p>
             </FadeInLoad>
 

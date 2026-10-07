@@ -23,7 +23,7 @@ const SEGMENTS = [
     benefits: [
       'Search the candidate database directly instead of waiting on applications.',
       'Shortlist and track candidates from one simple pipeline.',
-      'A single annual plan — no per-hire negotiation.',
+      'A single annual plan, no per-hire negotiation.',
     ],
     cta: 'See pricing',
     to: '/employers/pricing',

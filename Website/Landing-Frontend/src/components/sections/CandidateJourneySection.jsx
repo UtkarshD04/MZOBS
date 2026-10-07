@@ -10,7 +10,7 @@ export default function CandidateJourneySection() {
       className="bg-[#FAF8F5] py-10 sm:py-14 px-4 sm:px-6 lg:px-12 border-t border-stone-200/40 relative overflow-hidden select-none"
     >
       {/* ============================================================
-         THE WOW ELEMENT — CONTINUOUS ARTWORK FLOWING RIBBON SVG
+         THE WOW ELEMENT, CONTINUOUS ARTWORK FLOWING RIBBON SVG
          Runs continuously down the section
       ============================================================ */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">

@@ -148,7 +148,7 @@ export default function RecommendedJobs() {
 
   return (
     <div className="min-h-screen bg-(--explorer-bg) font-sans text-(--explorer-navy) antialiased">
-      <Seo path="/employees/recommended" title="Jobs matched to you — Mzobs" noindex />
+      <Seo path="/employees/recommended" title="Jobs matched to you | Mzobs" noindex />
       <Navbar />
 
       <main className="mx-auto max-w-7xl px-6 pb-20 pt-32 md:px-10">
@@ -160,7 +160,7 @@ export default function RecommendedJobs() {
             {firstName ? `${firstName}, these jobs fit you.` : 'Jobs matched to your profile.'}
           </h1>
           <p className="mt-3 text-[15.5px] leading-relaxed text-(--explorer-muted)">
-            Matched against your skills, preferred role and location — with a clear reason for every recommendation.
+            Matched against your skills, preferred role and location, with a clear reason for every recommendation.
           </p>
           {signedIn && jobs && jobs.length > 0 && (
             <p className="mt-4 text-[13px] font-semibold text-(--explorer-navy)">
@@ -176,7 +176,7 @@ export default function RecommendedJobs() {
         ) : jobs === null ? (
           <SkeletonGrid />
         ) : jobs.length === 0 ? (
-          <Notice title="No matches yet" body="Add your skills, preferred role and location and we'll line up openings that fit — each with a clear reason." to="/employees/profile" cta="Complete your profile" />
+          <Notice title="No matches yet" body="Add your skills, preferred role and location and we'll line up openings that fit, each with a clear reason." to="/employees/profile" cta="Complete your profile" />
         ) : (
           <ul className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {jobs.map((job, i) => <JobCard key={job.id} job={job} index={i} />)}

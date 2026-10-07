@@ -40,7 +40,7 @@ export default function EmployerMatchIntelligenceSection() {
             Don't just find a candidate. Understand the match.
           </h2>
           <p className="mt-3 text-[15px] text-[#111827]/70 leading-relaxed">
-            Mzobs brings context behind every recommendation, so recruiters can see where a candidate fits — and where they don't.
+            Mzobs brings context behind every recommendation, so recruiters can see where a candidate fits, and where they don't.
           </p>
         </FadeInView>
 
@@ -67,7 +67,7 @@ export default function EmployerMatchIntelligenceSection() {
                   <span key={s} className="text-[11.5px] font-medium px-2.5 py-1 rounded-full bg-[#F1EDE5] text-[#667085]">{s}</span>
                 ))}
               </div>
-              <p className="mt-5 text-[11px] text-[#667085]/70">Illustrative candidate profile — product preview, not a real person.</p>
+              <p className="mt-5 text-[11px] text-[#667085]/70">Illustrative candidate profile, product preview, not a real person.</p>
             </div>
           </FadeInView>
 
@@ -94,7 +94,7 @@ export default function EmployerMatchIntelligenceSection() {
                   "This candidate closely matches the technical requirements, has 4 years of backend experience and is based in Bengaluru."
                 </p>
                 <p className="mt-4 text-[11.5px] text-[#667085]/80 leading-relaxed">
-                  Match Intelligence is decision support, not an automated hiring decision — every recommendation is something you can check for yourself.
+                  Match Intelligence is decision support, not an automated hiring decision, every recommendation is something you can check for yourself.
                 </p>
               </div>
             </div>

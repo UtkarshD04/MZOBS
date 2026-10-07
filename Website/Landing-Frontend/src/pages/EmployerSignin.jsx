@@ -16,7 +16,7 @@ const PERKS = [
 export default function EmployerSignin() {
   return (
     <div className="min-h-screen bg-white text-[#111827] font-sans antialiased selection:bg-teal-200">
-      <Seo path="/employers/signin" title="Employer Sign In — Mzobs" noindex />
+      <Seo path="/employers/signin" title="Employer Sign In | Mzobs" noindex />
       <EmployerNavbar />
 
       <section id="home" className="relative overflow-hidden pt-[76px]">

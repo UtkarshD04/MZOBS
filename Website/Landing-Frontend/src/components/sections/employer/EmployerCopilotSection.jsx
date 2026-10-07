@@ -39,7 +39,7 @@ export default function EmployerCopilotSection() {
             Your hiring questions, answered in context.
           </h2>
           <p className="mt-3 max-w-md text-[15px] text-[#111827]/70 leading-relaxed">
-            Ask Mzobs Copilot about the candidates in front of you — it works alongside your usual filters, not instead of them.
+            Ask Mzobs Copilot about the candidates in front of you, it works alongside your usual filters, not instead of them.
           </p>
         </FadeInView>
 

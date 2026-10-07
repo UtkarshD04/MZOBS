@@ -9,7 +9,7 @@ export default function NotFound() {
   const { pathname } = useLocation()
   return (
     <div className="min-h-screen bg-bg flex flex-col">
-      <Seo path={pathname} title="Page Not Found — Mzobs" noindex />
+      <Seo path={pathname} title="Page Not Found | Mzobs" noindex />
       <Navbar />
       <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-24">
         <span className="text-[13px] font-bold tracking-[0.14em] uppercase text-gold-strong mb-3">404</span>

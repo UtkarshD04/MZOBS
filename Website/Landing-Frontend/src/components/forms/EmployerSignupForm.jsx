@@ -182,7 +182,7 @@ export default function EmployerSignupForm() {
       {googleCredential ? (
         <div className="flex items-center gap-2.5 mb-4 px-4 py-3 rounded-xl bg-[var(--careers-tint-sage)] text-[13px] font-semibold text-[var(--careers-tint-sage-ink)]">
           <CheckCircle2 size={16} className="shrink-0" />
-          Signed in as {form.name || form.email} — no password needed.
+          Signed in as {form.name || form.email}, no password needed.
         </div>
       ) : (
         <>

@@ -78,7 +78,7 @@ export default function ContactForm() {
         </div>
         <h3 className="text-lg font-extrabold text-(--explorer-navy) tracking-tight">Message sent</h3>
         <p className="text-[14px] text-(--explorer-muted) mt-1.5 max-w-xs">
-          Thanks for reaching out — our team will get back to you within one business day.
+          Thanks for reaching out, our team will get back to you within one business day.
         </p>
         <ExplorerButton variant="secondary" className="mt-6" onClick={() => setStatus('idle')}>
           Send another message

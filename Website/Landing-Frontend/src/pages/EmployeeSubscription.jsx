@@ -14,6 +14,9 @@ import { fetchPlan, fetchServiceRequests, requestService, cancelServiceRequest }
 import { createSubscriptionOrder, verifySubscriptionPayment, confirmMockSubscriptionPayment, previewSubscriptionCoupon } from '../lib/employeeSubscription'
 import { openRazorpayCheckout, loadRazorpay } from '../lib/razorpay'
 
+// Premium is a single ₹499 one-time payment; shown even if the plan API still returns an older price.
+const PREMIUM_PRICE = 499
+
 const SIGN_IN_TO = `/employees/signin?next=${encodeURIComponent('/employees/subscription')}`
 const tealBtn =
   'mz-btn-teal inline-flex h-11 items-center justify-center gap-2 rounded-[10px] bg-mz-primary px-5 text-[14.5px] font-semibold text-white transition-colors hover:bg-mz-primary-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary disabled:opacity-60'
@@ -73,7 +76,7 @@ function Price({ amount, original }) {
 function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
   const signedIn = Boolean(session?.token)
   const limit = plan.basic.applicationLimit
-  const fee = plan.premium.price
+  const fee = PREMIUM_PRICE
   const finalFee = payment.coupon?.finalAmount ?? fee
 
   return (
@@ -624,7 +627,7 @@ export default function EmployeeSubscription() {
 
   return (
     <div className="mz-home min-h-screen bg-mz-bg font-sans text-mz-ink antialiased">
-      <Seo path="/employees/subscription" title="Mzobs Basic vs Premium — Mzobs" noindex />
+      <Seo path="/employees/subscription" title="Mzobs Basic vs Premium | Mzobs" noindex />
       <Navbar />
       <main className="pb-14 pt-[88px] sm:pt-[96px]">
         <Container className="max-w-[1040px]">
@@ -675,8 +678,8 @@ export default function EmployeeSubscription() {
                 <div className="rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
                   <h2 id="never-title" className="text-[16px] font-bold text-mz-ink">You’re never charged for</h2>
                   <ul className="mt-3 space-y-2.5 text-[14px] text-mz-ink-2">
-                    <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Being shortlisted — employers pay MZOBS for shortlists.</li>
-                    <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Getting placed — no success fee and no cut of your salary.</li>
+                    <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Being shortlisted, employers pay MZOBS for shortlists.</li>
+                    <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Getting placed, no success fee and no cut of your salary.</li>
                     <li className="flex gap-2"><X size={16} className="mt-0.5 shrink-0 text-mz-muted" aria-hidden="true" />No renewals: Premium is a single payment.</li>
                   </ul>
                 </div>
@@ -685,11 +688,11 @@ export default function EmployeeSubscription() {
                   {isPaid ? (
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[14px]">
                       <div>
-                        <p className="font-medium text-mz-ink">{plan.data.premium.name} — one-time fee</p>
+                        <p className="font-medium text-mz-ink">{plan.data.premium.name}, one-time fee</p>
                         {profile?.subscription?.paidOn && <p className="text-[13px] text-mz-muted">{dateFmt.format(new Date(profile.subscription.paidOn))}</p>}
                       </div>
                       <span className="flex items-center gap-2">
-                        <span className="font-bold text-mz-ink">₹{profile?.subscription?.amount ?? plan.data.premium.price}</span>
+                        <span className="font-bold text-mz-ink">₹{profile?.subscription?.amount ?? PREMIUM_PRICE}</span>
                         <span className="rounded-full bg-mz-primary-tint px-2.5 py-1 text-[12px] font-semibold text-mz-primary-strong">Paid</span>
                       </span>
                     </div>

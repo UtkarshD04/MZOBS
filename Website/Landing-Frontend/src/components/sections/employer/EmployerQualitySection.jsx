@@ -5,7 +5,7 @@ const POINTS = [
   {
     icon: Briefcase,
     title: 'Simple job posting',
-    desc: 'Share a role once and it goes live — no per-job fees, no sales calls.',
+    desc: 'Share a role once and it goes live, no per-job fees, no sales calls.',
   },
   {
     icon: Search,

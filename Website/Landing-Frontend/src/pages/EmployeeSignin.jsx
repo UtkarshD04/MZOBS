@@ -7,7 +7,7 @@ import EmployeePhoneAuthForm from '../components/forms/EmployeePhoneAuthForm'
 export default function EmployeeSignin() {
   return (
     <div className="min-h-screen bg-white text-(--jobs-navy) font-sans antialiased selection:bg-teal-200">
-      <Seo path="/employees/signin" title="Sign In — Mzobs" noindex />
+      <Seo path="/employees/signin" title="Sign In | Mzobs" noindex />
       <AuthHeader prompt="Don't have an account?" linkTo="/employees/signup" linkLabel="Create one" />
 
       <section className="relative py-6 sm:py-10 lg:py-12">

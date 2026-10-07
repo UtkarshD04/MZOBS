@@ -17,7 +17,7 @@ export default function OpportunityCard({ job, onOpen }) {
       className="group relative w-full min-w-0 text-left flex items-center gap-4 py-4 sm:py-4.5 px-3 sm:px-4 rounded-xl motion-safe:transition-colors motion-safe:duration-200 hover:bg-(--explorer-bg) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-teal)"
     >
       {/* Near-invisible at rest, the per-company accent tone only appears
-          on hover — a quiet rhythm marker rather than a permanent stripe
+          on hover, a quiet rhythm marker rather than a permanent stripe
           (see the redesign brief's item 16). */}
       <span
         aria-hidden="true"

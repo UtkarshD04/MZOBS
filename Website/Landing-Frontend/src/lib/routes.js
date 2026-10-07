@@ -15,6 +15,7 @@ export const CLIENT_ONLY_ROUTES = {
   employeeSignin: '/employees/signin',
   employeeForgotPassword: '/employees/forgot-password',
   employeeResetPassword: '/employees/reset-password',
+  allCities: '/jobs/cities',
   deleteAccount: '/delete-account',
   employerSignup: '/employers/signup',
   employerSignin: '/employers/signin',

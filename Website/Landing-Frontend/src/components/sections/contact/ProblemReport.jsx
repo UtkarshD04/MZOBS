@@ -64,7 +64,7 @@ function ReportModal({ onClose }) {
         email: form.email,
         role: 'Other',
         subject: `Report: ${form.type}`,
-        message: file ? `${form.description}\n\n(Attachment mentioned: ${file.name} — reply to this email to send it.)` : form.description,
+        message: file ? `${form.description}\n\n(Attachment mentioned: ${file.name}, reply to this email to send it.)` : form.description,
       })
       setStatus('success')
     } catch (err) {
@@ -132,7 +132,7 @@ function ReportModal({ onClose }) {
           ) : (
             <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
               <p className="text-[13.5px] text-(--explorer-muted) font-medium leading-relaxed">
-                Help us keep MZOBS safe and trustworthy — every report is reviewed by our team.
+                Help us keep MZOBS safe and trustworthy, every report is reviewed by our team.
               </p>
 
               <div className="flex flex-col gap-2">
@@ -182,7 +182,7 @@ function ReportModal({ onClose }) {
                   id="report-description"
                   value={form.description}
                   onChange={(e) => update('description', e.target.value)}
-                  placeholder="Tell us what you saw and where — the more detail, the faster we can act."
+                  placeholder="Tell us what you saw and where, the more detail, the faster we can act."
                   aria-invalid={!!errors.description}
                   aria-describedby={errors.description ? 'report-description-error' : undefined}
                   className={`min-h-[104px] px-3 py-2.5 rounded-lg border bg-white text-[14.5px] text-(--explorer-navy) placeholder:text-(--explorer-muted)/60 outline-none resize-none transition-colors duration-200 ${

@@ -9,27 +9,27 @@ import EmployerPlanCards from '../components/sections/employer/EmployerPlanCards
 import { FadeInLoad, FadeInView } from '../components/sections/employer/employerMotion'
 
 const HIGHLIGHTS = [
-  { icon: ShieldCheck, title: 'One-time annual payment', desc: 'No auto-renewal, no hidden charges — MZOBS never charges your card without your action.' },
+  { icon: ShieldCheck, title: 'One-time annual payment', desc: 'No auto-renewal, no hidden charges, MZOBS never charges your card without your action.' },
   { icon: FileCheck2, title: 'GST invoice included', desc: 'Every payment comes with a proper GST invoice for your records, generated automatically.' },
-  { icon: RefreshCcw, title: 'Renew in a few clicks', desc: "When your plan is close to expiry, renew anytime from your dashboard — nothing to raise with support." },
+  { icon: RefreshCcw, title: 'Renew in a few clicks', desc: "When your plan is close to expiry, renew anytime from your dashboard, nothing to raise with support." },
 ]
 
 const FAQS = [
   {
     q: 'How many jobs can I post?',
-    a: 'As many as you need. Once any MZOBS Employer annual plan is active, job postings are unlimited for the full year — there is no per-job charge.',
+    a: 'As many as you need. Once any MZOBS Employer annual plan is active, job postings are unlimited for the full year, there is no per-job charge.',
   },
   {
     q: 'Which candidates can I see resumes for?',
-    a: "Only candidates who have applied to one of your own job postings. MZOBS does not sell access to a general resume database — a candidate's resume and contact details are only ever visible to the employer they applied to.",
+    a: "Only candidates who have applied to one of your own job postings. MZOBS does not sell access to a general resume database, a candidate's resume and contact details are only ever visible to the employer they applied to.",
   },
   {
     q: 'Does this renew automatically?',
-    a: 'No. This is a one-time annual payment. MZOBS never auto-charges you — you renew manually from your dashboard whenever you choose.',
+    a: 'No. This is a one-time annual payment. MZOBS never auto-charges you, you renew manually from your dashboard whenever you choose.',
   },
   {
     q: 'How do I subscribe?',
-    a: 'Pick a plan, confirm your mobile number and pay right from this page — no signup form. Your account, already on the active plan, is ready the moment payment goes through.',
+    a: 'Pick a plan, confirm your mobile number and pay right from this page, no signup form. Your account, already on the active plan, is ready the moment payment goes through.',
   },
 ]
 

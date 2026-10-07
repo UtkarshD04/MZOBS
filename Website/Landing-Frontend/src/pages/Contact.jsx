@@ -40,7 +40,7 @@ export default function Contact() {
                 className="block"
                 style={{ backgroundImage: 'var(--hero-cta-gradient)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
               >
-                — or your next role.
+, or your next role.
               </span>
             </h1>
             <p className="mt-5 text-[16px] sm:text-[17.5px] text-(--explorer-navy)/75 font-medium leading-relaxed max-w-2xl mx-auto">

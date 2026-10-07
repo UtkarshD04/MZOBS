@@ -117,7 +117,7 @@ function ResultsCard() {
           <CandidateRow key={c.name} candidate={c} expanded={expandedIdx === i} onToggle={() => setExpandedIdx(expandedIdx === i ? -1 : i)} />
         ))}
       </div>
-      <p className="mt-4 text-[11px] text-[#667085]/80 text-center">Illustrative example — not real candidate data.</p>
+      <p className="mt-4 text-[11px] text-[#667085]/80 text-center">Illustrative example, not real candidate data.</p>
     </div>
   )
 }

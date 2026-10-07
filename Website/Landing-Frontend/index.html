@@ -14,7 +14,7 @@
          injected here as a literal string by server.js/scripts/prerender.js
          in production. During `npm run dev` this comment is left as-is (no
          server in front of plain `vite`) and each page's own <Seo>/<title>
-         is hoisted into <head> by React after hydration instead — this
+         is hoisted into <head> by React after hydration instead, this
          placeholder is intentionally the only <title> source, so the two
          paths never produce duplicate tags. -->
     <!--app-head-->
@@ -24,7 +24,7 @@
     <!--app-tail-->
     <!--
       Shown only while a client-only route (auth/dashboard) is still
-      rendering into an empty #root — entry-client.jsx removes it right
+      rendering into an empty #root, entry-client.jsx removes it right
       after mount. Prerendered/SSR'd routes already have real markup in
       #root by the time this paints, so entry-client.jsx removes it
       immediately for those instead of waiting.

@@ -28,6 +28,7 @@ import { CLIENT_ONLY_ROUTES } from './lib/routes'
 // CLIENT_ONLY_ROUTES pages are never reached by server-side render() (see
 // server.js's catch-all — a known client-only route ships an empty shell
 // instead), so they're free to be real, separate chunks fetched on demand.
+const AllCities = lazy(() => import('./pages/AllCities'))
 const EmployeeProfile = lazy(() => import('./pages/EmployeeProfile'))
 const EmployeeSubscription = lazy(() => import('./pages/EmployeeSubscription'))
 const EmployeeSignup = lazy(() => import('./pages/EmployeeSignup'))
@@ -90,6 +91,7 @@ export default function App() {
         <Suspense fallback={<RouteFallback />}>
           <Routes location={location}>
             <Route path="/" element={<Home />} />
+            <Route path={CLIENT_ONLY_ROUTES.allCities} element={<AllCities />} />
             <Route path="/jobs/city/:citySlug" element={<CityJobs />} />
             <Route path="/jobs/:id" element={<JobDetail />} />
             <Route path="/about" element={<Navigate to="/our-story" replace />} />

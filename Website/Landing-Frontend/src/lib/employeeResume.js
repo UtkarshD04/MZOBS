@@ -21,7 +21,7 @@ export function validateResumeFileClientSide(file) {
   if (!file) return null
   const ext = /\.[a-zA-Z0-9]+$/.exec(file.name)?.[0]?.toLowerCase()
   if (!ext || !RESUME_ALLOWED_EXTENSIONS.includes(ext)) return 'Only PDF, DOC or DOCX files are accepted.'
-  if (file.size > RESUME_MAX_SIZE) return 'File is too large — the limit is 5MB.'
+  if (file.size > RESUME_MAX_SIZE) return 'File is too large, the limit is 5MB.'
   return null
 }
 

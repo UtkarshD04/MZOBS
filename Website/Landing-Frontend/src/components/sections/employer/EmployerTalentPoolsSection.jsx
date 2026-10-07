@@ -50,7 +50,7 @@ export default function EmployerTalentPoolsSection() {
             </div>
           ))}
         </div>
-        <p className="mt-6 text-center text-[11.5px] text-[#667085]/80">Illustrative example — product preview.</p>
+        <p className="mt-6 text-center text-[11.5px] text-[#667085]/80">Illustrative example, product preview.</p>
       </div>
     </section>
   )

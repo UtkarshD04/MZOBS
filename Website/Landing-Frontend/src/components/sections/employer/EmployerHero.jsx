@@ -101,7 +101,7 @@ export default function EmployerHero() {
 
             <FadeInLoad delay={0.2}>
               <p className="mt-6 max-w-md text-[15px] leading-relaxed text-(--explorer-muted) sm:text-[16.5px]">
-                Post jobs, discover relevant talent, and manage your hiring journey — all in one place.
+                Post jobs, discover relevant talent, and manage your hiring journey, all in one place.
               </p>
             </FadeInLoad>
 

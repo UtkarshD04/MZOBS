@@ -48,7 +48,7 @@ export const HERO_DATA = {
   titleLine1: "Hiring, Built",
   titleItalic: "Right From",
   titleLine2: "Both Sides.",
-  subtitle: "MZOBS brings talent and opportunity together — connecting job seekers with employers through smart matching and one simple hiring workflow.",
+  subtitle: "MZOBS brings talent and opportunity together, connecting job seekers with employers through smart matching and one simple hiring workflow.",
   ctaText: "Get Started",
   bgImage: "/images/hero-bg.jpg",
   rotatingPrefix: "It's time to",
@@ -60,7 +60,7 @@ export const WHO_WE_ARE_DATA = {
   badge: "WHO WE ARE",
   heroTitleLine1: "Built For Smarter Hiring,",
   heroTitleLine2: "Made For Both Sides.",
-  heroSubtitle: "Every profile checked, every pipeline refined — a hiring platform where job seekers find roles they're right for, and employers find people worth hiring.",
+  heroSubtitle: "Every profile checked, every pipeline refined, a hiring platform where job seekers find roles they're right for, and employers find people worth hiring.",
   stats: [
     {
       number: "12,400+",
@@ -91,28 +91,28 @@ export const SERVICES_DATA = {
       title: "Quality Candidate Pipeline",
       desc: "Candidates are matched to each role on skills and experience before they reach an employer.",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=85",
-      expandedText: "Every requirement on Mzobs is matched against candidate skills, experience, location and role preference, so employers start with the people who fit best — not a pile of unsorted applications. Candidates see why a role suits them, and employers see why a candidate suits the role."
+      expandedText: "Every requirement on Mzobs is matched against candidate skills, experience, location and role preference, so employers start with the people who fit best, not a pile of unsorted applications. Candidates see why a role suits them, and employers see why a candidate suits the role."
     },
     {
       icon: Settings,
       title: "Guided Job Matching",
-      desc: "Curated openings filtered to your track — no scrolling through noise.",
+      desc: "Curated openings filtered to your track, no scrolling through noise.",
       image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=85",
-      expandedText: "Instead of handing job seekers a search bar and leaving them to scroll through hundreds of unrelated postings, Mzobs curates openings around the track they've told us they're targeting. Every opening a candidate sees is guided by what they actually want and are qualified for, so the matches are relevant from the start — cutting out the noise of a generic job board."
+      expandedText: "Instead of handing job seekers a search bar and leaving them to scroll through hundreds of unrelated postings, Mzobs curates openings around the track they've told us they're targeting. Every opening a candidate sees is guided by what they actually want and are qualified for, so the matches are relevant from the start, cutting out the noise of a generic job board."
     },
     {
       icon: Sparkles,
       title: "Structured Interviews",
       desc: "Schedule, track and score interviews from one shared pipeline.",
       image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=85",
-      expandedText: "Once a candidate is matched to a role, the interview process runs through one shared pipeline instead of scattered emails and calendar invites. Scheduling, tracking and scoring each round happens in the same place, so both our team and the employer can see exactly where a candidate stands at every stage — from first interview to final decision."
+      expandedText: "Once a candidate is matched to a role, the interview process runs through one shared pipeline instead of scattered emails and calendar invites. Scheduling, tracking and scoring each round happens in the same place, so both our team and the employer can see exactly where a candidate stands at every stage, from first interview to final decision."
     },
     {
       icon: BarChart3,
       title: "Offer & Hiring Analytics",
       desc: "Track offers, acceptance and time-to-fill with full visibility.",
       image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=85",
-      expandedText: "From the moment an offer goes out, Mzobs tracks its status — sent, accepted or declined — alongside how long each requirement took to fill. Employers get full visibility into where every hire stands, without having to chase updates across email threads or spreadsheets to find out."
+      expandedText: "From the moment an offer goes out, Mzobs tracks its status, sent, accepted or declined, alongside how long each requirement took to fill. Employers get full visibility into where every hire stands, without having to chase updates across email threads or spreadsheets to find out."
     }
   ],
   featuredCard: {
@@ -161,13 +161,13 @@ export const COMPANY_WORKFLOW_DATA = {
   titlePrefix: "How Companies ",
   titleItalic: "Hire",
   titleSuffix: " On Mzobs",
-  subtitle: "One workflow, from open requirement to signed offer — with candidates matched to your role before they reach you.",
+  subtitle: "One workflow, from open requirement to signed offer, with candidates matched to your role before they reach you.",
   steps: [
     {
       num: "01",
       icon: Briefcase,
       title: "Post The Requirement",
-      desc: "Share the role, must-have skills and budget — live in minutes, not weeks.",
+      desc: "Share the role, must-have skills and budget, live in minutes, not weeks.",
       bg: "#cfe8fb",
       accent: "#0b7a6d"
     },
@@ -183,7 +183,7 @@ export const COMPANY_WORKFLOW_DATA = {
       num: "03",
       icon: Users2,
       title: "Interview Shortlisted Talent",
-      desc: "Meet only candidates matched to your requirement — no resume pile to dig through.",
+      desc: "Meet only candidates matched to your requirement, no resume pile to dig through.",
       bg: "#ffe2b0",
       accent: "#d97706"
     },
@@ -215,7 +215,7 @@ export const FAQ_DATA = {
   items: [
     {
       q: "What is Mzobs?",
-      a: "Mzobs is a trusted hiring marketplace — job seekers discover roles matched to their skills, and employers discover candidates ranked by fit for their requirement."
+      a: "Mzobs is a trusted hiring marketplace, job seekers discover roles matched to their skills, and employers discover candidates ranked by fit for their requirement."
     },
     {
       q: "Is Mzobs free for job seekers?",
@@ -231,11 +231,11 @@ export const FAQ_DATA = {
     },
     {
       q: "What roles and industries does Mzobs cover?",
-      a: "From entry-level to leadership hiring across tech, operations, sales, finance and more — browse open categories on the Find Your Team section or share your requirement directly."
+      a: "From entry-level to leadership hiring across tech, operations, sales, finance and more, browse open categories on the Find Your Team section or share your requirement directly."
     },
     {
       q: "How do I get started as an employer?",
-      a: "Sign up on the Employers page and post your requirement — we start matching candidates from your very first job post."
+      a: "Sign up on the Employers page and post your requirement, we start matching candidates from your very first job post."
     }
   ]
 }
@@ -249,7 +249,7 @@ export const TESTIMONIALS_DATA = {
     {
       id: 1,
       image: "/images/new_images/testimonial_rohit.jpg",
-      quote: "Mzobs didn't just help me find a job — my resume was rebuilt by an expert, I trained for two weeks, and I walked into my interview actually prepared.",
+      quote: "Mzobs didn't just help me find a job, my resume was rebuilt by an expert, I trained for two weeks, and I walked into my interview actually prepared.",
       name: "Rohit Kulkarni",
       title: "Placed as Business Analyst, Razorpay"
     },
@@ -277,7 +277,7 @@ export const TESTIMONIALS_DATA = {
     {
       id: 5,
       image: "/images/new_images/testimonial_john.jpg",
-      quote: "One dashboard for every application, interview and offer status — I always knew exactly where I stood.",
+      quote: "One dashboard for every application, interview and offer status, I always knew exactly where I stood.",
       name: "John Smith",
       title: "Placed as Software Engineer, Innovate"
     }
@@ -289,7 +289,7 @@ export const OUR_GOAL_DATA = {
   titlePrefix: "Turning ",
   titleItalic: "Hiring",
   titleSuffix: " Into a Smarter Match",
-  desc: "MZOBS is built to make hiring faster and more relevant for both sides — helping job seekers showcase their skills and helping employers discover candidates who better fit their requirements.",
+  desc: "MZOBS is built to make hiring faster and more relevant for both sides, helping job seekers showcase their skills and helping employers discover candidates who better fit their requirements.",
   ctaText: "Meet Our Team",
   image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
 }
@@ -299,7 +299,7 @@ export const OUR_VISION_DATA = {
   titlePrefix: "We're building a future where opportunity finds ",
   titleItalic: "the right person",
   titleSuffix: ".",
-  desc: "Not just faster hiring — smarter hiring. Talent matched to relevant opportunities, inside one hiring ecosystem both sides can rely on.",
+  desc: "Not just faster hiring, smarter hiring. Talent matched to relevant opportunities, inside one hiring ecosystem both sides can rely on.",
   badges: [
     { icon: "Sparkles", text: "Verified, trusted listings" },
     { icon: "Users", text: "Matched, not just listed" }
@@ -314,18 +314,18 @@ export const ABOUT_GOAL_DATA = {
   titlePrefix: "What ",
   titleItalic: "Drives",
   titleSuffix: " Everything We Build",
-  desc: "Every feature, every screening step and every conversation on Mzobs points back to the same commitments. They're not a mission statement on a wall — they're what we measure ourselves against, on every single hire.",
+  desc: "Every feature, every screening step and every conversation on Mzobs points back to the same commitments. They're not a mission statement on a wall, they're what we measure ourselves against, on every single hire.",
   items: [
     {
       title: "Fair Match",
-      desc: "Right candidate, right role — decided on skill, not luck.",
-      detail: "No black-box algorithms and no back-channel referrals deciding who gets seen. Every candidate is matched against a role on skill, experience and real fit — so a great engineer from a small city gets the same shot as one from a big brand name.",
+      desc: "Right candidate, right role, decided on skill, not luck.",
+      detail: "No black-box algorithms and no back-channel referrals deciding who gets seen. Every candidate is matched against a role on skill, experience and real fit, so a great engineer from a small city gets the same shot as one from a big brand name.",
       icon: Target, bg: "var(--careers-cyan)", ink: "#0b3b3d"
     },
     {
       title: "Stronger Profiles",
       desc: "Resumes that show what candidates can really do.",
-      detail: "Our team helps candidates rebuild their resumes and present their skills clearly, so the profile an employer sees reflects the person — not just an upload.",
+      detail: "Our team helps candidates rebuild their resumes and present their skills clearly, so the profile an employer sees reflects the person, not just an upload.",
       icon: Sparkles, bg: "var(--careers-mint)", ink: "#1f4d1a"
     },
     {
@@ -337,19 +337,19 @@ export const ABOUT_GOAL_DATA = {
     {
       title: "Zero Ghosting",
       desc: "Every applicant gets a real update, always.",
-      detail: "No application black hole. Every candidate who applies gets a real status update — selected, rejected or in-progress — instead of silence. It's a small thing that most platforms skip, and we don't.",
+      detail: "No application black hole. Every candidate who applies gets a real status update, selected, rejected or in-progress, instead of silence. It's a small thing that most platforms skip, and we don't.",
       icon: MessageCircle, bg: "var(--careers-pink)", ink: "#7a1f42"
     },
     {
       title: "Employer Growth",
       desc: "Tools that grow with every team that hires.",
-      detail: "From a first hire to a full team, employers post roles, discover candidates, schedule interviews and send offers from one dashboard — so hiring scales without extra spreadsheets.",
+      detail: "From a first hire to a full team, employers post roles, discover candidates, schedule interviews and send offers from one dashboard, so hiring scales without extra spreadsheets.",
       icon: Building2, bg: "var(--careers-tint-blue)", ink: "var(--careers-tint-blue-ink)"
     },
     {
       title: "Long-Term Fit",
       desc: "We optimize for retention, not just placements.",
-      detail: "We don't stop measuring success at the offer letter. We track how long a placement stays and how well it's working for both sides, and use that to keep improving the match — not just the count of hires.",
+      detail: "We don't stop measuring success at the offer letter. We track how long a placement stays and how well it's working for both sides, and use that to keep improving the match, not just the count of hires.",
       icon: Heart, bg: "var(--careers-tint-sand)", ink: "var(--careers-tint-sand-ink)"
     }
   ]
@@ -360,13 +360,13 @@ export const WHAT_MAKES_US_DIFFERENT_DATA = {
   titlePrefix: "What Makes ",
   titleItalic: "Us",
   titleSuffix: " Different",
-  desc: "Most hiring platforms just moved the paperwork online. We rebuilt the process itself — here's the same hire, done the old way and the Mzobs way.",
+  desc: "Most hiring platforms just moved the paperwork online. We rebuilt the process itself, here's the same hire, done the old way and the Mzobs way.",
   columnLeft: "Traditional Hiring",
   columnRight: "The Mzobs Way",
   rows: [
     {
       traditional: "Résumés vanish into an ATS black hole, sorted by keyword luck.",
-      mzobs: "Every candidate is matched on skills and fit — not keyword luck.",
+      mzobs: "Every candidate is matched on skills and fit, not keyword luck.",
       icon: Target, bg: "var(--careers-tint-blue)", ink: "var(--careers-tint-blue-ink)"
     },
     {
@@ -391,7 +391,7 @@ export const WHAT_MAKES_US_DIFFERENT_DATA = {
     },
     {
       traditional: "Success measured by resumes collected, not hires that stick.",
-      mzobs: "We track retention, not just placements — long after the offer letter.",
+      mzobs: "We track retention, not just placements, long after the offer letter.",
       icon: Heart, bg: "var(--careers-tint-sand)", ink: "var(--careers-tint-sand-ink)"
     }
   ]
@@ -404,7 +404,7 @@ export const APPROACH_DATA = {
     { text: "hiring", italic: true },
     { text: " should do more than " },
     { text: "collect resumes", italic: true },
-    { text: " — it should drive a " },
+    { text: ", it should drive a " },
     { text: "real, lasting", italic: true },
     { text: " match." }
   ],
@@ -421,7 +421,7 @@ export const APPROACH_DATA = {
       num: "02",
       icon: BarChart2,
       title: "Set Your Preferences",
-      desc: "Job seekers share the roles, locations and work modes they want, and employers define must-have skills — so MZOBS knows what a good match looks like for both sides.",
+      desc: "Job seekers share the roles, locations and work modes they want, and employers define must-have skills, so MZOBS knows what a good match looks like for both sides.",
       image: "/images/new_images/step_02.jpg"
     },
     {
@@ -444,7 +444,7 @@ export const APPROACH_DATA = {
 export const EMPLOYEE_GOAL_DATA = {
   titlePrefix: "We're Not Another ",
   titleItalic: "Job Board",
-  titleSuffix: " — We're Your Placement Team",
+  titleSuffix: ", We're Your Placement Team",
   desc: "Most platforms hand you a search bar and wish you luck. Mzobs assigns your resume to a real recruiter, runs you through mock interviews, and only puts you in front of employers hiring for roles you're actually qualified for.",
   ctaText: "See Your Journey",
   ctaHref: "#candidate-journey",
@@ -455,7 +455,7 @@ export const EMPLOYEE_APPROACH_DATA = {
   heading: [
     { text: "Getting hired shouldn't feel like " },
     { text: "guesswork", italic: true },
-    { text: " — we build your resume, coach your interviews, and match you to roles that actually fit." }
+    { text: ", we build your resume, coach your interviews, and match you to roles that actually fit." }
   ],
   image: "/images/new_images/employee_approach.jpg",
   steps: [
@@ -475,7 +475,7 @@ export const EMPLOYEE_APPROACH_DATA = {
       num: "03",
       icon: Target,
       title: "Matched, Not Searched",
-      desc: "We match you to roles based on your skills and preferences — you stop scrolling job boards that go nowhere."
+      desc: "We match you to roles based on your skills and preferences, you stop scrolling job boards that go nowhere."
     },
     {
       num: "04",
@@ -543,7 +543,7 @@ export const CTA_BAND_DATA = {
 
 export const FOOTER_DATA = {
   logoSub: "HIRING PLATFORM",
-  desc: "Mzobs is where verified talent meets trusted opportunity—connecting people, skills, and employers to build better careers and better hiring.",
+  desc: "Mzobs is where verified talent meets trusted opportunity, connecting people, skills, and employers to build better careers and better hiring.",
   ctaText: "Contact Us",
   menuTitle: "Menu",
   menuItems: [
@@ -635,7 +635,7 @@ export const PRICING_DATA = {
     takeaways: [
       "Affordable entry with ₹999 for first 10 hires.",
       "Recharge with ₹499 to hire 5 more candidates.",
-      "No upfront commission — pay only when you hire more.",
+      "No upfront commission, pay only when you hire more.",
       "Designed for startups & Tier 3 companies to scale affordably."
     ],
     stats: [
@@ -713,17 +713,17 @@ export const EMPLOYER_QUALITY_POINTS = [
   {
     icon: Sparkles,
     title: "Well-Matched Resumes",
-    desc: "Candidates are ranked on skills, experience and role fit — not just auto-filtered by keywords."
+    desc: "Candidates are ranked on skills, experience and role fit, not just auto-filtered by keywords."
   },
   {
     icon: Target,
     title: "Matched To Your Requirement",
-    desc: "Applicants are scored against the exact role, skills and experience you listed — not a generic resume dump."
+    desc: "Applicants are scored against the exact role, skills and experience you listed, not a generic resume dump."
   },
   {
     icon: MessageCircle,
     title: "No Middleman Delay",
-    desc: "There's no staff queue sitting between a candidate and your dashboard — once they apply, you see them."
+    desc: "There's no staff queue sitting between a candidate and your dashboard, once they apply, you see them."
   },
   {
     icon: CheckCircle2,
@@ -824,7 +824,7 @@ export const CAMPUS_NETWORK_DATA = {
 
 export const HOME_EMPLOYER_CTA_DATA = {
   title: "Hiring for your team?",
-  subtitle: "Post a requirement and reach candidates MZOBS has matched to it — ranked by fit before they reach you.",
+  subtitle: "Post a requirement and reach candidates MZOBS has matched to it, ranked by fit before they reach you.",
   ctaText: "Post a requirement",
   ctaTo: "/employers/signup"
 }

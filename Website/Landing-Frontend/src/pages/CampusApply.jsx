@@ -260,7 +260,7 @@ export default function CampusApply() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = 'Campus application form — Mzobs'
+    document.title = 'Campus application form | Mzobs'
     return () => { document.title = prev }
   }, [])
 

@@ -47,9 +47,9 @@ const JOURNEY = ['Apply', 'Get selected', 'Get your Ally ID', 'Build your campus
 
 const FAQ = [
   ['What is a Mzobs Ally?', 'A Mzobs Ally is a student representative who helps connect their community with meaningful career opportunities, hiring initiatives, events and the Mzobs ecosystem.'],
-  ['Who can apply?', 'The Mzobs Ally program is open to 3rd and 4th year students — that is, students who have completed at least 4 semesters (for 8-semester/4-year courses) or the equivalent for your course length. 1st and 2nd year students are not eligible yet.'],
+  ['Who can apply?', 'The Mzobs Ally program is open to 3rd and 4th year students, that is, students who have completed at least 4 semesters (for 8-semester/4-year courses) or the equivalent for your course length. 1st and 2nd year students are not eligible yet.'],
   ['What will I actually do?', 'You’ll discover opportunities worth sharing, bring students into the Mzobs ecosystem, create campus conversations and activities, and spread opportunities across your campus.'],
-  ['How do I apply?', 'Fill in the application below — about you, your campus, your experience and why Mzobs. It takes a few minutes and you can move back and forth between steps.'],
+  ['How do I apply?', 'Fill in the application below, about you, your campus, your experience and why Mzobs. It takes a few minutes and you can move back and forth between steps.'],
   ['What do I get as an Ally?', 'Early access to opportunities and events, a network of students, recruiters and professionals, recognition for your contribution, and room to build communication and leadership skills.'],
 ]
 
@@ -107,7 +107,7 @@ function Pass({ name, college, city, hoverFlip = true }) {
       data-flip={flip}
       onClick={() => setFlip((f) => !f)}
       aria-pressed={flip}
-      aria-label="Mzobs Ally ID preview — tap to flip"
+      aria-label="Mzobs Ally ID preview, tap to flip"
       style={{ background: 'none', border: 0, padding: 0, textAlign: 'left', color: 'inherit' }}
     >
       <div className="cm-pass-inner">
@@ -129,8 +129,8 @@ function Pass({ name, college, city, hoverFlip = true }) {
         <div className="cm-face cm-back">
           <div className="brand"><span>ALLY ID</span><i>PREVIEW</i></div>
           <dl>
-            <div><dt>Campus</dt><dd>{college || '—'}</dd></div>
-            <div><dt>City</dt><dd>{city || '—'}</dd></div>
+            <div><dt>Campus</dt><dd>{college || '-'}</dd></div>
+            <div><dt>City</dt><dd>{city || '-'}</dd></div>
             <div><dt>Ally ID</dt><dd>{id}</dd></div>
             <div><dt>Joined</dt><dd>2026</dd></div>
           </dl>
@@ -151,7 +151,7 @@ const EMPTY = { name: '', email: '', phone: '', college: '', city: '', course: '
 // bypassed by odd phrasing in the course field.
 const YEAR_OPTIONS = ['1st year', '2nd year', '3rd year', '4th year / final year']
 const ELIGIBLE_YEARS = new Set(['3rd year', '4th year / final year'])
-const YEAR_INELIGIBLE_MSG = 'Mzobs Ally is open to 3rd and 4th year students only (minimum 4 semesters completed for 8-semester courses) — 1st and 2nd year students aren’t eligible yet.'
+const YEAR_INELIGIBLE_MSG = 'Mzobs Ally is open to 3rd and 4th year students only (minimum 4 semesters completed for 8-semester courses), 1st and 2nd year students aren’t eligible yet.'
 
 function validate(step, f) {
   const e = {}
@@ -167,7 +167,7 @@ function validate(step, f) {
     if (!f.year) e.year = 'Select your year of study'
     else if (!ELIGIBLE_YEARS.has(f.year)) e.year = YEAR_INELIGIBLE_MSG
   }
-  if (step === 2 && f.experience.trim().length < 10) e.experience = 'Share a line or two — even small things count'
+  if (step === 2 && f.experience.trim().length < 10) e.experience = 'Share a line or two, even small things count'
   if (step === 3 && f.why.trim().length < 20) e.why = 'Tell us a little more (a couple of sentences)'
   return e
 }
@@ -284,7 +284,7 @@ function ApplicationForm({ f, set }) {
           {step === 1 && (
             <>
               <h3>Your campus</h3><p className="s">Where will you be representing Mzobs?</p>
-              <p className="s" style={{ marginTop: -6 }}>Open to 3rd and 4th year students only — at least 4 semesters completed (for 8-semester courses) or the equivalent for your course length.</p>
+              <p className="s" style={{ marginTop: -6 }}>Open to 3rd and 4th year students only, at least 4 semesters completed (for 8-semester courses) or the equivalent for your course length.</p>
               <div className="cm-fgrid">
                 <div className="full"><Field label="College / university" name="college" f={f} set={set} error={errors.college} placeholder="Your college" autoFocus /></div>
                 <Field label="City" name="city" f={f} set={set} error={errors.city} placeholder="City" />
@@ -295,7 +295,7 @@ function ApplicationForm({ f, set }) {
           )}
           {step === 2 && (
             <>
-              <h3>Your experience</h3><p className="s">Clubs, events, communities, projects — anything where you led or organised.</p>
+              <h3>Your experience</h3><p className="s">Clubs, events, communities, projects, anything where you led or organised.</p>
               <div className="cm-fgrid">
                 <div className="full"><Field textarea label="What have you led or organised?" name="experience" f={f} set={set} error={errors.experience} placeholder="A club, a fest, a group, a project…" autoFocus /></div>
                 <div className="full"><Field textarea label="Campus communities you’re part of (optional)" name="involvement" f={f} set={set} placeholder="Clubs, societies, teams…" /></div>
@@ -315,7 +315,7 @@ function ApplicationForm({ f, set }) {
               <h3>Finish</h3><p className="s">Check everything, then send it in.</p>
               <dl className="cm-review">
                 {[['Name', f.name], ['Email', f.email], ['Phone', f.phone], ['Campus', `${f.college}, ${f.city}`], ['Course', f.course], ['Year', f.year], ['Experience', f.experience], ['Involvement', f.involvement], ['Why Mzobs', f.why]].map(([k, v]) => (
-                  <div key={k}><dt>{k}</dt><dd>{v || '—'}</dd></div>
+                  <div key={k}><dt>{k}</dt><dd>{v || '-'}</dd></div>
                 ))}
               </dl>
               {fail && <p className="cm-err" role="alert" style={{ marginTop: 18 }}>{fail}</p>}
@@ -348,7 +348,7 @@ export default function Ally() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = 'Mzobs Ally — Carry Opportunities. Connect Talent.'
+    document.title = 'Mzobs Ally | Carry Opportunities. Connect Talent.'
     return () => { document.title = prev }
   }, [])
 
@@ -453,7 +453,7 @@ export default function Ally() {
           <Rv as="p" className="cm-eyebrow">Eligibility</Rv>
           <Rv as="h2" d={0.06} className="cm-h2">Who can apply.</Rv>
           <Rv as="p" d={0.12} className="cm-lead" style={{ marginTop: 22, maxWidth: '38ch' }}>
-            The Mzobs Ally program is currently open to senior students only — 3rd and 4th year, with at least 4 semesters completed.
+            The Mzobs Ally program is currently open to senior students only, 3rd and 4th year, with at least 4 semesters completed.
           </Rv>
           <div className="cm-elig">
             <Rv className="cm-elig-col cm-elig-yes" d={0.1}>

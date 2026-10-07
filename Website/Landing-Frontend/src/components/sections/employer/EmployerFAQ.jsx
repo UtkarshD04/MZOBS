@@ -7,7 +7,7 @@ import { CONTACT_EMAIL, CONTACT_PHONE } from '../../../lib/config'
 const FAQ_ITEMS = [
   {
     q: 'How do I create an employer account?',
-    a: 'Use the "Create account" tab above, or the sign-up page — enter your business email, name, company details and a password to get started. There is no sales call required.',
+    a: 'Use the "Create account" tab above, or the sign-up page, enter your business email, name, company details and a password to get started. There is no sales call required.',
   },
   {
     q: 'How do I post a job?',

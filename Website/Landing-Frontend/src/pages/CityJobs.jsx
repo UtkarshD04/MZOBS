@@ -91,9 +91,9 @@ export default function CityJobs() {
 
   const featuredJob = jobs[0]
   const compactJobs = jobs.slice(1, 1 + MAX_COMPACT_ROWS)
-  const seoTitle = city ? `${city.city} Jobs — Openings Hiring Now | Mzobs` : 'City Jobs — Mzobs'
+  const seoTitle = city ? `${city.city} Jobs: Openings Hiring Now | Mzobs` : 'City Jobs | Mzobs'
   const seoDescription = city
-    ? `Browse job openings in ${city.city} from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.`
+    ? `Browse job openings in ${city.city} from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.`
     : 'Browse job openings by city on Mzobs.'
 
   return (
@@ -132,7 +132,7 @@ export default function CityJobs() {
                 <h1 className="text-[32px] sm:text-[42px] font-black text-white tracking-tight leading-none">{city.city}</h1>
                 {city.imageAttribution && (
                   <p className="mt-3 text-[10.5px] font-medium text-white/55">
-                    {city.landmark} — Photo: {city.imageAttribution}
+                    {city.landmark}, Photo: {city.imageAttribution}
                   </p>
                 )}
               </div>
@@ -164,12 +164,12 @@ export default function CityJobs() {
                     </div>
                     <div>
                       <p className="text-[11px] font-bold uppercase tracking-wide text-(--explorer-muted)">Salary range</p>
-                      <p className="mt-1 text-[22px] font-black text-(--explorer-navy)">{formatSalaryRange(stats.salaryMin, stats.salaryMax) || '—'}</p>
+                      <p className="mt-1 text-[22px] font-black text-(--explorer-navy)">{formatSalaryRange(stats.salaryMin, stats.salaryMax) || '-'}</p>
                     </div>
                     <div>
                       <p className="text-[11px] font-bold uppercase tracking-wide text-(--explorer-muted)">Top categories</p>
                       <p className="mt-1 text-[15px] font-black leading-snug text-(--explorer-navy)">
-                        {stats.topCategories?.length ? stats.topCategories.slice(0, 2).join(', ') : '—'}
+                        {stats.topCategories?.length ? stats.topCategories.slice(0, 2).join(', ') : '-'}
                       </p>
                     </div>
                     <div>

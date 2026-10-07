@@ -111,7 +111,7 @@ export default function BrowseSection({ onSelectCategory, onSelectCity }) {
               {!categoriesLoaded
                 ? Array.from({ length: 6 }).map((_, i) => <BrowseLinkSkeleton key={i} />)
                 : categories.length === 0
-                  ? <p className="text-[13.5px] text-(--explorer-muted) sm:col-span-2">No open categories right now — check back soon.</p>
+                  ? <p className="text-[13.5px] text-(--explorer-muted) sm:col-span-2">No open categories right now, check back soon.</p>
                   : categories.map((cat) => (
                       <BrowseLink
                         key={cat.title}
@@ -129,7 +129,7 @@ export default function BrowseSection({ onSelectCategory, onSelectCity }) {
               {!citiesLoaded
                 ? Array.from({ length: 6 }).map((_, i) => <BrowseLinkSkeleton key={i} />)
                 : cityList.length === 0
-                  ? <p className="text-[13.5px] text-(--explorer-muted) sm:col-span-2">No live city data right now — check back soon.</p>
+                  ? <p className="text-[13.5px] text-(--explorer-muted) sm:col-span-2">No live city data right now, check back soon.</p>
                   : cityList.map((c) => (
                       <BrowseLink key={c.slug} label={c.city} count={c.count} onClick={() => onSelectCity?.(c.slug)} />
                     ))}

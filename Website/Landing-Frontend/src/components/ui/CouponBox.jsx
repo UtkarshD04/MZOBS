@@ -32,7 +32,7 @@ export default function CouponBox({ onPreview, applied, onApply, onRemove }) {
       <div className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 bg-(--jobs-teal-tint)">
         <div className="flex items-center gap-2 text-[13px] font-bold text-(--jobs-teal-dark)">
           <CheckCircle2 size={15} />
-          {applied.code} applied — ₹{applied.discountAmount} off
+          {applied.code} applied, ₹{applied.discountAmount} off
         </div>
         <button type="button" onClick={onRemove} className="text-(--jobs-ink-soft) hover:text-(--jobs-navy) cursor-pointer">
           <X size={15} />

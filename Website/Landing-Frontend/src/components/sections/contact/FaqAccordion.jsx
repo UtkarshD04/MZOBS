@@ -93,7 +93,7 @@ export default function FaqAccordion({ faqs, categories, activeCategory, onCateg
       </div>
 
       {/* Keyed so switching audience or category filter remounts just this
-          list, never the filter chips above it — StaggerGroup's
+          list, never the filter chips above it, StaggerGroup's
           whileInView only fires once per mounted instance (viewport.once),
           so reusing the same instance across a content swap left the
           second set of items permanently stuck at their initial (invisible)

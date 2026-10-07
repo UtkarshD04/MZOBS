@@ -204,7 +204,7 @@ function ApplicationSections({ onSent }) {
           {step === 2 && (
             <div className="sm:col-span-2">
               <Field label="About your placement company" error={errors.about}>
-                <textarea value={f.about} onChange={set('about')} rows={6} autoFocus placeholder="What kind of placements do you do — roles, sectors, how many candidates you work with?" aria-invalid={!!errors.about} className={`${inputCls(errors.about)} h-auto py-3`} />
+                <textarea value={f.about} onChange={set('about')} rows={6} autoFocus placeholder="What kind of placements do you do, roles, sectors, how many candidates you work with?" aria-invalid={!!errors.about} className={`${inputCls(errors.about)} h-auto py-3`} />
               </Field>
             </div>
           )}
@@ -249,7 +249,7 @@ export default function AssociateApply() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = 'Associate application form — Mzobs'
+    document.title = 'Associate application form | Mzobs'
     return () => { document.title = prev }
   }, [])
 

@@ -23,7 +23,7 @@ export function canonicalPath(path) {
 // scripts/prerender.js.
 export const STATIC_PAGE_SEO = {
   '/': {
-    title: 'Mzobs — Talent × Opportunity × Smarter Hiring',
+    title: 'Mzobs | Talent × Opportunity × Smarter Hiring',
     description:
       'Discover jobs from top employers across India, get matched to roles that fit your skills and experience, and move from profile to offer faster. Employers find quality talent and hire in one pipeline.',
     jsonLd: {
@@ -50,27 +50,27 @@ export const STATIC_PAGE_SEO = {
     },
   },
   '/our-story': {
-    title: 'Our Story — Mzobs',
-    description: 'How Mzobs began and where it is headed — the story behind the platform.',
+    title: 'Our Story | Mzobs',
+    description: 'How Mzobs began and where it is headed, the story behind the platform.',
   },
   '/employers': {
-    title: 'For Employers — Mzobs',
+    title: 'For Employers | Mzobs',
     description: 'Post jobs, discover candidates ranked by fit and manage interviews and offers in one hiring pipeline with Mzobs.',
   },
   '/employers/pricing': {
-    title: 'Pricing — Mzobs for Employers',
+    title: 'Pricing | Mzobs for Employers',
     description: 'One simple annual plan for unlimited job postings and applicant resume access on Mzobs.',
   },
   '/contact': {
-    title: 'Contact Us — Mzobs',
+    title: 'Contact Us | Mzobs',
     description: 'Get in touch with the Mzobs team for support, partnerships, or general enquiries.',
   },
   '/privacy-policy': {
-    title: 'Privacy Policy — Mzobs',
+    title: 'Privacy Policy | Mzobs',
     description: 'Read the Mzobs privacy policy to understand how we collect, use, and protect your data.',
   },
   '/terms-of-service': {
-    title: 'Terms & Conditions — Mzobs',
+    title: 'Terms & Conditions | Mzobs',
     description: 'Read the Mzobs Terms & Conditions that govern the use of the platform for candidates and employers.',
   },
   // One entry per HOT_CITIES_DATA.cities slug (see components/sections/home/
@@ -78,44 +78,44 @@ export const STATIC_PAGE_SEO = {
   // adding its slug here too, so it gets prerendered and shows up in
   // sitemap.xml like every other static route.
   '/jobs/city/bengaluru': {
-    title: 'Bengaluru Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Bengaluru from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Bengaluru Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Bengaluru from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
   '/jobs/city/mumbai': {
-    title: 'Mumbai Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Mumbai from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Mumbai Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Mumbai from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
   '/jobs/city/delhi-ncr': {
-    title: 'Delhi NCR Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Delhi NCR from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Delhi NCR Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Delhi NCR from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
   '/jobs/city/hyderabad': {
-    title: 'Hyderabad Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Hyderabad from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Hyderabad Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Hyderabad from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
   '/jobs/city/pune': {
-    title: 'Pune Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Pune from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Pune Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Pune from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
   '/jobs/city/chennai': {
-    title: 'Chennai Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Chennai from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Chennai Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Chennai from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
   '/jobs/city/noida': {
-    title: 'Noida Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Noida from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Noida Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Noida from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
   '/jobs/city/gurugram': {
-    title: 'Gurugram Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Gurugram from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Gurugram Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Gurugram from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
   '/jobs/city/kolkata': {
-    title: 'Kolkata Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Kolkata from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Kolkata Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Kolkata from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
   '/jobs/city/lucknow': {
-    title: 'Lucknow Jobs — Openings Hiring Now | Mzobs',
-    description: 'Browse job openings in Lucknow from employers hiring now, with salary, experience and work mode on each listing — updated as new roles come in.',
+    title: 'Lucknow Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Lucknow from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
 }
 
@@ -156,7 +156,7 @@ function truncate(text, max) {
 // JSON-LD object built only from fields the public jobs API actually
 // returns (see Backend's toLatestJobSummary) — never fabricated.
 export function buildJobSeo(job, path) {
-  const title = `${job.title} at ${job.company} — Mzobs`
+  const title = `${job.title} at ${job.company} | Mzobs`
   const descSource = (job.description || '').replace(/\s+/g, ' ').trim()
   const description = descSource
     ? truncate(descSource, 160)

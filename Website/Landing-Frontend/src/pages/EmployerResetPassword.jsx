@@ -9,7 +9,7 @@ import EmployerResetPasswordForm from '../components/forms/EmployerResetPassword
 export default function EmployerResetPassword() {
   return (
     <div className="min-h-screen bg-white text-[#111827] font-sans antialiased selection:bg-teal-200">
-      <Seo path="/employers/reset-password" title="Reset Password — Mzobs" noindex />
+      <Seo path="/employers/reset-password" title="Reset Password | Mzobs" noindex />
       <EmployerNavbar />
 
       <section id="home" className="relative overflow-hidden pt-[76px]">

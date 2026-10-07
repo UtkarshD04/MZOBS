@@ -58,7 +58,7 @@ export default function JobDetail() {
       {seo ? (
         <Seo path={location.pathname} title={seo.title} description={seo.description} jsonLd={seo.jsonLd} />
       ) : (
-        <Seo path={location.pathname} title="Job — Mzobs" description="This job is no longer available." noindex={status === 'not-found'} />
+        <Seo path={location.pathname} title="Job | Mzobs" description="This job is no longer available." noindex={status === 'not-found'} />
       )}
       <Navbar />
 

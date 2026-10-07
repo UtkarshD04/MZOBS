@@ -9,7 +9,7 @@ const FILTERS = [
 ]
 
 const POINTS = [
-  'Search candidates by skill, experience and location — not just the people who applied to your postings.',
+  'Search candidates by skill, experience and location, not just the people who applied to your postings.',
   'Browse full candidate profiles and resumes before you decide who to reach out to.',
 ]
 

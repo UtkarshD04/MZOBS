@@ -234,8 +234,8 @@ export default function SectionSeam({ variant }) {
   return (
     <div ref={rootRef} data-seam={variant} className="relative z-[5] h-0 overflow-visible" aria-hidden="true">
       {/* top/bottom are deliberately asymmetric (sized to each side's own
-          real padding), so the motif's `top-1/2` below — the band's own
-          geometric middle — naturally lands at the right spot rather than
+          real padding), so the motif's `top-1/2` below, the band's own
+          geometric middle, naturally lands at the right spot rather than
           exactly on the section boundary. */}
       <div className="pointer-events-none absolute inset-x-0" style={{ top: -cfg.top, height: cfg.top + cfg.bottom }}>
         <div data-seam-wash className="absolute inset-0" style={{ background: cfg.wash }} />
