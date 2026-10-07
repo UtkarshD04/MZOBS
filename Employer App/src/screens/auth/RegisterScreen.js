@@ -15,14 +15,15 @@ const TITLES = ['Verify mobile', 'Your details', 'Company details']
 
 // Naukri-recruiter-style registration: mobile + OTP first (a number that already has an account
 // just signs in), then personal details, then company details.
-export default function RegisterScreen({ navigation }) {
+export default function RegisterScreen({ navigation, route }) {
+  const preset = route?.params?.phoneToken ? route.params : null
   const { colors, spacing, isDark } = useTheme()
   const { startSession } = useAuth()
-  const [step, setStep] = useState(0)
-  const [phone, setPhone] = useState('')
+  const [step, setStep] = useState(preset ? 1 : 0)
+  const [phone, setPhone] = useState(preset?.phone ?? '')
   const [otp, setOtp] = useState('')
   const [otpSent, setOtpSent] = useState(0)
-  const [phoneToken, setPhoneToken] = useState(null)
+  const [phoneToken, setPhoneToken] = useState(preset?.phoneToken ?? null)
   const [form, setForm] = useState({ name: '', email: '', password: '', companyName: '', industry: '', size: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')

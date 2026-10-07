@@ -45,7 +45,7 @@ export default function LoginScreen({ navigation }) {
     try {
       await signIn(email, password)
     } catch (err) {
-      setError(errorMessage(err, 'Couldn’t sign in. Please try again.'))
+      setError(err?.response?.status === 401 ? 'Invalid email or password. New to Mzobs? Tap Register below.' : errorMessage(err, 'Couldn’t sign in. Please try again.'))
       setLoading(false)
     }
   }
@@ -56,14 +56,20 @@ export default function LoginScreen({ navigation }) {
     setLoading(true)
     try {
       const phoneToken = await authService.verifyOtp(phone, otp)
-      const data = await authService.phoneLogin(phone, phoneToken)
-      startSession(data)
+      try {
+        startSession(await authService.phoneLogin(phone, phoneToken))
+        return
+      } catch (err) {
+        // No account for this number → carry on to sign-up with the number already verified.
+        if (err?.response?.status === 404) {
+          setLoading(false)
+          navigation.replace('Register', { phone, phoneToken })
+          return
+        }
+        throw err
+      }
     } catch (err) {
-      setError(
-        err?.response?.status === 404
-          ? 'No account found for this number. Register to create one.'
-          : errorMessage(err, 'Couldn’t sign in. Please try again.')
-      )
+      setError(errorMessage(err, 'Couldn’t sign in. Please try again.'))
       setLoading(false)
     }
   }
