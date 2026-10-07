@@ -7,6 +7,7 @@ import { Container } from '../components/mz/primitives'
 import SearchTop from '../components/mz/home/SearchTop'
 import UrgentHiringSection from '../components/mz/home/UrgentHiringSection'
 import JobMarketplace from '../components/sections/home/JobMarketplace'
+import HotJobsByCity from '../components/sections/home/HotJobsByCity'
 import CareerSidebar from '../components/mz/home/CareerSidebar'
 import JobSidePanel from '../components/mz/home/JobSidePanel'
 import RecommendedCard from '../components/mz/home/RecommendedCard'
@@ -88,6 +89,7 @@ export default function Home() {
         <UrgentHiringSection />
 
         <CategorySection onSelect={applyJobFilters} />
+        <HotJobsByCity />
         <CompaniesSection onSelect={applyJobFilters} />
         <CampusSection />
         <EmployerStrip />

@@ -1003,6 +1003,10 @@
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
+@keyframes mzMarqueeY {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
 @keyframes mzDash {
   to { stroke-dashoffset: -24; }
 }
@@ -1022,6 +1026,10 @@
 .mz-marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
 .mz-marquee-track { display: flex; width: max-content; animation: mzMarquee 60s linear infinite; }
 .mz-marquee:hover .mz-marquee-track, .mz-marquee:focus-within .mz-marquee-track { animation-play-state: paused; }
+.mz-vmarquee { overflow: hidden; -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent); }
+.mz-vmarquee-track { display: flex; flex-direction: column; animation: mzMarqueeY 40s linear infinite; }
+.mz-vmarquee-reverse { animation-direction: reverse; }
+.mz-vmarquee:hover .mz-vmarquee-track, .mz-vmarquee:focus-within .mz-vmarquee-track { animation-play-state: paused; }
 .mz-skeleton {
   background: linear-gradient(90deg, #eceef6 25%, #f6f7fb 37%, #eceef6 63%);
   background-size: 400% 100%;
@@ -1029,7 +1037,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mz-float, .mz-float-alt, .mz-marquee-track, .mz-skeleton { animation: none !important; }
+  .mz-float, .mz-float-alt, .mz-marquee-track, .mz-vmarquee-track, .mz-skeleton { animation: none !important; }
+  .mz-vmarquee { overflow-y: auto; -webkit-mask-image: none; mask-image: none; }
   .mz-marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
 }
 
