@@ -14,7 +14,7 @@ export default function FinalCTA() {
           </p>
           <Link
             to={CLIENT_ONLY_ROUTES.associateApply}
-            className="group mt-6 inline-flex h-[50px] items-center gap-2 rounded-full bg-gradient-to-r from-[#0b7a6d] to-[#0b7a6d] px-6 text-[15px] font-bold text-white shadow-[0_14px_30px_-10px_rgba(11, 122, 109,0.5)] transition-transform duration-200 hover:-translate-y-0.5"
+            className="group mt-6 inline-flex h-[50px] items-center gap-2 rounded-full bg-gradient-to-r from-[#0b7a6d] to-[#0b7a6d] px-6 text-[15px] font-bold text-white shadow-[0_14px_30px_-10px_rgba(11,122,109,0.5)] transition-transform duration-200 hover:-translate-y-0.5"
           >
             Start Your Associate Application
             <ArrowRight size={17} className="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />

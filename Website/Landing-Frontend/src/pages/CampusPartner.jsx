@@ -11,7 +11,7 @@ export default function CampusPartner() {
   }, [])
 
   return (
-    <div className="mz-home min-h-screen bg-mz-bg font-sans text-mz-ink antialiased">
+    <div className="mz-home min-h-screen bg-white font-sans text-mz-ink antialiased">
       <Navbar />
       <main>
         <CampusRegister />

@@ -2,16 +2,14 @@ import { useEffect } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import AssociateHero from '../components/associate/AssociateHero'
-import NetworkStats from '../components/associate/NetworkStats'
 import WhyAssociate from '../components/associate/WhyAssociate'
 import HowItWorks from '../components/associate/HowItWorks'
 import CityNetwork from '../components/associate/CityNetwork'
 import PartnerFit from '../components/associate/PartnerFit'
-import MzobsEcosystem from '../components/associate/MzobsEcosystem'
 import TrustSection from '../components/associate/TrustSection'
+import FAQ from '../components/associate/FAQ'
 import OfficialApplication from '../components/associate/OfficialApplication'
 import AssociateCTA from '../components/associate/AssociateCTA'
-import '../components/associate/associate.css'
 
 export default function Associate() {
   useEffect(() => {
@@ -25,13 +23,12 @@ export default function Associate() {
       <Navbar />
       <main>
         <AssociateHero />
-        <NetworkStats />
         <WhyAssociate />
         <HowItWorks />
         <CityNetwork />
         <PartnerFit />
-        <MzobsEcosystem />
         <TrustSection />
+        <FAQ />
         <OfficialApplication />
         <AssociateCTA />
       </main>

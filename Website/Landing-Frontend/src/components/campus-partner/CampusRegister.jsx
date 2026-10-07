@@ -1,24 +1,20 @@
-import { useCallback, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight, BadgeCheck, Briefcase, Building2, Check, GraduationCap, Handshake, Headset, LineChart, Plus, Users } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Container } from '../mz/primitives'
-import CampusModal from './CampusModal'
+import { CLIENT_ONLY_ROUTES } from '../../lib/routes'
 
-const FEATURES = [
-  { label: 'Verified Opportunities', icon: BadgeCheck },
-  { label: 'Career Readiness', icon: GraduationCap },
-  { label: 'Industry Connections', icon: Handshake },
+const POINTS = [
+  'Verified opportunities for your students',
+  'Career readiness and industry connections',
+  'A dedicated Mzobs contact for your institution',
 ]
 
-const ease = [0.22, 1, 0.36, 1]
-
 const BENEFITS = [
-  { title: 'Verified jobs & internships', text: 'Relevant, screened opportunities for your students.', icon: BadgeCheck },
-  { title: 'Career preparation', text: 'Resume, interview and skill readiness support.', icon: GraduationCap },
-  { title: 'Employer access', text: 'Direct connections with companies hiring freshers.', icon: Building2 },
-  { title: 'Campus hiring drives', text: 'Help organising placement drives and hiring events.', icon: Users },
-  { title: 'Placement insights', text: 'A clearer view of where your students are heading.', icon: LineChart },
-  { title: 'A dedicated contact', text: 'One Mzobs point of contact for your institution.', icon: Headset },
+  { title: 'Verified jobs & internships', text: 'Relevant, screened opportunities for your students.' },
+  { title: 'Career preparation', text: 'Resume, interview and skill readiness support.' },
+  { title: 'Employer access', text: 'Direct connections with companies hiring freshers.' },
+  { title: 'Campus hiring drives', text: 'Help organising placement drives and hiring events.' },
+  { title: 'Placement insights', text: 'A clearer view of where your students are heading.' },
+  { title: 'A dedicated contact', text: 'One Mzobs point of contact for your institution.' },
 ]
 
 const STEPS = [
@@ -34,198 +30,96 @@ const FAQ = [
   { q: 'How long does verification take?', a: 'We aim to get back to you soon after reviewing your details. Share accurate contact information to speed it up.' },
 ]
 
-const reveal = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-60px' },
-  transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-}
-const rise = (delay = 0) => ({
-  initial: { opacity: 0, y: 14 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, delay, ease },
-})
-
-function Chip({ icon: Icon, eyebrow, title, accent, calm, delay = 0 }) {
-  return (
-    <motion.div
-      animate={calm ? undefined : { y: [0, -3, 0] }}
-      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay }}
-      className="flex min-w-0 flex-1 flex-col items-center gap-2 text-center"
-    >
-      <span className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-[0_8px_20px_-10px_rgba(7,59,58,0.35)] ring-1 ${accent ? 'text-[#0f8b7d] ring-[#0f8b7d]/20' : 'text-[#0F8B7D] ring-[#0F8B7D]/15'}`}>
-        <Icon size={21} aria-hidden="true" />
-      </span>
-      <span>
-        <span className="block text-[10.5px] font-bold uppercase tracking-[0.14em] text-mz-muted">{eyebrow}</span>
-        <span className="block text-[15px] font-extrabold leading-tight text-[#073B3A] sm:text-[17px]">{title}</span>
-      </span>
-    </motion.div>
-  )
-}
-
-function PreviewCard({ calm }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 22 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.9, delay: 0.3, ease }}
-      className="relative mx-auto mt-9 w-full max-w-[580px]"
-    >
-      <div className="absolute -inset-6 rounded-[40px] bg-[radial-gradient(ellipse_at_50%_60%,rgba(15, 139, 125,0.18),transparent_70%)] blur-xl" aria-hidden="true" />
-      <motion.div
-        animate={calm ? undefined : { y: [0, -4, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        className="relative rounded-[24px] border border-white/80 bg-white/70 px-5 py-6 shadow-[0_30px_60px_-28px_rgba(7,59,58,0.35)] ring-1 ring-[#073B3A]/[0.06] backdrop-blur-xl sm:px-8 sm:py-7"
-      >
-        <div className="flex items-center gap-2 sm:gap-4">
-          <Chip icon={GraduationCap} eyebrow="Your" title="Campus" calm={calm} />
-          <ArrowRight size={16} className="mt-[-26px] shrink-0 text-[#0F8B7D]/60" aria-hidden="true" />
-          <motion.div
-            animate={calm ? undefined : { y: [0, -3, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-            className="flex min-w-0 flex-1 flex-col items-center gap-2 text-center"
-          >
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#073B3A] text-[22px] font-extrabold text-white shadow-[0_12px_26px_-10px_rgba(7,59,58,0.7)]">
-              m
-            </span>
-            <span className="block text-[17px] font-extrabold leading-tight text-[#073B3A]">Mzobs</span>
-          </motion.div>
-          <ArrowRight size={16} className="mt-[-26px] shrink-0 text-[#0F8B7D]/60" aria-hidden="true" />
-          <Chip icon={Briefcase} eyebrow="More" title="Opportunities" accent calm={calm} delay={2} />
-        </div>
-        <p className="mt-5 border-t border-[#073B3A]/[0.07] pt-4 text-center text-[13px] text-mz-muted">
-          Connecting students with the right opportunities.
-        </p>
-      </motion.div>
-    </motion.div>
-  )
-}
+const btn = 'inline-flex h-12 items-center rounded-md bg-[#0b7a6d] px-6 text-[15px] font-semibold text-white hover:bg-[#096558] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b7a6d]'
+const h2 = 'text-[26px] font-extrabold text-[#101828] sm:text-[32px]'
 
 export default function CampusRegister() {
-  const calm = useReducedMotion()
-  const [open, setOpen] = useState(false)
-  const openModal = useCallback(() => setOpen(true), [])
-  const closeModal = useCallback(() => setOpen(false), [])
-
   return (
     <>
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#E6F5F1] via-[#F1F4FB] to-[#F8FAFC] pb-8 pt-24 sm:pt-28">
-        <div className="pointer-events-none absolute -left-32 top-10 h-[380px] w-[380px] rounded-full bg-[#0F8B7D]/[0.16] blur-3xl" aria-hidden="true" />
-        <div className="pointer-events-none absolute -right-32 top-24 h-[420px] w-[420px] rounded-full bg-[#0f8b7d]/[0.16] blur-3xl" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(#073B3A_1px,transparent_1px)] [background-size:26px_26px] opacity-[0.045]" aria-hidden="true" />
-        <Container className="relative">
-          <div className="mx-auto max-w-[700px] text-center">
-            <motion.p {...rise(0)} className="text-[11.5px] font-bold uppercase tracking-[0.24em] text-[#0F8B7D]">
-              For Campuses
-            </motion.p>
-            <motion.h1 {...rise(0.08)} className="mt-3 text-[38px] font-extrabold leading-[1.05] tracking-[-0.035em] text-[#073B3A] sm:text-[52px] lg:text-[58px]">
-              Bring Your <span className="bg-gradient-to-r from-[#0F8B7D] to-[#0f8b7d] bg-clip-text text-transparent">Campus</span>
-              <br /> to Mzobs.
-            </motion.h1>
-            <motion.p {...rise(0.16)} className="mx-auto mt-4 max-w-[500px] text-[15.5px] leading-relaxed text-mz-ink-2 sm:text-[17px]">
+      <section className="border-b border-[#E6E8F0] bg-[#F8FAFC] pb-14 pt-28 lg:pb-20 lg:pt-36">
+        <Container className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+          <div>
+            <p className="text-[13px] font-bold uppercase tracking-wide text-[#0b7a6d]">For Campuses</p>
+            <h1 className="mt-3 text-[34px] font-extrabold leading-[1.15] text-[#101828] sm:text-[44px]">Add your campus to Mzobs</h1>
+            <p className="mt-4 max-w-xl text-[16.5px] leading-relaxed text-[#475467]">
               Connect your students with verified opportunities, career preparation and industry connections.
-            </motion.p>
-            <motion.div {...rise(0.24)} className="mt-6">
-              <button
-                type="button"
-                onClick={openModal}
-                className="inline-flex h-[52px] items-center gap-2 rounded-full bg-[#073B3A] px-8 text-[15.5px] font-bold text-white shadow-[0_14px_30px_-14px_rgba(7,59,58,0.75)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#0F8B7D]"
-              >
-                <Plus size={18} aria-hidden="true" />
-                Add Your Campus
-              </button>
-              <p className="mt-2.5 text-[12px] text-mz-muted">For colleges · universities · institutions</p>
-            </motion.div>
+            </p>
+            <div className="mt-7">
+              <Link to={CLIENT_ONLY_ROUTES.campusPartnerApply} className={btn}>Add Your Campus</Link>
+              <p className="mt-2.5 text-[13px] text-[#475467]">For colleges, universities and institutions</p>
+            </div>
           </div>
 
-          <PreviewCard calm={calm} />
-
-          <motion.ul {...rise(0.5)} className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
-            {FEATURES.map(({ label, icon: Icon }) => (
-              <li key={label} className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[#073B3A]/80">
-                <Check size={13} strokeWidth={3} className="text-[#0F8B7D]" aria-hidden="true" />
-                <Icon size={14} className="text-[#0F8B7D]" aria-hidden="true" />
-                {label}
-              </li>
-            ))}
-          </motion.ul>
-        </Container>
-      </section>
-
-      <section className="bg-[#F8FAFC] py-14 sm:py-16">
-        <Container>
-          <motion.div {...reveal} className="mx-auto max-w-[1000px]">
-            <p className="text-center text-[11.5px] font-bold uppercase tracking-[0.24em] text-[#0F8B7D]">What your campus gets</p>
-            <h2 className="mx-auto mt-2 max-w-[560px] text-center text-[26px] font-extrabold tracking-tight text-[#073B3A] sm:text-[32px]">
-              Everything students need, <span className="text-[#0f8b7d]">in one place.</span>
-            </h2>
-            <div className="mt-9 grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
-              {BENEFITS.map(({ title, text, icon: Icon }) => (
-                <div key={title} className="flex gap-3.5">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0F8B7D]/10 text-[#0F8B7D]">
-                    <Icon size={19} aria-hidden="true" />
-                  </span>
-                  <div>
-                    <p className="text-[15.5px] font-bold text-[#073B3A]">{title}</p>
-                    <p className="mt-0.5 text-[13.5px] leading-relaxed text-mz-muted">{text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </Container>
-      </section>
-
-      <section className="border-t border-[#073B3A]/[0.07] bg-white py-14 sm:py-16">
-        <Container>
-          <motion.div {...reveal} className="mx-auto max-w-[900px]">
-            <h2 className="text-center text-[26px] font-extrabold tracking-tight text-[#073B3A] sm:text-[32px]">How it works</h2>
-            <ol className="mt-9 grid gap-8 sm:grid-cols-3">
-              {STEPS.map(({ title, text }, i) => (
-                <li key={title} className="text-center sm:text-left">
-                  <span className="text-[34px] font-extrabold leading-none tracking-tight text-[#0f8b7d]/70">0{i + 1}</span>
-                  <p className="mt-2 text-[16px] font-bold text-[#073B3A]">{title}</p>
-                  <p className="mt-1 text-[13.5px] leading-relaxed text-mz-muted">{text}</p>
+          <div className="rounded-lg border border-[#E6E8F0] bg-white p-6">
+            <h2 className="text-[16px] font-bold text-[#101828]">What you get</h2>
+            <ul className="mt-4 space-y-3">
+              {POINTS.map((p) => (
+                <li key={p} className="flex gap-3 text-[14.5px] leading-snug text-[#475467]">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#0b7a6d]" aria-hidden="true" />
+                  {p}
                 </li>
               ))}
-            </ol>
-          </motion.div>
+            </ul>
+          </div>
         </Container>
       </section>
 
-      <section className="border-t border-[#073B3A]/[0.07] bg-[#F8FAFC] py-14 sm:py-16">
+      <section className="bg-white py-14 lg:py-20">
         <Container>
-          <motion.div {...reveal} className="mx-auto max-w-[760px]">
-            <h2 className="text-center text-[26px] font-extrabold tracking-tight text-[#073B3A] sm:text-[32px]">Good to know</h2>
-            <div className="mt-8 divide-y divide-[#073B3A]/10 rounded-2xl border border-[#073B3A]/10 bg-white">
-              {FAQ.map(({ q, a }) => (
-                <details key={q} className="group px-5 py-4">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-semibold text-[#073B3A]">
-                    {q}
-                    <Plus size={16} className="shrink-0 text-[#0F8B7D] transition-transform duration-200 group-open:rotate-45" aria-hidden="true" />
-                  </summary>
-                  <p className="mt-2 text-[14px] leading-relaxed text-mz-muted">{a}</p>
-                </details>
-              ))}
-            </div>
-          </motion.div>
+          <h2 className={h2}>What your campus gets</h2>
+          <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {BENEFITS.map(({ title, text }) => (
+              <li key={title} className="rounded-lg border border-[#E6E8F0] p-5">
+                <h3 className="text-[15.5px] font-bold text-[#101828]">{title}</h3>
+                <p className="mt-2 text-[14px] leading-relaxed text-[#475467]">{text}</p>
+              </li>
+            ))}
+          </ul>
         </Container>
       </section>
 
-      <section className="border-t border-[#073B3A]/[0.07] bg-[#F8FAFC] py-9 text-center">
-        <h2 className="text-[20px] font-extrabold tracking-tight text-[#073B3A] sm:text-[22px]">Ready to connect your campus?</h2>
-        <button
-          type="button"
-          onClick={openModal}
-          className="group mt-4 inline-flex h-[48px] items-center gap-2 rounded-full bg-[#073B3A] px-7 text-[15px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#0F8B7D]"
-        >
-          Add Your Campus
-          <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
-        </button>
+      <section className="border-y border-[#E6E8F0] bg-[#F8FAFC] py-14 lg:py-20">
+        <Container>
+          <h2 className={h2}>How it works</h2>
+          <ol className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {STEPS.map(({ title, text }, i) => (
+              <li key={title} className="rounded-lg border border-[#E6E8F0] bg-white p-5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#0b7a6d] text-[14px] font-bold text-white">{i + 1}</span>
+                <h3 className="mt-3 text-[15.5px] font-bold text-[#101828]">{title}</h3>
+                <p className="mt-1.5 text-[14px] leading-relaxed text-[#475467]">{text}</p>
+              </li>
+            ))}
+          </ol>
+        </Container>
       </section>
 
-      <CampusModal open={open} onClose={closeModal} />
+      <section className="bg-white py-14 lg:py-20">
+        <Container>
+          <h2 className={h2}>Frequently asked questions</h2>
+          <div className="mt-6 max-w-3xl divide-y divide-[#EAECF0] rounded-lg border border-[#E6E8F0] bg-white">
+            {FAQ.map(({ q, a }) => (
+              <details key={q} className="group px-5 py-4">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-bold text-[#101828] [&::-webkit-details-marker]:hidden">
+                  {q}
+                  <span className="text-[20px] leading-none text-[#475467] group-open:hidden" aria-hidden="true">+</span>
+                  <span className="hidden text-[20px] leading-none text-[#475467] group-open:inline" aria-hidden="true">−</span>
+                </summary>
+                <p className="mt-2.5 text-[14px] leading-relaxed text-[#475467]">{a}</p>
+              </details>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-[#101828] py-14 text-white lg:py-16">
+        <Container className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+          <div>
+            <h2 className="text-[24px] font-extrabold sm:text-[28px]">Ready to connect your campus?</h2>
+            <p className="mt-1.5 text-[15px] text-white/70">Submit your details and our team will get back to you.</p>
+          </div>
+          <Link to={CLIENT_ONLY_ROUTES.campusPartnerApply} className={btn}>Add Your Campus</Link>
+        </Container>
+      </section>
     </>
   )
 }

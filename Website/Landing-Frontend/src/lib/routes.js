@@ -24,6 +24,7 @@ export const CLIENT_ONLY_ROUTES = {
   associate: '/associate',
   associateApply: '/associate/apply',
   campusPartner: '/add-your-campus',
+  campusPartnerApply: '/add-your-campus/apply',
   // old links — redirect to /ally (see App.jsx)
   allyLegacy: '/campus-mantri',
   dootLegacy: '/doot',

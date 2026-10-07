@@ -1,42 +1,23 @@
-import { Briefcase, Building2, GraduationCap, MapPin, ShieldCheck } from 'lucide-react'
-import { Container, Reveal } from '../mz/primitives'
+import { Container } from '../mz/primitives'
 
-const TYPES = [
-  { icon: Briefcase, title: 'Placement Consultants' },
-  { icon: Building2, title: 'Recruitment Agencies' },
-  { icon: MapPin, title: 'Local Hiring Partners' },
-  { icon: GraduationCap, title: 'Career & Placement Organizations' },
-]
+const TYPES = ['Placement Consultants', 'Recruitment Agencies', 'Local Hiring Partners', 'Career & Placement Organizations']
 
 export default function PartnerFit() {
   return (
-    <section className="relative bg-white py-16 lg:py-24">
+    <section className="border-y border-[#E6E8F0] bg-[#F8FAFC] py-14 lg:py-20">
       <Container>
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-          <Reveal>
-            <h2 className="text-[28px] font-extrabold tracking-[-0.02em] text-[#101828] sm:text-[36px]">Are you the right fit?</h2>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-[#475467]">
-              We&rsquo;re looking to work with genuine organizations that care about connecting people with meaningful job opportunities.
-            </p>
-            <div className="mt-6 inline-flex items-center gap-2.5 rounded-2xl bg-[#E6F6F3] px-4 py-3">
-              <ShieldCheck size={18} className="shrink-0 text-[#0F8F83]" aria-hidden="true" />
-              <span className="text-[13px] font-bold text-[#0F8F83]">Every associate request is reviewed before onboarding</span>
-            </div>
-          </Reveal>
-
-          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {TYPES.map(({ icon: Icon, title }, i) => (
-              <Reveal as="li" key={title} delay={i * 0.08}>
-                <div className="group flex h-full flex-col gap-3 rounded-[18px] border border-[#E6E8F0] bg-[#F8FAFC] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#0b7a6d]/40 hover:bg-white hover:shadow-[0_20px_40px_-20px_rgba(11, 122, 109,0.25)]">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-[11px] bg-[#EEF2FF] text-[#0b7a6d] transition-colors duration-300 group-hover:bg-gradient-to-br group-hover:from-[#0b7a6d] group-hover:to-[#0b7a6d] group-hover:text-white">
-                    <Icon size={18} aria-hidden="true" />
-                  </span>
-                  <span className="text-[14.5px] font-bold leading-snug text-[#101828]">{title}</span>
-                </div>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
+        <h2 className="text-[26px] font-extrabold text-[#101828] sm:text-[32px]">Who can apply</h2>
+        <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[#475467]">
+          We work with genuine organizations that care about connecting people with meaningful job opportunities.
+        </p>
+        <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {TYPES.map((t) => (
+            <li key={t} className="flex items-center gap-3 rounded-lg border border-[#E6E8F0] bg-white px-5 py-4 text-[15px] font-semibold text-[#101828]">
+              <span className="h-2 w-2 shrink-0 rounded-full bg-[#0b7a6d]" aria-hidden="true" />
+              {t}
+            </li>
+          ))}
+        </ul>
       </Container>
     </section>
   )
