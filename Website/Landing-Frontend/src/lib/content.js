@@ -543,7 +543,7 @@ export const CTA_BAND_DATA = {
 
 export const FOOTER_DATA = {
   logoSub: "HIRING PLATFORM",
-  desc: "Mzobs is where verified talent meets trusted opportunity, connecting people, skills, and employers to build better careers and better hiring.",
+  desc: "Mzobs is where verified talent meets trusted opportunity connecting people, skills, and employers to build better careers and better hiring.",
   ctaText: "Contact Us",
   menuTitle: "Menu",
   menuItems: [
