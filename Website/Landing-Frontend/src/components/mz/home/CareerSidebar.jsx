@@ -107,7 +107,7 @@ export default function CareerSidebar() {
 
           <p className="relative flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-mz-muted">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#12A89D] shadow-[0_0_8px_2px_rgba(18,168,157,0.45)]" aria-hidden="true" />
-            Your MZOBS
+            Your MZOBS Profile
           </p>
           <h2 id="career-tools-title" className="relative mt-1 text-[17px] font-bold text-[#123B5D]">
             {signedIn ? `Build your next move, ${session.employee?.name?.split(' ')[0] ?? 'there'}` : 'Build your next move'}
