@@ -117,6 +117,36 @@ export const STATIC_PAGE_SEO = {
     title: 'Lucknow Jobs: Openings Hiring Now | Mzobs',
     description: 'Browse job openings in Lucknow from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
+  '/jobs/city/ahmedabad': {
+    title: 'Ahmedabad Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Ahmedabad from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/jaipur': {
+    title: 'Jaipur Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Jaipur from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/chandigarh': {
+    title: 'Chandigarh Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Chandigarh from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/indore': {
+    title: 'Indore Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Indore from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/bhopal': {
+    title: 'Bhopal Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Bhopal from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/kochi': {
+    title: 'Kochi Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Kochi from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  // The "Explore all locations" page. Registered in server.js ahead of
+  // /jobs/:id, so "cities" is never looked up as a job id.
+  '/jobs/cities': {
+    title: 'Jobs by City: All Locations Hiring | Mzobs',
+    description: 'Explore job openings in every city Mzobs covers, with live opening counts for each location.',
+  },
 }
 
 // Auth/dashboard-handoff routes — never worth indexing, and never

@@ -5,7 +5,6 @@ import Reveal from '../../ui/Reveal'
 import ExplorerButton from '../../ui/ExplorerButton'
 import { HOT_CITIES_DATA } from '../../../lib/content'
 import { fetchHotCities } from '../../../lib/publicJobs'
-import { CLIENT_ONLY_ROUTES } from '../../../lib/routes'
 import { useInitialHomeData } from '../../../lib/initialHomeDataContext'
 
 function hashOf(str) {
@@ -198,7 +197,7 @@ export default function HotJobsByCity() {
           <h2 className="text-3xl sm:text-[32px] leading-[1.1] font-black text-(--explorer-navy) tracking-tight text-balance">{HOT_CITIES_DATA.title}</h2>
           <p className="mt-3 text-[15px] leading-relaxed text-(--explorer-muted)">{HOT_CITIES_DATA.subtitle}</p>
           <Link
-            to={CLIENT_ONLY_ROUTES.allCities}
+            to="/jobs/cities"
             className="group mt-5 inline-flex items-center gap-1.5 text-[14.5px] font-black text-(--explorer-blue) hover:text-(--explorer-blue-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--explorer-blue) rounded-lg"
           >
             Explore all locations
