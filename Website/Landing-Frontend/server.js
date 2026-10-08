@@ -12,7 +12,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { buildHeadHtml } from './src/lib/renderHead.js'
-import { buildJobSeo, canonicalPath, NOINDEX_PREFIXES, SITE_URL, STATIC_PAGE_SEO } from './src/lib/seoData.js'
+import { buildJobSeo, canonicalPath, CLIENT_ONLY_PAGE_SEO, NOINDEX_PREFIXES, SITE_URL, STATIC_PAGE_SEO } from './src/lib/seoData.js'
 import { buildSitemapXml, fetchAllPublicJobIds } from './src/lib/sitemap.js'
 import { CLIENT_ONLY_ROUTES } from './src/lib/routes.js'
 
@@ -337,7 +337,8 @@ app.get('*', (req, res) => {
   const noindex = NOINDEX_PREFIXES.some((prefix) => req.path.startsWith(prefix))
   const headHtml = buildHeadHtml({
     title: 'Mzobs | Careers & Hiring Platform',
-    description: 'Mzobs connects verified job seekers with employers hiring, one platform for candidates and companies.',
+    description: 'Mzobs connects verified job seekers with hiring employers on one platform.',
+    ...CLIENT_ONLY_PAGE_SEO[req.path],
     canonical: `${SITE_URL}${canonicalPath(req.path)}`,
     noindex,
   })

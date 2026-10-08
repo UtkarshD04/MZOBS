@@ -29,7 +29,7 @@ const LINK_GROUPS = [
       { label: 'Post a job', to: '/employers/signup' },
       { label: 'Hire with Mzobs', to: '/employers' },
       { label: 'Pricing', to: '/employers/pricing' },
-      { label: 'Employer login', to: '/employers/signin' },
+      { label: 'Employer sign in', to: '/employers/signin' },
     ],
   },
   {

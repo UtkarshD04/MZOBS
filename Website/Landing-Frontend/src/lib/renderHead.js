@@ -7,7 +7,8 @@ import { DEFAULT_OG_IMAGE } from './seoData.js'
 // handles React 19's title/meta head-hoisting for a partial (non-<html>)
 // render tree.
 function escapeHtml(value) {
-  return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  // An existing entity (e.g. &amp;) is left alone so a title is never double-encoded.
+  return String(value).replace(/&(?!(?:[a-z][a-z0-9]*|#\d+|#x[0-9a-f]+);)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
 export function buildHeadHtml({ title, description, canonical, noindex = false, jsonLd = null, ogImage = DEFAULT_OG_IMAGE, type = 'website' }) {

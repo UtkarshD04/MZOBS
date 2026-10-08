@@ -21,6 +21,21 @@ export function canonicalPath(path) {
 // Title/description for every prerendered public static route — kept in
 // sync with the routes registered in App.jsx and prerendered by
 // scripts/prerender.js.
+// Title/description for the client-only public pages (never prerendered, so
+// not in STATIC_PAGE_SEO) — used by server.js for their <head> tags.
+// TODO: /ally and /associate render only on the client, so their page content
+// is not server-rendered; only these head tags are. Listed for review.
+export const CLIENT_ONLY_PAGE_SEO = {
+  '/ally': {
+    title: 'Mzobs Ally | Represent Mzobs on Your Campus',
+    description: 'Become a Mzobs Ally: represent Mzobs on your campus, help classmates get hired and build real-world experience.',
+  },
+  '/associate': {
+    title: 'Associate with Mzobs | Partner With Us',
+    description: 'Partner with Mzobs to connect verified talent with employers who are hiring.',
+  },
+}
+
 export const STATIC_PAGE_SEO = {
   '/': {
     title: 'Mzobs | Talent × Opportunity × Smart Hiring',

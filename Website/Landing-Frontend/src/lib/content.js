@@ -554,7 +554,7 @@ export const FOOTER_DATA = {
   ],
   socialsTitle: "Socials",
   socialsItems: [
-    { label: "Instagram", href: "https://www.instagram.com/mzobs2601?igsi=MXA5ODdrZGFzbWptYw==" },
+    { label: "Instagram", href: "https://www.instagram.com/mzobs2601" },
     { label: "Facebook", href: "#" },
     { label: "LinkedIn", href: "#" },
     { label: "Twitter (X)", href: "#" },

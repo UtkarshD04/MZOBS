@@ -14,7 +14,7 @@ import AssociateCTA from '../components/associate/AssociateCTA'
 export default function Associate() {
   useEffect(() => {
     const prev = document.title
-    document.title = 'Become an Associate | Mzobs'
+    document.title = 'Associate with Mzobs | Partner With Us'
     return () => { document.title = prev }
   }, [])
 

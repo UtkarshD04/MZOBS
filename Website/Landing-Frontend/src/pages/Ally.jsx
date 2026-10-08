@@ -348,7 +348,7 @@ export default function Ally() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = 'Mzobs Ally | Carry Opportunities. Connect Talent.'
+    document.title = 'Mzobs Ally | Represent Mzobs on Your Campus'
     return () => { document.title = prev }
   }, [])
 
