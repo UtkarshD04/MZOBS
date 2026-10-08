@@ -54,7 +54,8 @@ export default function EmployerResdexSection() {
     <section id="discover-talent" className="relative overflow-hidden bg-white py-20 md:py-28 px-6 md:px-12">
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1fr_1fr] lg:gap-20">
         <FadeInView>
-          <h2 className="font-sans text-3xl sm:text-4xl md:text-[44px] font-bold text-(--explorer-navy) tracking-tight leading-[1.05]">
+          <span className="text-[12px] font-bold uppercase tracking-[0.16em] text-(--explorer-blue)">Candidate search</span>
+          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[44px] font-bold text-(--explorer-navy) tracking-tight leading-[1.05]">
             Find Talent Beyond the Applications.
           </h2>
           <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-(--explorer-muted)">
