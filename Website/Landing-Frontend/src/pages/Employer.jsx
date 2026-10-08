@@ -1,63 +1,57 @@
-import { useRef } from 'react'
 import Seo from '../components/Seo'
 import { STATIC_PAGE_SEO } from '../lib/seoData'
 import EmployerNavbar from '../components/layout/EmployerNavbar'
 import EmployerFooter from '../components/layout/EmployerFooter'
 import FloatingQuickNav from '../components/ui/FloatingQuickNav'
 import EmployerHero from '../components/sections/employer/EmployerHero'
-import EmployerWhySection from '../components/sections/employer/EmployerWhySection'
-import EmployerResdexSection from '../components/sections/employer/EmployerResdexSection'
-import EmployerJobPostingPreview from '../components/sections/employer/EmployerJobPostingPreview'
 import EmployerProcessSteps from '../components/sections/employer/EmployerProcessSteps'
+import EmployerSourcingSection from '../components/sections/employer/EmployerSourcingSection'
+import EmployerPipelineSection from '../components/sections/employer/EmployerPipelineSection'
 import EmployerSegments from '../components/sections/employer/EmployerSegments'
-import EmployerEcosystemSection from '../components/sections/employer/EmployerEcosystemSection'
+import EmployerTrustPrivacySection from '../components/sections/employer/EmployerTrustPrivacySection'
 import EmployerPricingTeaser from '../components/sections/employer/EmployerPricingTeaser'
 import EmployerFAQ from '../components/sections/employer/EmployerFAQ'
 import EmployerCTABand from '../components/sections/employer/EmployerCTABand'
-import { useEmployerSmoothScroll, useEdgeBounce } from '../lib/employerMotionHooks'
+import { useEmployerSmoothScroll } from '../lib/employerMotionHooks'
 
 export default function Employer() {
   useEmployerSmoothScroll()
-  const pageRef = useRef(null)
-  useEdgeBounce(pageRef)
   return (
-    <div ref={pageRef} className="min-h-screen bg-(--explorer-bg) text-(--explorer-navy) font-sans antialiased selection:bg-(--explorer-blue-surface)">
+    <div className="min-h-screen bg-(--explorer-bg) text-(--explorer-navy) font-sans antialiased selection:bg-(--explorer-blue-surface)">
       <Seo path="/employers" {...STATIC_PAGE_SEO['/employers']} />
-      <EmployerNavbar />
+      <EmployerNavbar overHero />
 
-      {/* 1. Hero — workflow visual + real company logos, no fake candidate data */}
-      <EmployerHero />
+      <main id="main">
+        {/* Hero — who it's for, primary actions, dashboard preview, client logos */}
+        <EmployerHero />
 
-      {/* 2. Everything You Need to Hire */}
-      <EmployerWhySection />
+        {/* 01 How an employer starts: account → plan → first job */}
+        <EmployerProcessSteps />
 
-      {/* 3. Find Talent Beyond the Applications */}
-      <EmployerResdexSection />
+        {/* 02 Job posting (inbound) + candidate search (outbound, #discover-talent) */}
+        <EmployerSourcingSection />
 
-      {/* 4. Turn Your Requirement Into an Opportunity */}
-      <EmployerJobPostingPreview />
+        {/* 03 How applications move: New → Shortlisted → Interview → Offered → Hired */}
+        <EmployerPipelineSection />
 
-      {/* 5. Simple hiring workflow: Post -> Discover -> Shortlist -> Interview -> Hire */}
-      <EmployerProcessSteps />
+        {/* 04 Audience tabs */}
+        <EmployerSegments />
 
-      {/* 6. Built for growing teams */}
-      <EmployerSegments />
+        {/* 05 Trust & privacy — only checks the Backend actually enforces */}
+        <EmployerTrustPrivacySection />
 
-      {/* 7. One platform, two sides of hiring */}
-      <EmployerEcosystemSection />
+        {/* 06 Pricing */}
+        <EmployerPricingTeaser />
 
-      {/* 8. Pricing */}
-      <EmployerPricingTeaser />
+        {/* 07 FAQs */}
+        <EmployerFAQ />
 
-      {/* 9. Employer FAQs (doubles as recruiter resources — no blog exists) */}
-      <EmployerFAQ />
-
-      {/* 10. Closing CTA */}
-      <EmployerCTABand />
+        {/* Closing CTA */}
+        <EmployerCTABand />
+      </main>
 
       <EmployerFooter />
 
-      {/* Floating quick-links button */}
       <FloatingQuickNav />
     </div>
   )

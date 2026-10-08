@@ -22,7 +22,7 @@ export function FadeInLoad({ children, delay = 0, className = '', ...props }) {
 // ScrollTrigger position shifted after fonts/images finished loading — never
 // reads as empty; worst case it's dimmed, never invisible. Mirrors the
 // autoAlpha floor useStoryProgress already uses successfully for process cards.
-export function FadeInView({ children, delay = 0, className = '', ...props }) {
+export function FadeInView({ as: Tag = 'div', children, delay = 0, className = '', ...props }) {
   const ref = useRef(null)
   useLayoutEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
@@ -34,5 +34,5 @@ export function FadeInView({ children, delay = 0, className = '', ...props }) {
     }, ref)
     return () => ctx.revert()
   }, [delay])
-  return <div ref={ref} className={className} {...props}>{children}</div>
+  return <Tag ref={ref} className={className} {...props}>{children}</Tag>
 }

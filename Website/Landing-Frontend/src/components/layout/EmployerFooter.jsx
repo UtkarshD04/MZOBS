@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Mail, MapPin, Phone } from 'lucide-react'
+import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react'
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6'
-import ExplorerButton from '../ui/ExplorerButton'
 import { FOOTER_DATA } from '../../lib/content'
 
 const SOCIAL_ICONS = {
@@ -34,49 +33,44 @@ const LINK_GROUPS = [
     title: 'Company',
     links: [
       { label: 'Our story', to: '/our-story' },
-      { label: 'Our story', to: '/our-story' },
+      { label: 'Become an Associate', to: '/associate' },
       { label: 'Contact us', to: '/contact' },
     ],
   },
 ]
 
 const linkClass =
-  'relative w-fit inline-block hover:text-(--explorer-blue) transition-colors after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-(--explorer-blue) after:transition-all after:duration-300 hover:after:w-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)'
+  'inline-flex min-h-8 items-center rounded-sm text-white/70 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5fe0b8]'
 
 const liveSocials = FOOTER_DATA.socialsItems.filter((item) => item.href && item.href !== '#')
 
-// Employer-section footer — same light --explorer-* system as the site-wide
-// Footer (not a separate dark employer identity), with the link groups
-// reordered so "For employers" leads.
+// Employer-section footer, shared by /employers, /employers/pricing and the
+// employer auth pages: a dark close with "For employers" leading the links.
 export default function EmployerFooter() {
   return (
-    <footer className="bg-white border-t border-(--explorer-border)">
-      <div className="h-1 bg-(image:--hero-cta-gradient)" aria-hidden="true" />
-
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-14 pb-8">
-        <div className="grid grid-cols-2 md:grid-cols-12 gap-x-8 gap-y-10">
-          <div className="col-span-2 md:col-span-4 space-y-5">
-            <Link to="/employers" className="block w-fit" aria-label="Mzobs for employers">
-              <img src="/images/logo.png" alt="Mzobs" className="h-24 w-auto object-contain -my-6 -ml-5" />
+    <footer className="bg-(--explorer-navy-deep) text-white">
+      <div className="mx-auto max-w-7xl px-4 pt-16 pb-8 sm:px-6 md:px-10">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-12">
+          <div className="col-span-2 space-y-5 md:col-span-4">
+            <Link to="/employers" className="block w-fit rounded-sm focus-visible:outline-2 focus-visible:outline-[#5fe0b8]" aria-label="Mzobs for employers">
+              <img src="/images/logo.png" alt="" className="-my-6 -ml-5 h-24 w-auto object-contain brightness-0 invert" />
             </Link>
-            <p className="text-[14px] text-(--explorer-muted) leading-relaxed max-w-sm">
-              Post jobs, discover relevant candidates, and manage your hiring pipeline, all on Mzobs.
+            <p className="max-w-sm text-[14px] leading-relaxed text-white/65">
+              Post jobs, search reviewed candidate resumes and manage your hiring pipeline, all on Mzobs.
             </p>
-
-            <div className="flex flex-wrap gap-3">
-              <ExplorerButton to="/" variant="secondary" size="md">
-                Looking for a job?
-              </ExplorerButton>
-              <ExplorerButton to="/employers/signup" variant="primary" size="md">
-                Post a Job
-              </ExplorerButton>
-            </div>
+            <Link
+              to="/employers/signup"
+              className="group inline-flex h-11 items-center gap-2 rounded-md bg-[#5fe0b8] px-5 text-[14px] font-bold text-(--explorer-navy-deep) transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Post a job
+              <ArrowRight size={15} aria-hidden="true" className="motion-safe:transition-transform motion-safe:group-hover:translate-x-1" />
+            </Link>
           </div>
 
           {LINK_GROUPS.map((group) => (
-            <nav key={group.title} aria-label={group.title} className="md:col-span-2 space-y-4">
-              <h4 className="text-[13px] font-extrabold uppercase tracking-wider text-(--explorer-navy)">{group.title}</h4>
-              <ul className="space-y-2.5 text-[14px] text-(--explorer-muted) font-medium">
+            <nav key={group.title} aria-label={group.title} className="space-y-3 md:col-span-2">
+              <h3 className="text-[12px] font-bold uppercase tracking-[0.14em] text-white/45">{group.title}</h3>
+              <ul className="space-y-1 text-[14px] font-medium">
                 {group.links.map((item) => (
                   <li key={item.label}>
                     <Link to={item.to} className={linkClass}>
@@ -88,37 +82,37 @@ export default function EmployerFooter() {
             </nav>
           ))}
 
-          <div className="col-span-2 md:col-span-2 space-y-4">
-            <h4 className="text-[13px] font-extrabold uppercase tracking-wider text-(--explorer-navy)">{FOOTER_DATA.contactTitle}</h4>
-            <ul className="space-y-3 text-[14px] text-(--explorer-muted) font-medium">
+          <div className="col-span-2 space-y-3 md:col-span-2">
+            <h3 className="text-[12px] font-bold uppercase tracking-[0.14em] text-white/45">{FOOTER_DATA.contactTitle}</h3>
+            <ul className="space-y-2 text-[14px] font-medium">
               <li className="flex items-start gap-2.5">
-                <Phone size={15} className="mt-1 shrink-0 text-(--explorer-blue)" aria-hidden="true" />
+                <Phone size={15} className="mt-2 shrink-0 text-[#5fe0b8]" aria-hidden="true" />
                 <a href={`tel:${FOOTER_DATA.phone.replace(/\s+/g, '')}`} className={linkClass}>
                   {FOOTER_DATA.phone}
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
-                <Mail size={15} className="mt-1 shrink-0 text-(--explorer-blue)" aria-hidden="true" />
+                <Mail size={15} className="mt-2 shrink-0 text-[#5fe0b8]" aria-hidden="true" />
                 <a href={`mailto:${FOOTER_DATA.email}`} className={`${linkClass} break-all`}>
                   {FOOTER_DATA.email}
                 </a>
               </li>
-              <li className="flex items-start gap-2.5">
-                <MapPin size={15} className="mt-1 shrink-0 text-(--explorer-blue)" aria-hidden="true" />
-                <span className="leading-relaxed">{FOOTER_DATA.address}</span>
+              <li className="flex items-start gap-2.5 pt-1">
+                <MapPin size={15} className="mt-1 shrink-0 text-[#5fe0b8]" aria-hidden="true" />
+                <span className="leading-relaxed text-white/70">{FOOTER_DATA.address}</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-(--explorer-border) flex flex-col-reverse md:flex-row items-center justify-between gap-5 text-[12.5px] text-(--explorer-muted) font-medium">
+        <div className="mt-14 flex flex-col-reverse items-center justify-between gap-5 border-t border-white/12 pt-6 text-[12.5px] font-medium text-white/55 md:flex-row">
           <p>{FOOTER_DATA.copyright}</p>
 
-          <div className="flex flex-col sm:flex-row items-center gap-x-6 gap-y-3">
+          <div className="flex flex-col items-center gap-x-6 gap-y-3 sm:flex-row">
             <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
               {FOOTER_DATA.rightLinks.map((link) => (
                 <li key={link.to}>
-                  <Link to={link.to} className="hover:text-(--explorer-blue) transition-colors">
+                  <Link to={link.to} className="inline-flex min-h-8 items-center transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-[#5fe0b8]">
                     {link.label}
                   </Link>
                 </li>
@@ -135,10 +129,10 @@ export default function EmployerFooter() {
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={item.label}
-                      className="w-9 h-9 rounded-full border border-(--explorer-border) bg-(--explorer-bg) flex items-center justify-center text-(--explorer-blue) transition-colors hover:bg-(--explorer-blue) hover:text-white hover:border-(--explorer-blue) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--explorer-blue)"
+                      aria-label={`Mzobs on ${item.label}`}
+                      className="grid h-10 w-10 place-items-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-[#5fe0b8] hover:bg-[#5fe0b8] hover:text-(--explorer-navy-deep) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5fe0b8]"
                     >
-                      {Icon && <Icon size={14} />}
+                      {Icon && <Icon size={14} aria-hidden="true" />}
                     </a>
                   )
                 })}
