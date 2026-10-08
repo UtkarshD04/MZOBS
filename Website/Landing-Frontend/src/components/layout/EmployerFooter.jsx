@@ -99,7 +99,7 @@ export default function EmployerFooter() {
               </li>
               <li className="flex items-start gap-2.5 pt-1">
                 <MapPin size={15} className="mt-1 shrink-0 text-[#5fe0b8]" aria-hidden="true" />
-                <span className="leading-relaxed text-white/70">{FOOTER_DATA.address}</span>
+                <span className="leading-relaxed text-white/70"><span className="font-bold text-white">Corporate Office:</span> {FOOTER_DATA.address}</span>
               </li>
             </ul>
           </div>

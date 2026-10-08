@@ -89,7 +89,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin size={15} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />
-                <span className="leading-relaxed">{FOOTER_DATA.address}</span>
+                <span className="leading-relaxed"><span className="font-bold text-(--explorer-navy)">Corporate Office:</span> {FOOTER_DATA.address}</span>
               </li>
             </ul>
           </div>

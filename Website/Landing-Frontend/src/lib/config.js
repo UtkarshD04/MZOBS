@@ -65,4 +65,4 @@ export const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY ?? ''
 
 export const CONTACT_EMAIL = 'support@mzobs.com'
 export const CONTACT_PHONE = '+91 8756992444'
-export const CONTACT_ADDRESS = 'Yogiraj Tower, near Madhurima Sweets, Vibhuti Khand, Gomti Nagar, Lucknow'
+export const CONTACT_ADDRESS = '401, Experio Building, Vibhuti Khand, Gomti Nagar, Lucknow (UP) - 226010'
