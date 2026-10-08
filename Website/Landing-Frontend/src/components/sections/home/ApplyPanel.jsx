@@ -136,7 +136,7 @@ function SignupPrompt({ job, onCreateAccount }) {
   return (
     <div className="rounded-xl border border-(--jobs-border) bg-(--jobs-bg-subtle) p-4">
       <p className="text-[13px] text-(--jobs-ink-soft) leading-relaxed">
-        New to Mzobs? Create a free account, you'll confirm your phone, then come straight back to apply for{' '}
+        New to Mzobs? Create a free account. You'll confirm your phone, then come straight back to apply for{' '}
         <span className="font-semibold text-(--jobs-navy)">{job.title}</span>.
       </p>
       <button
@@ -513,7 +513,7 @@ export default function ApplyPanel({ job, onClose }) {
           <div>
             <h3 className="font-extrabold text-lg text-(--jobs-navy) leading-snug">Resume under review</h3>
             <p className="mt-1.5 text-[13px] text-(--jobs-ink-soft) leading-relaxed">
-              Your resume is with the Mzobs team for review. Once it's approved you'll be able to apply to {job.title}, check back shortly.
+              Your resume is with the Mzobs team for review. Once it's approved, you'll be able to apply to {job.title}. Check back shortly.
             </p>
           </div>
         </div>
@@ -531,7 +531,7 @@ export default function ApplyPanel({ job, onClose }) {
         </h3>
         <p className="mt-1.5 text-[13px] text-(--jobs-ink-soft) leading-relaxed">
           {resumeStatus === 'changes'
-            ? "Mzobs asked for a few changes before this can be approved, upload an updated version."
+            ? "Mzobs asked for a few changes before this can be approved. Please upload an updated version."
             : resumeStatus === 'rejected'
               ? 'Your last upload was rejected. Upload a new resume to try again.'
               : "PDF or Word, up to 5MB. Mzobs reviews it before you're eligible to apply."}

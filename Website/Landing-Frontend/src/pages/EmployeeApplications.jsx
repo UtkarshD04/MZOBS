@@ -218,7 +218,7 @@ function InterviewsSection({ interviews, mock, status }) {
         <>
           {upcoming.length === 0 && past.length === 0 && !mockShown && (
             <p className="mt-2 text-[13.5px] leading-relaxed text-mz-muted">
-              Nothing scheduled yet. When an employer or the MZOBS team schedules an interview with you, the time, mode and joining details show up here.
+              Nothing scheduled yet. When an employer or the Mzobs team schedules an interview with you, the time, mode and joining details show up here.
             </p>
           )}
           {(upcoming.length > 0 || past.length > 0) && (
@@ -277,7 +277,7 @@ function MockInterview({ mock }) {
   return (
     <div className="mt-4 rounded-[10px] bg-mz-bg p-3.5">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[14px] font-semibold text-mz-ink">MZOBS mock interview</p>
+        <p className="text-[14px] font-semibold text-mz-ink">Mzobs mock interview</p>
         <span className="text-[12.5px] font-semibold text-mz-primary-strong">{MOCK_STATUS[mock.status] ?? mock.status}</span>
       </div>
       {mock.status === 'scheduled' && mock.when && (

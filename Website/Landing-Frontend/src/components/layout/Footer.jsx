@@ -18,7 +18,7 @@ const LINK_GROUPS = [
     links: [
       { label: 'Find jobs', to: '/#latest-jobs' },
       { label: 'Create profile', to: '/employees/signup' },
-      { label: 'Candidate login', to: '/employees/signin' },
+      { label: 'Candidate sign in', to: '/employees/signin' },
       { label: 'Mzobs Premium', to: '/employees/subscription' },
       { label: 'Mzobs Ally', to: '/ally' },
     ],

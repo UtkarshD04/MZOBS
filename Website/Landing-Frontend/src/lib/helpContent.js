@@ -116,7 +116,7 @@ export const FAQS = [
     category: 'applications',
     audience: 'seeker',
     question: 'How do I apply for a job?',
-    answer: 'Open any listing and click Apply Now. Make sure your profile and resume are up to date first, employers see your MZOBS profile alongside your application.',
+    answer: 'Open any listing and click Apply Now. Make sure your profile and resume are up to date first, employers see your Mzobs profile alongside your application.',
   },
   {
     id: 'application-status',
@@ -151,7 +151,7 @@ export const FAQS = [
     category: 'recruiters',
     audience: 'seeker',
     question: 'How do I contact an employer or recruiter?',
-    answer: 'Once you’ve applied to a role, replies from the employer arrive in your MZOBS messages and by email. We don’t currently support messaging a recruiter before applying.',
+    answer: 'Once you’ve applied to a role, replies from the employer arrive in your Mzobs messages and by email. We don’t currently support messaging a recruiter before applying.',
   },
   {
     id: 'report-suspicious',

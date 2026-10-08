@@ -1,17 +1,17 @@
 export const CANDIDATE_JOURNEY_DATA = {
   badge: "CANDIDATE WORKFLOW",
   title: "FROM PROFILE TO OPPORTUNITY",
-  subtitle: "Your journey with MZOBS, designed to take you one step closer to the right opportunity.",
+  subtitle: "Your journey with Mzobs, designed to take you one step closer to the right opportunity.",
   
   steps: [
     {
       id: "step-01",
       num: "01",
       title: "₹499 LIFETIME SUBSCRIPTION",
-      description: "Start your MZOBS journey with a one-time ₹499 subscription and get lifetime access to the candidate platform.",
+      description: "Start your Mzobs journey with a one-time ₹499 subscription and get lifetime access to the candidate platform.",
       align: "image-left",
       image: "/images/journey/step-01.png",
-      imageAlt: "Candidate starting MZOBS journey with lifetime subscription",
+      imageAlt: "Candidate starting Mzobs journey with lifetime subscription",
       shapeType: "arch-left",
       lineAccent: "from-teal-400 via-teal-300 to-teal-200"
     },
@@ -19,10 +19,10 @@ export const CANDIDATE_JOURNEY_DATA = {
       id: "step-02",
       num: "02",
       title: "UPLOAD YOUR RESUME",
-      description: "Upload your resume and share your skills, experience and career profile with MZOBS.",
+      description: "Upload your resume and share your skills, experience and career profile with Mzobs.",
       align: "image-right",
       image: "/images/journey/step-02.png",
-      imageAlt: "Uploading resume digitally on MZOBS candidate portal",
+      imageAlt: "Uploading resume digitally on Mzobs candidate portal",
       shapeType: "curve-right",
       lineAccent: "from-teal-300 via-teal-300 to-teal-200"
     },
@@ -55,7 +55,7 @@ export const CANDIDATE_JOURNEY_DATA = {
       description: "Your profile is categorised according to your skills and capabilities to identify suitable opportunities.",
       align: "image-left",
       image: "/images/journey/step-05.png",
-      imageAlt: "Recruiter categorising candidate skills and technical capabilities on MZOBS portal",
+      imageAlt: "Recruiter categorising candidate skills and technical capabilities on Mzobs portal",
       shapeType: "arch-left",
       lineAccent: "from-teal-200 via-amber-200 to-orange-200"
     }
@@ -63,7 +63,7 @@ export const CANDIDATE_JOURNEY_DATA = {
 
   cta: {
     title: "YOUR NEXT OPPORTUNITY STARTS HERE.",
-    subtitle: "Create your MZOBS profile and take the next step.",
+    subtitle: "Create your Mzobs profile and take the next step.",
     buttonText: "Create Your Profile"
   }
 }

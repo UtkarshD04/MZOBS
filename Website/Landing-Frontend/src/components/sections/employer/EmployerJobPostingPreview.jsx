@@ -24,7 +24,7 @@ export default function EmployerJobPostingPreview() {
             Turn Your Requirement Into an Opportunity.
           </h2>
           <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-(--explorer-muted)">
-            Share the role, must-have skills, location and budget, Mzobs turns it into a live posting candidates can find and apply to.
+            Share the role, must-have skills, location and budget, and Mzobs turns it into a live posting candidates can find and apply to.
           </p>
           <ExplorerButton to="/employers/signup" size="lg" className="mt-9">
             Post a Job <ArrowUpRight size={16} />

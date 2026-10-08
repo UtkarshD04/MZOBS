@@ -30,7 +30,7 @@ const KEPT = [
   'Payment and transaction records, kept for tax and accounting requirements',
   'Records needed for fraud prevention, security and dispute resolution',
   'Records we are legally required to retain',
-  'Details an employer already holds because your application was shared with them, these are anonymized on our side, and we cannot delete copies held by the employer',
+  'Details an employer already holds because your application was shared with them. These are anonymized on our side, and we cannot delete copies held by the employer',
 ]
 
 const EMPLOYER_STEPS = [

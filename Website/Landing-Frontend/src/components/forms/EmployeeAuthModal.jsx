@@ -38,7 +38,7 @@ export default function EmployeeAuthModal({ open, onClose }) {
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             role="dialog"
             aria-modal="true"
-            aria-label="Sign in or create an Mzobs account"
+            aria-label="Sign in or create a Mzobs account"
             className="fixed inset-x-0 bottom-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[101] w-full sm:max-w-md sm:rounded-[28px] rounded-t-[28px] bg-white border border-(--jobs-border) shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
           >
             <button

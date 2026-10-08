@@ -59,7 +59,7 @@ export default function EmployerLogosSection() {
             {title}
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-[14.5px] text-(--explorer-muted) leading-relaxed">
-            From renewable energy to steel and FMCG &mdash; real companies already growing their teams on Mzobs.
+            From renewable energy to steel and FMCG, real companies are already growing their teams on Mzobs.
           </p>
         </FadeInView>
 

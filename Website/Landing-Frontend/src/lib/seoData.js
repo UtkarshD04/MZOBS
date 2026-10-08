@@ -51,7 +51,7 @@ export const STATIC_PAGE_SEO = {
   },
   '/our-story': {
     title: 'Our Story | Mzobs',
-    description: 'How Mzobs began and where it is headed, the story behind the platform.',
+    description: 'How Mzobs began and where it is headed: the story behind the platform.',
   },
   '/employers': {
     title: 'For Employers | Mzobs',

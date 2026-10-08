@@ -140,7 +140,7 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
           <p className="text-[13px] text-mz-muted">{isPaid ? `Paid once${paidOn ? ` on ${dateFmt.format(new Date(paidOn))}` : ''} · valid for life` : 'Paid once, valid for life. No renewals.'}</p>
         </div>
         <ul className="mt-4 flex-1 space-y-2 text-[14px] text-mz-ink">
-          {['Get unlimited job applications', 'Receive human CV enhancement and an ATS score', 'Attend live technical, behavioural, and HR mock interviews', 'Experience one to one HR and career coaching with a personal roadmap', 'Gain premium visibility to recruiters'].map((t) => (
+          {['Get unlimited job applications', 'Get your CV enhanced by an expert, plus an ATS score', 'Attend live technical, behavioral, and HR mock interviews', 'Experience one to one HR and career coaching with a personal roadmap', 'Gain premium visibility to recruiters'].map((t) => (
             <li key={t} className="flex gap-2">
               <Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />
               {t}
@@ -180,7 +180,7 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
 function HowItWorks() {
   const steps = [
     ['Request', 'Pick a service and tell us what you need.'],
-    ['We schedule', 'The MZOBS team confirms a time or starts the work.'],
+    ['We schedule', 'The Mzobs team confirms a time or starts the work.'],
     ['Session / work', 'A live session, or our experts work on your CV or plan.'],
     ['Delivered', 'Feedback, files and next steps land in your account.'],
   ]
@@ -368,7 +368,7 @@ function ServicesSection({ plan, session, isPaid, requests, onRequest, onCancel,
     <section id="premium-services" aria-labelledby="services-title" className="scroll-mt-24">
       <h2 id="services-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Premium services</h2>
       <p className="mt-1 max-w-2xl text-[14px] text-mz-muted">
-        Delivered by the MZOBS team, not a bot. Request a service and follow it here from request to delivery.
+        Delivered by the Mzobs team, not a bot. Request a service and follow it here from request to delivery.
       </p>
       <div className="mt-4">
         <HowItWorks />
@@ -602,7 +602,7 @@ export default function EmployeeSubscription() {
     try {
       const created = await requestService(token, input)
       setRequests((r) => ({ status: 'ready', data: [created, ...r.data] }))
-      toast('Request sent. The MZOBS team will be in touch.', { tone: 'success' })
+      toast('Request sent. The Mzobs team will be in touch.', { tone: 'success' })
     } catch (err) {
       if (err.code === 'PREMIUM_REQUIRED') reloadProfile().catch(() => {})
       if (err.code === 'ALREADY_REQUESTED') setRequestsRetry((n) => n + 1)
@@ -678,7 +678,7 @@ export default function EmployeeSubscription() {
                 <div className="rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
                   <h2 id="never-title" className="text-[16px] font-bold text-mz-ink">You’re never charged for</h2>
                   <ul className="mt-3 space-y-2.5 text-[14px] text-mz-ink-2">
-                    <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Being shortlisted, employers pay MZOBS for shortlists.</li>
+                    <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Being shortlisted: it is always free for you.</li>
                     <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Getting placed, no success fee and no cut of your salary.</li>
                     <li className="flex gap-2"><X size={16} className="mt-0.5 shrink-0 text-mz-muted" aria-hidden="true" />No renewals: Premium is a single payment.</li>
                   </ul>

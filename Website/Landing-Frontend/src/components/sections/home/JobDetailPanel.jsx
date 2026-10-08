@@ -134,7 +134,7 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
         </div>
 
         <TrustRow icon={<Users size={14} aria-hidden="true" />}>
-          Applications are reviewed by MZOBS before being shared with the employer.
+          Applications are reviewed by Mzobs before being shared with the employer.
         </TrustRow>
 
         <p className="mt-2 flex items-center gap-1.5 text-[12px] text-(--explorer-muted)">

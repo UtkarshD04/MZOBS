@@ -47,9 +47,9 @@ const JOURNEY = ['Apply', 'Get selected', 'Get your Ally ID', 'Build your campus
 
 const FAQ = [
   ['What is a Mzobs Ally?', 'A Mzobs Ally is a student representative who helps connect their community with meaningful career opportunities, hiring initiatives, events and the Mzobs ecosystem.'],
-  ['Who can apply?', 'The Mzobs Ally program is open to 3rd and 4th year students, that is, students who have completed at least 4 semesters (for 8-semester/4-year courses) or the equivalent for your course length. 1st and 2nd year students are not eligible yet.'],
+  ['Who can apply?', 'The Mzobs Ally program is open to 3rd and 4th year students who have completed at least 4 semesters (for 8-semester/4-year courses) or the equivalent for their course length. 1st and 2nd year students are not eligible yet.'],
   ['What will I actually do?', 'You’ll discover opportunities worth sharing, bring students into the Mzobs ecosystem, create campus conversations and activities, and spread opportunities across your campus.'],
-  ['How do I apply?', 'Fill in the application below, about you, your campus, your experience and why Mzobs. It takes a few minutes and you can move back and forth between steps.'],
+  ['How do I apply?', 'Fill in the application below: about you, your campus, your experience and why Mzobs. It takes a few minutes and you can move back and forth between steps.'],
   ['What do I get as an Ally?', 'Early access to opportunities and events, a network of students, recruiters and professionals, recognition for your contribution, and room to build communication and leadership skills.'],
 ]
 
@@ -151,7 +151,7 @@ const EMPTY = { name: '', email: '', phone: '', college: '', city: '', course: '
 // bypassed by odd phrasing in the course field.
 const YEAR_OPTIONS = ['1st year', '2nd year', '3rd year', '4th year / final year']
 const ELIGIBLE_YEARS = new Set(['3rd year', '4th year / final year'])
-const YEAR_INELIGIBLE_MSG = 'Mzobs Ally is open to 3rd and 4th year students only (minimum 4 semesters completed for 8-semester courses), 1st and 2nd year students aren’t eligible yet.'
+const YEAR_INELIGIBLE_MSG = 'Mzobs Ally is open to 3rd and 4th year students only (minimum 4 semesters completed for 8-semester courses). 1st and 2nd year students aren’t eligible yet.'
 
 function validate(step, f) {
   const e = {}
@@ -295,9 +295,9 @@ function ApplicationForm({ f, set }) {
           )}
           {step === 2 && (
             <>
-              <h3>Your experience</h3><p className="s">Clubs, events, communities, projects, anything where you led or organised.</p>
+              <h3>Your experience</h3><p className="s">Clubs, events, communities, projects, anything where you led or organized.</p>
               <div className="cm-fgrid">
-                <div className="full"><Field textarea label="What have you led or organised?" name="experience" f={f} set={set} error={errors.experience} placeholder="A club, a fest, a group, a project…" autoFocus /></div>
+                <div className="full"><Field textarea label="What have you led or organized?" name="experience" f={f} set={set} error={errors.experience} placeholder="A club, a fest, a group, a project…" autoFocus /></div>
                 <div className="full"><Field textarea label="Campus communities you’re part of (optional)" name="involvement" f={f} set={set} placeholder="Clubs, societies, teams…" /></div>
               </div>
             </>

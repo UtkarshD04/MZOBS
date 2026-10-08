@@ -50,7 +50,7 @@ export default function Seo({ path, title, description, noindex = false, jsonLd 
     upsertLink('canonical', canonical)
     upsertMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow')
     upsertMeta('property', 'og:type', type)
-    upsertMeta('property', 'og:site_name', 'MZOBS')
+    upsertMeta('property', 'og:site_name', 'Mzobs')
     upsertMeta('property', 'og:title', title)
     upsertMeta('property', 'og:description', description)
     upsertMeta('property', 'og:url', canonical)

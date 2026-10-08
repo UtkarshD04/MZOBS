@@ -578,7 +578,7 @@ const SECTIONS = [
   {
     title: 'Changes to these terms',
     blocks: [
-      { p: 'Mzobs may update these Terms from time to time. The “Last Updated” date will be changed when the Terms are updated. Where required by applicable law, material changes may be communicated through the Services or other appropriate channels.' },
+      { p: 'Mzobs may update these Terms from time to time. The “Last updated” date will be changed when the Terms are updated. Where required by applicable law, material changes may be communicated through the Services or other appropriate channels.' },
       { p: 'Continued use of the Services after the effective date of updated Terms constitutes acceptance of the updated Terms, to the extent permitted by applicable law.' },
     ],
   },

@@ -13,7 +13,7 @@ export default function SafetyBanner({ onLearnMore }) {
         <div className="flex-1 min-w-0">
           <h3 className="text-[13px] font-black uppercase tracking-wide text-(--explorer-navy)">Your safety matters</h3>
           <p className="mt-1 text-[14px] text-(--explorer-navy)/75 font-medium leading-relaxed max-w-2xl">
-            Never share passwords, OTPs, banking PINs or other sensitive financial information with anyone claiming to represent MZOBS.
+            Never share passwords, OTPs, banking PINs or other sensitive financial information with anyone claiming to represent Mzobs.
           </p>
         </div>
         <button

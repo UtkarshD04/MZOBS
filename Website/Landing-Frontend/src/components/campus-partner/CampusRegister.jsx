@@ -12,7 +12,7 @@ const BENEFITS = [
   { title: 'Verified jobs & internships', text: 'Relevant, screened opportunities for your students.' },
   { title: 'Career preparation', text: 'Resume, interview and skill readiness support.' },
   { title: 'Employer access', text: 'Direct connections with companies hiring freshers.' },
-  { title: 'Campus hiring drives', text: 'Help organising placement drives and hiring events.' },
+  { title: 'Campus hiring drives', text: 'Help organizing placement drives and hiring events.' },
   { title: 'Placement insights', text: 'A clearer view of where your students are heading.' },
   { title: 'A dedicated contact', text: 'One Mzobs point of contact for your institution.' },
 ]

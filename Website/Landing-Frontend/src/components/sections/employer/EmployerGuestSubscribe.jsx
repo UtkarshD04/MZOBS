@@ -127,7 +127,7 @@ export default function EmployerGuestSubscribe({ open, onClose, plan }) {
               <>
                 <h3 className="font-sans text-2xl font-bold text-(--explorer-navy)">Add your mobile number</h3>
                 <p className="text-[13px] text-(--explorer-muted) mt-1.5 mb-6">
-                  We'll use this to reach you about your account, then take you straight to payment, no signup form to fill in.
+                  We'll use this to reach you about your account, then take you straight to payment, with no signup form to fill in.
                 </p>
 
                 {payError && <p className="text-[12.5px] text-red-600 mb-4 -mt-2">{payError}</p>}

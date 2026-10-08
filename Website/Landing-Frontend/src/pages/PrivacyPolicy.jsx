@@ -444,7 +444,7 @@ const SECTIONS = [
       },
       { h: 'With the Mzobs team' },
       {
-        p: 'Mzobs staff, including our operations team, can access account, profile, resume, application, payment and request information to the extent needed for verification, support, premium services and platform safety. Staff access is limited to authorised team members.',
+        p: 'Mzobs staff, including our operations team, can access account, profile, resume, application, payment and request information to the extent needed for verification, support, premium services and platform safety. Staff access is limited to authorized team members.',
       },
       { h: 'With service providers' },
       {

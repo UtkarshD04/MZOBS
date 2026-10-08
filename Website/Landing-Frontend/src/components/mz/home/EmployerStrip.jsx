@@ -10,7 +10,7 @@ export default function EmployerStrip() {
         <div className="flex flex-col gap-4 rounded-[12px] border border-mz-line bg-white px-5 py-5 sm:flex-row sm:items-center sm:gap-6 sm:px-6">
           <div>
             <h2 id="employer-strip-title" className="text-[16px] font-semibold text-mz-ink">Hiring for your team?</h2>
-            <p className="mt-0.5 text-[14px] text-mz-muted">Post a requirement with MZOBS.</p>
+            <p className="mt-0.5 text-[14px] text-mz-muted">Post a requirement with Mzobs.</p>
           </div>
           <Link
             to="/employers"

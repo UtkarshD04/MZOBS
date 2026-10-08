@@ -132,7 +132,7 @@ function ReportModal({ onClose }) {
           ) : (
             <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
               <p className="text-[13.5px] text-(--explorer-muted) font-medium leading-relaxed">
-                Help us keep MZOBS safe and trustworthy, every report is reviewed by our team.
+                Help us keep Mzobs safe and trustworthy, every report is reviewed by our team.
               </p>
 
               <div className="flex flex-col gap-2">
@@ -241,7 +241,7 @@ export default function ProblemReport() {
           <h3 className="text-[19px] sm:text-[21px] font-black text-(--explorer-navy) tracking-tight text-balance">
             Spotted something that doesn't look right?
           </h3>
-          <p className="mt-1.5 text-[14px] text-(--explorer-muted) font-medium">Help us keep MZOBS safe and trustworthy.</p>
+          <p className="mt-1.5 text-[14px] text-(--explorer-muted) font-medium">Help us keep Mzobs safe and trustworthy.</p>
         </div>
         <button
           type="button"

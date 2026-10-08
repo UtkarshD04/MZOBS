@@ -60,7 +60,7 @@ export default function EmployerFooter() {
               <img src="/images/logo.png" alt="Mzobs" className="h-24 w-auto object-contain -my-6 -ml-5" />
             </Link>
             <p className="text-[14px] text-(--explorer-muted) leading-relaxed max-w-sm">
-              Post jobs, discover relevant candidates, and manage your hiring pipeline, the employer side of Mzobs.
+              Post jobs, discover relevant candidates, and manage your hiring pipeline, all on Mzobs.
             </p>
 
             <div className="flex flex-wrap gap-3">

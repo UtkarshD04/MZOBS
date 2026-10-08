@@ -518,7 +518,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
             <h2 className="text-base font-black text-(--jobs-navy)">Continue with Email</h2>
           </div>
           <p className="text-[13px] text-(--jobs-ink-soft) mt-1 mb-5 ml-6">
-            Enter your email and we will send you a 6-digit code. If you already have an account it opens, otherwise we will create one.
+            Enter your email and we will send you a 6-digit code. If you already have an account, we'll sign you in; otherwise, we'll create one.
           </p>
 
           <Field label="Email address">

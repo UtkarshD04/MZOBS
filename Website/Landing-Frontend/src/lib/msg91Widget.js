@@ -62,7 +62,7 @@ function loadWidget() {
       const poll = () => {
         if (typeof window.sendOtp === 'function') return resolve()
         if (Date.now() - start > TIMEOUT_MS) {
-          return reject(new Error('OTP widget did not initialize in time. Check that this domain is whitelisted in the MSG91 widget settings.'))
+          return reject(new Error('Could not start OTP verification. Please refresh the page and try again.'))
         }
         setTimeout(poll, POLL_MS)
       }

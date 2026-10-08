@@ -5,7 +5,7 @@ import { MessageCircleQuestion, X } from 'lucide-react'
 
 const LINKS = [
   { label: 'Contact Us', to: '/contact' },
-  { label: 'Employee Login', to: '/employees/signin' },
+  { label: 'Job Seeker Sign In', to: '/employees/signin' },
   { label: 'Employer Login', to: '/employers/signin' },
 ]
 

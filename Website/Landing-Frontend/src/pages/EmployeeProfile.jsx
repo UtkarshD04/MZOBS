@@ -383,11 +383,11 @@ export default function EmployeeProfile() {
                       {isPaid ? <ShieldCheck size={19} className="text-(--jobs-teal)" /> : <CreditCard size={19} className="text-white/80" />}
                     </div>
                     <div>
-                      <p className="text-[14.5px] font-black">{isPaid ? 'Placement Support Programme, active' : `Unlock premium for ₹${profile.subscription?.amount ?? 499}`}</p>
+                      <p className="text-[14.5px] font-black">{isPaid ? 'Mzobs Premium, active' : `Unlock premium for ₹${profile.subscription?.amount ?? 499}`}</p>
                       <p className="text-[12.5px] text-white/65 mt-1 max-w-md leading-relaxed">
                         {isPaid
                           ? `${profile.subscription?.paidOn ? `Paid on ${new Date(profile.subscription.paidOn).toLocaleDateString('en-IN')} · ` : ''}One-time payment · valid for life`
-                          : 'Resume review, mock interviews and priority visibility to employers, one-time fee, no renewal.'}
+                          : 'Resume review, mock interviews and priority visibility to employers. One-time fee, no renewal.'}
                       </p>
                     </div>
                   </div>

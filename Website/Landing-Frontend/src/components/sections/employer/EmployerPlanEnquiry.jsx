@@ -77,7 +77,7 @@ export default function EmployerPlanEnquiry({ open, onClose }) {
                   <CheckCircle2 size={28} className="text-(--explorer-blue)" />
                 </div>
                 <h3 className="font-sans text-2xl font-bold text-(--explorer-navy)">We'll call you soon.</h3>
-                <p className="text-[13px] text-(--explorer-muted) mt-1.5">Thanks, our team has your details and will reach out with a plan built for your hiring needs.</p>
+                <p className="text-[13px] text-(--explorer-muted) mt-1.5">Thanks! Our team has your details and will reach out with a plan built for your hiring needs.</p>
                 <button
                   type="button"
                   onClick={handleClose}

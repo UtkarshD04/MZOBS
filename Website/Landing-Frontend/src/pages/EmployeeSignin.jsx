@@ -14,7 +14,7 @@ export default function EmployeeSignin() {
         <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
           <div className="lg:hidden mb-6">
             <span className="inline-flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-(--jobs-blue-dark) uppercase">
-              MZOBS Careers
+              Mzobs Careers
             </span>
             <h1 className="mt-2 text-[22px] font-black leading-tight text-(--jobs-navy) tracking-tight">
               Welcome back.

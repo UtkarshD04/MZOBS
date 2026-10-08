@@ -48,7 +48,7 @@ export const HERO_DATA = {
   titleLine1: "Hiring, Built",
   titleItalic: "Right From",
   titleLine2: "Both Sides.",
-  subtitle: "MZOBS brings talent and opportunity together, connecting job seekers with employers through smart matching and one simple hiring workflow.",
+  subtitle: "Mzobs brings talent and opportunity together, connecting job seekers with employers through smart matching and one simple hiring workflow.",
   ctaText: "Get Started",
   bgImage: "/images/hero-bg.jpg",
   rotatingPrefix: "It's time to",
@@ -289,7 +289,7 @@ export const OUR_GOAL_DATA = {
   titlePrefix: "Turning ",
   titleItalic: "Hiring",
   titleSuffix: " Into a Smarter Match",
-  desc: "MZOBS is built to make hiring faster and more relevant for both sides, helping job seekers showcase their skills and helping employers discover candidates who better fit their requirements.",
+  desc: "Mzobs is built to make hiring faster and more relevant for both sides, helping job seekers showcase their skills and helping employers discover candidates who better fit their requirements.",
   ctaText: "Meet Our Team",
   image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
 }
@@ -421,7 +421,7 @@ export const APPROACH_DATA = {
       num: "02",
       icon: BarChart2,
       title: "Set Your Preferences",
-      desc: "Job seekers share the roles, locations and work modes they want, and employers define must-have skills, so MZOBS knows what a good match looks like for both sides.",
+      desc: "Job seekers share the roles, locations and work modes they want, and employers define must-have skills, so Mzobs knows what a good match looks like for both sides.",
       image: "/images/new_images/step_02.jpg"
     },
     {
@@ -435,7 +435,7 @@ export const APPROACH_DATA = {
       num: "04",
       icon: Target,
       title: "Connect & Hire",
-      desc: "Once the right opportunity and candidate come together, both sides can move forward with the hiring process through MZOBS.",
+      desc: "Once the right opportunity and candidate come together, both sides can move forward with the hiring process through Mzobs.",
       image: "/images/new_images/step_04.jpg"
     }
   ]
@@ -817,14 +817,14 @@ export const CAMPUS_NETWORK_DATA = {
   subtitle: "Connect your campus with top employers, real opportunities and a smarter path from learning to hiring.",
   count: 100,
   statLabel: "Colleges attached",
-  statNote: "Placement cells already on MZOBS",
-  ctaText: "Bring Your Campus to MZOBS",
+  statNote: "Placement cells already on Mzobs",
+  ctaText: "Bring Your Campus to Mzobs",
   ctaTo: "/contact"
 }
 
 export const HOME_EMPLOYER_CTA_DATA = {
   title: "Hiring for your team?",
-  subtitle: "Post a requirement and reach candidates MZOBS has matched to it, ranked by fit before they reach you.",
+  subtitle: "Post a requirement and reach candidates Mzobs has matched to it, ranked by fit before they reach you.",
   ctaText: "Post a requirement",
   ctaTo: "/employers/signup"
 }

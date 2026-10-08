@@ -87,7 +87,7 @@ export default function CareerSidebar() {
         {
           icon: ListChecks,
           title: 'Improve your application',
-          status: completion && (nextStep ? `Next: ${nextStep.label.toLowerCase()}` : 'Your profile has every detail'),
+          status: completion && (nextStep ? `Next: ${nextStep.label.toLowerCase()}` : 'Your profile is complete'),
           to: nextStep ? `/employees/profile#${nextStep.section}` : '/employees/profile',
         },
       ]

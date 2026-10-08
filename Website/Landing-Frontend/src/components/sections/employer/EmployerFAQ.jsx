@@ -7,7 +7,7 @@ import { CONTACT_EMAIL, CONTACT_PHONE } from '../../../lib/config'
 const FAQ_ITEMS = [
   {
     q: 'How do I create an employer account?',
-    a: 'Use the "Create account" tab above, or the sign-up page, enter your business email, name, company details and a password to get started. There is no sales call required.',
+    a: 'Go to the sign-up page and enter your business email, name, company details and a password to get started. There is no sales call required.',
   },
   {
     q: 'How do I post a job?',
@@ -19,11 +19,11 @@ const FAQ_ITEMS = [
   },
   {
     q: 'How are resumes and contact details protected?',
-    a: 'Every resume is manually reviewed by our team before a candidate is allowed to apply, and candidate details are only shared with the employer they applied to.',
+    a: 'Every resume is manually reviewed by our team before a candidate is allowed to apply. In candidate search, phone numbers, emails and resumes stay hidden until an employer unlocks them with a CV credit, and every unlock is logged.',
   },
   {
-    q: 'How can I contact MZOBS support?',
-    a: `Reach our team at ${CONTACT_EMAIL} or ${CONTACT_PHONE}, or use the "Talk to MZOBS" tab above to request a callback.`,
+    q: 'How can I contact Mzobs support?',
+    a: `Reach our team at ${CONTACT_EMAIL} or ${CONTACT_PHONE}.`,
   },
 ]
 
@@ -60,7 +60,7 @@ export default function EmployerFAQ() {
         <FadeInView className="lg:sticky lg:top-28 self-start">
           <h2 className="font-sans text-4xl sm:text-5xl font-bold text-(--explorer-navy) tracking-tight leading-[0.98]">Answers before you begin.</h2>
           <p className="mt-5 text-[15px] text-(--explorer-muted) leading-relaxed">
-            Everything you need to know about hiring on MZOBS. Still have questions?{' '}
+            Everything you need to know about hiring on Mzobs. Still have questions?{' '}
             <Link to="/contact" className="font-bold text-(--explorer-blue) underline decoration-(--explorer-blue) decoration-2 underline-offset-4 hover:text-(--explorer-blue-hover) transition-colors">
               Contact our team
             </Link>

@@ -92,7 +92,7 @@ export default function DeleteAccountForm() {
         </div>
         <h3 className="text-lg font-black text-(--explorer-navy)">Account deleted</h3>
         <p className="text-[13.5px] text-(--explorer-muted) mt-1.5 max-w-xs">
-          Your MZOBS account and associated personal data have been permanently deleted.
+          Your Mzobs account and associated personal data have been permanently deleted.
         </p>
         <Link to="/" className="text-xs font-bold text-(--explorer-muted) hover:text-(--explorer-navy) transition-colors mt-6">
           Back to home

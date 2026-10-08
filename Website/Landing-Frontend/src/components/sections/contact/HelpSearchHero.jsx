@@ -83,7 +83,7 @@ export default function HelpSearchHero({ faqs, onSelectFaq, onGoToContact }) {
 
       <div className="relative z-40 max-w-3xl mx-auto px-6 md:px-12 text-center">
         <Reveal direction="up" duration={0.5}>
-          <p className="text-[12px] font-bold uppercase tracking-[0.24em] text-(--explorer-blue)">MZOBS Support Center</p>
+          <p className="text-[12px] font-bold uppercase tracking-[0.24em] text-(--explorer-blue)">Mzobs Support Center</p>
         </Reveal>
 
         <Reveal direction="up" duration={0.55} delay={0.06}>
@@ -94,7 +94,7 @@ export default function HelpSearchHero({ faqs, onSelectFaq, onGoToContact }) {
 
         <Reveal direction="up" duration={0.5} delay={0.14}>
           <p className="mt-4 text-[15px] sm:text-base text-(--explorer-muted) leading-relaxed font-medium">
-            Find quick answers, explore helpful guides, or connect with the MZOBS support team.
+            Find quick answers, explore helpful guides, or connect with the Mzobs support team.
           </p>
         </Reveal>
 

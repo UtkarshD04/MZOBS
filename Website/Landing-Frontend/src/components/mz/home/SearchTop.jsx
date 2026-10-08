@@ -55,7 +55,7 @@ export default function SearchTop({ filters, onSearch }) {
           Your ambition deserves the right job.
         </h1>
         <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-mz-muted">
-          Live openings from employers hiring on MZOBS &mdash; verified companies are marked on every listing.
+          Live openings from employers hiring on Mzobs. Verified companies are marked on every listing.
         </p>
 
         <div className="relative mt-5">

@@ -9,7 +9,7 @@ import { StaggerGroup, StaggerItem } from '../../ui/Stagger'
 // rather just call now.
 export default function SupportOptions({ email, phone, onChat, onCallback }) {
   const methods = [
-    { icon: MessageCircle, label: 'Chat with us', desc: 'Get help from the MZOBS support team.', cta: 'Start a conversation', onClick: onChat },
+    { icon: MessageCircle, label: 'Chat with us', desc: 'Get help from the Mzobs support team.', cta: 'Start a conversation', onClick: onChat },
     { icon: Mail, label: 'Email support', desc: "Send us your question and we'll get back to you.", cta: 'Send an email', href: `mailto:${email}` },
     { icon: PhoneCall, label: 'Request a callback', desc: 'Tell us what you need help with.', cta: 'Request a callback', onClick: onCallback ?? onChat },
   ]

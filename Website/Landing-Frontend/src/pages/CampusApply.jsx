@@ -249,7 +249,7 @@ function Sent({ f }) {
       <p className="mx-auto mt-2 max-w-md text-[15px] text-[#475467]">
         Thank you, {f.contactPerson.split(' ')[0]}. The Mzobs team will review {f.campusName} and get in touch on {f.officialEmail}.
       </p>
-      <Link to={CLIENT_ONLY_ROUTES.campusPartner} className={`${primaryBtn} mt-6`}>Back to Add your campus</Link>
+      <Link to={CLIENT_ONLY_ROUTES.campusPartner} className={`${primaryBtn} mt-6`}>Back to Add Your Campus</Link>
     </div>
   )
 }

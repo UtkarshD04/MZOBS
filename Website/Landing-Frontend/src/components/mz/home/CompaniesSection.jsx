@@ -60,7 +60,7 @@ export default function CompaniesSection({ onSelect }) {
   return (
     <section id="companies" aria-labelledby="companies-title" className="relative scroll-mt-20 overflow-hidden border-t border-mz-line bg-white py-10 lg:py-12">
       <Container>
-        <h2 id="companies-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Companies hiring through MZOBS</h2>
+        <h2 id="companies-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Companies hiring through Mzobs</h2>
       </Container>
 
       <div className="mt-6">

@@ -29,7 +29,7 @@ export default function EmployerSignup() {
           <div className="lg:col-span-6">
             <FadeInLoad delay={0.08}>
               <h1 className="mt-6 font-sans text-[42px] sm:text-5xl md:text-[60px] font-bold leading-[0.96] tracking-[-0.04em] text-[#111827]">
-                Hire Quality Talent, <em className="font-sans font-normal text-[#075f55]">Not</em> A Stack Of Resumes.
+                Hire Quality Talent, <em className="font-sans font-normal text-[#075f55]">Not</em> A Stack of Resumes.
               </h1>
             </FadeInLoad>
 
