@@ -68,7 +68,7 @@ const CHAPTERS = [
     sub: '#7a3b2c',
     accent: '#E76F51',
     nodeIcon: Unlink,
-    heading: <>Hiring wasn’t broken by accident.</>,
+    heading: <>Hiring wasn’t working for anyone.</>,
     body: 'Job seekers were sending applications into systems that often felt like a black hole. Employers were receiving hundreds of applications and still struggling to find the right people.',
     punch: 'Both sides were searching. Neither side was being understood.',
     Visual: BrokenLinkVisual,

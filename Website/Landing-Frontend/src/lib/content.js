@@ -488,7 +488,7 @@ export const EMPLOYEE_APPROACH_DATA = {
 
 export const TRUSTED_LOGOS_DATA = {
   badge: "WHO HIRES ON MZOBS",
-  title: "Companies Hiring On Mzobs",
+  title: "Companies Hiring on Mzobs",
   logos: [
     { name: "AMPIN Energy Transition", logo: "/industry-logos/ampin.png" },
     { name: "Amplus Solar", logo: "/industry-logos/amplus.jpg" },
@@ -543,7 +543,7 @@ export const CTA_BAND_DATA = {
 
 export const FOOTER_DATA = {
   logoSub: "HIRING PLATFORM",
-  desc: "Mzobs is where verified talent meets trusted opportunity connecting people, skills, and employers to build better careers and better hiring.",
+  desc: "Mzobs is where verified talent meets trusted opportunity, connecting people, skills and employers to build better careers and better hiring.",
   ctaText: "Contact Us",
   menuTitle: "Menu",
   menuItems: [
