@@ -31,7 +31,7 @@ export function setVocabularyFrom(pool) {
   vocab.companyTypes = uniq(pool.map((c) => c.companyType))
   vocab.departments = uniq(pool.map((c) => c.department))
   vocab.degrees = uniq(pool.flatMap((c) => c.education.map((e) => e.degree)))
-  vocab.institutes = uniq(pool.flatMap((c) => c.education.map((e) => e.institute)))
+  vocab.institutes = uniq(pool.flatMap((c) => [c.college, ...c.education.map((e) => e.institute)]))
   vocab.languages = uniq(pool.flatMap((c) => c.languages ?? []))
   vocab.companies = uniq(pool.flatMap((c) => [c.currentCompany, ...c.workHistory.map((w) => w.company)]))
 }

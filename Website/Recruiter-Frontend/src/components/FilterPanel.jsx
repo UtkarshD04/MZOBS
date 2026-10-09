@@ -250,7 +250,7 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
 
         <Section title="Education" count={n(c.degree, c.institute, c.education, c.gradFrom != null || c.gradTo != null)}>
           {show('degree') && (<><Label>Degree</Label><Suggest id="dl-deg" value={c.degree} onChange={(degree) => set({ degree })} placeholder="e.g. B.Tech" options={vocab.degrees} /></>)}
-          {show('institute') && (<><Label>Institute</Label><Suggest id="dl-inst" value={c.institute} onChange={(institute) => set({ institute })} placeholder="College / university" options={vocab.institutes} /></>)}
+          {show('institute') && (<><Label>College / University</Label><Suggest id="dl-inst" value={c.institute} onChange={(institute) => set({ institute })} placeholder="College / university" options={vocab.institutes} /></>)}
           {show('gradYear') && (<><Label>Year of passing</Label><NumberPair a={c.gradFrom} b={c.gradTo} onA={(gradFrom) => set({ gradFrom })} onB={(gradTo) => set({ gradTo })} pa="From" pb="To" /></>)}
         </Section>
 

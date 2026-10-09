@@ -19,7 +19,7 @@ import PlanCredits from './pages/PlanCredits'
 import { refreshPlan } from './services/planService'
 import { useCompany } from './services/companyService'
 import GstGate from './components/GstGate'
-import { IS_DEMO, TOKEN_KEY, EMPLOYER_SIGNIN_URL } from './lib/config'
+import { IS_DEMO, GST_REQUIRED, TOKEN_KEY, EMPLOYER_SIGNIN_URL } from './lib/config'
 
 // Live mode needs an employer session, issued by the marketing site's
 // employer sign-in and handed over as a one-time code (see main.jsx). With no
@@ -61,7 +61,7 @@ export default function App() {
 // company's GSTIN is VERIFIED (the API refuses everything else anyway).
 function GstGatedApp({ ai, setAi, location }) {
   const { company, error, reload } = useCompany()
-  const verified = IS_DEMO || company?.gstVerification?.status === 'VERIFIED'
+  const verified = IS_DEMO || !GST_REQUIRED || company?.gstVerification?.status === 'VERIFIED'
   useEffect(() => {
     if (verified) refreshPlan()
   }, [verified])

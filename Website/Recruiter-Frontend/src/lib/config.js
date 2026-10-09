@@ -5,6 +5,11 @@ const ENV = import.meta.env ?? {}
 // own pipeline — see services/talentService.js); 'demo' searches a
 // clearly-labelled sample pool bundled with the app.
 export const TALENT_SOURCE = ENV.VITE_TALENT_SOURCE ?? 'live'
+// Keep in step with the backend's GST_VERIFICATION_REQUIRED: when false the
+// dashboard no longer sits behind the GST gate (verification stays available
+// on the Account page).
+export const GST_REQUIRED = false
+
 export const IS_DEMO = TALENT_SOURCE !== 'live'
 export const API_URL = ENV.VITE_API_URL ?? '/api/employer'
 // CV links are root-relative (`/files/resume/:token`) and must open on the API host. When
