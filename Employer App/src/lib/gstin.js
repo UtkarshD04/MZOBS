@@ -4,6 +4,9 @@
 const CHARSET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const GSTIN_RE = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/
 
+// Keep in step with the backend's GST_VERIFICATION_REQUIRED.
+export const GST_REQUIRED = false
+
 export const normalizeGstin = (value) => (typeof value === 'string' ? value.replace(/\s+/g, '').toUpperCase() : '')
 
 export function isValidGstin(value) {

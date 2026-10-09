@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { ArrowRight, ArrowLeft, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users, ShieldCheck, FileText } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users, ShieldCheck, FileText, AlertCircle, Loader2 } from 'lucide-react'
 import { isValidGstin, normalizeGstin } from '../../lib/gstin'
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
 import OtpInput from '../ui/OtpInput'
 import TermsConsent from '../ui/TermsConsent'
 import { GoogleAuthButton, OrDivider } from '../ui/GoogleAuthButton'
 import { decodeGoogleCredential } from '../../lib/googleCredential'
-import { signupEmployer, signupEmployerWithGoogle, verifyEmployerPhoneWidget, redirectToEmployerDashboard } from '../../lib/employerAuth'
+import { signupEmployer, signupEmployerWithGoogle, checkEmployerGst, verifyEmployerPhoneWidget, redirectToEmployerDashboard } from '../../lib/employerAuth'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91Widget'
 
 const COMPANY_SIZES = ['1–50 employees', '51–200 employees', '201–500 employees', '501–1000 employees', '1000+ employees']
 const RESEND_COOLDOWN = 30
 // Server codes from the mandatory GST check (Backend utils/gstVerification.js).
 const GSTIN_ERRORS = ['GSTIN_REQUIRED', 'INVALID_GSTIN', 'GSTIN_NOT_FOUND', 'INACTIVE_REGISTRATION', 'GSTIN_ALREADY_REGISTERED']
+const PROVIDER_ISSUES = ['GST_NOT_CONFIGURED', 'PROVIDER_ERROR', 'PROVIDER_TIMEOUT', 'PROVIDER_RATE_LIMITED', 'STATUS_UNKNOWN', 'RATE_LIMITED', 'UNAVAILABLE']
 const LEGAL_NAME_ERRORS = ['INVALID_LEGAL_NAME', 'NAME_MISMATCH']
 
 const initialForm = {
@@ -33,7 +34,7 @@ const STEP_META = {
   phone: { title: 'Verify your phone', sub: 'We’ll text you a 6-digit code to confirm it’s you.' },
   password: { title: 'Secure your account', sub: 'Choose a password with at least 8 characters.' },
   company: { title: 'Tell us about your company', sub: 'This helps us tailor candidates for you.' },
-  gst: { title: 'Verify your GST', sub: 'Last step. We check your GSTIN against the GST registry.' },
+  gst: { title: 'Add your GST (optional)', sub: 'Last step. You can skip this and add your GSTIN later.' },
 }
 
 function validateStep(step, form, acceptedTerms, phoneVerified, hasGoogle) {
@@ -58,10 +59,11 @@ function validateStep(step, form, acceptedTerms, phoneVerified, hasGoogle) {
     if (!form.size) errors.size = 'Please select a company size.'
   }
   if (step === 'gst') {
-    // GST verification is mandatory for every employer.
-    if (!form.gstin) errors.gstin = 'Please enter your company’s 15-character GSTIN.'
-    else if (!isValidGstin(form.gstin)) errors.gstin = 'That isn’t a valid GSTIN. Check the characters and the last (check) digit.'
-    if (!form.gstLegalName.trim()) errors.gstLegalName = 'Enter the legal name exactly as on your GST certificate.'
+    // GST is optional for now, but a GSTIN that is typed must be complete.
+    if (form.gstin) {
+      if (!isValidGstin(form.gstin)) errors.gstin = 'That isn’t a valid GSTIN. Check the characters and the last (check) digit.'
+      if (!form.gstLegalName.trim()) errors.gstLegalName = 'Enter the legal name exactly as on your GST certificate.'
+    }
     if (!acceptedTerms) errors.terms = 'Please accept the Terms & Conditions and Privacy Policy to create an account.'
   }
   return errors
@@ -91,6 +93,9 @@ export default function EmployerSignupForm({ header }) {
   const [googleCredential, setGoogleCredential] = useState(null)
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [stepIndex, setStepIndex] = useState(0)
+  // Result of the optional "Verify GSTIN" check on the last step:
+  // null | { kind: 'checking' | 'verified' | 'review' | 'unavailable' | 'error', message, field? }
+  const [gstCheck, setGstCheck] = useState(null)
   const steps = googleCredential ? ['account', 'phone', 'company', 'gst'] : ['account', 'phone', 'password', 'company', 'gst']
   const step = steps[Math.min(stepIndex, steps.length - 1)]
   const isLast = stepIndex >= steps.length - 1
@@ -118,6 +123,27 @@ export default function EmployerSignupForm({ header }) {
 
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }))
+    // Any edit to what was checked makes the previous GST result stale.
+    if (['gstin', 'gstLegalName', 'companyName'].includes(key)) setGstCheck(null)
+  }
+
+  async function handleCheckGst() {
+    const next = validateStep('gst', form, true, true, true)
+    if (next.gstin || next.gstLegalName) return setErrors(next)
+    setErrors({})
+    setGstCheck({ kind: 'checking' })
+    try {
+      const r = await checkEmployerGst({ gstin: normalizeGstin(form.gstin), gstLegalName: form.gstLegalName.trim(), companyName: form.companyName.trim() })
+      if (r.verified) setGstCheck({ kind: 'verified', message: 'GST verified. Your account will be activated right after signup.' })
+      else if (r.status === 'UNDER_REVIEW') setGstCheck({ kind: 'review', message: r.message })
+      else if (r.ok === false || r.status === 'FAILED' || r.status === 'ERROR') {
+        // Provider trouble is not the employer's mistake — let them continue.
+        if (PROVIDER_ISSUES.includes(r.code)) setGstCheck({ kind: 'unavailable', message: `${r.message} You can continue and we’ll verify it after signup.` })
+        else setGstCheck({ kind: 'error', message: r.message, field: LEGAL_NAME_ERRORS.includes(r.code) ? 'gstLegalName' : 'gstin' })
+      } else setGstCheck({ kind: 'unavailable', message: `${r.message || 'GST verification is unavailable right now.'} You can continue and we’ll verify it after signup.` })
+    } catch {
+      setGstCheck({ kind: 'unavailable', message: 'Couldn’t reach the GST service. You can continue and we’ll verify it after signup.' })
+    }
   }
 
   function updatePhone(value) {
@@ -216,7 +242,7 @@ export default function EmployerSignupForm({ header }) {
     // wrong GSTIN / legal name or an inactive registration refuses the signup
     // (shown on the GST fields); otherwise the account is created and, until
     // verified, opens on the dashboard's GST verification screen.
-    const gst = { gstin: normalizeGstin(form.gstin), gstLegalName: form.gstLegalName.trim() }
+    const gst = form.gstin ? { gstin: normalizeGstin(form.gstin), gstLegalName: form.gstLegalName.trim() } : {}
     try {
       const { token } = googleCredential
         ? await signupEmployerWithGoogle({
@@ -240,6 +266,7 @@ export default function EmployerSignupForm({ header }) {
   }
 
   const meta = STEP_META[step]
+  const gstTone = gstCheck?.kind
 
   return (
     <form onSubmit={handleSubmit} noValidate>
@@ -393,9 +420,9 @@ export default function EmployerSignupForm({ header }) {
         <>
           <p className="flex items-start gap-2 mb-4 text-[12.5px] text-[#4b5563]">
             <ShieldCheck size={14} className="shrink-0 mt-0.5 text-[#075f55]" />
-            Every company on Mzobs is verified against the GST registry. Your account is activated once your GSTIN is verified.
+            Add your GSTIN to have your company verified against the GST registry. Leave it blank to continue without.
           </p>
-          <Field label="GSTIN">
+          <Field label="GSTIN (optional)">
             <Input
               icon={FileText}
               autoFocus
@@ -405,14 +432,52 @@ export default function EmployerSignupForm({ header }) {
               maxLength={15}
               autoComplete="off"
               spellCheck={false}
-              className="font-mono uppercase tracking-wide"
+              className={`font-mono uppercase tracking-wide ${gstTone === 'verified' ? '!border-emerald-500 !bg-emerald-50' : ''} ${gstCheck?.kind === 'error' && gstCheck.field === 'gstin' ? '!border-red-500' : ''}`}
             />
             <span className={`text-xs mt-1 block ${errors.gstin ? 'text-red' : 'text-[#9E9E9E]'}`}>{errors.gstin || `${form.gstin.length}/15 characters`}</span>
           </Field>
-          <Field label="Legal name (as on GST certificate)">
-            <Input icon={Building2} value={form.gstLegalName} onChange={(e) => update('gstLegalName', e.target.value)} placeholder="e.g. Acme Private Limited" maxLength={200} />
+          <Field label="Legal name (as on GST certificate)" optional>
+            <Input
+              icon={Building2}
+              value={form.gstLegalName}
+              onChange={(e) => update('gstLegalName', e.target.value)}
+              placeholder="e.g. Acme Private Limited"
+              maxLength={200}
+              className={`${gstTone === 'verified' ? '!border-emerald-500 !bg-emerald-50' : ''} ${gstCheck?.kind === 'error' && gstCheck.field === 'gstLegalName' ? '!border-red-500' : ''}`}
+            />
             {errors.gstLegalName && <span className="text-xs text-red mt-1 block">{errors.gstLegalName}</span>}
           </Field>
+
+          {gstCheck && gstCheck.kind !== 'checking' && (
+            <div
+              role={gstCheck.kind === 'error' ? 'alert' : 'status'}
+              className={`flex items-start gap-2.5 mb-4 px-4 py-3 rounded-xl text-[13px] font-semibold ${
+                gstCheck.kind === 'verified' ? 'bg-emerald-50 text-emerald-700' : gstCheck.kind === 'error' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-800'
+              }`}
+            >
+              {gstCheck.kind === 'verified' ? <CheckCircle2 size={16} className="shrink-0 mt-0.5" /> : <AlertCircle size={16} className="shrink-0 mt-0.5" />}
+              <span>{gstCheck.message}</span>
+            </div>
+          )}
+
+          {form.gstin && gstCheck?.kind !== 'verified' && (
+            <button
+              type="button"
+              onClick={handleCheckGst}
+              disabled={gstCheck?.kind === 'checking' || status === 'submitting'}
+              className="mb-4 inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-[#075f55] text-[13px] font-bold text-[#075f55] hover:bg-[#075f55]/5 disabled:opacity-60 transition-colors"
+            >
+              {gstCheck?.kind === 'checking' ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Checking GST...
+                </>
+              ) : (
+                <>
+                  <ShieldCheck size={14} /> Verify GSTIN
+                </>
+              )}
+            </button>
+          )}
           <TermsConsent tone="careers" checked={acceptedTerms} onChange={setAcceptedTerms} error={errors.terms} className="mb-4" />
         </>
       )}
@@ -433,7 +498,7 @@ export default function EmployerSignupForm({ header }) {
         )}
         <SubmitButton disabled={status === 'submitting' || (isLast && !acceptedTerms) || (step === 'phone' && !phoneVerified)}>
           {status === 'submitting' ? (
-            'Verifying GST & creating your workspace...'
+            form.gstin ? 'Verifying GST & creating your workspace...' : 'Creating your workspace...'
           ) : isLast ? (
             <>
               Create your account <ArrowRight size={16} />

@@ -13,6 +13,20 @@ async function postJSON(path, body, token) {
   return data
 }
 
+// Dry-run of the signup GST check: resolves with { verified, status, code,
+// message, legalName } for any answer the server gives, so the form can show
+// the outcome before the account is created.
+export async function checkEmployerGst({ gstin, gstLegalName, companyName }) {
+  const res = await fetch(`${EMPLOYER_API_URL}/auth/check-gst`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ gstin, gstLegalName, companyName }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (res.status === 429) return { verified: false, status: 'ERROR', code: 'RATE_LIMITED', message: data.message ?? 'Too many checks. Please try again later.' }
+  return { verified: false, ...data, ok: res.ok && data.ok !== false }
+}
+
 export function loginEmployer({ email, password }) {
   return postJSON('/auth/login', { email, password })
 }

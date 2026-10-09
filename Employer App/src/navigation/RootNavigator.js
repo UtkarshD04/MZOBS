@@ -24,6 +24,7 @@ import CreateOfferScreen from '../screens/offers/CreateOfferScreen'
 import TeamScreen from '../screens/TeamScreen'
 import CompanyScreen from '../screens/CompanyScreen'
 import GstGateScreen from '../screens/GstGateScreen'
+import { GST_REQUIRED } from '../lib/gstin'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '../lib/queryClient'
 import { getCompany } from '../services/companyService'
@@ -37,7 +38,8 @@ export default function RootNavigator() {
   // their company's GSTIN is VERIFIED — the same record the website reads.
   // Seeded from the sign-in response so a verified account never flashes the gate.
   const companyQuery = useQuery({ queryKey: queryKeys.company, queryFn: getCompany, enabled: isAuthenticated, placeholderData: sessionCompany ?? undefined })
-  const gstVerified = companyQuery.data?.gstVerification?.status === 'VERIFIED'
+  // GST_REQUIRED mirrors the backend's GST_VERIFICATION_REQUIRED (off: no gate).
+  const gstVerified = !GST_REQUIRED || companyQuery.data?.gstVerification?.status === 'VERIFIED'
 
   const navTheme = {
     ...DefaultTheme,
