@@ -85,7 +85,9 @@ export default function JobListItem({ job, index = 0, onOpen, selected = false }
           <p className="mt-0.5 flex min-w-0 items-center gap-1 text-[13.5px] text-[#078B7D]/85">
             <span className="truncate">{job.company}</span>
             {job.verified && (
-              <BadgeCheck size={14} className="shrink-0 text-[#078B7D]" aria-label="Verified employer" role="img" />
+              <span className="ml-1 inline-flex shrink-0 items-center gap-0.5 rounded bg-[#E8F7F4] px-1.5 py-0.5 text-[11px] font-semibold text-[#078B7D]">
+                <BadgeCheck size={11} strokeWidth={2.6} aria-hidden="true" /> Verified
+              </span>
             )}
             {job.instantHiring && (
               <span className="ml-1 inline-flex shrink-0 items-center gap-0.5 rounded bg-amber-100 px-1.5 py-0.5 text-[11px] font-semibold text-amber-800">

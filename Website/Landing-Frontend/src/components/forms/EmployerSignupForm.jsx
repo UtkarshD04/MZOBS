@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+<<<<<<< Updated upstream
 import { ArrowRight, ArrowLeft, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users } from 'lucide-react'
+=======
+import { ArrowRight, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users, ShieldCheck, FileText } from 'lucide-react'
+import { isValidGstin, normalizeGstin } from '../../lib/gstin'
+>>>>>>> Stashed changes
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
 import OtpInput from '../ui/OtpInput'
 import TermsConsent from '../ui/TermsConsent'
@@ -11,6 +16,9 @@ import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91W
 
 const COMPANY_SIZES = ['1–50 employees', '51–200 employees', '201–500 employees', '501–1000 employees', '1000+ employees']
 const RESEND_COOLDOWN = 30
+// Server codes from the mandatory GST check (Backend utils/gstVerification.js).
+const GSTIN_ERRORS = ['GSTIN_REQUIRED', 'INVALID_GSTIN', 'GSTIN_NOT_FOUND', 'INACTIVE_REGISTRATION', 'GSTIN_ALREADY_REGISTERED']
+const LEGAL_NAME_ERRORS = ['INVALID_LEGAL_NAME', 'NAME_MISMATCH']
 
 const initialForm = {
   name: '',
@@ -20,6 +28,8 @@ const initialForm = {
   companyName: '',
   industry: '',
   size: '',
+  gstin: '',
+  gstLegalName: '',
 }
 
 const STEP_META = {
@@ -45,12 +55,26 @@ function validateStep(step, form, acceptedTerms, phoneVerified, hasGoogle) {
     if (!form.password) errors.password = 'Please create a password.'
     else if (form.password.length < 8) errors.password = 'Password must be at least 8 characters.'
   }
+<<<<<<< Updated upstream
   if (step === 'company') {
     if (!form.companyName.trim()) errors.companyName = 'Please enter your company name.'
     if (!form.industry.trim()) errors.industry = 'Please enter your industry.'
     if (!form.size) errors.size = 'Please select a company size.'
     if (!acceptedTerms) errors.terms = 'Please accept the Terms & Conditions and Privacy Policy to create an account.'
   }
+=======
+  if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
+  else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
+  else if (!phoneVerified) errors.phone = 'Please confirm your phone number with the OTP.'
+  if (!form.companyName.trim()) errors.companyName = 'Please enter your company name.'
+  if (!form.industry.trim()) errors.industry = 'Please enter your industry.'
+  if (!form.size) errors.size = 'Please select a company size.'
+  // GST verification is mandatory for every employer.
+  if (!form.gstin) errors.gstin = 'Please enter your company’s 15-character GSTIN.'
+  else if (!isValidGstin(form.gstin)) errors.gstin = 'That isn’t a valid GSTIN. Check the characters and the last (check) digit.'
+  if (!form.gstLegalName.trim()) errors.gstLegalName = 'Enter the legal name exactly as on your GST certificate.'
+  if (!acceptedTerms) errors.terms = 'Please accept the Terms & Conditions and Privacy Policy to create an account.'
+>>>>>>> Stashed changes
   return errors
 }
 
@@ -199,6 +223,11 @@ export default function EmployerSignupForm({ header }) {
     }
 
     setStatus('submitting')
+    // Mandatory GST: the server verifies it before creating the account. A
+    // wrong GSTIN / legal name or an inactive registration refuses the signup
+    // (shown on the GST fields); otherwise the account is created and, until
+    // verified, opens on the dashboard's GST verification screen.
+    const gst = { gstin: normalizeGstin(form.gstin), gstLegalName: form.gstLegalName.trim() }
     try {
       const { token } = googleCredential
         ? await signupEmployerWithGoogle({
@@ -208,12 +237,16 @@ export default function EmployerSignupForm({ header }) {
             industry: form.industry,
             size: form.size,
             phoneToken,
+            ...gst,
           })
-        : await signupEmployer({ ...form, phoneToken })
+        : await signupEmployer({ ...form, phoneToken, ...gst })
       await redirectToEmployerDashboard(token)
     } catch (err) {
       setStatus('idle')
-      setErrors({ form: err.message })
+      // GST refusals belong next to the field the employer has to fix.
+      if (GSTIN_ERRORS.includes(err.code)) setErrors({ gstin: err.message })
+      else if (LEGAL_NAME_ERRORS.includes(err.code)) setErrors({ gstLegalName: err.message })
+      else setErrors({ form: err.message })
     }
   }
 
@@ -369,6 +402,7 @@ export default function EmployerSignupForm({ header }) {
         </>
       )}
 
+<<<<<<< Updated upstream
       {errors.form && <p className="text-xs text-red mb-4">{errors.form}</p>}
 
       <div className="flex items-center gap-3 mt-2">
@@ -382,6 +416,47 @@ export default function EmployerSignupForm({ header }) {
           >
             <ArrowLeft size={18} />
           </button>
+=======
+      <div className="mt-2">
+        <SectionLabel>GST verification</SectionLabel>
+      </div>
+      <p className="flex items-start gap-2 -mt-1 mb-3 text-[12.5px] text-[#4b5563]">
+        <ShieldCheck size={14} className="shrink-0 mt-0.5 text-[#075f55]" />
+        Every company on Mzobs is verified against the GST registry. Your account is activated once your GSTIN is verified.
+      </p>
+
+      <div className="grid sm:grid-cols-2 gap-x-4">
+          <Field label="GSTIN">
+            <Input
+              icon={FileText}
+              value={form.gstin}
+              onChange={(e) => update('gstin', normalizeGstin(e.target.value).slice(0, 15))}
+              placeholder="e.g. 27AAPFU0939F1ZV"
+              maxLength={15}
+              autoComplete="off"
+              spellCheck={false}
+              className="font-mono uppercase tracking-wide"
+            />
+            {errors.gstin && <span className="text-xs text-red mt-1 block">{errors.gstin}</span>}
+          </Field>
+          <Field label="Legal name (as on GST certificate)">
+            <Input icon={Building2} value={form.gstLegalName} onChange={(e) => update('gstLegalName', e.target.value)} placeholder="e.g. Acme Private Limited" maxLength={200} />
+            {errors.gstLegalName && <span className="text-xs text-red mt-1 block">{errors.gstLegalName}</span>}
+          </Field>
+      </div>
+
+      <TermsConsent tone="careers" checked={acceptedTerms} onChange={setAcceptedTerms} error={errors.terms} className="mb-4" />
+
+      {errors.form && <p className="text-xs text-red mb-4 -mt-2">{errors.form}</p>}
+
+      <SubmitButton disabled={status === 'submitting' || !acceptedTerms} className="mt-2">
+        {status === 'submitting' ? (
+          'Verifying GST & creating your workspace...'
+        ) : (
+          <>
+            Create your account <ArrowRight size={16} />
+          </>
+>>>>>>> Stashed changes
         )}
         <SubmitButton disabled={status === 'submitting' || (isLast && !acceptedTerms) || (step === 'phone' && !phoneVerified)}>
             {status === 'submitting' ? (

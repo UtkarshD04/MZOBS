@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, ArrowRight, Users, Building2, Bookmark, Share2, Check, TrendingUp } from 'lucide-react'
+import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, ArrowRight, Users, Building2, Bookmark, Share2, Check, TrendingUp, BadgeCheck } from 'lucide-react'
 import ApplyPanel from './ApplyPanel'
 import ExplorerButton from '../../ui/ExplorerButton'
 import { isJobSaved, toggleJobSaved } from '../../../lib/savedJobs'
@@ -90,6 +90,11 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
                 <Building2 size={13} className="shrink-0 text-(--explorer-muted)" aria-hidden="true" />
                 {job.company}
               </span>
+              {job.verified && (
+                <span className="inline-flex shrink-0 items-center gap-0.5 rounded bg-[#E8F7F4] px-1.5 py-0.5 text-[11px] font-semibold text-[#078B7D]">
+                  <BadgeCheck size={11} strokeWidth={2.6} aria-hidden="true" /> Verified
+                </span>
+              )}
               <span aria-hidden="true">·</span>
               <span>{job.location}</span>
               {job.workMode && (

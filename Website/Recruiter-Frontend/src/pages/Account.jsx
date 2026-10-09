@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 import { Bell, CheckCheck, LifeBuoy, Mail, Settings as Cog, LogOut, CreditCard } from 'lucide-react'
 import { Button, EmptyState, Skeleton } from '../components/ui'
+import GstVerification from '../components/GstVerification'
 import { useWorkspace } from '../store/workspace'
 import { IS_DEMO } from '../lib/config'
 import { getSession, logout } from '../services/liveApi'
@@ -151,7 +152,7 @@ export function Settings() {
     </div>
   )
   return (
-    <Page title="Recruiter settings" sub="Your account and workspace.">
+    <Page title="Recruiter settings" sub="Your account, company verification and workspace.">
       <div className="space-y-5">
         <section className="rounded-2xl border border-line bg-white p-5 shadow-card">
           <h2 className="mb-1 flex items-center gap-2 text-[15px] font-semibold"><Cog size={15} className="text-muted" /> Account</h2>
@@ -164,6 +165,7 @@ export function Settings() {
             </dl>
           )}
         </section>
+        <GstVerification />
         <section className="rounded-2xl border border-line bg-white p-5 shadow-card">
           <h2 className="mb-3 text-[15px] font-semibold">Quick links</h2>
           <div className="flex flex-wrap gap-2">

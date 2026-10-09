@@ -17,6 +17,8 @@ import { Messages, Interviews, AITalent, Reports } from './pages/Workspaces'
 import { Notifications, Help, Settings } from './pages/Account'
 import PlanCredits from './pages/PlanCredits'
 import { refreshPlan } from './services/planService'
+import { useCompany } from './services/companyService'
+import GstGate from './components/GstGate'
 import { IS_DEMO, TOKEN_KEY, EMPLOYER_SIGNIN_URL } from './lib/config'
 
 // Live mode needs an employer session, issued by the marketing site's
@@ -51,10 +53,34 @@ export default function App() {
   useEffect(() => {
     if (!ok) window.location.href = EMPLOYER_SIGNIN_URL
   }, [ok])
-  useEffect(() => {
-    if (ok) refreshPlan()
-  }, [ok])
   if (!ok) return null
+  return <GstGatedApp ai={ai} setAi={setAi} location={location} />
+}
+
+// Mandatory GST verification: nothing but the verification screen until the
+// company's GSTIN is VERIFIED (the API refuses everything else anyway).
+function GstGatedApp({ ai, setAi, location }) {
+  const { company, error, reload } = useCompany()
+  const verified = IS_DEMO || company?.gstVerification?.status === 'VERIFIED'
+  useEffect(() => {
+    if (verified) refreshPlan()
+  }, [verified])
+
+  if (!IS_DEMO && !company) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-bg p-6 text-center">
+        {error ? (
+          <div>
+            <p className="text-[14px] text-ink-2">Couldn’t load your company.</p>
+            <button onClick={reload} className="mt-3 text-[13px] font-semibold text-accent hover:underline">Retry</button>
+          </div>
+        ) : (
+          <p className="text-[14px] text-muted">Loading…</p>
+        )}
+      </div>
+    )
+  }
+  if (!verified) return <GstGate company={company} onRefresh={reload} />
   return (
     <WorkspaceProvider>
       <TopNav onAskAI={() => setAi(true)} />

@@ -45,3 +45,11 @@ export function useDeleteCompanyMutation() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['companies'] }),
   })
 }
+
+export function useReviewCompanyGstMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, ...input }) => companiesService.reviewCompanyGst(id, input),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['companies'] }),
+  })
+}

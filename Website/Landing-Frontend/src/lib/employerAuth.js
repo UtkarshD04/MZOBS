@@ -9,7 +9,7 @@ async function postJSON(path, body, token) {
     body: JSON.stringify(body),
   })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.message ?? 'Something went wrong. Please try again.')
+  if (!res.ok) throw Object.assign(new Error(data.message ?? 'Something went wrong. Please try again.'), { code: data.code })
   return data
 }
 
@@ -17,16 +17,16 @@ export function loginEmployer({ email, password }) {
   return postJSON('/auth/login', { email, password })
 }
 
-export function signupEmployer({ companyName, name, email, phone, password, industry, size, website, hq, phoneToken }) {
-  return postJSON('/auth/signup', { companyName, name, email, phone, password, industry, size, website, hq, phoneToken })
+export function signupEmployer({ companyName, name, email, phone, password, industry, size, website, hq, phoneToken, gstin, gstLegalName }) {
+  return postJSON('/auth/signup', { companyName, name, email, phone, password, industry, size, website, hq, phoneToken, gstin, gstLegalName })
 }
 
 export function loginEmployerWithGoogle({ credential }) {
   return postJSON('/auth/google-login', { credential })
 }
 
-export function signupEmployerWithGoogle({ credential, companyName, phone, industry, size, website, hq, phoneToken }) {
-  return postJSON('/auth/google-signup', { credential, companyName, phone, industry, size, website, hq, phoneToken })
+export function signupEmployerWithGoogle({ credential, companyName, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName }) {
+  return postJSON('/auth/google-signup', { credential, companyName, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName })
 }
 
 export function forgotPasswordEmployer({ email }) {

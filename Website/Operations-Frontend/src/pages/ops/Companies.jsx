@@ -19,7 +19,52 @@ import {
   useBlockCompanyMutation,
   useUnblockCompanyMutation,
   useDeleteCompanyMutation,
+  useReviewCompanyGstMutation,
 } from '../../hooks/useCompanies'
+
+// The employer's own GSTIN check (Company.gstVerification) — separate from
+// the KYC verificationStatus above, which staff still decide here.
+const GST_LABEL = { NOT_SUBMITTED: 'Not submitted', PENDING: 'Verifying', VERIFIED: 'GST verified', FAILED: 'GST failed', UNDER_REVIEW: 'Needs review' }
+const GST_TONE = { VERIFIED: 'green', FAILED: 'red', UNDER_REVIEW: 'gold', PENDING: 'gold' }
+const GST_REVIEW_REASON = {
+  PROFILE_NAME_DIFFERS: 'GST legal/trade name differs from the company profile name',
+  GSTIN_IN_USE: 'GSTIN is already verified for another company',
+  STATUS_UNKNOWN: 'Provider could not confirm the registration status',
+}
+
+function GstPanel({ app, company }) {
+  const review = useReviewCompanyGstMutation()
+  const gst = company.gstVerification ?? { status: 'NOT_SUBMITTED' }
+  const decide = (decision) =>
+    review.mutate(
+      { id: company.id, decision },
+      {
+        onSuccess: () => app.addToast('success', `${company.name} GSTIN ${decision === 'approve' ? 'approved' : 'rejected'}`),
+        onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
+      }
+    )
+  return (
+    <div className="bg-surface-sunken rounded-lg px-3 py-2 mt-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-[11px] text-ink-tertiary">GST verification</div>
+        <Badge tone={GST_TONE[gst.status] ?? 'gray'}>{GST_LABEL[gst.status] ?? gst.status}</Badge>
+      </div>
+      {gst.gstin && <div className="text-[12px] font-semibold mt-1">{gst.gstin}</div>}
+      {gst.legalName && <div className="text-[12px] mt-0.5">{gst.legalName}{gst.tradeName ? ` · ${gst.tradeName}` : ''}</div>}
+      {gst.registeredAddress && <div className="text-[11.5px] text-ink-tertiary mt-0.5">{gst.registeredAddress}</div>}
+      {gst.status === 'FAILED' && gst.reason && <div className="text-[11.5px] text-ink-tertiary mt-0.5">Reason: {gst.reason}</div>}
+      {gst.status === 'UNDER_REVIEW' && (
+        <>
+          <div className="text-[11.5px] text-gold-strong mt-1">{GST_REVIEW_REASON[gst.reason] ?? gst.reason}</div>
+          <div className="flex items-center gap-2 mt-2">
+            <Button variant="primary" size="sm" disabled={review.isPending} onClick={() => decide('approve')}>Approve GSTIN</Button>
+            <Button size="sm" disabled={review.isPending} onClick={() => decide('reject')}>Reject</Button>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
 
 const TABS = ['Pending', 'Verified', 'Rejected', 'All']
 const TAB_KEYS = ['pending', 'verified', 'rejected', null]
@@ -266,6 +311,7 @@ export default function Companies() {
                     <div className="text-[12px] font-semibold mt-0.5">{co.pan || '—'}</div>
                   </div>
                 </div>
+                <GstPanel app={app} company={co} />
 
                 {co.hiringContacts?.[0] && (
                   <div className="flex items-center gap-1.5 text-xs text-ink-tertiary mt-3">

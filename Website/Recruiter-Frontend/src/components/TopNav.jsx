@@ -7,6 +7,21 @@ import { getSession, logout } from '../services/liveApi'
 import { getPlanSnapshot, subscribePlan } from '../services/planService'
 import { listNotifications } from '../services/accountService'
 import { ROUTES } from '../lib/routes'
+import { StatusPill } from './ui'
+import { useCompany, GST_STATUS_LABEL, GST_STATUS_PILL } from '../services/companyService'
+
+// The company's GST verification status, from the same server record the
+// Settings page and the employer app use. Links to Settings to act on it.
+function GstStatusLink() {
+  const { company } = useCompany()
+  const status = company?.gstVerification?.status ?? (company ? 'NOT_SUBMITTED' : null)
+  if (!status) return null
+  return (
+    <Link role="menuitem" to="/settings" className="mt-1.5 inline-block" title="GST verification — open settings">
+      <StatusPill status={GST_STATUS_PILL[status] ?? 'none'} label={GST_STATUS_LABEL[status]} />
+    </Link>
+  )
+}
 
 // The source PNG has wide transparent margins, so it is cropped to the mark
 // itself (overflow-hidden + offset) to render at a readable size in the nav.
@@ -99,6 +114,7 @@ function ProfileMenu() {
           <div className="border-b border-line-2 px-3 pb-2 pt-1.5">
             <p className="truncate text-[13px] font-semibold">{IS_DEMO ? 'Demo recruiter' : s?.user?.name ?? 'Recruiter'}</p>
             <p className="truncate text-[12px] text-muted">{IS_DEMO ? 'Sample workspace' : s?.user?.email ?? s?.company?.name}</p>
+            {!IS_DEMO && <GstStatusLink />}
           </div>
           <Link role="menuitem" to="/settings" className={item}><Settings size={14} className="text-muted" /> Recruiter settings</Link>
           <Link role="menuitem" to="/credits" className={item}><CreditCard size={14} className="text-muted" /> Plan & credits</Link>

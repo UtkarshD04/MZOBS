@@ -12,5 +12,6 @@ export function formatINRShort(n) {
 
 export function formatSalaryRange(min, max) {
   if (!min || !max) return ''
+  if (min === max) return formatINRShort(min)
   return `${formatINRShort(min)} – ${formatINRShort(max)}`
 }

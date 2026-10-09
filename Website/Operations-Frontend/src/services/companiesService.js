@@ -27,3 +27,8 @@ export function unblockCompany(id) {
 export function deleteCompany(id) {
   return apiClient.delete(`/companies/${id}`).then((r) => r.data)
 }
+
+// Resolves an employer GSTIN check that the automatic rules sent to UNDER_REVIEW.
+export function reviewCompanyGst(id, { decision, note }) {
+  return apiClient.patch(`/companies/${id}/gst-review`, { decision, note }).then((r) => r.data)
+}
