@@ -9,6 +9,7 @@ import { CONTACT_EMAIL } from '../lib/config'
 import { CLIENT_ONLY_ROUTES } from '../lib/routes'
 import { COLLEGE_TYPES, loadStateColleges } from '../lib/colleges'
 import CollegePicker from '../components/CollegePicker'
+import DISTRICTS from '../data/districts.json'
 
 // Same flow as the associate application: instructions first, then the form in
 // sections A, B and C, then a confirmation.
@@ -40,7 +41,8 @@ function validate(section, f) {
     if (f.studentStrength && !/^\d+$/.test(f.studentStrength.trim())) e.studentStrength = 'Numbers only'
   }
   if (section === 1) {
-    if (!f.city.trim()) e.city = 'Add your city'
+    if (!f.state) e.state = 'Choose your state'
+    if (!f.city.trim()) e.city = 'Choose or type your city'
   }
   if (section === 2) {
     if (!f.contactPerson.trim()) e.contactPerson = 'Add a contact name'
@@ -122,6 +124,15 @@ function ApplicationSections({ onSent }) {
   }
   const last = step === SECTIONS.length - 1
 
+  // Changing the state clears a city picked for the old one.
+  const changeState = (e) => {
+    const { value } = e.target
+    setF((x) => ({ ...x, state: value, city: value === x.state ? x.city : '' }))
+    setErrors((er) => (er.state ? { ...er, state: undefined } : er))
+  }
+  // Districts of the chosen state (official list, src/data/districts.json).
+  const cityOptions = (DISTRICTS[f.state] ?? []).map((name) => ({ name }))
+
   // Colleges for the chosen state (AICTE list, lib/colleges.js), narrowed to
   // the chosen type. The result remembers which state it was loaded for, so
   // "loading" is simply a result for a different state.
@@ -186,7 +197,7 @@ function ApplicationSections({ onSent }) {
           {step === 0 && (
             <>
               <Field label="State" error={errors.state}>
-                <select value={f.state} onChange={set('state')} autoComplete="address-level1" autoFocus aria-invalid={!!errors.state} className={`${inputCls(errors.state)} cursor-pointer`}>
+                <select value={f.state} onChange={changeState} autoComplete="address-level1" autoFocus aria-invalid={!!errors.state} className={`${inputCls(errors.state)} cursor-pointer`}>
                   <option value="">Select a state</option>
                   {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -232,11 +243,23 @@ function ApplicationSections({ onSent }) {
 
           {step === 1 && (
             <>
-              <Field label="City" error={errors.city}>
-                <input value={f.city} onChange={set('city')} placeholder="City" autoComplete="address-level2" maxLength={100} autoFocus aria-invalid={!!errors.city} className={inputCls(errors.city)} />
+              <Field label="State" error={errors.state}>
+                <select value={f.state} onChange={changeState} autoComplete="address-level1" aria-invalid={!!errors.state} className={`${inputCls(errors.state)} cursor-pointer`}>
+                  <option value="">Select a state</option>
+                  {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
               </Field>
-              <Field label="State">
-                <input value={f.state} readOnly aria-readonly="true" className={`${inputCls(false)} bg-[#F8FAFC] text-[#475467]`} />
+              <Field label="City / district" error={errors.city}>
+                <CollegePicker
+                  value={f.city}
+                  onChange={(v) => set('city')({ target: { value: v } })}
+                  options={cityOptions}
+                  noun="cities"
+                  autoFocus
+                  placeholder={f.state ? 'Click to choose, or type your city' : 'Choose your state first'}
+                  invalid={!!errors.city}
+                  className={inputCls(errors.city)}
+                />
               </Field>
             </>
           )}

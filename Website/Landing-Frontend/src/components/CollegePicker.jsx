@@ -3,10 +3,11 @@ import { ChevronDown, Search } from 'lucide-react'
 
 const MAX_SHOWN = 60
 
-// Searchable college dropdown for the "add campus" form. Opens on click/focus
-// (unlike a native <datalist>, which many browsers only show after typing),
-// filters as you type, and still accepts a name that isn't in the list.
-export default function CollegePicker({ value, onChange, options, disabled, placeholder, invalid, describedBy, className }) {
+// Searchable dropdown for the "add campus" form (colleges, cities). Opens on
+// click/focus (unlike a native <datalist>, which many browsers only show after
+// typing), filters as you type, and still accepts a value that isn't listed.
+// `options` are { name, type? }; `type` is shown as a hint next to the name.
+export default function CollegePicker({ value, onChange, options, disabled, placeholder, invalid, describedBy, className, noun = 'colleges', autoFocus }) {
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(0)
   const wrap = useRef(null)
@@ -81,6 +82,7 @@ export default function CollegePicker({ value, onChange, options, disabled, plac
         onKeyDown={onKeyDown}
         disabled={disabled}
         placeholder={placeholder}
+        autoFocus={autoFocus}
         autoComplete="off"
         maxLength={200}
         role="combobox"
@@ -94,7 +96,7 @@ export default function CollegePicker({ value, onChange, options, disabled, plac
       <button
         type="button"
         tabIndex={-1}
-        aria-label={showList ? 'Hide colleges' : 'Show colleges'}
+        aria-label={`${showList ? 'Hide' : 'Show'} ${noun}`}
         disabled={disabled}
         onClick={() => setOpen((o) => !o)}
         className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[#667085] disabled:opacity-40"
@@ -123,7 +125,7 @@ export default function CollegePicker({ value, onChange, options, disabled, plac
                 className={`cursor-pointer px-3 py-2 text-[14px] ${i === active ? 'bg-[#e8f4f2] text-[#075f55]' : 'text-[#101828]'}`}
               >
                 {o.name}
-                <span className="ml-2 text-[11.5px] text-[#98a2b3]">{o.type}</span>
+                {o.type && <span className="ml-2 text-[11.5px] text-[#98a2b3]">{o.type}</span>}
               </li>
             ))
           ) : (
