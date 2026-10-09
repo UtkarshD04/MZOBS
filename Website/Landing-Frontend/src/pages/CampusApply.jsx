@@ -8,6 +8,7 @@ import { submitCampusPartnerRequest } from '../lib/campusPartner'
 import { CONTACT_EMAIL } from '../lib/config'
 import { CLIENT_ONLY_ROUTES } from '../lib/routes'
 import { COLLEGE_TYPES, loadStateColleges } from '../lib/colleges'
+import CollegePicker from '../components/CollegePicker'
 
 // Same flow as the associate application: instructions first, then the form in
 // sections A, B and C, then a confirmation.
@@ -198,20 +199,15 @@ function ApplicationSections({ onSent }) {
               </Field>
               <div className="sm:col-span-2">
                 <Field label="Campus / college name" error={errors.campusName}>
-                  <input
+                  <CollegePicker
                     value={f.campusName}
-                    onChange={set('campusName')}
-                    list="campus-college-options"
-                    placeholder={f.state ? 'Start typing to search, or enter your college name' : 'Choose your state first'}
-                    autoComplete="off"
-                    maxLength={200}
-                    aria-invalid={!!errors.campusName}
-                    aria-describedby="campus-college-hint"
+                    onChange={(v) => set('campusName')({ target: { value: v } })}
+                    options={collegeOptions}
+                    placeholder={f.state ? 'Click to choose, or type to search' : 'Choose your state first'}
+                    invalid={!!errors.campusName}
+                    describedBy="campus-college-hint"
                     className={inputCls(errors.campusName)}
                   />
-                  <datalist id="campus-college-options">
-                    {collegeOptions.map((c) => <option key={c.name} value={c.name} />)}
-                  </datalist>
                   <span id="campus-college-hint" className="mt-1.5 block text-[12.5px] text-[#667085]">
                     {!f.state
                       ? 'Pick your state to see AICTE-approved colleges there.'

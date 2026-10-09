@@ -6,6 +6,7 @@ export const CATEGORY_META = {
   batches: { ic: 'Layers', tone: 'navy' },
   interviews: { ic: 'Video', tone: 'navy' },
   requirements: { ic: 'Briefcase', tone: 'gold' },
+  'campus-requests': { ic: 'GraduationCap', tone: 'green' },
   system: { ic: 'Bell', tone: 'navy' },
 }
 
