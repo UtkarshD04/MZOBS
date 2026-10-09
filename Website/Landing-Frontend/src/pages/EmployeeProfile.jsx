@@ -1000,6 +1000,7 @@ export default function EmployeeProfile() {
                     currentCity: profile.currentCity ?? '',
                     state: profile.state ?? '',
                     pincode: profile.pincode ?? '',
+                    college: profile.college ?? '',
                     currentCtc: profile.currentCtc ?? '',
                     relocationOk: !!profile.relocationOk,
                   })
@@ -1039,6 +1040,9 @@ export default function EmployeeProfile() {
                       <Field label="Pincode">
                         <Input value={draft.pincode} onChange={(e) => setDraft({ ...draft, pincode: e.target.value })} />
                       </Field>
+                      <Field label="College / University">
+                        <Input value={draft.college} onChange={(e) => setDraft({ ...draft, college: e.target.value })} placeholder="e.g. Delhi University" maxLength={200} />
+                      </Field>
                       <Field label="Current CTC">
                         <Input value={draft.currentCtc} onChange={(e) => setDraft({ ...draft, currentCtc: e.target.value })} />
                       </Field>
@@ -1051,6 +1055,10 @@ export default function EmployeeProfile() {
                   </>
                 ) : (
                   <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-[13px]">
+                    <div>
+                      <dt className="text-(--jobs-ink-soft)">College / University</dt>
+                      <dd className="font-semibold mt-0.5">{profile.college || '-'}</dd>
+                    </div>
                     <div>
                       <dt className="text-(--jobs-ink-soft)">Date of birth</dt>
                       <dd className="font-semibold mt-0.5">{profile.dob || '-'}</dd>

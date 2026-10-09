@@ -143,7 +143,7 @@ function textFor(c, scope) {
   if (scope === 'title') return `${c.designation} ${c.workHistory.map((w) => w.role).join(' ')}`
   if (scope === 'skills') return c.skills.join(' ')
   if (scope === 'experience') return c.workHistory.map((w) => `${w.role} ${w.company} ${(w.skills ?? []).join(' ')}`).join(' ')
-  return [c.name, c.designation, c.currentCompany, c.summary, c.location, (c.preferredLocations ?? []).join(' '), canonCity(c.location), c.skills.join(' '), c.workHistory.map((w) => `${w.role} ${w.company}`).join(' '), c.projects.map((p) => `${p.name} ${p.description} ${(p.tech ?? []).join(' ')}`).join(' '), c.education.map((e) => `${e.degree} ${e.institute}`).join(' '), c.resumeText ?? ''].join(' ')
+  return [c.name, c.designation, c.currentCompany, c.summary, c.location, (c.preferredLocations ?? []).join(' '), canonCity(c.location), c.skills.join(' '), c.workHistory.map((w) => `${w.role} ${w.company}`).join(' '), c.projects.map((p) => `${p.name} ${p.description} ${(p.tech ?? []).join(' ')}`).join(' '), c.education.map((e) => `${e.degree} ${e.institute}`).join(' '), c.college ?? '', c.resumeText ?? ''].join(' ')
 }
 
 // A keyword matches at the start of a word ("cyber" finds "cybersecurity", "sap" never finds "map"),
@@ -196,7 +196,7 @@ function passes(c, crit, trust, exclude) {
   if (crit.gender && c.gender !== crit.gender) return false
   if (crit.prevCompany && !c.workHistory.slice(1).some((w) => norm(w.company).includes(norm(crit.prevCompany)))) return false
   if (crit.degree && !c.education.some((e) => norm(e.degree).includes(norm(crit.degree)))) return false
-  if (crit.institute && !c.education.some((e) => norm(e.institute).includes(norm(crit.institute)))) return false
+  if (crit.institute && ![c.college, ...c.education.map((e) => e.institute)].some((n) => norm(n).includes(norm(crit.institute)))) return false
   if (crit.gradFrom != null || crit.gradTo != null) {
     if (!c.education.some((e) => e.year != null && (crit.gradFrom == null || e.year >= crit.gradFrom) && (crit.gradTo == null || e.year <= crit.gradTo))) return false
   }
