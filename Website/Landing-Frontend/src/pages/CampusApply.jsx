@@ -7,6 +7,7 @@ import { Container } from '../components/mz/primitives'
 import { submitCampusPartnerRequest } from '../lib/campusPartner'
 import { CONTACT_EMAIL } from '../lib/config'
 import { CLIENT_ONLY_ROUTES } from '../lib/routes'
+import { COLLEGE_TYPES, loadStateColleges } from '../lib/colleges'
 
 // Same flow as the associate application: instructions first, then the form in
 // sections A, B and C, then a confirmation.
@@ -16,7 +17,8 @@ const SECTIONS = [
   ['C', 'Contact person'],
 ]
 
-const INSTITUTION_TYPES = ['University', 'Engineering College', 'Degree College', 'Management Institute', 'Polytechnic', 'Other']
+// Same types the college list is tagged with (lib/colleges.js).
+const INSTITUTION_TYPES = COLLEGE_TYPES
 
 const STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh',
@@ -31,13 +33,13 @@ const EMPTY = { campusName: '', institutionType: '', website: '', studentStrengt
 function validate(section, f) {
   const e = {}
   if (section === 0) {
-    if (!f.campusName.trim()) e.campusName = 'Add your campus name'
-    if (!f.institutionType) e.institutionType = 'Choose an institution type'
+    if (!f.state) e.state = 'Choose your state'
+    if (!f.institutionType) e.institutionType = 'Choose the type of college'
+    if (!f.campusName.trim()) e.campusName = 'Choose your college, or type its name'
     if (f.studentStrength && !/^\d+$/.test(f.studentStrength.trim())) e.studentStrength = 'Numbers only'
   }
   if (section === 1) {
     if (!f.city.trim()) e.city = 'Add your city'
-    if (!f.state) e.state = 'Choose your state'
   }
   if (section === 2) {
     if (!f.contactPerson.trim()) e.contactPerson = 'Add a contact name'
@@ -118,6 +120,25 @@ function ApplicationSections({ onSent }) {
     setErrors((er) => (er[k] ? { ...er, [k]: undefined } : er))
   }
   const last = step === SECTIONS.length - 1
+
+  // Colleges for the chosen state (AICTE list, lib/colleges.js), narrowed to
+  // the chosen type. The result remembers which state it was loaded for, so
+  // "loading" is simply a result for a different state.
+  const [loaded, setLoaded] = useState({ state: '', list: [], failed: false })
+  useEffect(() => {
+    if (!f.state) return
+    let live = true
+    loadStateColleges(f.state)
+      .then((list) => live && setLoaded({ state: f.state, list, failed: false }))
+      .catch(() => live && setLoaded({ state: f.state, list: [], failed: true }))
+    return () => {
+      live = false
+    }
+  }, [f.state])
+  const collegesReady = !f.state || loaded.state === f.state
+  const stateColleges = !f.state ? [] : collegesReady ? loaded.list : null
+  const collegesFailed = collegesReady && loaded.failed
+  const collegeOptions = (stateColleges ?? []).filter((c) => !f.institutionType || c.type === f.institutionType)
   const scrollTop = () => top.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   async function submit(e) {
@@ -163,25 +184,53 @@ function ApplicationSections({ onSent }) {
         <div className="grid gap-5 px-5 py-6 sm:grid-cols-2 sm:px-8">
           {step === 0 && (
             <>
-              <div className="sm:col-span-2">
-                <Field label="Campus / college name" error={errors.campusName}>
-                  <input value={f.campusName} onChange={set('campusName')} placeholder="Your institution's name" autoComplete="organization" maxLength={200} autoFocus aria-invalid={!!errors.campusName} className={inputCls(errors.campusName)} />
-                </Field>
-              </div>
-              <Field label="Institution type" error={errors.institutionType}>
+              <Field label="State" error={errors.state}>
+                <select value={f.state} onChange={set('state')} autoComplete="address-level1" autoFocus aria-invalid={!!errors.state} className={`${inputCls(errors.state)} cursor-pointer`}>
+                  <option value="">Select a state</option>
+                  {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </Field>
+              <Field label="College type" error={errors.institutionType}>
                 <select value={f.institutionType} onChange={set('institutionType')} aria-invalid={!!errors.institutionType} className={`${inputCls(errors.institutionType)} cursor-pointer`}>
                   <option value="">Select a type</option>
                   {INSTITUTION_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
               </Field>
+              <div className="sm:col-span-2">
+                <Field label="Campus / college name" error={errors.campusName}>
+                  <input
+                    value={f.campusName}
+                    onChange={set('campusName')}
+                    list="campus-college-options"
+                    placeholder={f.state ? 'Start typing to search, or enter your college name' : 'Choose your state first'}
+                    autoComplete="off"
+                    maxLength={200}
+                    aria-invalid={!!errors.campusName}
+                    aria-describedby="campus-college-hint"
+                    className={inputCls(errors.campusName)}
+                  />
+                  <datalist id="campus-college-options">
+                    {collegeOptions.map((c) => <option key={c.name} value={c.name} />)}
+                  </datalist>
+                  <span id="campus-college-hint" className="mt-1.5 block text-[12.5px] text-[#667085]">
+                    {!f.state
+                      ? 'Pick your state to see AICTE-approved colleges there.'
+                      : stateColleges === null
+                        ? 'Loading colleges…'
+                        : collegesFailed
+                          ? 'Couldn’t load the college list. Type your college’s name instead.'
+                          : collegeOptions.length
+                            ? `${collegeOptions.length.toLocaleString('en-IN')} ${f.institutionType ? `${f.institutionType.toLowerCase()} ` : ''}listing${collegeOptions.length === 1 ? '' : 's'} in ${f.state} (AICTE-approved). Not listed? Just type your college’s name.`
+                            : `No ${f.institutionType ? f.institutionType.toLowerCase() + ' ' : ''}listings in ${f.state} on our AICTE list. Type your college’s name.`}
+                  </span>
+                </Field>
+              </div>
               <Field label="Approx. student strength" optional error={errors.studentStrength}>
                 <input value={f.studentStrength} onChange={set('studentStrength')} placeholder="e.g. 1200" inputMode="numeric" maxLength={7} className={inputCls(errors.studentStrength)} />
               </Field>
-              <div className="sm:col-span-2">
-                <Field label="College website" optional>
-                  <input value={f.website} onChange={set('website')} placeholder="www.example.edu" inputMode="url" autoComplete="url" maxLength={300} className={inputCls(false)} />
-                </Field>
-              </div>
+              <Field label="College website" optional>
+                <input value={f.website} onChange={set('website')} placeholder="www.example.edu" inputMode="url" autoComplete="url" maxLength={300} className={inputCls(false)} />
+              </Field>
             </>
           )}
 
@@ -190,11 +239,8 @@ function ApplicationSections({ onSent }) {
               <Field label="City" error={errors.city}>
                 <input value={f.city} onChange={set('city')} placeholder="City" autoComplete="address-level2" maxLength={100} autoFocus aria-invalid={!!errors.city} className={inputCls(errors.city)} />
               </Field>
-              <Field label="State" error={errors.state}>
-                <select value={f.state} onChange={set('state')} autoComplete="address-level1" aria-invalid={!!errors.state} className={`${inputCls(errors.state)} cursor-pointer`}>
-                  <option value="">Select a state</option>
-                  {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
+              <Field label="State">
+                <input value={f.state} readOnly aria-readonly="true" className={`${inputCls(false)} bg-[#F8FAFC] text-[#475467]`} />
               </Field>
             </>
           )}
