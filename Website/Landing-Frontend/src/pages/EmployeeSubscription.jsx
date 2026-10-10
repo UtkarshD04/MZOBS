@@ -140,7 +140,7 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
           <p className="text-[13px] text-mz-muted">{isPaid ? `Paid once${paidOn ? ` on ${dateFmt.format(new Date(paidOn))}` : ''} · valid for life` : 'Paid once, valid for life. No renewals.'}</p>
         </div>
         <ul className="mt-4 flex-1 space-y-2 text-[14px] text-mz-ink">
-          {['Get unlimited job applications', 'Get your CV enhanced by an expert, plus an ATS score', 'Attend live technical, behavioral, and HR mock interviews', 'Experience one to one HR and career coaching with a personal roadmap', 'Gain premium visibility to recruiters'].map((t) => (
+          {['Get unlimited job applications', 'Get your CV enhanced by an expert, plus an ATS score', 'Attend live technical, behavioral, and HR mock interviews', 'Experience one to one HR and career coaching with a personal roadmap', 'Get more job-fit picks from a wider pool'].map((t) => (
             <li key={t} className="flex gap-2">
               <Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />
               {t}
