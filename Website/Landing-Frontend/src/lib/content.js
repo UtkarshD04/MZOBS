@@ -219,7 +219,7 @@ export const FAQ_DATA = {
     },
     {
       q: "Is Mzobs free for job seekers?",
-      a: "Yes. Creating a profile, applying to roles and getting matched is free for job seekers. We only charge employers for successful placements."
+      a: "Yes. With the free Mzobs Basic plan, you can create a profile, get matched and apply to up to 10 jobs. Mzobs Premium is a one-time ₹499 lifetime plan that adds unlimited applications, expert resume review, mock interviews, career coaching and premium visibility to recruiters."
     },
     {
       q: "How does candidate matching work?",
@@ -604,7 +604,7 @@ export const PRICING_DATA = {
       "Scalable model with higher revenue potential as placements grow."
     ],
     steps: [
-      { n: "01", title: "Candidates subscribe monthly", desc: "For job access and career support." },
+      { n: "01", title: "Candidates can upgrade to Premium", desc: "A one-time ₹499 lifetime plan for more job access and career support." },
       { n: "02", title: "Employers get hiring support", desc: "For up to 10 candidates." },
       { n: "03", title: "Beyond 10 successful hires", desc: "10% of the first month's salary applies." },
       { n: "04", title: "A success fee is charged", desc: "Only after the employee completes one month." }
