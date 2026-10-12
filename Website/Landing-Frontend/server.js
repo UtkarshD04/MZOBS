@@ -112,8 +112,8 @@ app.use(
         // MSG91 OTP widget (src/lib/msg91Widget.js).
         'script-src': ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`, 'https://checkout.razorpay.com', 'https://accounts.google.com', ...MSG91_WIDGET_ORIGINS],
         // Razorpay's checkout modal and Google's OAuth prompt both render
-        // in an iframe.
-        'frame-src': ["'self'", 'https://api.razorpay.com', 'https://accounts.google.com'],
+        // in an iframe, as does the Google Maps embed on /contact.
+        'frame-src': ["'self'", 'https://api.razorpay.com', 'https://accounts.google.com', 'https://www.google.com'],
         // This site's own backend(s) (API_ORIGINS), plus the XHR calls each
         // of those same three third parties makes on its own.
         'connect-src': [

@@ -108,17 +108,27 @@ export default function Contact() {
               </ul>
             </div>
 
-            <div className="rounded-xl bg-(--explorer-navy-deep) p-6 text-white">
-              <MapPin size={20} className="text-white/70" />
-              <h3 className="mt-3 text-[15px] font-extrabold">Our office</h3>
-              <p className="mt-1.5 text-[13.5px] text-white/70 leading-relaxed">{CONTACT_ADDRESS}</p>
+            <div className="bg-white border border-(--explorer-border) rounded-xl p-6">
+              <div className="flex items-center gap-2.5">
+                <span className="w-9 h-9 rounded-lg bg-(--explorer-teal-surface) text-(--explorer-teal) flex items-center justify-center">
+                  <MapPin size={17} />
+                </span>
+                <h3 className="text-[14.5px] font-extrabold text-(--explorer-navy)">Our office</h3>
+              </div>
+              <p className="mt-3 text-[13.5px] text-(--explorer-muted) leading-relaxed">{CONTACT_ADDRESS}</p>
+              <iframe
+                title="Map showing the Mzobs office in Gomti Nagar, Lucknow"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(CONTACT_ADDRESS)}&z=16&output=embed`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="mt-4 block h-52 w-full rounded-lg border-0 bg-(--explorer-bg)"
+              />
               <ExplorerButton
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT_ADDRESS)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 size="md"
                 className="mt-4"
-                style={{ outlineColor: '#ffffff' }}
               >
                 Get directions <ArrowUpRight size={15} aria-hidden="true" />
               </ExplorerButton>
