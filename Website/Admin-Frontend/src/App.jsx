@@ -29,6 +29,7 @@ import SendNotification from './pages/admin/SendNotification'
 import Employees from './pages/admin/Employees'
 import Applications from './pages/admin/Applications'
 import Associates from './pages/admin/Associates'
+import CampusRequests from './pages/admin/CampusRequests'
 
 export default function App() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="shortlisted" element={<Shortlisted />} />
             <Route path="placements" element={<Placements />} />
             <Route path="associates" element={<Associates />} />
+            <Route path="campus-requests" element={<CampusRequests />} />
             <Route path="queries" element={<Queries />} />
             <Route path="payments" element={<Payments />} />
             <Route path="coupons" element={<Coupons />} />

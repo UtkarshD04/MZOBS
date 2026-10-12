@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, CalendarClock, Check, ChevronDown, ExternalLink, Loader2, MapPin, Monitor, RotateCw, SearchX, Video, Building2 } from 'lucide-react'
+import { ArrowRight, CalendarClock, Check, ChevronDown, ExternalLink, Loader2, Lock, MapPin, Monitor, RotateCw, SearchX, Video, Building2 } from 'lucide-react'
 import Seo from '../components/Seo'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import { Container, CompanyLogo } from '../components/mz/primitives'
 import { useToast } from '../components/mz/Toast'
 import { getEmployeeSession } from '../lib/employeeSession'
+import { getEmployeeProfile } from '../lib/employeeProfile'
 import { fetchApplications, fetchInterviews, fetchMockInterview, withdrawApplication } from '../lib/employeeApi'
 
 const PAGE_SIZE = 50
@@ -95,6 +96,71 @@ function Progress({ app }) {
   )
 }
 
+// Application tracking is a Premium perk, so Basic accounts see this instead of the page.
+function TrackingGate({ paid, onRetry }) {
+  if (paid === null) {
+    return (
+      <div className="space-y-3" aria-busy="true" aria-label="Loading">
+        <div className="mz-skeleton h-8 w-56 rounded" />
+        <div className="mz-skeleton h-40 w-full rounded-[12px]" />
+      </div>
+    )
+  }
+  if (paid === 'error') {
+    return (
+      <div className="flex flex-col items-center gap-2 rounded-[12px] border border-dashed border-mz-line-strong bg-white px-6 py-12 text-center">
+        <SearchX size={24} className="text-mz-muted" aria-hidden="true" />
+        <p className="text-[15px] font-semibold text-mz-ink">Couldn’t load this page</p>
+        <p className="max-w-sm text-[14px] text-mz-muted">Check your connection and try again.</p>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="mz-btn-teal mt-2 inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-mz-primary px-4 text-[13.5px] font-semibold text-white hover:bg-mz-primary-strong"
+        >
+          <RotateCw size={14} aria-hidden="true" /> Retry
+        </button>
+      </div>
+    )
+  }
+  return (
+    <div className="mx-auto flex max-w-[520px] flex-col items-center gap-2 rounded-[14px] border border-mz-line bg-white px-6 py-12 text-center">
+      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-mz-primary-tint text-mz-primary-strong">
+        <Lock size={20} aria-hidden="true" />
+      </span>
+      <h1 className="mt-2 text-[22px] font-bold tracking-[-0.02em] text-mz-ink">Application tracking is a Premium feature</h1>
+      <p className="max-w-sm text-[14px] leading-relaxed text-mz-muted">
+        Upgrade to Mzobs Premium to follow every application stage by stage, see when employers view your profile, and keep your interviews in one place.
+      </p>
+      <Link
+        to="/employees/subscription"
+        className="mz-btn-teal mt-3 inline-flex h-11 items-center gap-1.5 rounded-[10px] bg-mz-primary px-5 text-[14px] font-semibold text-white hover:bg-mz-primary-strong"
+      >
+        See Premium <ArrowRight size={14} aria-hidden="true" />
+      </Link>
+    </div>
+  )
+}
+
+// Shown on a rejected application: how far it got and the employer's own reason.
+function RejectionNote({ app }) {
+  const after = { interview: 'after the interview', shortlisted: 'after shortlisting', shared: 'at the screening stage' }[app.rejectedAfter] ?? ''
+  return (
+    <div role="note" className="mt-4 rounded-[10px] border border-[#FDE2DF] bg-[#FEF6F5] px-3.5 py-3">
+      <p className="text-[13px] font-semibold text-[#B42318]">Not selected{after ? ` ${after}` : ''}</p>
+      <p className="mt-1 text-[13.5px] leading-relaxed text-mz-ink-2">
+        {app.rejectionReason ? (
+          <>
+            <span className="font-medium text-mz-ink">Reason from the employer: </span>
+            {app.rejectionReason}
+          </>
+        ) : (
+          'The employer didn’t share a reason for this decision.'
+        )}
+      </p>
+    </div>
+  )
+}
+
 function ApplicationCard({ app, onWithdraw, withdrawing }) {
   const [showHistory, setShowHistory] = useState(false)
   const [confirming, setConfirming] = useState(false)
@@ -141,6 +207,8 @@ function ApplicationCard({ app, onWithdraw, withdrawing }) {
       </div>
 
       <Progress app={app} />
+
+      {app.status === 'rejected' && <RejectionNote app={app} />}
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-mz-line pt-3">
         <button
@@ -336,6 +404,8 @@ export default function EmployeeApplications() {
   const [retry, setRetry] = useState(0)
   const [tab, setTab] = useState('all')
   const [withdrawingId, setWithdrawingId] = useState(null)
+  // null = still checking the plan, 'error' = couldn't check. Application tracking is Premium-only.
+  const [paid, setPaid] = useState(null)
   const [interviews, setInterviews] = useState({ status: 'loading', list: null, mock: null })
 
   useEffect(() => {
@@ -356,6 +426,22 @@ export default function EmployeeApplications() {
 
   useEffect(() => {
     if (!token) return
+    let cancelled = false
+    setPaid(null)
+    getEmployeeProfile(token)
+      .then((profile) => !cancelled && setPaid(profile?.subscription?.status === 'paid'))
+      .catch((err) => {
+        if (cancelled) return
+        signInAgainIfExpired(err)
+        setPaid('error')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [token, retry, signInAgainIfExpired])
+
+  useEffect(() => {
+    if (!token || paid !== true) return
     const controller = new AbortController()
     setStatus('loading')
     fetchApplications(token, { page: 1, limit: PAGE_SIZE }, { signal: controller.signal })
@@ -371,10 +457,10 @@ export default function EmployeeApplications() {
         setStatus('error')
       })
     return () => controller.abort()
-  }, [token, retry, signInAgainIfExpired])
+  }, [token, paid, retry, signInAgainIfExpired])
 
   useEffect(() => {
-    if (!token) return
+    if (!token || paid !== true) return
     let cancelled = false
     Promise.allSettled([fetchInterviews(token), fetchMockInterview(token)]).then(([iv, mock]) => {
       if (cancelled) return
@@ -384,7 +470,7 @@ export default function EmployeeApplications() {
     return () => {
       cancelled = true
     }
-  }, [token])
+  }, [token, paid])
 
   async function loadMore() {
     setLoadingMore(true)
@@ -421,6 +507,10 @@ export default function EmployeeApplications() {
       <Navbar />
       <main className="pb-14 pt-[88px] sm:pt-[96px]">
         <Container className="max-w-[920px]">
+          {paid !== true ? (
+            <TrackingGate paid={paid} onRetry={() => setRetry((n) => n + 1)} />
+          ) : (
+            <>
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="text-[24px] font-bold tracking-[-0.02em] text-mz-ink sm:text-[28px]">My applications</h1>
@@ -524,6 +614,8 @@ export default function EmployeeApplications() {
               )}
             </div>
           </section>
+            </>
+          )}
         </Container>
       </main>
       <Footer />

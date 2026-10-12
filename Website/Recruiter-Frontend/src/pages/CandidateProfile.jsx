@@ -4,10 +4,10 @@ import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Building2, Phone, Mail, M
 import { useActions } from '../components/useActions'
 import { NotesList } from '../components/ActionModals'
 import { ResumeFrame, ResumeLinks } from '../components/ResumeViewer'
-import { Avatar, Button, Chip, MatchBadge, SectionCard, Skeleton, StatusPill, TrustScore, VerifiedBadge, EmptyState } from '../components/ui'
+import { Avatar, Button, Chip, MatchBadge, Modal, SectionCard, Skeleton, StatusPill, TrustScore, VerifiedBadge, EmptyState } from '../components/ui'
 import { getTalent, findSimilar } from '../services/talentService'
 import { setCandidateStage, getResumeLink } from '../services/liveApi'
-import { STAGES, STAGE_LABELS } from '../lib/talent/criteria'
+import { STAGES, STAGE_LABELS, REJECTION_REASONS, composeRejectionReason } from '../lib/talent/criteria'
 import { computeMatch, computeTrust, MATCH_LABELS } from '../lib/talent/engine'
 import { loadLastCriteria } from '../lib/lastCriteria'
 import { loadLastResults } from '../lib/lastResults'
@@ -118,15 +118,14 @@ export default function CandidateProfile() {
   const [c, setC] = useState(undefined)
   const [similar, setSimilar] = useState(null)
   const [stageBusy, setStageBusy] = useState(false)
+  const [rejecting, setRejecting] = useState(false)
+  const [rejectPreset, setRejectPreset] = useState('')
+  const [rejectDetail, setRejectDetail] = useState('')
   const { toast } = useWorkspace()
 
   const reload = () => getTalent(id).then((x) => setC(x ?? null))
   const { onAction, host } = useActions(criteria, { onUnlocked: reload })
-  const moveStage = async (stage) => {
-    let reason
-    if (stage === 'rejected') {
-      reason = window.prompt('Reason for rejecting (optional)') ?? undefined
-    }
+  const moveStage = async (stage, reason) => {
     setStageBusy(true)
     try {
       await setCandidateStage(c._live.candidateId, stage, reason)
@@ -241,12 +240,63 @@ export default function CandidateProfile() {
           <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line-2 pt-4">
             <span className="text-[12px] font-medium uppercase tracking-wide text-muted">Pipeline</span>
             {STAGES.map((st) => (
-              <button key={st} disabled={stageBusy || c.stage === st} onClick={() => moveStage(st)} className={`rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors ${c.stage === st ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line text-ink-2 hover:bg-line-2 disabled:opacity-50'}`}>{STAGE_LABELS[st]}</button>
+              <button key={st} disabled={stageBusy || c.stage === st} onClick={() => (st === 'rejected' ? setRejecting(true) : moveStage(st))} className={`rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors ${c.stage === st ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line text-ink-2 hover:bg-line-2 disabled:opacity-50'}`}>{STAGE_LABELS[st]}</button>
             ))}
             {c.stage === 'rejected' && c.rejectionReason && <span className="text-[12.5px] text-muted">Reason: {c.rejectionReason}</span>}
           </div>
         )}
       </header>
+
+      <Modal
+        open={rejecting}
+        onClose={() => setRejecting(false)}
+        title="Reject this candidate?"
+        subtitle="The candidate will see this reason in their application tracking."
+        width={480}
+        footer={
+          <>
+            <Button onClick={() => setRejecting(false)}>Cancel</Button>
+            <Button
+              variant="primary"
+              disabled={!composeRejectionReason(rejectPreset, rejectDetail) || composeRejectionReason(rejectPreset, rejectDetail).length < 5}
+              onClick={() => {
+                const reason = composeRejectionReason(rejectPreset, rejectDetail)
+                setRejecting(false)
+                setRejectPreset('')
+                setRejectDetail('')
+                moveStage('rejected', reason)
+              }}
+            >
+              Reject
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[13px] font-medium text-ink-2">Pick a reason</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {REJECTION_REASONS.map((r) => (
+            <button
+              key={r}
+              type="button"
+              aria-pressed={rejectPreset === r}
+              onClick={() => setRejectPreset((cur) => (cur === r ? '' : r))}
+              className={`rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors ${rejectPreset === r ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line text-ink-2 hover:bg-line-2'}`}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
+        <label className="mt-4 block text-[13px] font-medium text-ink-2" htmlFor="reject-detail">Add detail (optional if you picked a reason)</label>
+        <textarea
+          id="reject-detail"
+          value={rejectDetail}
+          onChange={(e) => setRejectDetail(e.target.value)}
+          maxLength={300}
+          rows={3}
+          placeholder="e.g. Strong communication, but we need 3+ years of React"
+          className="mt-1 w-full rounded-lg border border-line px-3 py-2 text-[13.5px] outline-none focus:border-accent"
+        />
+      </Modal>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_340px]">
         <div className="space-y-5">
