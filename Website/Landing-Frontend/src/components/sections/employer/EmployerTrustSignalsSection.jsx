@@ -47,7 +47,7 @@ export default function EmployerTrustSignalsSection() {
             Resume, skills, education and experience, brought together in one place.
           </p>
           <p className="mt-4 text-[13px] text-[#667085]">
-            Shown alongside the Match Score, the score tells you how well someone fits, the insights show you why.
+            Shown alongside the Match Score: the score tells you how well someone fits, and the insights show you why.
           </p>
         </FadeInView>
 

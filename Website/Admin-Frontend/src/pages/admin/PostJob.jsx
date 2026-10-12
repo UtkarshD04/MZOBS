@@ -110,7 +110,7 @@ export default function PostJob() {
           <ArrowLeft size={14} /> Back to Requirements
         </button>
         <h1 className="text-2xl font-bold tracking-tight">Post a job</h1>
-        <p className="text-sm text-ink-secondary mt-1">A Mzobs-posted role — no invoice, no employer review, it goes live on the candidate job board immediately.</p>
+        <p className="text-sm text-ink-secondary mt-1">A Mzobs-posted role — no invoice, no employer review. It goes live on the candidate job board immediately.</p>
       </StaggerItem>
 
       <StaggerItem>

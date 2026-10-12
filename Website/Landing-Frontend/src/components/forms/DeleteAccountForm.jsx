@@ -186,7 +186,7 @@ export default function DeleteAccountForm() {
             <AlertTriangle size={16} className="text-red shrink-0 mt-0.5" />
             <p className="text-[12.5px] text-(--explorer-muted)">
               This permanently deletes your profile, resume, applications, and other personal data. Records an employer already holds
-              because you were shared with them (or that we're required to keep for legal/tax reasons) are anonymized, not deleted. This
+              because your application was shared with them (or that we're required to keep for legal/tax reasons) are anonymized, not deleted. This
               cannot be undone.
             </p>
           </div>

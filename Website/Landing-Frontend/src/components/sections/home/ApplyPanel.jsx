@@ -126,7 +126,7 @@ function InlineLoginForm({ onSuccess }) {
       {error && <p className="text-[12.5px] text-red-600 mb-3">{error}</p>}
       <button type="submit" disabled={submitting} className={`${primaryButtonClass} w-full`}>
         {submitting && <Loader2 size={15} className="animate-spin" aria-hidden="true" />}
-        {submitting ? 'Signing in…' : 'Log in'}
+        {submitting ? 'Signing in…' : 'Sign in'}
       </button>
     </form>
   )
@@ -372,7 +372,7 @@ function InlineSignupForm({ onSuccess, onSwitchToLogin }) {
         onClick={onSwitchToLogin}
         className="mt-3 w-full text-center text-[12.5px] font-semibold text-(--jobs-ink-soft) hover:text-(--jobs-navy) transition-colors"
       >
-        Already have an account? Log in
+        Already have an account? Sign in
       </button>
     </form>
   )

@@ -51,11 +51,11 @@ export const CANDIDATE_JOURNEY_DATA = {
     {
       id: "step-05",
       num: "05",
-      title: "SKILL CATEGORISATION",
-      description: "Your profile is categorised according to your skills and capabilities to identify suitable opportunities.",
+      title: "SKILL CATEGORIZATION",
+      description: "Your profile is categorized according to your skills and capabilities to identify suitable opportunities.",
       align: "image-left",
       image: "/images/journey/step-05.png",
-      imageAlt: "Recruiter categorising candidate skills and technical capabilities on Mzobs portal",
+      imageAlt: "Recruiter categorizing candidate skills and technical capabilities on Mzobs portal",
       shapeType: "arch-left",
       lineAccent: "from-teal-200 via-amber-200 to-orange-200"
     }

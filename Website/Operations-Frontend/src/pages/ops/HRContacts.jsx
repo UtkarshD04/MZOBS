@@ -49,7 +49,7 @@ export default function HRContacts() {
     <StaggerGroup>
       <StaggerItem className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">HR Contacts</h1>
-        <p className="text-sm text-ink-secondary mt-1">Every HR in MZOBS, with their resume workload.</p>
+        <p className="text-sm text-ink-secondary mt-1">Every HR team member at Mzobs, with their resume workload.</p>
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 gap-4 mb-5">

@@ -51,7 +51,7 @@ export default function Overview() {
       icon: Contact,
       label: 'HR contacts',
       value: hrContactCount,
-      hint: 'HR staff accounts at MZOBS',
+      hint: 'HR staff accounts at Mzobs',
       cls: 'text-navy',
     },
     {

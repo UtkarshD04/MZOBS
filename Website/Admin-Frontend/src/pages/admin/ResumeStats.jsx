@@ -36,7 +36,7 @@ export default function ResumeStats() {
     <StaggerGroup>
       <StaggerItem className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Resume Stats</h1>
-        <p className="text-sm text-ink-secondary mt-1">How many resumes each HR has, and at what stage.</p>
+        <p className="text-sm text-ink-secondary mt-1">How many resumes each HR team member has, and at what stage.</p>
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">

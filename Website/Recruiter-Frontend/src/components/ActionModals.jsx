@@ -92,7 +92,7 @@ export function AddToJobModal({ ids, onClose }) {
 // ---- outreach ---------------------------------------------------------------
 
 const TEMPLATES = {
-  intro: { label: 'Personalised intro', body: (c, me) => `Hi ${c.name.split(' ')[0]},\n\nI came across your profile on Mzobs — your ${c.experienceYears} years as a ${c.designation}${c.skills.length ? ` working with ${c.skills.slice(0, 3).join(', ')}` : ''} stood out for a role we're hiring for.\n\nWould you be open to a short conversation this week to hear more?\n\nBest,\n${me}` },
+  intro: { label: 'Personalized intro', body: (c, me) => `Hi ${c.name.split(' ')[0]},\n\nI came across your profile on Mzobs — your ${c.experienceYears} years as a ${c.designation}${c.skills.length ? ` working with ${c.skills.slice(0, 3).join(', ')}` : ''} stood out for a role we're hiring for.\n\nWould you be open to a short conversation this week to hear more?\n\nBest,\n${me}` },
   followup: { label: 'Follow-up', body: (c, me) => `Hi ${c.name.split(' ')[0]},\n\nFollowing up on my earlier note about an opening that fits your ${c.designation} background. If the timing isn't right, no problem — happy to reconnect later.\n\nBest,\n${me}` },
   invite: { label: 'Interview invitation', body: (c, me) => `Hi ${c.name.split(' ')[0]},\n\nThanks for your interest. We'd like to invite you to an interview. Please reply with two or three time slots that work for you this week.\n\nBest,\n${me}` },
   reminder: { label: 'Reminder', body: (c, me) => `Hi ${c.name.split(' ')[0]},\n\nA quick reminder about your upcoming conversation with us. Let me know if you need to reschedule.\n\nBest,\n${me}` },

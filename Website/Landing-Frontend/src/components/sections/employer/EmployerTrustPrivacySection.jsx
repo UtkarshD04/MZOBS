@@ -14,7 +14,7 @@ const CHECKS = [
   {
     icon: ShieldCheck,
     title: 'Resumes reviewed by our team',
-    desc: 'Mzobs reviews every candidate resume. Only verified resumes can apply to your jobs or appear in candidate search.',
+    desc: 'Mzobs reviews every candidate resume. Only candidates with verified resumes can apply to your jobs or appear in candidate search.',
   },
   {
     icon: FileCheck2,

@@ -23,7 +23,7 @@ export default function CTABand({
           {/* Background Image with Parallax */}
           <ParallaxImage
             src={CTA_BAND_DATA.bgImage}
-            alt="Ready to get hired or hire faster"
+            alt="Ready to get hired or hire faster?"
             offset={60}
             className="w-full h-full absolute inset-0 object-cover object-center brightness-[0.5] group-hover:scale-108 transition-transform duration-700 ease-out-premium"
           />

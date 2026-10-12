@@ -11,7 +11,7 @@ const STARTING_PRICE = Math.min(...PLANS.map((p) => p.baseAmount))
 const FAQ_ITEMS = [
   {
     q: 'How do I create an employer account?',
-    a: 'Go to the sign-up page and enter your business email, name, company details and a password to get started. There is no sales call required. You can also pick a plan on the pricing section and start with just your mobile number.',
+    a: 'Go to the sign-up page and enter your business email, name, company details and a password to get started. There is no sales call required. You can also pick a plan in the pricing section and start with just your mobile number.',
   },
   {
     q: 'How do I post a job?',

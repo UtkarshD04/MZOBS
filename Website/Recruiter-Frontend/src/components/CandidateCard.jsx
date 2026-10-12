@@ -122,7 +122,7 @@ function CandidateCard({ row, terms, compact, onAction }) {
                 size="sm"
                 icon={IS_DEMO || isRevealed(c, 'resume') ? FileText : Lock}
                 onClick={() => onAction('resume', c)}
-                title={IS_DEMO || isRevealed(c, 'resume') ? 'Open the CV' : creditSpent(c) ? 'View the CV — free, the credit is already used' : 'View the CV — uses 1 credit, once per candidate'}
+                title={IS_DEMO || isRevealed(c, 'resume') ? 'Open the CV' : creditSpent(c) ? 'View the CV — free, since the credit is already used' : 'View the CV — uses 1 credit, once per candidate'}
               >
                 View CV
               </Button>

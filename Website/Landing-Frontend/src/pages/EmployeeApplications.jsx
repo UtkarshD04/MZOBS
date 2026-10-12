@@ -491,7 +491,7 @@ export default function EmployeeApplications() {
               ) : apps.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 rounded-[12px] border border-dashed border-mz-line-strong bg-white px-6 py-12 text-center">
                   <p className="text-[15px] font-semibold text-mz-ink">You haven’t applied to any jobs yet</p>
-                  <p className="max-w-sm text-[14px] text-mz-muted">When you apply, each application and its progress shows up here.</p>
+                  <p className="max-w-sm text-[14px] text-mz-muted">When you apply, each application and its progress show up here.</p>
                   <Link
                     to="/#latest-jobs"
                     className="mz-btn-teal mt-2 inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-mz-primary px-4 text-[13.5px] font-semibold text-white hover:bg-mz-primary-strong"

@@ -116,21 +116,21 @@ export const FAQS = [
     category: 'applications',
     audience: 'seeker',
     question: 'How do I apply for a job?',
-    answer: 'Open any listing and click Apply Now. Make sure your profile and resume are up to date first, employers see your Mzobs profile alongside your application.',
+    answer: 'Open any listing and click Apply Now. Make sure your profile and resume are up to date first: employers see your Mzobs profile alongside your application.',
   },
   {
     id: 'application-status',
     category: 'applications',
     audience: 'seeker',
     question: 'How do I check my application status?',
-    answer: 'Go to your dashboard’s Applications tab to see every job you’ve applied to and its current status, Submitted, Under Review, Interviewing, or Closed.',
+    answer: 'Go to your dashboard’s Applications tab to see every job you’ve applied to and its current status: Submitted, Under Review, Interviewing or Closed.',
   },
   {
     id: 'update-profile',
     category: 'profile',
     audience: 'seeker',
     question: 'How do I update my profile?',
-    answer: 'Open your profile from the account menu and edit any section, experience, skills, education, or your resume. Changes save automatically and are visible to recruiters right away.',
+    answer: 'Open your profile from the account menu and edit any section: experience, skills, education or your resume. Changes save automatically and are visible to recruiters right away.',
   },
   {
     id: 'upload-resume',
@@ -165,7 +165,7 @@ export const FAQS = [
     category: 'safety',
     audience: 'both',
     question: 'How do I reset my password?',
-    answer: 'From the sign-in page, select Forgot password and follow the email link we send you. For security, the link expires after 60 minutes.',
+    answer: 'From the sign-in page, select Forgot password and follow the email link we send you. For security, the link expires after 30 minutes.',
   },
   {
     id: 'delete-account',

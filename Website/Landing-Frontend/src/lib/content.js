@@ -60,7 +60,7 @@ export const WHO_WE_ARE_DATA = {
   badge: "WHO WE ARE",
   heroTitleLine1: "Built For Smarter Hiring,",
   heroTitleLine2: "Made For Both Sides.",
-  heroSubtitle: "Every profile checked, every pipeline refined, a hiring platform where job seekers find roles they're right for, and employers find people worth hiring.",
+  heroSubtitle: "Every profile checked, every pipeline refined: a hiring platform where job seekers find roles they're right for, and employers find people worth hiring.",
   stats: [
     {
       number: "12,400+",
@@ -112,7 +112,7 @@ export const SERVICES_DATA = {
       title: "Offer & Hiring Analytics",
       desc: "Track offers, acceptance and time-to-fill with full visibility.",
       image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=85",
-      expandedText: "From the moment an offer goes out, Mzobs tracks its status, sent, accepted or declined, alongside how long each requirement took to fill. Employers get full visibility into where every hire stands, without having to chase updates across email threads or spreadsheets to find out."
+      expandedText: "From the moment an offer goes out, Mzobs tracks its status (sent, accepted or declined) alongside how long each requirement took to fill. Employers get full visibility into where every hire stands, without having to chase updates across email threads or spreadsheets to find out."
     }
   ],
   featuredCard: {
@@ -215,7 +215,7 @@ export const FAQ_DATA = {
   items: [
     {
       q: "What is Mzobs?",
-      a: "Mzobs is a trusted hiring marketplace, job seekers discover roles matched to their skills, and employers discover candidates ranked by fit for their requirement."
+      a: "Mzobs is a trusted hiring marketplace: job seekers discover roles matched to their skills, and employers discover candidates ranked by fit for their requirement."
     },
     {
       q: "Is Mzobs free for job seekers?",
@@ -231,11 +231,11 @@ export const FAQ_DATA = {
     },
     {
       q: "What roles and industries does Mzobs cover?",
-      a: "From entry-level to leadership hiring across tech, operations, sales, finance and more, browse open categories on the Find Your Team section or share your requirement directly."
+      a: "We cover everything from entry-level to leadership hiring across tech, operations, sales, finance and more. Browse open categories in the Find Your Team section or share your requirement directly."
     },
     {
       q: "How do I get started as an employer?",
-      a: "Sign up on the Employers page and post your requirement, we start matching candidates from your very first job post."
+      a: "Sign up on the Employers page and post your requirement. We start matching candidates from your very first job post."
     }
   ]
 }
@@ -249,7 +249,7 @@ export const TESTIMONIALS_DATA = {
     {
       id: 1,
       image: "/images/new_images/testimonial_rohit.jpg",
-      quote: "Mzobs didn't just help me find a job, my resume was rebuilt by an expert, I trained for two weeks, and I walked into my interview actually prepared.",
+      quote: "Mzobs didn't just help me find a job. My resume was rebuilt by an expert, I trained for two weeks, and I walked into my interview actually prepared.",
       name: "Rohit Kulkarni",
       title: "Placed as Business Analyst, Razorpay"
     },
@@ -277,7 +277,7 @@ export const TESTIMONIALS_DATA = {
     {
       id: 5,
       image: "/images/new_images/testimonial_john.jpg",
-      quote: "One dashboard for every application, interview and offer status, I always knew exactly where I stood.",
+      quote: "One dashboard for every application, interview and offer status. I always knew exactly where I stood.",
       name: "John Smith",
       title: "Placed as Software Engineer, Innovate"
     }
@@ -314,7 +314,7 @@ export const ABOUT_GOAL_DATA = {
   titlePrefix: "What ",
   titleItalic: "Drives",
   titleSuffix: " Everything We Build",
-  desc: "Every feature, every screening step and every conversation on Mzobs points back to the same commitments. They're not a mission statement on a wall, they're what we measure ourselves against, on every single hire.",
+  desc: "Every feature, every screening step and every conversation on Mzobs points back to the same commitments. They're not a mission statement on a wall; they're what we measure ourselves against, on every single hire.",
   items: [
     {
       title: "Fair Match",
@@ -337,7 +337,7 @@ export const ABOUT_GOAL_DATA = {
     {
       title: "Zero Ghosting",
       desc: "Every applicant gets a real update, always.",
-      detail: "No application black hole. Every candidate who applies gets a real status update, selected, rejected or in-progress, instead of silence. It's a small thing that most platforms skip, and we don't.",
+      detail: "No application black hole. Every candidate who applies gets a real status update (selected, rejected or in progress) instead of silence. It's a small thing that most platforms skip, and we don't.",
       icon: MessageCircle, bg: "var(--careers-pink)", ink: "#7a1f42"
     },
     {
@@ -360,17 +360,17 @@ export const WHAT_MAKES_US_DIFFERENT_DATA = {
   titlePrefix: "What Makes ",
   titleItalic: "Us",
   titleSuffix: " Different",
-  desc: "Most hiring platforms just moved the paperwork online. We rebuilt the process itself, here's the same hire, done the old way and the Mzobs way.",
+  desc: "Most hiring platforms just moved the paperwork online. We rebuilt the process itself. Here's the same hire, done the old way and the Mzobs way.",
   columnLeft: "Traditional Hiring",
   columnRight: "The Mzobs Way",
   rows: [
     {
-      traditional: "Résumés vanish into an ATS black hole, sorted by keyword luck.",
+      traditional: "Resumes vanish into an ATS black hole, sorted by keyword luck.",
       mzobs: "Every candidate is matched on skills and fit, not keyword luck.",
       icon: Target, bg: "var(--careers-tint-blue)", ink: "var(--careers-tint-blue-ink)"
     },
     {
-      traditional: "A résumé is a keyword list that undersells the candidate.",
+      traditional: "A resume is a keyword list that undersells the candidate.",
       mzobs: "Resume and interview coaching help candidates show what they can do.",
       icon: Sparkles, bg: "var(--careers-tint-sage)", ink: "var(--careers-tint-sage-ink)"
     },
@@ -404,7 +404,7 @@ export const APPROACH_DATA = {
     { text: "hiring", italic: true },
     { text: " should do more than " },
     { text: "collect resumes", italic: true },
-    { text: ", it should drive a " },
+    { text: "; it should drive a " },
     { text: "real, lasting", italic: true },
     { text: " match." }
   ],
@@ -455,7 +455,7 @@ export const EMPLOYEE_APPROACH_DATA = {
   heading: [
     { text: "Getting hired shouldn't feel like " },
     { text: "guesswork", italic: true },
-    { text: ", we build your resume, coach your interviews, and match you to roles that actually fit." }
+    { text: ". We build your resume, coach your interviews, and match you to roles that actually fit." }
   ],
   image: "/images/new_images/employee_approach.jpg",
   steps: [
@@ -475,7 +475,7 @@ export const EMPLOYEE_APPROACH_DATA = {
       num: "03",
       icon: Target,
       title: "Matched, Not Searched",
-      desc: "We match you to roles based on your skills and preferences, you stop scrolling job boards that go nowhere."
+      desc: "We match you to roles based on your skills and preferences, so you stop scrolling job boards that go nowhere."
     },
     {
       num: "04",
@@ -606,8 +606,8 @@ export const PRICING_DATA = {
     steps: [
       { n: "01", title: "Candidates subscribe monthly", desc: "For job access and career support." },
       { n: "02", title: "Employers get hiring support", desc: "For up to 10 candidates." },
-      { n: "03", title: "Beyond 10 successful hires", desc: "10% of first-month salary is applicable." },
-      { n: "04", title: "Success fee is charged", desc: "Only after the employee completes one month." }
+      { n: "03", title: "Beyond 10 successful hires", desc: "10% of the first month's salary applies." },
+      { n: "04", title: "A success fee is charged", desc: "Only after the employee completes one month." }
     ]
   },
   startup: {
@@ -633,9 +633,9 @@ export const PRICING_DATA = {
       perks: ["Pay only when you need more", "Keep scaling, keep saving"]
     },
     takeaways: [
-      "Affordable entry with ₹999 for first 10 hires.",
+      "Affordable entry with ₹999 for the first 10 hires.",
       "Recharge with ₹499 to hire 5 more candidates.",
-      "No upfront commission, pay only when you hire more.",
+      "No upfront commission. Pay only when you hire more.",
       "Designed for startups & Tier 3 companies to scale affordably."
     ],
     stats: [
@@ -644,7 +644,7 @@ export const PRICING_DATA = {
       { value: "Unlimited", label: "Add-ons, Unlimited Growth" }
     ],
     steps: [
-      { n: "01", title: "Pay ₹999", desc: "One-time and get hiring support for up to 10 candidates." },
+      { n: "01", title: "Pay ₹999", desc: "Pay once and get hiring support for up to 10 candidates." },
       { n: "02", title: "Hire candidates", desc: "With our end-to-end support." },
       { n: "03", title: "Need to hire more?", desc: "Recharge with ₹499 to hire 5 more candidates." },
       { n: "04", title: "Continue recharging", desc: "As you grow. Pay only for what you use." }
@@ -660,7 +660,7 @@ export const EMPLOYEE_FEATURES = [
   {
     icon: Target,
     title: "Lifetime Platform Access",
-    desc: "One-time ₹499 subscription gives you lifetime access to profile matching, resume reviews, and placement tools.",
+    desc: "A one-time ₹499 subscription gives you lifetime access to profile matching, resume reviews, and placement tools.",
     image: "/images/new_images/emp_feature_1.jpg"
   },
   {
@@ -699,7 +699,7 @@ export const EMPLOYER_FEATURES = [
   {
     icon: Users2,
     title: "Batch Hiring & Scalability",
-    desc: "Easily scale your hiring needs from individual niche roles to full batch recruitment cycles effortlessly.",
+    desc: "Easily scale your hiring from individual niche roles to full batch recruitment cycles.",
     image: "/images/new_images/employer_feature_3.jpg"
   },
   {
@@ -723,7 +723,7 @@ export const EMPLOYER_QUALITY_POINTS = [
   {
     icon: MessageCircle,
     title: "No Middleman Delay",
-    desc: "There's no staff queue sitting between a candidate and your dashboard, once they apply, you see them."
+    desc: "There's no staff queue sitting between a candidate and your dashboard. Once they apply, you see them."
   },
   {
     icon: CheckCircle2,

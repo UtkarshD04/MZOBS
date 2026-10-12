@@ -58,7 +58,7 @@ export default function EmployerMatchIntelligenceSection() {
               </div>
               <div className="mt-6 grid grid-cols-2 gap-4 text-[12.5px] text-[#667085]">
                 <span className="flex items-center gap-2"><MapPin size={14} className="text-[#075f55]" /> Bengaluru</span>
-                <span className="flex items-center gap-2"><Briefcase size={14} className="text-[#075f55]" /> 4 years experience</span>
+                <span className="flex items-center gap-2"><Briefcase size={14} className="text-[#075f55]" /> 4 years of experience</span>
                 <span className="flex items-center gap-2"><Wallet size={14} className="text-[#075f55]" /> ₹22 LPA expected</span>
                 <span className="flex items-center gap-2"><UserCheck size={14} className="text-[#075f55]" /> Profile complete</span>
               </div>
@@ -94,7 +94,7 @@ export default function EmployerMatchIntelligenceSection() {
                   "This candidate closely matches the technical requirements, has 4 years of backend experience and is based in Bengaluru."
                 </p>
                 <p className="mt-4 text-[11.5px] text-[#667085]/80 leading-relaxed">
-                  Match Intelligence is decision support, not an automated hiring decision, every recommendation is something you can check for yourself.
+                  Match Intelligence is decision support, not an automated hiring decision. Every recommendation is something you can check for yourself.
                 </p>
               </div>
             </div>

@@ -40,7 +40,7 @@ export default function MockInterviews() {
     <StaggerGroup>
       <StaggerItem className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Mock Interviews</h1>
-        <p className="text-sm text-ink-secondary mt-1">Which HR conducted how many mock interviews.</p>
+        <p className="text-sm text-ink-secondary mt-1">How many mock interviews each HR team member has conducted.</p>
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">

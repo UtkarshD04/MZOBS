@@ -95,7 +95,7 @@ function CandidateRow({ candidate, expanded, onToggle }) {
           <div className="mt-4 flex flex-col gap-1.5 text-[12px] text-[#111827]">
             <span className="flex items-center gap-1.5"><Check size={13} className="text-[#075f55]" /> Strong FastAPI experience</span>
             <span className="flex items-center gap-1.5"><Check size={13} className="text-[#075f55]" /> Relevant backend experience</span>
-            <span className="flex items-center gap-1.5"><Check size={13} className="text-[#075f55]" /> Bengaluru based</span>
+            <span className="flex items-center gap-1.5"><Check size={13} className="text-[#075f55]" /> Bengaluru-based</span>
           </div>
           <p className="mt-3 text-[11.5px] text-[#667085]">Potential gap: notice period slightly above preferred range.</p>
         </div>

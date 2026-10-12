@@ -34,7 +34,7 @@ const STEP_META = {
   phone: { title: 'Verify your phone', sub: 'We’ll text you a 6-digit code to confirm it’s you.' },
   password: { title: 'Secure your account', sub: 'Choose a password with at least 8 characters.' },
   company: { title: 'Tell us about your company', sub: 'This helps us tailor candidates for you.' },
-  gst: { title: 'Add your GST (optional)', sub: 'Last step. You can skip this and add your GSTIN later.' },
+  gst: { title: 'Add your GSTIN (optional)', sub: 'Last step. You can skip this and add your GSTIN later.' },
 }
 
 function validateStep(step, form, acceptedTerms, phoneVerified, hasGoogle) {
@@ -420,7 +420,7 @@ export default function EmployerSignupForm({ header }) {
         <>
           <p className="flex items-start gap-2 mb-4 text-[12.5px] text-[#4b5563]">
             <ShieldCheck size={14} className="shrink-0 mt-0.5 text-[#075f55]" />
-            Add your GSTIN to have your company verified against the GST registry. Leave it blank to continue without.
+            Add your GSTIN to have your company verified against the GST registry. Leave it blank to continue without it.
           </p>
           <Field label="GSTIN (optional)">
             <Input

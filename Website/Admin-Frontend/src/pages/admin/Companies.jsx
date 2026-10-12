@@ -144,7 +144,7 @@ function VerifyCompanyModal({ app, company, mode, onDone }) {
             <Select value={method} onChange={(e) => setMethod(e.target.value)}>
               <option value="gstin_pan">GSTIN + PAN cross-check</option>
               <option value="mca">MCA company master data</option>
-              <option value="video_call">Video call with authorised signatory</option>
+              <option value="video_call">Video call with authorized signatory</option>
               <option value="site_visit">Site visit</option>
             </Select>
           </Field>

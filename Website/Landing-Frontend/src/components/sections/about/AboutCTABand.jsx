@@ -41,7 +41,7 @@ export default function AboutCTABand() {
         >
           <ParallaxImage
             src={CTA_BAND_DATA.bgImage}
-            alt="Ready to get started with Mzobs"
+            alt="Ready to get started with Mzobs?"
             offset={50}
             className="w-full h-full absolute inset-0 object-cover object-center opacity-[0.16] group-hover:scale-105 transition-transform duration-700"
           />

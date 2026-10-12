@@ -9,7 +9,7 @@ export default function EmployerSignup() {
       seoTitle="Create Your Employer Account | Mzobs"
       heading="Hire quality talent,"
       accent="not a stack of resumes."
-      subtext="Create your free employer account and share your first requirement in minutes, no sales call required."
+      subtext="Create your free employer account and share your first requirement in minutes. No sales call required."
     >
       <EmployerSignupForm
         header={

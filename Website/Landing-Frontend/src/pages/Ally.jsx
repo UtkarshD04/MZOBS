@@ -47,7 +47,7 @@ const JOURNEY = ['Apply', 'Get selected', 'Get your Ally ID', 'Build your campus
 
 const FAQ = [
   ['What is a Mzobs Ally?', 'A Mzobs Ally is a student representative who helps connect their community with meaningful career opportunities, hiring initiatives, events and the Mzobs ecosystem.'],
-  ['Who can apply?', 'The Mzobs Ally program is open to 3rd and 4th year students who have completed at least 4 semesters (for 8-semester/4-year courses) or the equivalent for their course length. 1st and 2nd year students are not eligible yet.'],
+  ['Who can apply?', 'The Mzobs Ally program is open to 3rd- and 4th-year students who have completed at least 4 semesters (for 8-semester/4-year courses) or the equivalent for their course length. 1st- and 2nd-year students are not eligible yet.'],
   ['What will I actually do?', 'You’ll discover opportunities worth sharing, bring students into the Mzobs ecosystem, create campus conversations and activities, and spread opportunities across your campus.'],
   ['How do I apply?', 'Fill in the application below: about you, your campus, your experience and why Mzobs. It takes a few minutes and you can move back and forth between steps.'],
   ['What do I get as an Ally?', 'Early access to opportunities and events, a network of students, recruiters and professionals, recognition for your contribution, and room to build communication and leadership skills.'],
@@ -167,7 +167,7 @@ function validate(step, f) {
     if (!f.year) e.year = 'Select your year of study'
     else if (!ELIGIBLE_YEARS.has(f.year)) e.year = YEAR_INELIGIBLE_MSG
   }
-  if (step === 2 && f.experience.trim().length < 10) e.experience = 'Share a line or two, even small things count'
+  if (step === 2 && f.experience.trim().length < 10) e.experience = 'Share a line or two. Even small things count.'
   if (step === 3 && f.why.trim().length < 20) e.why = 'Tell us a little more (a couple of sentences)'
   return e
 }
@@ -284,7 +284,7 @@ function ApplicationForm({ f, set }) {
           {step === 1 && (
             <>
               <h3>Your campus</h3><p className="s">Where will you be representing Mzobs?</p>
-              <p className="s" style={{ marginTop: -6 }}>Open to 3rd and 4th year students only, at least 4 semesters completed (for 8-semester courses) or the equivalent for your course length.</p>
+              <p className="s" style={{ marginTop: -6 }}>Open to 3rd- and 4th-year students only, with at least 4 semesters completed (for 8-semester courses) or the equivalent for your course length.</p>
               <div className="cm-fgrid">
                 <div className="full"><Field label="College / university" name="college" f={f} set={set} error={errors.college} placeholder="Your college" autoFocus /></div>
                 <Field label="City" name="city" f={f} set={set} error={errors.city} placeholder="City" />
@@ -558,7 +558,7 @@ export default function Ally() {
       <section className="cm-sec" id="benefits">
         <div className="cm-wrap">
           <Rv as="p" className="cm-eyebrow">What you get</Rv>
-          <Rv as="h2" d={0.06} className="cm-h2">As a Mzobs Ally,<br />you get access to.</Rv>
+          <Rv as="h2" d={0.06} className="cm-h2">As a Mzobs Ally,<br />you get access to:</Rv>
           <div className="cm-ben">
             {BENEFITS.map(([Icon, label], i) => (
               <Rv key={label} d={(i % 3) * 0.07} className="cm-b"><Icon size={22} strokeWidth={1.6} /><span>{label}</span></Rv>
