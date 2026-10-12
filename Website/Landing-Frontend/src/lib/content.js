@@ -677,7 +677,7 @@ export const EMPLOYEE_FEATURES = [
   },
   {
     icon: BarChart3,
-    title: "Smart Skill Categorisation",
+    title: "Smart Skill Categorization",
     desc: "Your profile is categorized based on your technical and soft skills to match you with relevant hiring opportunities.",
     image: "/images/new_images/emp_feature_4.jpg"
   }

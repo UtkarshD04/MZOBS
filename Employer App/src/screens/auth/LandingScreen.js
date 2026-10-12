@@ -7,7 +7,7 @@ const FEATURES = [
   { icon: 'briefcase', title: 'Post jobs', desc: 'Publish roles with skills, location, experience and salary requirements.' },
   { icon: 'search', title: 'Find candidates', desc: 'Discover talent that matches the requirements that matter to you.' },
   { icon: 'sliders', title: 'Search & filter', desc: 'Narrow down relevant talent by skills, experience and location.' },
-  { icon: 'inbox', title: 'Manage applications', desc: 'Review and organise applications as they come in, from one inbox.' },
+  { icon: 'inbox', title: 'Manage applications', desc: 'Review and organize applications as they come in, from one inbox.' },
   { icon: 'check-square', title: 'Shortlist talent', desc: 'Review candidate profiles and move the relevant ones forward.' },
   { icon: 'calendar', title: 'Schedule interviews', desc: 'Manage interview steps with the candidates you shortlist.' },
 ]
