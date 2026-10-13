@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 440" role="img" aria-labelledby="t">
+  <title id="t">A winding path through soft hills toward a rising sun, with signposts pointing the way</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3f8f7"/>
+      <stop offset="1" stop-color="#e7f5f1"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef3f6"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="440" rx="28" fill="url(#sky)"/>
+
+  <!-- sun -->
+  <circle cx="452" cy="132" r="64" fill="#fbf3de"/>
+  <circle cx="452" cy="132" r="40" fill="#f3d98f" opacity=".85"/>
+
+  <!-- clouds -->
+  <g fill="#ffffff" opacity=".9">
+    <rect x="70" y="78" width="96" height="18" rx="9"/>
+    <rect x="104" y="62" width="62" height="18" rx="9"/>
+    <rect x="262" y="48" width="74" height="14" rx="7"/>
+  </g>
+
+  <!-- far hills -->
+  <path d="M0 262 C70 200 150 214 220 246 C300 282 360 196 450 214 C530 230 590 250 640 228 V440 H0 Z" fill="#cfe6e0"/>
+  <!-- mid hills -->
+  <path d="M0 316 C80 262 170 286 250 308 C340 332 420 250 520 270 C575 281 610 300 640 292 V440 H0 Z" fill="#9fcfc4"/>
+  <!-- near hills -->
+  <path d="M0 376 C90 330 190 352 290 372 C390 392 470 320 560 336 C600 343 625 356 640 352 V440 H0 Z" fill="#0b7a6d"/>
+
+  <!-- winding path -->
+  <path d="M236 440 C286 396 458 408 372 352 C300 305 442 292 392 252 C372 236 408 226 414 222 L426 224 C432 232 400 240 424 256 C486 296 354 316 428 358 C500 400 392 408 408 440 Z" fill="url(#road)"/>
+  <path d="M322 440 C346 414 420 420 380 386 C340 354 420 342 396 306" fill="none" stroke="#0b7a6d" stroke-width="2" stroke-dasharray="6 9" stroke-linecap="round" opacity=".55"/>
+
+  <!-- trees -->
+  <g fill="#075f55">
+    <rect x="96" y="318" width="5" height="26" fill="#16324f"/>
+    <circle cx="98" cy="310" r="17"/>
+    <rect x="552" y="296" width="4" height="20" fill="#16324f"/>
+    <circle cx="554" cy="290" r="13"/>
+    <rect x="530" y="304" width="3" height="16" fill="#16324f"/>
+    <circle cx="531" cy="299" r="10"/>
+  </g>
+
+  <!-- foreground signpost -->
+  <g>
+    <rect x="164" y="292" width="6" height="96" rx="3" fill="#16324f"/>
+    <path d="M170 300 h58 l12 11 -12 11 h-58 z" fill="#0b7a6d"/>
+    <path d="M164 328 h-52 l-12 11 12 11 h52 z" fill="#16324f"/>
+    <path d="M170 356 h44 l10 9 -10 9 h-44 z" fill="#c68a1f"/>
+  </g>
+  <!-- far signpost -->
+  <g>
+    <rect x="466" y="262" width="4" height="52" rx="2" fill="#16324f"/>
+    <path d="M470 268 h30 l8 7 -8 7 h-30 z" fill="#0b7a6d"/>
+    <path d="M466 290 h-26 l-8 7 8 7 h26 z" fill="#16324f"/>
+  </g>
+
+  <!-- small figure on the path -->
+  <g>
+    <circle cx="392" cy="334" r="6" fill="#16324f"/>
+    <path d="M385 358 C385 344 399 344 399 358 Z" fill="#0b7a6d"/>
+  </g>
+</svg>
