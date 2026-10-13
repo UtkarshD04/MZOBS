@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { MessageSquareWarning } from 'lucide-react'
 import { Button, Chip, EmptyState, Skeleton } from '../components/ui'
 import RejectionFeedbackModal, { feedbackSubmitError } from '../components/RejectionFeedbackModal'
-import { listFeedbackFollowUps, resubmitFeedback } from '../services/liveApi'
+import { getCandidateFeedback, listFeedbackFollowUps, resubmitFeedback } from '../services/liveApi'
 import { useWorkspace } from '../store/workspace'
 import { agoDate } from '../lib/format'
 
@@ -14,6 +14,7 @@ export default function FeedbackFollowUps() {
   const [rows, setRows] = useState(null)
   const [error, setError] = useState(false)
   const [editing, setEditing] = useState(null)
+  const [opening, setOpening] = useState(null)
 
   const load = useCallback(() => {
     setError(false)
@@ -22,6 +23,19 @@ export default function FeedbackFollowUps() {
   useEffect(() => {
     load()
   }, [load])
+
+  // The form is pre-filled with what the employer sent last time, so they correct it rather than retype it.
+  const startEditing = async (row) => {
+    setOpening(row.id)
+    try {
+      const full = await getCandidateFeedback(row.candidateId)
+      setEditing({ ...row, remarks: full?.history?.at(-1)?.remarks ?? '' })
+    } catch {
+      setEditing({ ...row, remarks: '' })
+    } finally {
+      setOpening(null)
+    }
+  }
 
   const submit = async (value) => {
     try {
@@ -58,7 +72,7 @@ export default function FeedbackFollowUps() {
             </div>
             {row.clarification?.message && <p className="mt-3 rounded-lg bg-warn-soft px-3 py-2 text-[13px] text-warn"><span className="font-semibold">Mzobs asked: </span>{row.clarification.message}</p>}
             <div className="mt-3">
-              <Button variant="primary" size="sm" onClick={() => setEditing(row)}>Update feedback</Button>
+              <Button variant="primary" size="sm" disabled={opening === row.id} onClick={() => startEditing(row)}>{opening === row.id ? 'Opening…' : 'Update feedback'}</Button>
             </div>
           </article>
         ))}
@@ -68,7 +82,7 @@ export default function FeedbackFollowUps() {
         open={Boolean(editing)}
         onClose={() => setEditing(null)}
         candidateName={editing?.candidateName}
-        initial={editing ? { stage: editing.stage, reasons: editing.reasons } : undefined}
+        initial={editing ? { stage: editing.stage, reasons: editing.reasons, remarks: editing.remarks } : undefined}
         clarification={editing?.clarification?.message}
         submitLabel="Resubmit feedback"
         onSubmit={submit}

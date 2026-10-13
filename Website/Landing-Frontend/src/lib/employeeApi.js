@@ -62,6 +62,11 @@ export function reportApplicationFeedback(token, id, reason) {
   return request(`/applications/${encodeURIComponent(id)}/feedback/dispute`, { method: 'POST', token, body: { reason } })
 }
 
+// A question about delivered feedback goes to the existing support queue, tagged to the application.
+export function askAboutApplicationFeedback(token, id, message) {
+  return request(`/applications/${encodeURIComponent(id)}/feedback/question`, { method: 'POST', token, body: { message } })
+}
+
 export function withdrawApplication(token, id) {
   return request(`/applications/${encodeURIComponent(id)}/withdraw`, { method: 'PATCH', token })
 }

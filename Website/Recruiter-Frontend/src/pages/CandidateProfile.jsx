@@ -128,7 +128,7 @@ export default function CandidateProfile() {
   const [similar, setSimilar] = useState(null)
   const [stageBusy, setStageBusy] = useState(false)
   const [rejecting, setRejecting] = useState(false)
-  const [feedback, setFeedback] = useState(null)
+  const [feedback, setFeedback] = useState(undefined)
   const [editingFeedback, setEditingFeedback] = useState(false)
   const { toast } = useWorkspace()
 
@@ -151,15 +151,15 @@ export default function CandidateProfile() {
   const candidateId = c?._live?.candidateId
   const rejectedStage = c?.stage === 'rejected'
   useEffect(() => {
-    if (IS_DEMO || !candidateId || !rejectedStage) return setFeedback(null)
-    getCandidateFeedback(candidateId).then(setFeedback).catch(() => setFeedback(null))
+    if (IS_DEMO || !candidateId || !rejectedStage) return setFeedback(undefined)
+    getCandidateFeedback(candidateId).then(setFeedback).catch(() => setFeedback(undefined))
   }, [candidateId, rejectedStage])
 
   const submitRejection = async (value) => {
     try {
       const result = await rejectCandidateWithFeedback(c._live.candidateId, value)
       setRejecting(false)
-      toast(result.feedback ? 'Rejected. Feedback sent to Mzobs for review.' : 'Rejected')
+      toast(result.feedbackSaved === false ? result.message : result.feedback ? 'Feedback sent to Mzobs for review.' : 'Rejected', result.feedbackSaved === false ? { tone: 'warn' } : undefined)
       await reload()
     } catch (e) {
       throw feedbackSubmitError(e)
@@ -281,6 +281,12 @@ export default function CandidateProfile() {
               <button key={st} disabled={stageBusy || c.stage === st} onClick={() => (st === 'rejected' ? setRejecting(true) : moveStage(st))} className={`rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors ${c.stage === st ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line text-ink-2 hover:bg-line-2 disabled:opacity-50'}`}>{STAGE_LABELS[st]}</button>
             ))}
             {c.stage === 'rejected' && c.rejectionReason && <span className="text-[12.5px] text-muted">Reason: {c.rejectionReason}</span>}
+            {c.stage === 'rejected' && feedback === null && (
+              <span className="flex flex-wrap items-center gap-2 text-[12.5px]">
+                <Chip tone="accent">No rejection feedback yet</Chip>
+                <button type="button" onClick={() => setRejecting(true)} className="font-semibold text-accent hover:underline">Add rejection feedback</button>
+              </span>
+            )}
             {c.stage === 'rejected' && feedback && (
               <span className="flex flex-wrap items-center gap-2 text-[12.5px]">
                 <Chip tone={feedback.status === 'approved' ? 'ok' : feedback.status === 'pending_review' ? 'neutral' : 'accent'}>{FEEDBACK_STATUS_LABELS[feedback.status] ?? feedback.status}</Chip>
@@ -293,12 +299,12 @@ export default function CandidateProfile() {
         )}
       </header>
 
-      <RejectionFeedbackModal open={rejecting} onClose={() => setRejecting(false)} candidateName={c.name} onSubmit={submitRejection} />
+      <RejectionFeedbackModal open={rejecting} onClose={() => setRejecting(false)} candidateName={c.name} onSubmit={submitRejection} title={c.stage === 'rejected' ? 'Add rejection feedback' : undefined} submitLabel={c.stage === 'rejected' ? 'Submit feedback' : 'Reject candidate'} />
       <RejectionFeedbackModal
         open={editingFeedback}
         onClose={() => setEditingFeedback(false)}
         candidateName={c.name}
-        initial={feedback ? { stage: feedback.stage, reasons: feedback.reasons } : undefined}
+        initial={feedback ? { stage: feedback.stage, reasons: feedback.reasons, remarks: feedback.history?.at(-1)?.remarks ?? '' } : undefined}
         clarification={feedback?.clarification?.message}
         submitLabel="Resubmit feedback"
         onSubmit={submitResubmission}

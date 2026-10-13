@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Menu, Sun, Moon, ChevronDown, LogOut, ShieldCheck, Bell } from 'lucide-react'
 import { useApp } from '../../../lib/appContext'
 import Avatar from '../../ui/Avatar'
@@ -9,10 +9,12 @@ import OpsNotificationsPanel from './OpsNotificationsPanel'
 import { useMeQuery, logout as clearAuth } from '../../../hooks/useAuth'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
 import { useNotificationsQuery } from '../../../hooks/useNotifications'
+import { useFeedbackCountsQuery } from '../../../hooks/useFeedback'
 
 export default function OpsTopNav() {
   const { isDark, toggleTheme, avatarMenuOpen, setAvatarMenuOpen, setMobileSidebarOpen } = useApp()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const avatarRef = useRef(null)
   const notifRef = useRef(null)
   const [notifOpen, setNotifOpen] = useState(false)
@@ -35,7 +37,11 @@ export default function OpsTopNav() {
     return () => document.removeEventListener('click', onClick)
   }, [setAvatarMenuOpen])
 
-  const pending = (dash?.kpis?.resumeQueue ?? 0) + (dash?.kpis?.companyQueue ?? 0)
+  // The chip describes the page you are on: on Rejection feedback it counts feedback waiting for review,
+  // never the resume/company queues, which are unrelated work.
+  const onFeedback = pathname.startsWith('/app/rejection-feedback')
+  const { data: feedbackCounts } = useFeedbackCountsQuery({ enabled: onFeedback })
+  const pending = onFeedback ? (feedbackCounts?.pending_review ?? 0) : (dash?.kpis?.resumeQueue ?? 0) + (dash?.kpis?.companyQueue ?? 0)
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 z-[60] flex items-center gap-4 px-5 bg-surface/90 backdrop-blur-xl border-b border-border">
@@ -50,7 +56,7 @@ export default function OpsTopNav() {
       <div className="flex items-center gap-1.5 ml-auto">
         {pending > 0 && (
           <Badge tone="gold" className="max-md:hidden mr-1">
-            {pending} items in queue
+            {onFeedback ? `${pending} pending review` : `${pending} items in queue`}
           </Badge>
         )}
 

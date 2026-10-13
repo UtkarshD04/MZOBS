@@ -1,153 +1,152 @@
-import { useState } from 'react'
-import { MessageSquareText, Building2, User } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { ChevronLeft, ChevronRight, MessageSquareText, RefreshCw, Search, X } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
 import CountUp from '../../components/ui/CountUp'
 import { PillTabs } from '../../components/ui/Tabs'
 import EmptyState from '../../components/ui/EmptyState'
-import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
-import { PageSkeleton } from '../../components/ui/Skeleton'
 import ErrorState from '../../components/ui/ErrorState'
-import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
-import { Field, Textarea } from '../../components/ui/Field'
+import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
+import { Skeleton } from '../../components/ui/Skeleton'
+import { Select } from '../../components/ui/Field'
+import ReviewModal from '../../components/feedback/ReviewModal'
+import FollowUpList from '../../components/feedback/FollowUpList'
 import { useApp } from '../../lib/appContext'
-import { useFeedbackCountsQuery, useFeedbackDetailQuery, useFeedbackListQuery, useResolveDisputeMutation, useReviewFeedbackMutation } from '../../hooks/useFeedback'
+import { useFeedbackCountsQuery, useFeedbackFiltersQuery, useFeedbackListQuery, useFollowUpsQuery, useRetryNotificationMutation } from '../../hooks/useFeedback'
+import { DISPUTE_LABEL, NOTIFICATION_LABEL, NOTIFICATION_TONE, QUEUES, STATUS_LABEL, STATUS_TONE, dateOnly, dateTime, errorMessage } from '../../components/feedback/shared'
 
-const TABS = [
-  { label: 'Pending review', status: 'pending_review', count: 'pending_review' },
-  { label: 'Approved', status: 'approved', count: 'approved' },
-  { label: 'Returned', status: 'returned', count: 'returned' },
-  { label: 'Flagged / disputed', status: 'attention', count: 'attention' },
-  { label: 'Employer follow-up', status: 'followUp', count: 'followUp' },
-]
+const PAGE_SIZE = 10
+const EMPTY_FILTERS = { q: '', company: '', job: '', stage: '', from: '', to: '' }
 
-const STATUS_LABEL = { pending_review: 'Pending review', approved: 'Approved', returned: 'Returned to employer', flagged: 'Flagged', disputed: 'Disputed by candidate' }
-const STATUS_TONE = { pending_review: 'gold', approved: 'green', returned: 'navy', flagged: 'red', disputed: 'red' }
-const when = (iso) => (iso ? new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '')
+const EMPTY_COPY = {
+  pending_review: { title: 'Nothing is waiting for review', body: 'New items appear here when an employer rejects a candidate and submits feedback.', next: { label: 'Check employer follow-ups', queue: 'followUp' } },
+  approved: { title: 'No feedback has been approved yet', body: 'Approved feedback, who approved it and whether the candidate was notified will be listed here.', next: { label: 'Go to Pending review', queue: 'pending_review' } },
+  returned: { title: 'Nothing is waiting on an employer correction', body: 'Feedback you send back to an employer shows up here until they resubmit it.', next: { label: 'Go to Pending review', queue: 'pending_review' } },
+  attention: { title: 'No flagged or disputed feedback', body: 'Items you flag, or that a candidate reports, are tracked here until they are resolved.', next: { label: 'Go to Pending review', queue: 'pending_review' } },
+  followUp: { title: 'No employers need chasing', body: 'A case opens automatically when a rejected candidate has had no feedback for over 24 hours, or returned feedback has gone unanswered for 3 days.', next: { label: 'Go to Pending review', queue: 'pending_review' } },
+}
 
-function Section({ title, children }) {
+function useDebounced(value, ms = 300) {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), ms)
+    return () => clearTimeout(t)
+  }, [value, ms])
+  return debounced
+}
+
+function RetryButton({ id }) {
+  const app = useApp()
+  const retry = useRetryNotificationMutation()
   return (
-    <div className="mb-4">
-      <h4 className="text-[11.5px] font-semibold uppercase tracking-wide text-ink-tertiary mb-1.5">{title}</h4>
-      {children}
-    </div>
+    <Button size="sm" disabled={retry.isPending} onClick={() => retry.mutate(id, { onSuccess: () => app.addToast('success', 'Candidate notified.'), onError: (err) => app.addToast('error', errorMessage(err)) })}>
+      <RefreshCw size={13} aria-hidden="true" /> {retry.isPending ? 'Retrying…' : 'Retry notification'}
+    </Button>
   )
 }
 
-function ReviewModal({ app, id }) {
-  const { data, isLoading, isError, refetch } = useFeedbackDetailQuery(id)
-  const review = useReviewFeedbackMutation()
-  const resolve = useResolveDisputeMutation()
-  const [summary, setSummary] = useState(null)
-  const [message, setMessage] = useState('')
-  const busy = review.isPending || resolve.isPending
-
-  if (isLoading) return <ModalBody><PageSkeleton /></ModalBody>
-  if (isError || !data) return <ModalBody><ErrorState onRetry={refetch} /></ModalBody>
-
-  const latest = data.versions.at(-1)
-  const text = summary ?? latest?.summary ?? data.draft.summary
-  const disputed = data.status === 'disputed'
-  const reviewable = data.status === 'pending_review' || disputed
-
-  const done = (note) => ({
-    onSuccess: () => {
-      app.closeModal()
-      app.addToast('success', note)
-    },
-    onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
-  })
-
+function FeedbackRow({ row, queue, onOpen }) {
+  const pending = row.status === 'pending_review'
   return (
-    <>
-      <ModalHead title={`${data.candidateName || 'Candidate'} · ${data.jobTitle || 'Role'}`} onClose={app.closeModal} />
-      <ModalBody className="max-h-[68vh]">
-        <div className="flex items-center gap-2 flex-wrap mb-4">
-          <Badge tone={STATUS_TONE[data.status] ?? 'gray'}>{STATUS_LABEL[data.status] ?? data.status}</Badge>
-          <span className="text-xs text-ink-tertiary flex items-center gap-1"><Building2 size={11} /> {data.companyName}</span>
-          <span className="text-xs text-ink-tertiary">· Reached: {data.stageLabel}</span>
-        </div>
-
-        <Section title="Reasons the employer gave">
-          <div className="flex flex-wrap gap-1.5">
-            {data.reasonDetails.map((r) => <Badge key={r.code} tone={r.category === 'skill' ? 'navy' : 'gray'} dot={false}>{r.label}</Badge>)}
+    <Card hover pad>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[14.5px] font-semibold">{row.candidateName || 'Candidate'}</span>
+            <Badge tone={STATUS_TONE[row.status] ?? 'gray'}>{STATUS_LABEL[row.status] ?? row.status}</Badge>
+            {row.dispute && row.dispute.status !== 'resolved' && <Badge tone="red" dot={false}>Report: {DISPUTE_LABEL[row.dispute.status]}</Badge>}
           </div>
-        </Section>
+          <p className="text-xs text-ink-tertiary mt-1.5">
+            {row.jobTitle || 'Role'} · {row.companyName} · {row.stageLabel} · rejected {dateOnly(row.rejectedAt)}
+          </p>
+          <p className="text-[11.5px] text-ink-tertiary mt-0.5">Application ID <code>{row.applicationId}</code></p>
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {row.reasons.map((r) => <Badge key={r.code} tone="gray" dot={false}>{r.label}</Badge>)}
+          </div>
+          {queue !== 'approved' && row.employerFeedback && <p className="text-[13px] text-ink-secondary mt-2 line-clamp-2"><span className="font-semibold text-ink">Employer: </span>{row.employerFeedback}</p>}
+          {queue === 'returned' && row.returnReason && <p className="text-[12.5px] text-ink-secondary mt-1.5"><span className="font-semibold text-ink">Returned {dateOnly(row.returnedAt)}: </span>{row.returnReason}</p>}
+          {queue === 'approved' && (
+            <div className="mt-2 flex items-center gap-2 flex-wrap text-[12.5px] text-ink-secondary">
+              <span>Approved {dateTime(row.approvedAt)} by {row.approvedByName || 'a reviewer'} · v{row.version}</span>
+              {row.notification && <Badge tone={NOTIFICATION_TONE[row.notification.status] ?? 'gray'}>{NOTIFICATION_LABEL[row.notification.status]}</Badge>}
+              {row.notification && (row.notification.status === 'failed' || row.notification.status === 'pending') && <RetryButton id={row.id} />}
+            </div>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2 justify-end">
+          <Button size="sm" onClick={() => onOpen(row, 'details')}>View details</Button>
+          {pending && (
+            <>
+              <Button size="sm" variant="primary" onClick={() => onOpen(row, 'approve')}>Approve</Button>
+              <Button size="sm" onClick={() => onOpen(row, 'return')}>Return</Button>
+              <Button size="sm" onClick={() => onOpen(row, 'flag')}>Flag / dispute</Button>
+            </>
+          )}
+          <Button size="sm" onClick={() => onOpen(row, 'application')}>View application</Button>
+        </div>
+      </div>
+    </Card>
+  )
+}
 
-        <Section title="Employer remarks (private, never shown to the candidate)">
-          <p className="rounded-xl bg-surface-sunken p-3 text-[13px] text-ink-secondary whitespace-pre-wrap">{data.employerRemarks || 'No remarks.'}</p>
-        </Section>
-
-        {data.dispute && (
-          <Section title={`Candidate report (${data.dispute.status})`}>
-            <p className="rounded-xl bg-red-tint p-3 text-[13px] whitespace-pre-wrap">{data.dispute.reason}</p>
-          </Section>
-        )}
-
-        {data.clarification && (
-          <Section title={`Last request sent to the employer (${when(data.clarification.requestedAt)})`}>
-            <p className="rounded-xl bg-surface-sunken p-3 text-[13px] text-ink-secondary">{data.clarification.message}</p>
-          </Section>
-        )}
-
-        {reviewable && (
-          <>
-            <Field label="Candidate-facing summary" hint={disputed ? 'The delivered text is pre-filled. Edit it to publish a revised version.' : 'Pre-filled from the structured reasons. The employer’s remarks are not included. Edit as needed.'}>
-              <Textarea rows={5} value={text} onChange={(e) => setSummary(e.target.value)} maxLength={1200} />
-            </Field>
-            {!disputed && data.draft.improvementAreas.length > 0 && (
-              <p className="text-xs text-ink-tertiary -mt-1 mb-3">Improvement areas shown to the candidate: {data.draft.improvementAreas.map((a) => a.label).join(', ')}.</p>
-            )}
-            <Field label="Message to the employer" optional hint="Required to return, flag, or send a disputed item back. The employer sees this.">
-              <Textarea rows={3} value={message} onChange={(e) => setMessage(e.target.value)} maxLength={500} placeholder="e.g. Please say which skills the candidate lacked." />
-            </Field>
-          </>
-        )}
-
-        {data.versions.length > 0 && (
-          <Section title="Delivered versions">
-            {data.versions.map((v) => (
-              <p key={v.number} className="text-[12.5px] text-ink-secondary mb-1.5"><span className="font-semibold">v{v.number}</span> · {when(v.approvedAt)} · {v.summary}</p>
-            ))}
-          </Section>
-        )}
-
-        <Section title="Audit trail">
-          <ol className="text-[12.5px] text-ink-secondary space-y-1">
-            {data.audit.map((a, i) => (
-              <li key={i}>{when(a.at)} · <span className="font-semibold">{a.action.replaceAll('_', ' ')}</span> by {a.actorType}{a.note ? ` · ${a.note}` : ''}</li>
-            ))}
-          </ol>
-        </Section>
-      </ModalBody>
-
-      <ModalFoot>
-        <Button onClick={app.closeModal} disabled={busy}>Close</Button>
-        {reviewable && !disputed && (
-          <>
-            <Button disabled={busy} onClick={() => review.mutate({ id, action: 'flag', message }, done('Feedback flagged'))}>Flag</Button>
-            <Button disabled={busy} onClick={() => review.mutate({ id, action: 'return', message }, done('Returned to the employer'))}>Ask employer</Button>
-            <Button variant="primary" disabled={busy} onClick={() => review.mutate({ id, action: 'approve', summary: text }, done('Approved. The candidate has been notified.'))}>Approve</Button>
-          </>
-        )}
-        {disputed && (
-          <>
-            <Button disabled={busy} onClick={() => resolve.mutate({ id, action: 'return', message }, done('Returned to the employer'))}>Ask employer</Button>
-            <Button disabled={busy} onClick={() => resolve.mutate({ id, action: 'uphold' }, done('Original feedback upheld'))}>Uphold original</Button>
-            <Button variant="primary" disabled={busy} onClick={() => resolve.mutate({ id, action: 'revise', summary: text }, done('Revised feedback published'))}>Publish revised</Button>
-          </>
-        )}
-      </ModalFoot>
-    </>
+function Pagination({ page, total, onPage }) {
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  if (total <= PAGE_SIZE) return null
+  const from = (page - 1) * PAGE_SIZE + 1
+  const to = Math.min(total, page * PAGE_SIZE)
+  return (
+    <nav className="mt-4 flex items-center justify-between gap-3" aria-label="Pagination">
+      <span className="text-[12.5px] text-ink-tertiary">Showing {from}–{to} of {total}</span>
+      <div className="flex gap-2">
+        <Button size="sm" disabled={page <= 1} onClick={() => onPage(page - 1)} aria-label="Previous page"><ChevronLeft size={14} aria-hidden="true" /> Previous</Button>
+        <Button size="sm" disabled={page >= pages} onClick={() => onPage(page + 1)} aria-label="Next page">Next <ChevronRight size={14} aria-hidden="true" /></Button>
+      </div>
+    </nav>
   )
 }
 
 export default function FeedbackReview() {
   const app = useApp()
-  const [tab, setTab] = useState(0)
-  const { data: counts } = useFeedbackCountsQuery()
-  const { data: rows = [], isLoading, isError, refetch } = useFeedbackListQuery(TABS[tab].status)
+  const [queueIndex, setQueueIndex] = useState(0)
+  const [filters, setFilters] = useState(EMPTY_FILTERS)
+  const [page, setPage] = useState(1)
+  const queue = QUEUES[queueIndex]
+  const isFollowUp = queue.key === 'followUp'
+  const debouncedQ = useDebounced(filters.q)
+
+  const params = useMemo(() => ({ ...filters, q: debouncedQ, status: queue.status, page, limit: PAGE_SIZE }), [filters, debouncedQ, queue.status, page])
+  const followUpParams = useMemo(() => ({ q: debouncedQ, page, limit: PAGE_SIZE }), [debouncedQ, page])
+
+  const { data: counts, isError: countsError } = useFeedbackCountsQuery()
+  const { data: filterOptions } = useFeedbackFiltersQuery()
+  const list = useFeedbackListQuery(params)
+  const followUps = useFollowUpsQuery(followUpParams, isFollowUp)
+  const active = isFollowUp ? followUps : list
+  const rows = active.data?.rows ?? []
+  const total = active.data?.total ?? 0
+
+  const filtersActive = Object.values(filters).some(Boolean)
+  const setFilter = (key, value) => {
+    setFilters((f) => ({ ...f, [key]: value, ...(key === 'company' ? { job: '' } : {}) }))
+    setPage(1)
+  }
+  const openQueue = (index) => {
+    setQueueIndex(index)
+    setPage(1)
+  }
+  const clearFilters = () => {
+    setFilters(EMPTY_FILTERS)
+    setPage(1)
+  }
+  const jobs = (filterOptions?.jobs ?? []).filter((j) => !filters.company || j.companyId === filters.company)
+  const openDetail = (row, intent) => app.openModal(<ReviewModal app={app} id={row.id} intent={intent} />, true)
+
+  // A page can end up past the last one after an action empties it.
+  const lastPage = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const pastEnd = rows.length === 0 && total > 0 && page > lastPage
+
+  const empty = EMPTY_COPY[queue.key]
 
   return (
     <StaggerGroup>
@@ -157,55 +156,72 @@ export default function FeedbackReview() {
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
-        {TABS.map((t, i) => (
-          <Card key={t.label} hover pad onClick={() => setTab(i)} className="cursor-pointer">
-            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">{t.label}</span>
-            <div className={`text-[28px] font-bold tracking-tight mt-2 ${i === 0 ? 'text-gold-strong' : i === 1 ? 'text-green' : 'text-ink'}`}>
-              <CountUp value={counts?.[t.count] ?? 0} />
+        {QUEUES.map((q, i) => (
+          <Card key={q.key} hover pad onClick={() => openQueue(i)} className={`cursor-pointer ${i === queueIndex ? 'ring-2 ring-navy' : ''}`} role="button" tabIndex={0} aria-pressed={i === queueIndex} aria-label={`${q.label}: ${counts?.[q.count] ?? 0}`} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), openQueue(i))}>
+            <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">{q.label}</span>
+            <div className={`text-[28px] font-bold tracking-tight mt-2 ${q.tone}`}>
+              {countsError ? '—' : <CountUp value={counts?.[q.count] ?? 0} />}
             </div>
           </Card>
         ))}
       </StaggerItem>
 
+      <StaggerItem className="mb-3">
+        <PillTabs items={QUEUES.map((q) => q.label)} active={queueIndex} onChange={openQueue} />
+      </StaggerItem>
+
       <StaggerItem className="mb-4">
-        <PillTabs items={TABS.map((t) => t.label)} active={tab} onChange={setTab} />
+        <div className="flex flex-wrap items-center gap-2" role="search">
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" aria-hidden="true" />
+            <input
+              value={filters.q}
+              onChange={(e) => setFilter('q', e.target.value)}
+              placeholder="Search candidate, application ID, company or job"
+              aria-label="Search feedback"
+              className="h-9 pl-8 pr-3 rounded-[9px] border border-border-strong bg-surface text-[12.5px] w-[300px] max-sm:w-full outline-none focus:border-navy focus:shadow-[0_0_0_3.5px_var(--color-navy-ring)]"
+            />
+          </div>
+          {!isFollowUp && (
+            <>
+              <div className="w-[170px] max-sm:w-full"><Select aria-label="Company" value={filters.company} onChange={(e) => setFilter('company', e.target.value)} className="!h-9 !text-[12.5px]"><option value="">All companies</option>{(filterOptions?.companies ?? []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</Select></div>
+              <div className="w-[170px] max-sm:w-full"><Select aria-label="Job" value={filters.job} onChange={(e) => setFilter('job', e.target.value)} className="!h-9 !text-[12.5px]"><option value="">All jobs</option>{jobs.map((j) => <option key={j.id} value={j.id}>{j.title}</option>)}</Select></div>
+              <div className="w-[170px] max-sm:w-full"><Select aria-label="Application stage" value={filters.stage} onChange={(e) => setFilter('stage', e.target.value)} className="!h-9 !text-[12.5px]"><option value="">All stages</option>{(filterOptions?.stages ?? []).map((s) => <option key={s.code} value={s.code}>{s.label}</option>)}</Select></div>
+              <label className="flex items-center gap-1.5 text-[12px] text-ink-tertiary">From <input type="date" value={filters.from} onChange={(e) => setFilter('from', e.target.value)} className="h-9 px-2 rounded-[9px] border border-border-strong bg-surface text-[12.5px] text-ink" /></label>
+              <label className="flex items-center gap-1.5 text-[12px] text-ink-tertiary">To <input type="date" value={filters.to} onChange={(e) => setFilter('to', e.target.value)} className="h-9 px-2 rounded-[9px] border border-border-strong bg-surface text-[12.5px] text-ink" /></label>
+            </>
+          )}
+          {filtersActive && <Button size="sm" onClick={clearFilters}><X size={13} aria-hidden="true" /> Clear filters</Button>}
+        </div>
       </StaggerItem>
 
       <StaggerItem>
-        {isLoading ? (
-          <PageSkeleton />
-        ) : isError ? (
-          <ErrorState onRetry={refetch} />
-        ) : rows.length === 0 ? (
-          <Card>
-            <EmptyState icon={MessageSquareText} title="Nothing in this queue" body="Feedback shows up here when an employer rejects a candidate." />
-          </Card>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {rows.map((row) => (
-              <Card key={row.id} hover pad>
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[14.5px] font-semibold">{row.candidateName || 'Candidate'}</span>
-                      <Badge tone={STATUS_TONE[row.status] ?? 'gray'}>{STATUS_LABEL[row.status] ?? row.status}</Badge>
-                      {row.disputeOpen && <Badge tone="red" dot={false}>Candidate report open</Badge>}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-ink-tertiary mt-1.5 flex-wrap">
-                      <User size={11} /> {row.jobTitle || 'Role'}
-                      <span>· {row.companyName}</span>
-                      <span>· {row.stageLabel}</span>
-                      <span>· {when(row.updatedAt)}</span>
-                    </div>
-                  </div>
-                  <Button size="sm" onClick={() => app.openModal(<ReviewModal app={app} id={row.id} />, true)}>
-                    {row.status === 'pending_review' || row.status === 'disputed' ? 'Review' : 'View'}
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
+        <div aria-live="polite">
+          {active.isLoading ? (
+            <div className="flex flex-col gap-3" aria-label="Loading">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-[112px] rounded-2xl" />)}</div>
+          ) : active.isError ? (
+            <ErrorState title="Couldn't load this queue" body={errorMessage(active.error, 'We could not reach the server. Check your connection and try again.')} onRetry={() => active.refetch()} />
+          ) : pastEnd ? (
+            <Card>
+              <EmptyState icon={MessageSquareText} title="That page is now empty" body="Items on it were handled, so there is nothing left here." action={<Button onClick={() => setPage(lastPage)}>Go to the last page</Button>} />
+            </Card>
+          ) : rows.length === 0 ? (
+            <Card>
+              {filtersActive ? (
+                <EmptyState icon={Search} title="No matches" body="Nothing in this queue matches your search or filters." action={<Button onClick={clearFilters}>Clear filters</Button>} />
+              ) : (
+                <EmptyState icon={MessageSquareText} title={empty.title} body={empty.body} action={<Button onClick={() => openQueue(QUEUES.findIndex((q) => q.key === empty.next.queue))}>{empty.next.label}</Button>} />
+              )}
+            </Card>
+          ) : isFollowUp ? (
+            <FollowUpList rows={rows} />
+          ) : (
+            <div className="flex flex-col gap-3">
+              {rows.map((row) => <FeedbackRow key={row.id} row={row} queue={queue.key} onOpen={openDetail} />)}
+            </div>
+          )}
+        </div>
+        {!active.isLoading && !active.isError && <Pagination page={page} total={total} onPage={setPage} />}
       </StaggerItem>
     </StaggerGroup>
   )
