@@ -1,16 +1,22 @@
-import { Video, BarChart3, Sparkles, MessageSquare, CalendarDays } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Button, EmptyState } from '../components/ui'
+import { Video, BarChart3, Sparkles, MessageSquare, CalendarDays, CalendarPlus, Search } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Avatar, Button, Chip, EmptyState, Modal } from '../components/ui'
+import { useActions } from '../components/useActions'
+import { makeCriteria, STAGE_LABELS } from '../lib/talent/criteria'
+import { listInterviewable } from '../services/talentService'
 import { listInterviews } from '../services/liveApi'
 import { useWorkspace } from '../store/workspace'
 import { IS_DEMO } from '../lib/config'
 import { agoDate } from '../lib/format'
 import { AI_PROMPTS } from '../components/AskAI'
 
-function Page({ title, sub, children }) {
+function Page({ title, sub, action, children }) {
   return (
     <div className="mx-auto max-w-[980px] px-4 py-8 lg:px-6">
-      <h1 className="text-[30px] font-extrabold tracking-[-0.03em] text-ink">{title}</h1>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <h1 className="text-[30px] font-extrabold tracking-[-0.03em] text-ink">{title}</h1>
+        {action}
+      </div>
       {sub && <p className="mt-1 text-[14px] text-muted">{sub}</p>}
       <div className="mt-6">{children}</div>
     </div>
@@ -42,17 +48,65 @@ export function Messages() {
   )
 }
 
+// Pick who to interview, then hand over to the usual scheduling form.
+function SchedulePicker({ open, onClose, onPick }) {
+  const [rows, setRows] = useState(null)
+  const [q, setQ] = useState('')
+  useEffect(() => {
+    if (!open) return
+    setRows(null)
+    setQ('')
+    listInterviewable().then(setRows).catch(() => setRows([]))
+  }, [open])
+  const order = { shortlisted: 0, interviewing: 1, offered: 2, shared: 3 }
+  const shown = useMemo(() => {
+    const t = q.trim().toLowerCase()
+    const list = (rows ?? []).filter((c) => !t || [c.name, c.designation, c.jobTitle, c.appliedFor].some((v) => v?.toLowerCase().includes(t)))
+    return list.sort((a, b) => (order[a._live?.stage] ?? 9) - (order[b._live?.stage] ?? 9))
+  }, [rows, q])
+  return (
+    <Modal open={open} onClose={onClose} title="Schedule an interview" subtitle="Choose a candidate from your pipeline" width={520}>
+      <div className="relative">
+        <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name or role" aria-label="Search candidates" className="h-10 w-full rounded-lg border border-line bg-white pl-9 pr-3 text-[14px] outline-none focus:border-accent" />
+      </div>
+      {rows === null && <p className="mt-4 text-[13px] text-muted">Loading your pipeline…</p>}
+      {rows && shown.length === 0 && <EmptyState icon={CalendarDays} title={rows.length ? 'No match' : 'No one to interview yet'} body={rows.length ? 'Try a different name or role.' : 'Candidates you shortlist or receive for a job show up here.'} />}
+      <ul className="mt-3 max-h-[52vh] space-y-1.5 overflow-y-auto">
+        {shown.map((c) => (
+          <li key={c.id}>
+            <button onClick={() => onPick(c)} className="flex w-full items-center gap-3 rounded-2xl border border-line px-3 py-2.5 text-left hover:border-accent hover:bg-accent-soft/40">
+              <Avatar candidate={c} size={34} />
+              <span className="min-w-0 flex-1"><span className="block truncate text-[14px] font-medium">{c.name}</span><span className="block truncate text-[12.5px] text-muted">{c.designation || c.appliedFor}{c.jobTitle ? ` · ${c.jobTitle}` : ''}</span></span>
+              {c._live?.stage && <Chip tone={c._live.stage === 'shortlisted' ? 'accent' : 'neutral'}>{STAGE_LABELS[c._live.stage] ?? c._live.stage}</Chip>}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </Modal>
+  )
+}
+
 export function Interviews() {
   const { interviews: local } = useWorkspace()
   const [live, setLive] = useState(null)
-  useEffect(() => {
+  const [picking, setPicking] = useState(false)
+  const load = useCallback(() => {
     if (!IS_DEMO) listInterviews().then((rows) => setLive(rows.map((r) => ({ id: r.id, candidateName: r.candidateName, type: r.round || r.mode, date: new Date(r.startsAt).toLocaleDateString('en-IN'), time: new Date(r.startsAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }), interviewers: (r.panel ?? []).join(', '), link: r.meetingLink, status: r.status })))).catch(() => setLive([]))
   }, [])
+  useEffect(() => {
+    load()
+  }, [load])
+  const { onAction, host } = useActions(makeCriteria(), { onInterviewScheduled: load })
   const interviews = IS_DEMO ? local : live ?? []
   return (
-    <Page title="Interviews" sub="Interviews you've planned from candidate profiles.">
+    <Page
+      title="Interviews"
+      sub="Interviews you've scheduled with candidates."
+      action={<Button variant="primary" icon={CalendarPlus} onClick={() => setPicking(true)}>Schedule interview</Button>}
+    >
       {interviews.length === 0 ? (
-        <EmptyState icon={CalendarDays} title="No interviews planned" body="Open a candidate and choose Schedule interview." />
+        <EmptyState icon={CalendarDays} title="No interviews scheduled" body="Choose Schedule interview to pick a candidate from your pipeline, or open a candidate and schedule from their profile." />
       ) : (
         <ul className="space-y-2">
           {interviews.map((i) => (
@@ -69,6 +123,8 @@ export function Interviews() {
           ))}
         </ul>
       )}
+      <SchedulePicker open={picking} onClose={() => setPicking(false)} onPick={(c) => { setPicking(false); onAction('interview', c) }} />
+      {host}
     </Page>
   )
 }

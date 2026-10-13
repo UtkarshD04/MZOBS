@@ -34,7 +34,7 @@ export function ShortlistModal({ ids, onClose }) {
   const open = ids.length > 0
   const done = (list, added) => {
     // Mirror the shortlist into the backend pipeline, but only lift candidates still at 'shared' so nobody already interviewing is moved backwards.
-    getTalentMany(ids).then((rows) => rows.filter((r) => r._live?.stage === 'shared').forEach((r) => setCandidateStage(r._live.candidateId, 'shortlisted').catch(() => {})))
+    getTalentMany(ids).then((rows) => rows.filter((r) => r._live?.stage === 'shared').forEach((r) => setCandidateStage(r._live.candidateId, 'shortlisted').catch(() => toast('Added to the list, but could not mark them shortlisted in your pipeline.', { tone: 'warn' }))))
     toast(added ? `${added} candidate${added === 1 ? '' : 's'} added to “${list.name}”` : `Already in “${list.name}”`)
     onClose(true)
   }
@@ -276,7 +276,7 @@ export function PickerField({ mode, value, onChange, placeholder, minimumDate })
   )
 }
 
-export function InterviewModal({ candidate, onClose }) {
+export function InterviewModal({ candidate, onClose, onScheduled }) {
   const { toast } = useWorkspace()
   const [f, setF] = useState({ type: 'Video', date: null, time: null, interviewers: '', link: '', reminder: '1 hour before' })
   const set = (p) => setF((x) => ({ ...x, ...p }))
@@ -298,6 +298,7 @@ export function InterviewModal({ candidate, onClose }) {
         panel: f.interviewers.split(',').map((x) => x.trim()).filter(Boolean),
       })
       toast(`Interview scheduled with ${candidate.name}`)
+      onScheduled?.(candidate)
       onClose()
     } catch (e) {
       toast(e.response?.data?.message ?? 'Could not schedule the interview', { tone: 'warn' })

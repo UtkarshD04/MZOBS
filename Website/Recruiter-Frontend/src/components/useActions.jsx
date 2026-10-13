@@ -19,7 +19,7 @@ import { Button } from './ui'
  * `host` element to render once per page. `onUnlocked(result)` runs after a
  * CV credit is spent, so the page can reload the now-unmasked candidate.
  */
-export function useActions(criteria, { onUnlocked } = {}) {
+export function useActions(criteria, { onUnlocked, onInterviewScheduled } = {}) {
   const nav = useNavigate()
   const { toast, compare, selected, clearSelection, setCompareIds } = useWorkspace()
   const [why, setWhy] = useState(null)
@@ -129,7 +129,7 @@ export function useActions(criteria, { onUnlocked } = {}) {
         }}
       />
       <ResumeViewer file={resume} onClose={() => setResume(null)} />
-      <InterviewModal candidate={interview} onClose={() => setInterview(null)} />
+      <InterviewModal candidate={interview} onClose={() => setInterview(null)} onScheduled={onInterviewScheduled} />
       <NoteModal candidate={note.c} kind={note.kind} onClose={() => setNote({ c: null, kind: 'note' })} />
       <CompareModal open={compareOpen} onClose={() => setCompareOpen(false)} criteria={criteria} />
       <CompareTray count={compare.length} onOpen={() => setCompareOpen(true)} />

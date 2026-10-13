@@ -280,6 +280,11 @@ export default function CandidateProfile() {
             {STAGES.map((st) => (
               <button key={st} disabled={stageBusy || c.stage === st} onClick={() => (st === 'rejected' ? setRejecting(true) : moveStage(st))} className={`rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors ${c.stage === st ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line text-ink-2 hover:bg-line-2 disabled:opacity-50'}`}>{STAGE_LABELS[st]}</button>
             ))}
+            {['shared', 'shortlisted', 'interviewing'].includes(c.stage) && (
+              <button type="button" onClick={() => onAction('interview', c)} className="flex items-center gap-1 rounded-full border border-accent px-3 py-1 text-[12.5px] font-semibold text-[#0a6f64] hover:bg-accent-soft">
+                <CalendarPlus size={13} /> Schedule interview
+              </button>
+            )}
             {c.stage === 'rejected' && c.rejectionReason && <span className="text-[12.5px] text-muted">Reason: {c.rejectionReason}</span>}
             {c.stage === 'rejected' && feedback === null && (
               <span className="flex flex-wrap items-center gap-2 text-[12.5px]">

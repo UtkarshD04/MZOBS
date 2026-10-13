@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Alert, Linking, View } from 'react-native'
-import { BarChart3, CalendarDays, MessageSquare, Sparkles, Video } from 'lucide-react-native'
+import { BarChart3, CalendarDays, CalendarPlus, MessageSquare, Sparkles, Video } from 'lucide-react-native'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { PageScroll, PageTitle, Shell } from '../../components/web/Shell'
 import { PickerField } from '../../components/web/ActionModals'
+import { useActions } from '../../components/web/useActions'
+import { makeCriteria, STAGE_LABELS } from '../../lib/talent/criteria'
+import { listInterviewable } from '../../services/talent'
 import { AI_PROMPTS } from '../../components/web/AskAI'
-import { Btn, C, EmptyState, Field, Sheet, Skeleton, T, card } from '../../components/wk'
+import { Avatar, Btn, C, Chip, EmptyState, Field, Input, Press, Sheet, Skeleton, T, card } from '../../components/wk'
 import { cancelInterview, listInterviews, rescheduleInterview } from '../../services/interviewsService'
 import { queryKeys } from '../../lib/queryClient'
 import { errorMessage } from '../../lib/api'
@@ -46,10 +49,49 @@ export function MessagesScreen() {
 
 const tone = { Confirmed: [C.okSoft, C.okText], 'Awaiting confirmation': [C.warnSoft, C.warn], Rescheduled: ['#f1eefc', '#6d4fc7'], Completed: [C.blueSoft, '#1f6fb2'], Cancelled: [C.line2, C.muted] }
 
+// Pick who to interview, then hand over to the usual scheduling form.
+function SchedulePicker({ open, onClose, onPick }) {
+  const [rows, setRows] = useState(null)
+  const [text, setText] = useState('')
+  useEffect(() => {
+    if (!open) return
+    setRows(null)
+    setText('')
+    listInterviewable().then(setRows).catch(() => setRows([]))
+  }, [open])
+  const shown = useMemo(() => {
+    const order = { shortlisted: 0, interviewing: 1, offered: 2, shared: 3 }
+    const t = text.trim().toLowerCase()
+    const list = (rows ?? []).filter((c) => !t || [c.name, c.designation, c.jobTitle, c.appliedFor].some((v) => v?.toLowerCase().includes(t)))
+    return list.sort((a, b) => (order[a._live?.stage] ?? 9) - (order[b._live?.stage] ?? 9))
+  }, [rows, text])
+  return (
+    <Sheet open={open} onClose={onClose} title="Schedule an interview" subtitle="Choose a candidate from your pipeline">
+      <Input value={text} onChangeText={setText} placeholder="Search by name or role" />
+      {rows === null ? <T s={13} c={C.muted} style={{ marginTop: 12 }}>Loading your pipeline…</T> : null}
+      {rows && shown.length === 0 ? <EmptyState icon={CalendarDays} title={rows.length ? 'No match' : 'No one to interview yet'} body={rows.length ? 'Try a different name or role.' : 'Candidates you shortlist or receive for a job show up here.'} /> : null}
+      <View style={{ gap: 8, marginTop: 12 }}>
+        {shown.map((c) => (
+          <Press key={c.id} onPress={() => onPick(c)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 52, borderRadius: 16, borderWidth: 1, borderColor: C.line, paddingHorizontal: 12, paddingVertical: 8 }}>
+            <Avatar candidate={c} size={34} />
+            <View style={{ flex: 1 }}>
+              <T s={14} w="m" numberOfLines={1}>{c.name}</T>
+              <T s={12.5} c={C.muted} numberOfLines={1}>{c.designation || c.appliedFor}{c.jobTitle ? ` · ${c.jobTitle}` : ''}</T>
+            </View>
+            {c._live?.stage ? <Chip tone={c._live.stage === 'shortlisted' ? 'accent' : 'neutral'}>{STAGE_LABELS[c._live.stage] ?? c._live.stage}</Chip> : null}
+          </Press>
+        ))}
+      </View>
+    </Sheet>
+  )
+}
+
 export function InterviewsScreen() {
   const qc = useQueryClient()
   const { toast } = useWorkspace()
   const q = useQuery({ queryKey: queryKeys.interviews, queryFn: listInterviews })
+  const [picking, setPicking] = useState(false)
+  const { onAction, host } = useActions(makeCriteria(), { onInterviewScheduled: () => qc.invalidateQueries({ queryKey: queryKeys.interviews }) })
   const [resched, setResched] = useState(null)
   const [date, setDate] = useState(null)
   const [time, setTime] = useState(null)
@@ -90,13 +132,14 @@ export function InterviewsScreen() {
   return (
     <Shell>
       <PageScroll>
-        <PageTitle title="Interviews" sub="Interviews you've planned from candidate profiles." />
+        <PageTitle title="Interviews" sub="Interviews you've scheduled with candidates." />
+        <Btn variant="primary" icon={CalendarPlus} onPress={() => setPicking(true)} style={{ alignSelf: 'flex-start' }}>Schedule interview</Btn>
         {q.isLoading ? (
           <View style={{ gap: 8 }}>{[0, 1, 2].map((i) => <Skeleton key={i} h={72} r={16} />)}</View>
         ) : q.isError ? (
           <EmptyState icon={CalendarDays} title="Couldn't load interviews" action={<Btn onPress={() => q.refetch()}>Retry</Btn>} />
         ) : interviews.length === 0 ? (
-          <EmptyState icon={CalendarDays} title="No interviews planned" body="Open a candidate and choose Schedule interview." />
+          <EmptyState icon={CalendarDays} title="No interviews scheduled" body="Choose Schedule interview to pick a candidate from your pipeline, or open a candidate and schedule from their profile." />
         ) : (
           <View style={{ gap: 8 }}>
             {interviews.map((i) => {
@@ -127,6 +170,9 @@ export function InterviewsScreen() {
           </View>
         )}
       </PageScroll>
+
+      <SchedulePicker open={picking} onClose={() => setPicking(false)} onPick={(c) => { setPicking(false); onAction('interview', c) }} />
+      {host}
 
       <Sheet open={!!resched} onClose={() => setResched(null)} title="Reschedule interview" subtitle={resched?.candidateName} footer={<><Btn onPress={() => setResched(null)}>Cancel</Btn><Btn variant="primary" loading={busy} onPress={confirmResched}>Confirm new time</Btn></>}>
         <View style={{ flexDirection: 'row', gap: 12 }}>
