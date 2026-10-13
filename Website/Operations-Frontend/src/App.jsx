@@ -23,6 +23,7 @@ import CampusRequests from './pages/ops/CampusRequests'
 import PlanEnquiries from './pages/ops/PlanEnquiries'
 import Payments from './pages/ops/Payments'
 import Team from './pages/ops/Team'
+import DataExport from './pages/ops/DataExport'
 import SendNotification from './pages/ops/SendNotification'
 
 export default function App() {
@@ -51,6 +52,7 @@ export default function App() {
               <Route path="queries" element={<Queries />} />
               <Route path="payments" element={<Payments />} />
               <Route path="team" element={<Team />} />
+              <Route path="data-export" element={<DataExport />} />
             </Route>
             <Route path="notifications/send" element={<SendNotification />} />
           </Route>

@@ -15,6 +15,7 @@ import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Input, Select } from '../../components/ui/Field'
 import { useApp } from '../../lib/appContext'
+import { exportEmployeesCsv } from '../../services/exportService'
 import { useEmployeesQuery, useEmployeeQuery, useCreateEmployeeMutation, useSetEmployeeStatusMutation, useDeleteEmployeeMutation } from '../../hooks/useEmployees'
 
 const TABS = ['All', 'Active', 'Suspended']
@@ -257,6 +258,7 @@ export default function Employees() {
   const { data: rows = [], isLoading, isError, refetch } = useEmployeesQuery(status ? { status } : {})
   const { data: allRows = [] } = useEmployeesQuery({})
   const setStatus = useSetEmployeeStatusMutation()
+  const [exporting, setExporting] = useState(false)
 
   const filtered = useMemo(() => {
     if (!query) return rows
@@ -268,6 +270,16 @@ export default function Employees() {
 
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
+
+  async function exportCsv() {
+    setExporting(true)
+    try {
+      await exportEmployeesCsv({ ...(status ? { status } : {}), ...(query ? { search: query } : {}) })
+    } catch {
+      app.addToast('error', 'Could not export CSV')
+    }
+    setExporting(false)
+  }
 
   function toggleStatus(e) {
     const nextStatus = e.status === 'suspended' ? 'active' : 'suspended'
@@ -287,9 +299,14 @@ export default function Employees() {
           <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
           <p className="text-sm text-ink-secondary mt-1">Candidate accounts on the platform — click a row for contact details and the resume.</p>
         </div>
-        <Button variant="primary" onClick={() => app.openModal(<CreateEmployeeModal app={app} onDone={refetch} />)}>
-          <Plus size={15} /> Add employee
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={exportCsv} disabled={exporting}>
+            <Download size={15} /> {exporting ? 'Exporting...' : 'Export CSV'}
+          </Button>
+          <Button variant="primary" onClick={() => app.openModal(<CreateEmployeeModal app={app} onDone={refetch} />)}>
+            <Plus size={15} /> Add employee
+          </Button>
+        </div>
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-3 gap-4 mb-5">

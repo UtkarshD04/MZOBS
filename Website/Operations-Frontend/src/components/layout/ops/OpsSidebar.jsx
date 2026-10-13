@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { GraduationCap, LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, IndianRupee, UserCog, Send, Sparkles, Handshake, SlidersHorizontal } from 'lucide-react'
+import { GraduationCap, LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, IndianRupee, UserCog, Send, Sparkles, Handshake, SlidersHorizontal, Download } from 'lucide-react'
 import { useApp } from '../../../lib/appContext'
 import { cn } from '../../../lib/utils'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
@@ -74,6 +74,7 @@ export default function OpsSidebar() {
     { to: '/app/queries', label: 'Queries', icon: LifeBuoy },
     { to: '/app/payments', label: 'Payments', icon: IndianRupee },
     { to: '/app/team', label: 'Team', icon: UserCog },
+    { to: '/app/data-export', label: 'Data export', icon: Download },
   ]
 
   function logout() {

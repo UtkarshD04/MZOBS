@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ClipboardList, Search, Building2, StickyNote } from 'lucide-react'
+import { ClipboardList, Search, Building2, StickyNote, Download } from 'lucide-react'
 import Card, { CardHead } from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Avatar from '../../components/ui/Avatar'
@@ -14,6 +14,7 @@ import { Select, Textarea } from '../../components/ui/Field'
 import { useApp } from '../../lib/appContext'
 import { useApplicationsQuery, useUpdateApplicationMutation } from '../../hooks/useApplications'
 import { useJobsQuery } from '../../hooks/useJobs'
+import { exportApplicationsCsv } from '../../services/exportService'
 
 const STATUS_TABS = ['All', 'New', 'Screening', 'Shortlisted', 'Shared', 'Interview', 'Selected', 'Rejected']
 const STATUS_KEYS = [null, 'new', 'screening', 'shortlisted', 'shared', 'interview', 'selected', 'rejected']
@@ -62,6 +63,7 @@ export default function Applications() {
   const [selectedIds, setSelectedIds] = useState([])
   const [bulkStatus, setBulkStatus] = useState('screening')
   const [bulkPending, setBulkPending] = useState(false)
+  const [exporting, setExporting] = useState(false)
 
   const status = STATUS_KEYS[tab]
   const { data: rows = [], isLoading, isError, refetch } = useApplicationsQuery({ ...(status ? { status } : {}), ...(jobId !== 'all' ? { jobId } : {}) })
@@ -86,6 +88,16 @@ export default function Applications() {
         onError: (err) => app.addToast('error', err.response?.data?.message ?? 'Something went wrong'),
       }
     )
+  }
+
+  async function exportCsv() {
+    setExporting(true)
+    try {
+      await exportApplicationsCsv({ ...(status ? { status } : {}), ...(jobId !== 'all' ? { jobId } : {}) })
+    } catch {
+      app.addToast('error', 'Could not export CSV')
+    }
+    setExporting(false)
   }
 
   function toggleSelected(id) {
@@ -117,7 +129,10 @@ export default function Applications() {
 
       <StaggerItem className="flex items-center justify-between gap-3 flex-wrap mb-4">
         <PillTabs items={STATUS_TABS} active={tab} onChange={setTab} />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button onClick={exportCsv} disabled={exporting}>
+            <Download size={15} /> {exporting ? 'Exporting...' : 'Export CSV'}
+          </Button>
           <Select value={jobId} onChange={(e) => setJobId(e.target.value)} className="w-56">
             <option value="all">All jobs</option>
             {jobs.map((j) => (
