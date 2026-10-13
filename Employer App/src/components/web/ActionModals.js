@@ -26,6 +26,31 @@ function Choice({ active, onPress, icon: Icon, children, disabled, tone = 'accen
   )
 }
 
+// A tick-box row: "Email the candidate…". Shared by the schedule form and the reschedule sheet.
+export function EmailOption({ value, onChange, label = 'Email the candidate the details', sub = 'Date, time, mode and meeting link, with your email as the reply-to. They also get a notification in Mzobs.' }) {
+  return (
+    <Pressable onPress={() => onChange(!value)} accessibilityRole="checkbox" accessibilityState={{ checked: value }} style={{ flexDirection: 'row', gap: 12, borderRadius: 12, borderWidth: 1, borderColor: C.line, backgroundColor: '#f5f9fb', padding: 12 }}>
+      <View style={{ width: 20, height: 20, marginTop: 1, borderRadius: 5, borderWidth: 1.5, borderColor: value ? C.accent : C.line, backgroundColor: value ? C.accent : '#fff', alignItems: 'center', justifyContent: 'center' }}>{value ? <Check size={13} color="#fff" /> : null}</View>
+      <View style={{ flex: 1, gap: 2 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><Mail size={14} color={C.ink} /><T s={13.5} w="s">{label}</T></View>
+        <T s={12} c={C.muted}>{sub}</T>
+      </View>
+    </Pressable>
+  )
+}
+
+// What to tell the recruiter about the email, in one honest sentence. Only a real send counts as success.
+export function emailOutcome(asked, email) {
+  if (!asked) return { text: '', warn: false }
+  switch (email?.status) {
+    case 'sent': return { text: ` Email sent to ${email.to}.`, warn: false }
+    case 'not_configured': return { text: ' No email was sent: mail isn\u2019t set up on the server yet.', warn: true }
+    case 'no_email': return { text: ' No email was sent: they have no email on file.', warn: true }
+    case 'not_allowed': return { text: ' No email was sent: view their email first.', warn: true }
+    default: return { text: ' The email could not be sent.', warn: true }
+  }
+}
+
 // ---- shortlist picker -------------------------------------------------------
 
 export function ShortlistModal({ ids, onClose }) {
@@ -278,15 +303,15 @@ export function PickerField({ mode, value, onChange, placeholder, minimumDate })
 
 export function InterviewModal({ candidate, onClose, onScheduled }) {
   const { toast } = useWorkspace()
-  const [f, setF] = useState({ type: 'Video', date: null, time: null, interviewers: '', link: '', reminder: '1 hour before' })
+  const [f, setF] = useState({ type: 'Video', date: null, time: null, interviewers: '', link: '', reminder: '1 hour before', email: true })
   const set = (p) => setF((x) => ({ ...x, ...p }))
   const [busy, setBusy] = useState(false)
-  useEffect(() => { if (candidate) setF({ type: 'Video', date: null, time: null, interviewers: '', link: '', reminder: '1 hour before' }) }, [candidate?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (candidate) setF({ type: 'Video', date: null, time: null, interviewers: '', link: '', reminder: '1 hour before', email: true }) }, [candidate?.id]) // eslint-disable-line react-hooks/exhaustive-deps
   const valid = f.date && f.time
   const submit = async () => {
     setBusy(true)
     try {
-      await scheduleInterview({
+      const created = await scheduleInterview({
         candidateId: candidate._live?.candidateId ?? candidate.id,
         role: candidate.designation || 'Interview',
         round: f.type,
@@ -296,8 +321,10 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
         meetingLink: f.link || undefined,
         location: f.type === 'On-site' ? 'Office' : undefined,
         panel: f.interviewers.split(',').map((x) => x.trim()).filter(Boolean),
+        notifyByEmail: f.email,
       })
-      toast(`Interview scheduled with ${candidate.name}`)
+      const mail = emailOutcome(f.email, created?.email)
+      toast(`Interview scheduled with ${candidate.name}.${mail.text}`, mail.warn ? { tone: 'warn' } : undefined)
       onScheduled?.(candidate)
       onClose()
     } catch (e) {
@@ -319,6 +346,7 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
         <Field label="Interviewers"><Input value={f.interviewers} onChangeText={(interviewers) => set({ interviewers })} placeholder="Names, comma separated" /></Field>
         {f.type === 'Video' || f.type === 'Technical' ? <Field label="Meeting link"><Input value={f.link} onChangeText={(link) => set({ link })} placeholder="https://meet…" autoCapitalize="none" keyboardType="url" /></Field> : null}
         <Field label="Reminder"><Select value={f.reminder} onChange={(reminder) => set({ reminder })} options={['None', '15 minutes before', '1 hour before', '1 day before']} title="Reminder" /></Field>
+        <EmailOption value={f.email} onChange={(email) => set({ email })} />
         <T s={12} c={C.muted}>Saved to your Mzobs account. Phone, Technical and HR rounds are booked as a video call with the round name recorded.</T>
       </View>
     </Sheet>

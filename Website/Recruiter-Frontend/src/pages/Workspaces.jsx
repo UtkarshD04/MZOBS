@@ -1,7 +1,8 @@
-import { Video, BarChart3, Sparkles, MessageSquare, CalendarDays, CalendarPlus, Search } from 'lucide-react'
+import { BarChart3, Sparkles, MessageSquare, CalendarDays, CalendarPlus, Search } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Avatar, Button, Chip, EmptyState, Modal } from '../components/ui'
 import { useActions } from '../components/useActions'
+import InterviewCard, { isUpcoming, normalizeInterview } from '../components/InterviewCard'
 import { makeCriteria, STAGE_LABELS } from '../lib/talent/criteria'
 import { listInterviewable } from '../services/talentService'
 import { listInterviews } from '../services/liveApi'
@@ -92,36 +93,41 @@ export function Interviews() {
   const [live, setLive] = useState(null)
   const [picking, setPicking] = useState(false)
   const load = useCallback(() => {
-    if (!IS_DEMO) listInterviews().then((rows) => setLive(rows.map((r) => ({ id: r.id, candidateName: r.candidateName, type: r.round || r.mode, date: new Date(r.startsAt).toLocaleDateString('en-IN'), time: new Date(r.startsAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }), interviewers: (r.panel ?? []).join(', '), link: r.meetingLink, status: r.status })))).catch(() => setLive([]))
+    if (!IS_DEMO) listInterviews().then(setLive).catch(() => setLive([]))
   }, [])
   useEffect(() => {
     load()
   }, [load])
   const { onAction, host } = useActions(makeCriteria(), { onInterviewScheduled: load })
-  const interviews = IS_DEMO ? local : live ?? []
+  const rows = useMemo(() => (IS_DEMO ? local : live ?? []).map(normalizeInterview), [local, live])
+  const { upcoming, past } = useMemo(() => {
+    const now = new Date()
+    return {
+      upcoming: rows.filter((i) => isUpcoming(i, now)).sort((a, b) => a.startsAt - b.startsAt),
+      past: rows.filter((i) => !isUpcoming(i, now)).sort((a, b) => b.startsAt - a.startsAt),
+    }
+  }, [rows])
   return (
     <Page
       title="Interviews"
       sub="Interviews you've scheduled with candidates."
       action={<Button variant="primary" icon={CalendarPlus} onClick={() => setPicking(true)}>Schedule interview</Button>}
     >
-      {interviews.length === 0 ? (
+      {rows.length === 0 ? (
         <EmptyState icon={CalendarDays} title="No interviews scheduled" body="Choose Schedule interview to pick a candidate from your pipeline, or open a candidate and schedule from their profile." />
       ) : (
-        <ul className="space-y-2">
-          {interviews.map((i) => (
-            <li key={i.id} className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-line bg-white p-4 shadow-card">
-              <div>
-                <p className="text-[14px] font-semibold">{i.candidateName}</p>
-                <p className="text-[13px] text-muted">{i.type} · {i.date} at {i.time}{i.interviewers ? ` · ${i.interviewers}` : ''}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                {i.link && <a href={i.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-[13px] font-medium text-blue"><Video size={14} /> Join link</a>}
-                <span className="rounded-md bg-blue-soft px-2 py-0.5 text-[12px] font-medium text-[#1f6fb2]">{i.status ?? 'Planned'}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div className="space-y-8">
+          <section aria-label="Upcoming interviews">
+            <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wider text-muted">Upcoming <span className="ml-1 rounded-full bg-accent-soft px-2 py-0.5 text-[11.5px] text-[#0a6f64]">{upcoming.length}</span></h2>
+            {upcoming.length === 0 ? <p className="rounded-2xl border border-dashed border-line px-4 py-6 text-center text-[13.5px] text-muted">Nothing coming up. Schedule one with the button above.</p> : <ul className="space-y-3">{upcoming.map((i) => <InterviewCard key={i.id} interview={i} />)}</ul>}
+          </section>
+          {past.length > 0 && (
+            <section aria-label="Past and cancelled interviews">
+              <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wider text-muted">Past &amp; cancelled <span className="ml-1 rounded-full bg-line-2 px-2 py-0.5 text-[11.5px]">{past.length}</span></h2>
+              <ul className="space-y-3">{past.map((i) => <InterviewCard key={i.id} interview={i} past />)}</ul>
+            </section>
+          )}
+        </div>
       )}
       <SchedulePicker open={picking} onClose={() => setPicking(false)} onPick={(c) => { setPicking(false); onAction('interview', c) }} />
       {host}

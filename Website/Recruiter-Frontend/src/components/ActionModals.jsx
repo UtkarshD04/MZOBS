@@ -257,9 +257,21 @@ const TYPES = [
   { id: 'On-site', icon: Building },
 ]
 
+// What to tell the recruiter about the email, in one honest sentence. Only a real send counts as success.
+function emailOutcome(asked, email) {
+  if (!asked) return { text: '', warn: false }
+  switch (email?.status) {
+    case 'sent': return { text: ` Email sent to ${email.to}.`, warn: false }
+    case 'not_configured': return { text: ' No email was sent: mail isn\u2019t set up on the server yet.', warn: true }
+    case 'no_email': return { text: ' No email was sent: they have no email on file.', warn: true }
+    case 'not_allowed': return { text: ' No email was sent: view their email first, then reschedule or contact them.', warn: true }
+    default: return { text: ' The email could not be sent.', warn: true }
+  }
+}
+
 export function InterviewModal({ candidate, onClose, onScheduled }) {
   const { addInterview, toast } = useWorkspace()
-  const [f, setF] = useState({ type: 'Video', date: '', time: '', interviewers: '', link: '', reminder: '1 hour before' })
+  const [f, setF] = useState({ type: 'Video', date: '', time: '', interviewers: '', link: '', reminder: '1 hour before', email: true })
   const set = (p) => setF((x) => ({ ...x, ...p }))
   const valid = f.date && f.time
   const [busy, setBusy] = useState(false)
@@ -267,7 +279,7 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
     if (!IS_DEMO) {
       setBusy(true)
       try {
-        await scheduleInterview({
+        const created = await scheduleInterview({
           candidateId: candidate._live?.candidateId ?? candidate.id,
           role: candidate.designation || 'Interview',
           round: f.type,
@@ -277,8 +289,10 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
           meetingLink: f.link || undefined,
           location: f.type === 'On-site' ? 'Office' : undefined,
           panel: f.interviewers.split(',').map((x) => x.trim()).filter(Boolean),
+          notifyByEmail: f.email,
         })
-        toast(`Interview scheduled with ${candidate.name}`)
+        const mail = emailOutcome(f.email, created?.email)
+        toast(`Interview scheduled with ${candidate.name}.${mail.text}`, mail.warn ? { tone: 'warn' } : undefined)
         onScheduled?.(candidate)
         onClose()
       } catch (e) {
@@ -322,6 +336,12 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
         <label className="block text-[12px] text-muted">Reminder
           <select value={f.reminder} onChange={(e) => set({ reminder: e.target.value })} className={clsx(field, 'mt-1')}>{['None', '15 minutes before', '1 hour before', '1 day before'].map((r) => <option key={r}>{r}</option>)}</select>
         </label>
+        {!IS_DEMO && (
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line bg-[#f5f9fb] p-3">
+            <input type="checkbox" checked={f.email} onChange={(e) => set({ email: e.target.checked })} className="mt-0.5 h-4 w-4 accent-[#0b7a6d]" />
+            <span><span className="flex items-center gap-1.5 text-[13.5px] font-semibold"><Mail size={14} aria-hidden="true" /> Email the candidate the details</span><span className="mt-0.5 block text-[12px] text-muted">Date, time, mode and meeting link, with your email as the reply-to. They also get a notification in Mzobs.</span></span>
+          </label>
+        )}
         <p className="text-[12px] text-muted">{IS_DEMO ? 'Demo: interviews are stored on this device only.' : 'Saved to your Mzobs account. Phone, Technical and HR rounds are booked as a video call with the round name recorded.'}</p>
       </div>
     </Modal>
