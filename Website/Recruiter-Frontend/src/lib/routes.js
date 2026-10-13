@@ -4,6 +4,7 @@ export const ROUTES = [
   { path: '/jobs', label: 'Jobs', nav: 'primary' },
   { path: '/talent-pool', label: 'Job Talent', nav: 'primary' },
   { path: '/unlocked', label: 'Unlocked CVs', nav: 'more' },
+  { path: '/feedback', label: 'Feedback follow-ups', nav: 'more' },
   { path: '/saved-searches', label: 'Saved Searches', nav: 'more' },
   { path: '/shortlists', label: 'Shortlists', nav: 'primary' },
   { path: '/messages', label: 'Messages', nav: 'primary' },

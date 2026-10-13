@@ -4,10 +4,11 @@ import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Building2, Phone, Mail, M
 import { useActions } from '../components/useActions'
 import { NotesList } from '../components/ActionModals'
 import { ResumeFrame, ResumeLinks } from '../components/ResumeViewer'
-import { Avatar, Button, Chip, MatchBadge, Modal, SectionCard, Skeleton, StatusPill, TrustScore, VerifiedBadge, EmptyState } from '../components/ui'
+import { Avatar, Button, Chip, MatchBadge, SectionCard, Skeleton, StatusPill, TrustScore, VerifiedBadge, EmptyState } from '../components/ui'
 import { getTalent, findSimilar } from '../services/talentService'
-import { setCandidateStage, getResumeLink } from '../services/liveApi'
-import { STAGES, STAGE_LABELS, REJECTION_REASONS, composeRejectionReason } from '../lib/talent/criteria'
+import { setCandidateStage, getResumeLink, rejectCandidateWithFeedback, getCandidateFeedback, resubmitFeedback } from '../services/liveApi'
+import RejectionFeedbackModal, { feedbackSubmitError } from '../components/RejectionFeedbackModal'
+import { STAGES, STAGE_LABELS } from '../lib/talent/criteria'
 import { computeMatch, computeTrust, MATCH_LABELS } from '../lib/talent/engine'
 import { loadLastCriteria } from '../lib/lastCriteria'
 import { loadLastResults } from '../lib/lastResults'
@@ -109,6 +110,14 @@ function CvSection({ candidate: c, onUnlock }) {
   )
 }
 
+const FEEDBACK_STATUS_LABELS = {
+  pending_review: 'Feedback pending review',
+  approved: 'Feedback approved',
+  returned: 'Mzobs needs more detail',
+  flagged: 'Feedback needs changes',
+  disputed: 'Feedback under review',
+}
+
 export default function CandidateProfile() {
   const { id } = useParams()
   const nav = useNavigate()
@@ -119,8 +128,8 @@ export default function CandidateProfile() {
   const [similar, setSimilar] = useState(null)
   const [stageBusy, setStageBusy] = useState(false)
   const [rejecting, setRejecting] = useState(false)
-  const [rejectPreset, setRejectPreset] = useState('')
-  const [rejectDetail, setRejectDetail] = useState('')
+  const [feedback, setFeedback] = useState(null)
+  const [editingFeedback, setEditingFeedback] = useState(false)
   const { toast } = useWorkspace()
 
   const reload = () => getTalent(id).then((x) => setC(x ?? null))
@@ -135,6 +144,35 @@ export default function CandidateProfile() {
       toast(e.response?.data?.message ?? 'Could not update the stage', { tone: 'warn' })
     } finally {
       setStageBusy(false)
+    }
+  }
+
+  // The feedback record (status + any clarification a reviewer asked for) for a rejected candidate.
+  const candidateId = c?._live?.candidateId
+  const rejectedStage = c?.stage === 'rejected'
+  useEffect(() => {
+    if (IS_DEMO || !candidateId || !rejectedStage) return setFeedback(null)
+    getCandidateFeedback(candidateId).then(setFeedback).catch(() => setFeedback(null))
+  }, [candidateId, rejectedStage])
+
+  const submitRejection = async (value) => {
+    try {
+      const result = await rejectCandidateWithFeedback(c._live.candidateId, value)
+      setRejecting(false)
+      toast(result.feedback ? 'Rejected. Feedback sent to Mzobs for review.' : 'Rejected')
+      await reload()
+    } catch (e) {
+      throw feedbackSubmitError(e)
+    }
+  }
+
+  const submitResubmission = async (value) => {
+    try {
+      setFeedback(await resubmitFeedback(feedback.id, value))
+      setEditingFeedback(false)
+      toast('Feedback updated and sent back for review')
+    } catch (e) {
+      throw feedbackSubmitError(e)
     }
   }
 
@@ -243,60 +281,28 @@ export default function CandidateProfile() {
               <button key={st} disabled={stageBusy || c.stage === st} onClick={() => (st === 'rejected' ? setRejecting(true) : moveStage(st))} className={`rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors ${c.stage === st ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line text-ink-2 hover:bg-line-2 disabled:opacity-50'}`}>{STAGE_LABELS[st]}</button>
             ))}
             {c.stage === 'rejected' && c.rejectionReason && <span className="text-[12.5px] text-muted">Reason: {c.rejectionReason}</span>}
+            {c.stage === 'rejected' && feedback && (
+              <span className="flex flex-wrap items-center gap-2 text-[12.5px]">
+                <Chip tone={feedback.status === 'approved' ? 'ok' : feedback.status === 'pending_review' ? 'neutral' : 'accent'}>{FEEDBACK_STATUS_LABELS[feedback.status] ?? feedback.status}</Chip>
+                {(feedback.status === 'returned' || feedback.status === 'flagged') && (
+                  <button type="button" onClick={() => setEditingFeedback(true)} className="font-semibold text-accent hover:underline">Update feedback</button>
+                )}
+              </span>
+            )}
           </div>
         )}
       </header>
 
-      <Modal
-        open={rejecting}
-        onClose={() => setRejecting(false)}
-        title="Reject this candidate?"
-        subtitle="The candidate will see this reason in their application tracking."
-        width={480}
-        footer={
-          <>
-            <Button onClick={() => setRejecting(false)}>Cancel</Button>
-            <Button
-              variant="primary"
-              disabled={!composeRejectionReason(rejectPreset, rejectDetail) || composeRejectionReason(rejectPreset, rejectDetail).length < 5}
-              onClick={() => {
-                const reason = composeRejectionReason(rejectPreset, rejectDetail)
-                setRejecting(false)
-                setRejectPreset('')
-                setRejectDetail('')
-                moveStage('rejected', reason)
-              }}
-            >
-              Reject
-            </Button>
-          </>
-        }
-      >
-        <p className="text-[13px] font-medium text-ink-2">Pick a reason</p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {REJECTION_REASONS.map((r) => (
-            <button
-              key={r}
-              type="button"
-              aria-pressed={rejectPreset === r}
-              onClick={() => setRejectPreset((cur) => (cur === r ? '' : r))}
-              className={`rounded-full border px-3 py-1 text-[12.5px] font-medium transition-colors ${rejectPreset === r ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line text-ink-2 hover:bg-line-2'}`}
-            >
-              {r}
-            </button>
-          ))}
-        </div>
-        <label className="mt-4 block text-[13px] font-medium text-ink-2" htmlFor="reject-detail">Add detail (optional if you picked a reason)</label>
-        <textarea
-          id="reject-detail"
-          value={rejectDetail}
-          onChange={(e) => setRejectDetail(e.target.value)}
-          maxLength={300}
-          rows={3}
-          placeholder="e.g. Strong communication, but we need 3+ years of React"
-          className="mt-1 w-full rounded-lg border border-line px-3 py-2 text-[13.5px] outline-none focus:border-accent"
-        />
-      </Modal>
+      <RejectionFeedbackModal open={rejecting} onClose={() => setRejecting(false)} candidateName={c.name} onSubmit={submitRejection} />
+      <RejectionFeedbackModal
+        open={editingFeedback}
+        onClose={() => setEditingFeedback(false)}
+        candidateName={c.name}
+        initial={feedback ? { stage: feedback.stage, reasons: feedback.reasons } : undefined}
+        clarification={feedback?.clarification?.message}
+        submitLabel="Resubmit feedback"
+        onSubmit={submitResubmission}
+      />
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_340px]">
         <div className="space-y-5">

@@ -17,6 +17,7 @@ import Requirements from './pages/ops/Requirements'
 import PostJob from './pages/ops/PostJob'
 import Shortlisted from './pages/ops/Shortlisted'
 import Queries from './pages/ops/Queries'
+import FeedbackReview from './pages/ops/FeedbackReview'
 import PremiumServices from './pages/ops/PremiumServices'
 import Associates from './pages/ops/Associates'
 import CampusRequests from './pages/ops/CampusRequests'
@@ -50,6 +51,7 @@ export default function App() {
               <Route path="requirements" element={<Requirements />} />
               <Route path="requirements/new" element={<PostJob />} />
               <Route path="queries" element={<Queries />} />
+              <Route path="rejection-feedback" element={<FeedbackReview />} />
               <Route path="payments" element={<Payments />} />
               <Route path="team" element={<Team />} />
               <Route path="data-export" element={<DataExport />} />

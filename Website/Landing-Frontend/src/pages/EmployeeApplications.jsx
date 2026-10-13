@@ -6,6 +6,7 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import { Container, CompanyLogo } from '../components/mz/primitives'
 import { useToast } from '../components/mz/Toast'
+import ApplicationFeedback from '../components/mz/ApplicationFeedback'
 import { getEmployeeSession } from '../lib/employeeSession'
 import { getEmployeeProfile } from '../lib/employeeProfile'
 import { fetchApplications, fetchInterviews, fetchMockInterview, withdrawApplication } from '../lib/employeeApi'
@@ -141,27 +142,17 @@ function TrackingGate({ paid, onRetry }) {
   )
 }
 
-// Shown on a rejected application: how far it got and the employer's own reason.
-function RejectionNote({ app }) {
-  const after = { interview: 'after the interview', shortlisted: 'after shortlisting', shared: 'at the screening stage' }[app.rejectedAfter] ?? ''
+// Shown on a rejected application: the decision, then feedback if a Mzobs reviewer has approved any.
+function RejectionNote({ app, token }) {
   return (
     <div role="note" className="mt-4 rounded-[10px] border border-[#FDE2DF] bg-[#FEF6F5] px-3.5 py-3">
-      <p className="text-[13px] font-semibold text-[#B42318]">Not selected{after ? ` ${after}` : ''}</p>
-      <p className="mt-1 text-[13.5px] leading-relaxed text-mz-ink-2">
-        {app.rejectionReason ? (
-          <>
-            <span className="font-medium text-mz-ink">Reason from the employer: </span>
-            {app.rejectionReason}
-          </>
-        ) : (
-          'The employer didn’t share a reason for this decision.'
-        )}
-      </p>
+      <p className="text-[13px] font-semibold text-[#B42318]">Not selected</p>
+      <ApplicationFeedback app={app} token={token} />
     </div>
   )
 }
 
-function ApplicationCard({ app, onWithdraw, withdrawing }) {
+function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
   const [showHistory, setShowHistory] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const job = app.job
@@ -208,7 +199,7 @@ function ApplicationCard({ app, onWithdraw, withdrawing }) {
 
       <Progress app={app} />
 
-      {app.status === 'rejected' && <RejectionNote app={app} />}
+      {app.status === 'rejected' && <RejectionNote app={app} token={token} />}
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-mz-line pt-3">
         <button
@@ -594,7 +585,7 @@ export default function EmployeeApplications() {
               ) : (
                 <ul className="space-y-3">
                   {visible.map((app) => (
-                    <ApplicationCard key={app.id} app={app} onWithdraw={handleWithdraw} withdrawing={withdrawingId === app.id} />
+                    <ApplicationCard key={app.id} app={app} token={token} onWithdraw={handleWithdraw} withdrawing={withdrawingId === app.id} />
                   ))}
                 </ul>
               )}

@@ -98,3 +98,19 @@ export const listUnlocks = () => fetchAll('/unlocks', 10)
 export const getCredits = () => apiClient.get('/credits').then((r) => r.data)
 export const listInterviews = () => apiClient.get('/interviews').then((r) => r.data)
 export const scheduleInterview = (body) => apiClient.post('/interviews', body).then((r) => r.data)
+
+// Rejection feedback. Rejecting a candidate sends the structured feedback (stage reached + at least one reason)
+// together with the stage change; a reviewer at Mzobs then approves what the candidate sees.
+export const rejectCandidateWithFeedback = (id, feedback) =>
+  apiClient.patch(`/candidates/${id}/stage`, { stage: 'rejected', feedback }).then((r) => {
+    invalidatePool()
+    return r.data
+  })
+export const getFeedbackOptions = () => apiClient.get('/rejection-feedback/options').then((r) => r.data)
+export const getCandidateFeedback = (candidateId) =>
+  apiClient
+    .get(`/rejection-feedback/by-candidate/${candidateId}`)
+    .then((r) => r.data)
+    .catch((e) => (e.response?.status === 404 ? null : Promise.reject(e)))
+export const listFeedbackFollowUps = () => apiClient.get('/rejection-feedback', { params: { followUp: 1 } }).then((r) => r.data)
+export const resubmitFeedback = (id, feedback) => apiClient.put(`/rejection-feedback/${id}`, feedback).then((r) => r.data)

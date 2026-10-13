@@ -53,6 +53,15 @@ export async function fetchApplications(token, { page = 1, limit = 50 } = {}, { 
   return { applications: data, total: Number.isFinite(total) ? total : data.length }
 }
 
+// Approved, candidate-facing feedback on a rejected application: { status: 'none'|'pending'|'available', feedback? }.
+export function fetchApplicationFeedback(token, id) {
+  return request(`/applications/${encodeURIComponent(id)}/feedback`, { token })
+}
+
+export function reportApplicationFeedback(token, id, reason) {
+  return request(`/applications/${encodeURIComponent(id)}/feedback/dispute`, { method: 'POST', token, body: { reason } })
+}
+
 export function withdrawApplication(token, id) {
   return request(`/applications/${encodeURIComponent(id)}/withdraw`, { method: 'PATCH', token })
 }

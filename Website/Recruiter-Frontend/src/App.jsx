@@ -10,6 +10,7 @@ import CandidateProfile from './pages/CandidateProfile'
 import SavedSearches from './pages/SavedSearches'
 import Shortlists from './pages/Shortlists'
 import UnlockedCvs from './pages/UnlockedCvs'
+import FeedbackFollowUps from './pages/FeedbackFollowUps'
 import JobTalent from './pages/JobTalent'
 import Jobs from './pages/Jobs'
 import JobForm from './pages/JobForm'
@@ -92,6 +93,7 @@ function GstGatedApp({ ai, setAi, location }) {
           <Route path="/saved-searches" element={<SavedSearches />} />
           <Route path="/shortlists" element={<Shortlists />} />
           <Route path="/unlocked" element={<UnlockedCvs />} />
+          <Route path="/feedback" element={<FeedbackFollowUps />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/new" element={<JobForm />} />
           <Route path="/jobs/:id/edit" element={<JobForm />} />
