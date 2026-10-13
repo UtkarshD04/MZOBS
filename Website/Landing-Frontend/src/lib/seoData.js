@@ -76,6 +76,10 @@ export const STATIC_PAGE_SEO = {
     title: 'Pricing | Mzobs for Employers',
     description: 'One simple annual plan for unlimited job postings and applicant resume access on Mzobs.',
   },
+  '/careers': {
+    title: 'Careers | Mzobs',
+    description: 'Build your future with Mzobs. Learn how we work and explore opportunities to help connect talent with opportunity.',
+  },
   '/contact': {
     title: 'Contact Us | Mzobs',
     description: 'Get in touch with the Mzobs team for support, partnerships, or general enquiries.',

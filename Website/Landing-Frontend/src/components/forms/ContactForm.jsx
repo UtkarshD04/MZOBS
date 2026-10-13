@@ -42,8 +42,11 @@ function validate(form) {
   return errors
 }
 
-export default function ContactForm() {
-  const [form, setForm] = useState(initialForm)
+// `defaults` lets a page pre-fill fields (the Careers page opens it with
+// role "Other" and a "Careers at Mzobs" subject); omitted, it's the plain form.
+export default function ContactForm({ defaults }) {
+  const startForm = { ...initialForm, ...defaults }
+  const [form, setForm] = useState(startForm)
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | submitting | success
   const [submitError, setSubmitError] = useState('')
@@ -63,7 +66,7 @@ export default function ContactForm() {
     try {
       await submitContactMessage(form)
       setStatus('success')
-      setForm(initialForm)
+      setForm(startForm)
     } catch (err) {
       setSubmitError(err.message)
       setStatus('idle')

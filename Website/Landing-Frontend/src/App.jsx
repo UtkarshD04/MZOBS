@@ -19,6 +19,7 @@ import CityJobs from './pages/CityJobs'
 import AllCities from './pages/AllCities'
 import OurStory from './pages/OurStory'
 import Contact from './pages/Contact'
+import Careers from './pages/Careers'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import Employer from './pages/Employer'
@@ -96,6 +97,7 @@ export default function App() {
             <Route path="/jobs/:id" element={<JobDetail />} />
             <Route path="/about" element={<Navigate to="/our-story" replace />} />
             <Route path="/our-story" element={<OurStory />} />
+            <Route path="/careers" element={<Careers />} />
             <Route path="/contact" element={<Contact />} />
             <Route path={CLIENT_ONLY_ROUTES.employeeProfile} element={<EmployeeProfile />} />
             <Route path={CLIENT_ONLY_ROUTES.employeeSubscription} element={<EmployeeSubscription />} />

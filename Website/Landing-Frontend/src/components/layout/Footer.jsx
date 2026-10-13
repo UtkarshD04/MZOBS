@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { Mail, MapPin, Phone } from 'lucide-react'
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6'
 import { FOOTER_DATA } from '../../lib/content'
-import { CONTACT_EMAIL } from '../../lib/config'
 import { Container } from '../mz/primitives'
 
 const SOCIAL_ICONS = {
@@ -48,7 +47,7 @@ const LINK_GROUPS = [
       { label: 'Our story', to: '/our-story' },
       { label: 'Associate with Mzobs', to: '/associate' },
       { label: 'Contact', to: '/contact' },
-      { label: 'Careers', href: `mailto:${CONTACT_EMAIL}?subject=Careers%20at%20Mzobs` },
+      { label: 'Careers', to: '/careers' },
     ],
   },
   {
