@@ -29,6 +29,11 @@ function CountText({ value, loading }) {
 export default function CategorySection({ onSelect }) {
   const { data: counts, status } = useCategoryCounts()
   const keywordCounts = useKeywordCategoryCounts()
+  // Categories with live openings lead; empty ones follow, dimmed. Sort is
+  // stable, so the original order holds within each group.
+  const rows = CATEGORIES.map((c) => ({ ...c, value: c.count(counts, keywordCounts) })).sort(
+    (a, b) => Number(a.value === 0) - Number(b.value === 0),
+  )
 
   return (
     <section id="categories" aria-labelledby="categories-title" className="scroll-mt-20 bg-mz-bg py-10 lg:py-12">
@@ -37,14 +42,14 @@ export default function CategorySection({ onSelect }) {
         <p className="mt-1 text-[14px] text-mz-muted">Live opening counts. Pick one to filter the job feed.</p>
 
         <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
-          {CATEGORIES.map(({ key, title, icon: Icon, tone, params, count }) => {
-            const value = count(counts, keywordCounts)
+          {rows.map(({ key, title, icon: Icon, tone, params, count, value }) => {
+            const empty = value === 0
             return (
-              <li key={key}>
+              <li key={key} className={empty ? 'opacity-60 transition-opacity hover:opacity-100' : ''}>
                 <button
                   type="button"
                   onClick={() => onSelect?.({ q: [], location: [], experience: '', ...params })}
-                  className="group flex h-full w-full flex-col items-center justify-center gap-3 rounded-[18px] border border-mz-line bg-white px-3 py-7 text-center transition-colors duration-150 hover:bg-mz-bg hover:border-mz-line-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
+                  className="group flex h-full w-full flex-col items-center justify-center gap-3 rounded-[18px] border border-mz-line bg-white px-3 py-7 text-center transition-all duration-150 hover:-translate-y-0.5 hover:border-mz-line-strong hover:shadow-[0_10px_24px_-14px_rgba(18,48,74,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
                 >
                   <span className="flex h-12 w-12 items-center justify-center rounded-[14px] text-white shadow-[0_8px_18px_-8px_var(--tone)] transition-transform duration-150 group-hover:scale-110" style={{ background: tone, '--tone': tone }}>
                     <Icon size={22} aria-hidden="true" />

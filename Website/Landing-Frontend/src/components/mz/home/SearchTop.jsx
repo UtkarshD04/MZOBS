@@ -51,8 +51,8 @@ export default function SearchTop({ filters, onSearch }) {
       <div className="pointer-events-none absolute -left-24 bottom-[-40px] h-64 w-64 rounded-full bg-[#9b8cf0]/30 blur-2xl" aria-hidden="true" />
 
       <Container className="relative">
-        <h1 id="search-title" className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-[#12304A] sm:text-[32px]">
-          Your ambition deserves the right job.
+        <h1 id="search-title" className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-[#12304A] sm:text-[40px]">
+          Your ambition deserves the <span className="bg-gradient-to-r from-[#078B7D] to-[#12A89D] bg-clip-text text-transparent">right job.</span>
         </h1>
         <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-mz-muted">
           Live openings from employers hiring on Mzobs. Verified companies are marked on every listing.

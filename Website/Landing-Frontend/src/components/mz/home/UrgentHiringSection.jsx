@@ -28,6 +28,7 @@ export default function UrgentHiringSection() {
   return (
     <section aria-labelledby="urgent-title" className="pb-8 lg:pb-10">
       <Container>
+        <div className="rounded-[20px] border border-amber-200/70 bg-gradient-to-br from-amber-50/80 to-white p-4 sm:p-6">
         <div className="flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-amber-100 text-amber-700" aria-hidden="true">
             <Zap size={17} strokeWidth={2.4} />
@@ -51,6 +52,7 @@ export default function UrgentHiringSection() {
                 </li>
               ))}
         </ul>
+        </div>
       </Container>
     </section>
   )
