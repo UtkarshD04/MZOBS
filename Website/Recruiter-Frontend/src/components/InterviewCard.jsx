@@ -64,7 +64,7 @@ function EmailNote({ email }) {
   )
 }
 
-export default function InterviewCard({ interview: i, past = false }) {
+export default function InterviewCard({ interview: i, past = false, onReschedule, onCancel, onComplete }) {
   const end = i.durationMins ? new Date(i.startsAt.getTime() + i.durationMins * 60000) : null
   const cancelled = i.status === 'Cancelled'
   const video = i.mode !== 'On-site'
@@ -103,6 +103,13 @@ export default function InterviewCard({ interview: i, past = false }) {
             <a href={i.meetingLink} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 rounded-full bg-accent px-4 text-[13px] font-bold text-white transition-colors hover:bg-[#075f55]">
               <Video size={14} aria-hidden="true" /> Join interview
             </a>
+          )}
+          {i.status !== 'Cancelled' && i.status !== 'Completed' && (onReschedule || onCancel || onComplete) && (
+            <span className="inline-flex flex-wrap items-center gap-2">
+              {onReschedule && <button type="button" onClick={() => onReschedule(i)} className="h-8 rounded-full border border-line px-3 text-[12.5px] font-semibold text-ink-2 hover:bg-line-2">Reschedule</button>}
+              {onComplete && past && <button type="button" onClick={() => onComplete(i)} className="h-8 rounded-full border border-line px-3 text-[12.5px] font-semibold text-ink-2 hover:bg-line-2">Mark completed</button>}
+              {onCancel && <button type="button" onClick={() => onCancel(i)} className="h-8 rounded-full px-3 text-[12.5px] font-semibold text-red-600 hover:bg-red-50">Cancel</button>}
+            </span>
           )}
           <EmailNote email={i.email} />
         </div>

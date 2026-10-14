@@ -5,7 +5,7 @@ import { useActions } from '../components/useActions'
 import InterviewCard, { isOverdue, isUpcoming, normalizeInterview } from '../components/InterviewCard'
 import { makeCriteria, STAGE_LABELS } from '../lib/talent/criteria'
 import { listInterviewable } from '../services/talentService'
-import { listInterviews } from '../services/liveApi'
+import { cancelInterview, completeInterview, listInterviews, rescheduleInterview } from '../services/liveApi'
 import { useWorkspace } from '../store/workspace'
 import { IS_DEMO } from '../lib/config'
 import { agoDate } from '../lib/format'
@@ -108,6 +108,43 @@ export function Interviews() {
       past: rows.filter((i) => !isUpcoming(i, now) && !isOverdue(i, now)).sort((a, b) => b.startsAt - a.startsAt),
     }
   }, [rows])
+
+  // Reschedule / cancel / mark completed (live only). One dialog at a time: { kind, interview }.
+  const { toast } = useWorkspace()
+  const [dialog, setDialog] = useState(null)
+  const [when, setWhen] = useState({ date: '', time: '' })
+  const [note, setNote] = useState('')
+  const [email, setEmail] = useState(true)
+  const [busy, setBusy] = useState(false)
+  const openDialog = (kind) => (interview) => {
+    const d = interview.startsAt
+    const pad = (n) => String(n).padStart(2, '0')
+    setWhen({ date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`, time: `${pad(d.getHours())}:${pad(d.getMinutes())}` })
+    setNote('')
+    setEmail(true)
+    setDialog({ kind, interview })
+  }
+  const confirmDialog = async () => {
+    if (busy || !dialog) return
+    const { kind, interview } = dialog
+    setBusy(true)
+    try {
+      if (kind === 'reschedule') await rescheduleInterview(interview.id, { startsAt: new Date(`${when.date}T${when.time}`).toISOString(), notifyByEmail: email })
+      else if (kind === 'cancel') await cancelInterview(interview.id, { notifyByEmail: email })
+      else await completeInterview(interview.id, note.trim())
+      toast(kind === 'reschedule' ? 'Interview rescheduled' : kind === 'cancel' ? 'Interview cancelled' : 'Interview marked completed')
+      setDialog(null)
+      load()
+    } catch (e) {
+      toast(e.response?.data?.message ?? 'Could not update the interview', { tone: 'warn' })
+    } finally {
+      setBusy(false)
+    }
+  }
+  const actions = IS_DEMO ? {} : { onReschedule: openDialog('reschedule'), onCancel: openDialog('cancel'), onComplete: openDialog('complete') }
+  const dialogTitle = { reschedule: 'Reschedule interview', cancel: 'Cancel this interview?', complete: 'Mark interview completed' }[dialog?.kind]
+  const dialogValid = dialog?.kind === 'reschedule' ? when.date && when.time : dialog?.kind === 'complete' ? note.trim().length > 0 : true
+
   return (
     <Page
       title="Interviews"
@@ -120,13 +157,13 @@ export function Interviews() {
         <div className="space-y-8">
           <section aria-label="Upcoming interviews">
             <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wider text-muted">Upcoming <span className="ml-1 rounded-full bg-accent-soft px-2 py-0.5 text-[11.5px] text-[#0a6f64]">{upcoming.length}</span></h2>
-            {upcoming.length === 0 ? <p className="rounded-2xl border border-dashed border-line px-4 py-6 text-center text-[13.5px] text-muted">Nothing coming up. Schedule one with the button above.</p> : <ul className="space-y-3">{upcoming.map((i) => <InterviewCard key={i.id} interview={i} />)}</ul>}
+            {upcoming.length === 0 ? <p className="rounded-2xl border border-dashed border-line px-4 py-6 text-center text-[13.5px] text-muted">Nothing coming up. Schedule one with the button above.</p> : <ul className="space-y-3">{upcoming.map((i) => <InterviewCard key={i.id} interview={i} {...actions} />)}</ul>}
           </section>
           {overdue.length > 0 && (
             <section aria-label="Interviews that need an update">
               <h2 className="mb-1 text-[13px] font-bold uppercase tracking-wider text-muted">Needs update <span className="ml-1 rounded-full bg-warn-soft px-2 py-0.5 text-[11.5px] text-warn">{overdue.length}</span></h2>
               <p className="mb-3 text-[12.5px] text-muted">The time has passed and these aren&rsquo;t marked completed or cancelled yet.</p>
-              <ul className="space-y-3">{overdue.map((i) => <InterviewCard key={i.id} interview={i} past />)}</ul>
+              <ul className="space-y-3">{overdue.map((i) => <InterviewCard key={i.id} interview={i} past {...actions} />)}</ul>
             </section>
           )}
           {past.length > 0 && (
@@ -139,6 +176,35 @@ export function Interviews() {
       )}
       <SchedulePicker open={picking} onClose={() => setPicking(false)} onPick={(c) => { setPicking(false); onAction('interview', c) }} />
       {host}
+      <Modal
+        open={!!dialog}
+        onClose={busy ? () => {} : () => setDialog(null)}
+        title={dialogTitle}
+        subtitle={dialog?.interview.candidateName}
+        width={460}
+        footer={
+          <>
+            <Button onClick={() => setDialog(null)} disabled={busy}>{dialog?.kind === 'cancel' ? 'Keep' : 'Close'}</Button>
+            <Button variant="primary" onClick={confirmDialog} disabled={busy || !dialogValid}>{busy ? 'Saving…' : dialog?.kind === 'reschedule' ? 'Confirm new time' : dialog?.kind === 'cancel' ? 'Cancel interview' : 'Mark completed'}</Button>
+          </>
+        }
+      >
+        {dialog?.kind === 'reschedule' && (
+          <div className="grid grid-cols-2 gap-3">
+            <label className="text-[12px] text-muted">Date<input type="date" value={when.date} onChange={(e) => setWhen((w) => ({ ...w, date: e.target.value }))} className="mt-1 w-full rounded-lg border border-line px-3 py-2 text-[13.5px] outline-none focus:border-accent" /></label>
+            <label className="text-[12px] text-muted">Time<input type="time" value={when.time} onChange={(e) => setWhen((w) => ({ ...w, time: e.target.value }))} className="mt-1 w-full rounded-lg border border-line px-3 py-2 text-[13.5px] outline-none focus:border-accent" /></label>
+          </div>
+        )}
+        {dialog?.kind === 'complete' && (
+          <label className="block text-[12px] text-muted">How did it go? (private note)
+            <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={4} className="mt-1 w-full rounded-lg border border-line px-3 py-2 text-[13.5px] outline-none focus:border-accent" />
+          </label>
+        )}
+        {dialog?.kind === 'cancel' && <p className="text-[13.5px] text-ink-2">The candidate is notified in Mzobs.</p>}
+        {dialog && dialog.kind !== 'complete' && (
+          <label className="mt-4 flex cursor-pointer items-center gap-2 text-[13px]"><input type="checkbox" checked={email} onChange={(e) => setEmail(e.target.checked)} className="h-4 w-4 accent-[#0b7a6d]" /> Also email the candidate</label>
+        )}
+      </Modal>
     </Page>
   )
 }
