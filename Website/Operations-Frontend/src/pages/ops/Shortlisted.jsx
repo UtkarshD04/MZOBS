@@ -60,7 +60,7 @@ export default function Shortlisted() {
                         <Avatar initials={c.name?.slice(0, 2)?.toUpperCase()} size="sm" />
                         <div className="min-w-0">
                           <div className="font-semibold truncate">{c.name}</div>
-                          <div className="text-xs text-ink-tertiary truncate">{c.currentCity || 'City not set'}</div>
+                          {c.currentCity && <div className="text-xs text-ink-tertiary truncate">{c.currentCity}</div>}
                         </div>
                       </div>
                     </Td>

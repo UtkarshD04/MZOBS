@@ -58,7 +58,7 @@ export default function Resumes() {
                           {c.name}
                           {c.subscription?.status === 'paid' && <Star size={13} className="text-gold fill-gold flex-shrink-0" title="Paid subscription" />}
                         </div>
-                        <div className="text-xs text-ink-tertiary truncate">{c.currentCity || 'City not set'}</div>
+                        {c.currentCity && <div className="text-xs text-ink-tertiary truncate">{c.currentCity}</div>}
                       </div>
                     </div>
                   </Td>
