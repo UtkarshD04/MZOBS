@@ -296,7 +296,13 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
         onScheduled?.(candidate)
         onClose()
       } catch (e) {
-        toast(e.response?.data?.message ?? 'Could not schedule the interview', { tone: 'warn' })
+        if (!e.response) {
+          // No answer (timeout / network): the server may still have saved it, so refresh the list.
+          toast('No response from the server. The interview may still have been saved — check the Interviews page.', { tone: 'warn' })
+          onScheduled?.(candidate)
+        } else {
+          toast(e.response.data?.message ?? 'Could not schedule the interview', { tone: 'warn' })
+        }
       } finally {
         setBusy(false)
       }

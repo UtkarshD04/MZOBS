@@ -97,7 +97,7 @@ export async function getResumeLink(c) {
 export const listUnlocks = () => fetchAll('/unlocks', 10)
 export const getCredits = () => apiClient.get('/credits').then((r) => r.data)
 export const listInterviews = () => apiClient.get('/interviews').then((r) => r.data)
-export const scheduleInterview = (body) => apiClient.post('/interviews', body).then((r) => r.data)
+export const scheduleInterview = (body) => apiClient.post('/interviews', body, { timeout: 30000 }).then((r) => r.data)
 export const rescheduleInterview = (id, body) => apiClient.patch(`/interviews/${id}/reschedule`, body).then((r) => r.data)
 export const cancelInterview = (id, body) => apiClient.patch(`/interviews/${id}/cancel`, body).then((r) => r.data)
 export const completeInterview = (id, feedback) => apiClient.post(`/interviews/${id}/feedback`, { feedback: { notes: feedback } }).then((r) => r.data)
