@@ -18,11 +18,9 @@ import PostJob from './pages/ops/PostJob'
 import Shortlisted from './pages/ops/Shortlisted'
 import Queries from './pages/ops/Queries'
 import FeedbackReview from './pages/ops/FeedbackReview'
-import PremiumServices from './pages/ops/PremiumServices'
 import Associates from './pages/ops/Associates'
 import CampusRequests from './pages/ops/CampusRequests'
 import PlanEnquiries from './pages/ops/PlanEnquiries'
-import Payments from './pages/ops/Payments'
 import Team from './pages/ops/Team'
 import DataExport from './pages/ops/DataExport'
 import SendNotification from './pages/ops/SendNotification'
@@ -41,7 +39,6 @@ export default function App() {
             <Route index element={<Overview />} />
             <Route path="resumes" element={<Resumes />} />
             <Route path="shortlisted" element={<Shortlisted />} />
-            <Route path="premium-services" element={<PremiumServices />} />
             <Route path="associates" element={<Associates />} />
             <Route path="campus-requests" element={<CampusRequests />} />
             <Route path="plan-enquiries" element={<PlanEnquiries />} />
@@ -52,7 +49,6 @@ export default function App() {
               <Route path="requirements/new" element={<PostJob />} />
               <Route path="queries" element={<Queries />} />
               <Route path="rejection-feedback" element={<FeedbackReview />} />
-              <Route path="payments" element={<Payments />} />
               <Route path="team" element={<Team />} />
               <Route path="data-export" element={<DataExport />} />
             </Route>

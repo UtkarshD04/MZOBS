@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { GraduationCap, LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, IndianRupee, UserCog, Send, Sparkles, Handshake, SlidersHorizontal, Download, MessageSquareText } from 'lucide-react'
+import { GraduationCap, LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, UserCog, Send, Handshake, SlidersHorizontal, Download, MessageSquareText } from 'lucide-react'
 import { useApp } from '../../../lib/appContext'
 import { cn } from '../../../lib/utils'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
@@ -54,7 +54,6 @@ export default function OpsSidebar() {
   const items = [
     { to: '/app/resumes', label: 'Resumes', icon: Inbox, badge: kpis.resumeQueue },
     { to: '/app/shortlisted', label: 'Shortlisted', icon: Star },
-    { to: '/app/premium-services', label: 'Premium services', icon: Sparkles },
     { to: '/app/associates', label: 'Associates', icon: Handshake },
     { to: '/app/campus-requests', label: 'Campus Requests', icon: GraduationCap },
     { to: '/app/plan-enquiries', label: 'Plan enquiries', icon: SlidersHorizontal },
@@ -73,7 +72,6 @@ export default function OpsSidebar() {
     { to: '/app/requirements', label: 'Requirements', icon: Briefcase },
     { to: '/app/queries', label: 'Queries', icon: LifeBuoy },
     { to: '/app/rejection-feedback', label: 'Rejection feedback', icon: MessageSquareText },
-    { to: '/app/payments', label: 'Payments', icon: IndianRupee },
     { to: '/app/team', label: 'Team', icon: UserCog },
     { to: '/app/data-export', label: 'Data export', icon: Download },
   ]

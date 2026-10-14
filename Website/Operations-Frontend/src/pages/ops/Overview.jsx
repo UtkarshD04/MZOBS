@@ -101,7 +101,7 @@ export default function Overview() {
       </StaggerItem>
 
       <StaggerItem className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/payments')}>
+        <Card hover pad>
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Employer revenue</span>
             <Building2 size={15} className="text-navy" />
@@ -110,7 +110,7 @@ export default function Overview() {
             <CountUp value={revenue.collected ?? 0} prefix="₹" />
           </div>
         </Card>
-        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/payments')}>
+        <Card hover pad>
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Subscription revenue</span>
             <Users size={15} className="text-gold-strong" />
@@ -120,7 +120,7 @@ export default function Overview() {
           </div>
           <p className="text-[12px] text-ink-tertiary mt-1.5">{kpis.subscribedCandidates ?? 0} candidates paid</p>
         </Card>
-        <Card hover pad className="cursor-pointer" onClick={() => navigate('/app/payments')}>
+        <Card hover pad>
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold tracking-wide uppercase text-ink-tertiary">Outstanding</span>
             <AlertTriangle size={15} className="text-red" />
