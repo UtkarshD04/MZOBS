@@ -100,7 +100,7 @@ export const listInterviews = () => apiClient.get('/interviews').then((r) => r.d
 export const scheduleInterview = (body) => apiClient.post('/interviews', body).then((r) => r.data)
 export const rescheduleInterview = (id, body) => apiClient.patch(`/interviews/${id}/reschedule`, body).then((r) => r.data)
 export const cancelInterview = (id, body) => apiClient.patch(`/interviews/${id}/cancel`, body).then((r) => r.data)
-export const completeInterview = (id, feedback) => apiClient.post(`/interviews/${id}/feedback`, { feedback }).then((r) => r.data)
+export const completeInterview = (id, feedback) => apiClient.post(`/interviews/${id}/feedback`, { feedback: { notes: feedback } }).then((r) => r.data)
 
 // Rejection feedback. Rejecting a candidate sends the structured feedback (stage reached + at least one reason)
 // together with the stage change; a reviewer at Mzobs then approves what the candidate sees.
