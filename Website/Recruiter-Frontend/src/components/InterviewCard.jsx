@@ -50,6 +50,9 @@ export function normalizeInterview(r) {
 
 export const isUpcoming = (i, now = new Date()) => !['Cancelled', 'Completed'].includes(i.status) && i.startsAt.getTime() + (i.durationMins ?? 30) * 60000 >= now.getTime()
 
+// Time has passed but nobody marked it completed or cancelled, so it still needs the recruiter's attention.
+export const isOverdue = (i, now = new Date()) => !['Cancelled', 'Completed'].includes(i.status) && !isUpcoming(i, now)
+
 function EmailNote({ email }) {
   if (!email?.status) return null
   const sent = email.status === 'sent'

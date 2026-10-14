@@ -203,7 +203,10 @@ export function InterviewsScreen() {
     ])
 
   const upcoming = interviews.filter(isUpcoming).sort((a, b) => new Date(a.startsAt) - new Date(b.startsAt))
-  const past = interviews.filter((i) => !isUpcoming(i)).sort((a, b) => new Date(b.startsAt) - new Date(a.startsAt))
+  // Time has passed but still not completed or cancelled: keep these visible and actionable.
+  const isOverdue = (i) => !['Cancelled', 'Completed'].includes(i.status) && !isUpcoming(i)
+  const overdue = interviews.filter(isOverdue).sort((a, b) => new Date(b.startsAt) - new Date(a.startsAt))
+  const past = interviews.filter((i) => !isUpcoming(i) && !isOverdue(i)).sort((a, b) => new Date(b.startsAt) - new Date(a.startsAt))
 
   return (
     <Shell>
@@ -222,6 +225,13 @@ export function InterviewsScreen() {
               <T s={12.5} w="b" c={C.muted} style={{ textTransform: 'uppercase', letterSpacing: 0.8 }}>Upcoming · {upcoming.length}</T>
               {upcoming.length === 0 ? <T s={13.5} c={C.muted}>Nothing coming up. Schedule one with the button above.</T> : upcoming.map((i) => <InterviewCard key={i.id} i={i} onReschedule={openResched} onCancel={cancel} />)}
             </View>
+            {overdue.length > 0 ? (
+              <View style={{ gap: 10 }}>
+                <T s={12.5} w="b" c={C.muted} style={{ textTransform: 'uppercase', letterSpacing: 0.8 }}>Needs update · {overdue.length}</T>
+                <T s={12.5} c={C.muted}>The time has passed and these aren&apos;t marked completed or cancelled yet.</T>
+                {overdue.map((i) => <InterviewCard key={i.id} i={i} onReschedule={openResched} onCancel={cancel} />)}
+              </View>
+            ) : null}
             {past.length > 0 ? (
               <View style={{ gap: 10 }}>
                 <T s={12.5} w="b" c={C.muted} style={{ textTransform: 'uppercase', letterSpacing: 0.8 }}>Past and cancelled · {past.length}</T>

@@ -2,7 +2,7 @@ import { BarChart3, Sparkles, MessageSquare, CalendarDays, CalendarPlus, Search 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Avatar, Button, Chip, EmptyState, Modal } from '../components/ui'
 import { useActions } from '../components/useActions'
-import InterviewCard, { isUpcoming, normalizeInterview } from '../components/InterviewCard'
+import InterviewCard, { isOverdue, isUpcoming, normalizeInterview } from '../components/InterviewCard'
 import { makeCriteria, STAGE_LABELS } from '../lib/talent/criteria'
 import { listInterviewable } from '../services/talentService'
 import { listInterviews } from '../services/liveApi'
@@ -100,11 +100,12 @@ export function Interviews() {
   }, [load])
   const { onAction, host } = useActions(makeCriteria(), { onInterviewScheduled: load })
   const rows = useMemo(() => (IS_DEMO ? local : live ?? []).map(normalizeInterview), [local, live])
-  const { upcoming, past } = useMemo(() => {
+  const { upcoming, overdue, past } = useMemo(() => {
     const now = new Date()
     return {
       upcoming: rows.filter((i) => isUpcoming(i, now)).sort((a, b) => a.startsAt - b.startsAt),
-      past: rows.filter((i) => !isUpcoming(i, now)).sort((a, b) => b.startsAt - a.startsAt),
+      overdue: rows.filter((i) => isOverdue(i, now)).sort((a, b) => b.startsAt - a.startsAt),
+      past: rows.filter((i) => !isUpcoming(i, now) && !isOverdue(i, now)).sort((a, b) => b.startsAt - a.startsAt),
     }
   }, [rows])
   return (
@@ -121,6 +122,13 @@ export function Interviews() {
             <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wider text-muted">Upcoming <span className="ml-1 rounded-full bg-accent-soft px-2 py-0.5 text-[11.5px] text-[#0a6f64]">{upcoming.length}</span></h2>
             {upcoming.length === 0 ? <p className="rounded-2xl border border-dashed border-line px-4 py-6 text-center text-[13.5px] text-muted">Nothing coming up. Schedule one with the button above.</p> : <ul className="space-y-3">{upcoming.map((i) => <InterviewCard key={i.id} interview={i} />)}</ul>}
           </section>
+          {overdue.length > 0 && (
+            <section aria-label="Interviews that need an update">
+              <h2 className="mb-1 text-[13px] font-bold uppercase tracking-wider text-muted">Needs update <span className="ml-1 rounded-full bg-warn-soft px-2 py-0.5 text-[11.5px] text-warn">{overdue.length}</span></h2>
+              <p className="mb-3 text-[12.5px] text-muted">The time has passed and these aren&rsquo;t marked completed or cancelled yet.</p>
+              <ul className="space-y-3">{overdue.map((i) => <InterviewCard key={i.id} interview={i} past />)}</ul>
+            </section>
+          )}
           {past.length > 0 && (
             <section aria-label="Past and cancelled interviews">
               <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wider text-muted">Past &amp; cancelled <span className="ml-1 rounded-full bg-line-2 px-2 py-0.5 text-[11.5px]">{past.length}</span></h2>
