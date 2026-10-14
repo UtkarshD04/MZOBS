@@ -35,6 +35,20 @@ export function signupEmployee({ name, email, phone, password, experience, gradu
   return postJSON('/auth/signup', { name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken, emailToken })
 }
 
+// Server-side OTP for the one reserved test/review number (Backend
+// utils/msg91.js TEST_PHONE + utils/reviewLogin.js): it never gets an SMS and
+// accepts a fixed code, which MSG91's client-side widget can't do. Every
+// other number goes through the widget (see EmployeePhoneAuthForm).
+export const REVIEW_LOGIN_PHONE = '9000000001'
+
+export function sendEmployeePhoneOtp({ phone }) {
+  return postJSON('/auth/send-otp', { phone })
+}
+
+export function verifyEmployeePhoneOtp({ phone, otp }) {
+  return postJSON('/auth/verify-otp', { phone, otp })
+}
+
 // Logs an *existing* account in using nothing but a verified phoneToken — no
 // password. A 404 just means this number isn't registered yet, which the
 // phone-first auth flow reads as "show the signup details step".

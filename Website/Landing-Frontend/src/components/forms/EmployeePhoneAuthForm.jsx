@@ -16,6 +16,9 @@ import {
   signupEmployee,
   signupEmployeeWithGoogle,
   verifyEmployeePhoneWidget,
+  REVIEW_LOGIN_PHONE,
+  sendEmployeePhoneOtp,
+  verifyEmployeePhoneOtp,
 } from '../../lib/employeeAuth'
 import { saveEmployeeSession, buildAppRedirectUrl } from '../../lib/employeeSession'
 import { uploadEmployeeResume, validateResumeFileClientSide } from '../../lib/employeeResume'
@@ -23,6 +26,9 @@ import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../lib/msg91W
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const RESEND_COOLDOWN = 30
+// The reserved test number skips MSG91's widget (it can't accept a fixed code)
+// and verifies on our own backend instead.
+const isReviewPhone = (value) => value.trim() === REVIEW_LOGIN_PHONE
 
 const stepTransition = {
   initial: { opacity: 0, x: 12 },
@@ -129,7 +135,8 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
     setOtpError('')
     setSendingOtp(true)
     try {
-      await sendWidgetOtp(phone)
+      if (isReviewPhone(phone)) await sendEmployeePhoneOtp({ phone: phone.trim() })
+      else await sendWidgetOtp(phone)
       setStep('otp')
       setOtp('')
       setResendIn(RESEND_COOLDOWN)
@@ -144,7 +151,8 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
     setOtpError('')
     setSendingOtp(true)
     try {
-      await retryWidgetOtp('SMS')
+      if (isReviewPhone(phone)) await sendEmployeePhoneOtp({ phone: phone.trim() })
+      else await retryWidgetOtp('SMS')
       setOtp('')
       setResendIn(RESEND_COOLDOWN)
     } catch (err) {
@@ -184,8 +192,13 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
       // MSG91's widget verifies the code itself and hands back a signed
       // access-token — that still has to be confirmed server-to-server
       // before we trust it (a client can't just assert "verified").
-      const widgetResult = await verifyWidgetOtp(otp)
-      const { phoneToken: token } = await verifyEmployeePhoneWidget({ phone, accessToken: widgetResult.message })
+      let token
+      if (isReviewPhone(phone)) {
+        ;({ phoneToken: token } = await verifyEmployeePhoneOtp({ phone: phone.trim(), otp }))
+      } else {
+        const widgetResult = await verifyWidgetOtp(otp)
+        ;({ phoneToken: token } = await verifyEmployeePhoneWidget({ phone, accessToken: widgetResult.message }))
+      }
       setPhoneToken(token)
       await proceedAfterVerification(token)
     } catch (err) {

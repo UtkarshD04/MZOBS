@@ -164,6 +164,9 @@ app.use((req, res, next) => {
   next()
 })
 
+// The job board is the homepage; a bare /jobs goes there.
+app.get('/jobs', (req, res) => res.redirect(301, '/'))
+
 // /about was folded into /our-story — permanent redirect so old links and
 // search results land on the one page that's left.
 app.get('/about', (req, res) => res.redirect(301, '/our-story'))

@@ -92,6 +92,8 @@ export default function App() {
         <Suspense fallback={<RouteFallback />}>
           <Routes location={location}>
             <Route path="/" element={<Home />} />
+            {/* /jobs on its own has no page of its own: the job board is the homepage. */}
+            <Route path="/jobs" element={<Navigate to="/" replace />} />
             <Route path="/jobs/cities" element={<AllCities />} />
             <Route path="/jobs/city/:citySlug" element={<CityJobs />} />
             <Route path="/jobs/:id" element={<JobDetail />} />
