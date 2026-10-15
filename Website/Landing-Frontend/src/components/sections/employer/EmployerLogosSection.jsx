@@ -1,49 +1,9 @@
-import { useLayoutEffect, useRef } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowUpRight, Building2 } from 'lucide-react'
 import { FadeInView } from './employerMotion'
 import { TRUSTED_LOGOS_DATA } from '../../../lib/content'
 
-gsap.registerPlugin(ScrollTrigger)
-
 export default function EmployerLogosSection() {
   const { badge, title, logos } = TRUSTED_LOGOS_DATA
-  const gridRef = useRef(null)
-  const ctaRef = useRef(null)
-
-  // Cards reveal in sequence (not all at once), then the CTA fades up once
-  // the last card has landed — a single ScrollTrigger pass, never repeated.
-  useLayoutEffect(() => {
-    const cards = gridRef.current?.children
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    if (reduce) {
-      if (cards?.length) gsap.set(cards, { autoAlpha: 1, y: 0, scale: 1 })
-      gsap.set(ctaRef.current, { autoAlpha: 1, y: 0 })
-      return undefined
-    }
-
-    const ctx = gsap.context(() => {
-      gsap.set(ctaRef.current, { autoAlpha: 0, y: 18 })
-      if (!cards?.length) return
-      gsap.fromTo(
-        cards,
-        { autoAlpha: 0, y: 26, scale: 0.96 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.55,
-          ease: 'power3.out',
-          stagger: 0.09,
-          scrollTrigger: { trigger: gridRef.current, start: 'top 90%', once: true },
-          onComplete: () => gsap.to(ctaRef.current, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out' }),
-        }
-      )
-    }, gridRef)
-    return () => ctx.revert()
-  }, [])
 
   return (
     <section id="companies" className="relative overflow-hidden bg-(--explorer-bg) py-16 md:py-20 px-6 md:px-12">
@@ -63,11 +23,12 @@ export default function EmployerLogosSection() {
           </p>
         </FadeInView>
 
-        <div ref={gridRef} className="mt-10 grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:gap-5">
-          {logos.map((logo) => (
+        <div className="mz-marquee mt-10 py-3">
+          <ul className="mz-marquee-track gap-4 pl-4 lg:gap-5" style={{ animationDuration: `${Math.max(20, logos.length * 4)}s` }}>
+            {[...logos, ...logos].map((logo, i) => (
+              <li key={`${logo.name}-${i}`} aria-hidden={i >= logos.length ? 'true' : undefined} className="shrink-0">
             <div
-              key={logo.name}
-              className="group relative flex h-28 flex-col items-center justify-center gap-2.5 overflow-hidden rounded-2xl border border-(--explorer-border) bg-white p-4 shadow-[0_2px_10px_-4px_rgba(16,42,67,0.10)] transition-[transform,box-shadow,border-color] duration-[280ms] ease-out motion-safe:md:hover:-translate-y-1.5 md:hover:border-(--explorer-blue) md:hover:shadow-[0_20px_36px_-16px_rgba(11, 122, 109,0.38)]"
+              className="group relative flex h-28 w-44 flex-col items-center justify-center gap-2.5 overflow-hidden rounded-2xl border border-(--explorer-border) bg-white p-4 shadow-[0_2px_10px_-4px_rgba(16,42,67,0.10)] transition-[transform,box-shadow,border-color] duration-[280ms] ease-out motion-safe:md:hover:-translate-y-1.5 md:hover:border-(--explorer-blue) md:hover:shadow-[0_20px_36px_-16px_rgba(11, 122, 109,0.38)]"
             >
               {/* Static top accent — always on, gives each card structure at rest */}
               <span
@@ -91,10 +52,12 @@ export default function EmployerLogosSection() {
                 <ArrowUpRight size={12} strokeWidth={2.4} aria-hidden="true" />
               </span>
             </div>
-          ))}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div ref={ctaRef} className="mt-9 flex justify-center">
+        <div className="mt-9 flex justify-center">
           <span className="group inline-flex items-center gap-2.5 rounded-full bg-(--explorer-blue) px-5 py-2.5 text-[13.5px] font-semibold text-white shadow-[0_14px_28px_-14px_rgba(11, 122, 109,0.6)] transition-all duration-[280ms] ease-out motion-safe:hover:-translate-y-0.5 hover:bg-(--explorer-blue-hover) hover:shadow-[0_18px_34px_-14px_rgba(11, 122, 109,0.7)]">
             <Building2 size={15} aria-hidden="true" />
             {logos.length}+ companies hiring on Mzobs

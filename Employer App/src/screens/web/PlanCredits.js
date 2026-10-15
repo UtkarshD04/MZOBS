@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Pressable, TextInput, View } from 'react-native'
+import { Linking, Pressable, TextInput, View } from 'react-native'
 import { AlertTriangle, CheckCircle2, Coins, CreditCard, ShieldCheck, SlidersHorizontal, Tag, Ticket, XCircle } from 'lucide-react-native'
 import { PageScroll, PageTitle, Shell } from '../../components/web/Shell'
 import { Btn, C, EmptyState, F, Field, Input, Sheet, Skeleton, T, card } from '../../components/wk'
 import { useWorkspace } from '../../store/workspace'
+import { useAuth } from '../../context/AuthContext'
+import { getStorePrices, iapEnabled, restorePurchases } from '../../lib/iap'
 import { agoDate } from '../../lib/tfmt'
-import { getPlans, getSubscription, getWallet, isCancel, listPlanPayments, listPurchases, listUnlockHistory, paymentError, previewCoupon, previewSubscriptionCoupon, purchaseCredits, purchaseSubscription, submitPlanEnquiry } from '../../services/plan'
+import { getPlans, getSubscription, getWallet, isCancel, listPlanPayments, listPurchases, listUnlockHistory, paymentError, previewCoupon, previewSubscriptionCoupon, purchaseCredits, purchaseSubscription, refreshPlan, submitPlanEnquiry } from '../../services/plan'
 
 const rupees = (paise) => `₹${(paise / 100).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 const dateOf = (iso) => (iso ? new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—')
@@ -29,7 +31,7 @@ function CouponRow({ code, setCode, onApply, label }) {
   )
 }
 
-function TierCard({ plan: p, onBuy, busy }) {
+function TierCard({ plan: p, onBuy, busy, storePrice }) {
   const [code, setCode] = useState('')
   const [preview, setPreview] = useState(null)
   const [err, setErr] = useState('')
@@ -46,13 +48,13 @@ function TierCard({ plan: p, onBuy, busy }) {
   return (
     <View style={{ borderRadius: 12, borderWidth: 1, borderColor: C.line, backgroundColor: '#fff', padding: 16 }}>
       <T s={13} w="s" c={C.muted} style={{ letterSpacing: 0.6 }}>{String(p.planName).toUpperCase()}</T>
-      <T s={26} w="b" style={{ marginTop: 6 }}>{rupees(preview ? preview.finalAmount * 100 : p.totalAmountPaise)}{preview ? <T s={14} w="m" c={C.muted} style={{ textDecorationLine: 'line-through' }}>  {rupees(p.totalAmountPaise)}</T> : null}</T>
-      <T s={12} c={C.muted}>{rupees(p.baseAmountPaise)} + GST {p.gstRatePercent}% ({rupees(p.gstAmountPaise)}) · 1 year</T>
+      <T s={26} w="b" style={{ marginTop: 6 }}>{iapEnabled ? storePrice ?? '—' : rupees(preview ? preview.finalAmount * 100 : p.totalAmountPaise)}{preview ? <T s={14} w="m" c={C.muted} style={{ textDecorationLine: 'line-through' }}>  {rupees(p.totalAmountPaise)}</T> : null}</T>
+      <T s={12} c={C.muted}>{iapEnabled ? 'One-time purchase · valid for 1 year · does not auto-renew' : `${rupees(p.baseAmountPaise)} + GST ${p.gstRatePercent}% (${rupees(p.gstAmountPaise)}) · 1 year`}</T>
       {p.benefits?.length > 0 ? <View style={{ marginTop: 8, gap: 4 }}>{p.benefits.map((b) => <View key={b} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><CheckCircle2 size={13} color={C.okText} /><T s={13} c={C.ink2} style={{ flex: 1 }}>{b}</T></View>)}</View> : null}
-      <View style={{ marginTop: 12 }}><CouponRow code={code} setCode={(t) => { setCode(t); setPreview(null) }} onApply={apply} label={`Coupon for ${p.planName}`} /></View>
+      {iapEnabled ? null : <View style={{ marginTop: 12 }}><CouponRow code={code} setCode={(t) => { setCode(t); setPreview(null) }} onApply={apply} label={`Coupon for ${p.planName}`} /></View>}
       {preview ? <T s={12} w="m" c={C.okText} style={{ marginTop: 6 }}>{preview.code} applied — you save ₹{preview.discountAmount.toLocaleString('en-IN')}</T> : null}
       {err ? <T s={12} c={C.bad} style={{ marginTop: 6 }}>{err}</T> : null}
-      <Btn variant="primary" loading={busy} onPress={() => onBuy(p, preview?.code)} style={{ marginTop: 14 }}>{`Subscribe · ${rupees(preview ? preview.finalAmount * 100 : p.totalAmountPaise)}`}</Btn>
+      <Btn variant="primary" loading={busy} onPress={() => onBuy(p, preview?.code)} style={{ marginTop: 14 }}>{iapEnabled ? `Buy plan${storePrice ? ` · ${storePrice}` : ''}` : `Subscribe · ${rupees(preview ? preview.finalAmount * 100 : p.totalAmountPaise)}`}</Btn>
     </View>
   )
 }
@@ -109,7 +111,7 @@ function CustomPlanCard() {
   )
 }
 
-function SubscriptionCard({ data, onBuy, busy }) {
+function SubscriptionCard({ data, onBuy, busy, prices }) {
   const { subscription: s, isActive } = data
   const left = daysLeft(s?.expiresAt)
   return (
@@ -129,12 +131,12 @@ function SubscriptionCard({ data, onBuy, busy }) {
       )}
       {!isActive ? (
         <View style={{ marginTop: 16, gap: 16 }}>
-          {(data.plans ?? []).map((p) => <TierCard key={p.planCode} plan={p} busy={busy === p.planCode} onBuy={onBuy} />)}
+          {(data.plans ?? []).map((p) => <TierCard key={p.planCode} plan={p} busy={busy === p.planCode} onBuy={onBuy} storePrice={prices[p.appleProductId]} />)}
           {!(data.plans ?? []).length ? <T s={13} c={C.muted}>Plans are not available from the server right now.</T> : null}
-          <CustomPlanCard />
+          {iapEnabled ? null : <CustomPlanCard />}
         </View>
       ) : (
-        <View style={{ marginTop: 16 }}><CustomPlanCard /></View>
+        iapEnabled ? null : <View style={{ marginTop: 16 }}><CustomPlanCard /></View>
       )}
     </Card>
   )
@@ -166,7 +168,7 @@ function CreditsCard({ wallet, rate }) {
   )
 }
 
-function PackCard({ plan, onBuy, busy }) {
+function PackCard({ plan, onBuy, busy, storePrice }) {
   const [code, setCode] = useState('')
   const [preview, setPreview] = useState(null)
   const [err, setErr] = useState('')
@@ -185,9 +187,9 @@ function PackCard({ plan, onBuy, busy }) {
     <View style={[card, { padding: 20 }]}>
       <T s={13} w="s" c={C.muted} style={{ letterSpacing: 0.6 }}>{String(plan.name).toUpperCase()}</T>
       <T s={30} w="b" style={{ marginTop: 6 }}>{plan.creditsGranted}<T s={14} w="m" c={C.muted}> credits</T></T>
-      <T s={22} w="b" style={{ marginTop: 4 }}>₹{price.toLocaleString('en-IN')}{preview ? <T s={14} w="m" c={C.muted} style={{ textDecorationLine: 'line-through' }}>  ₹{plan.amountRupees.toLocaleString('en-IN')}</T> : null}</T>
-      <T s={12} c={C.muted}>₹{plan.rupeesPerCredit} per credit</T>
-      <View style={{ marginTop: 16 }}><CouponRow code={code} setCode={(t) => { setCode(t); setPreview(null) }} onApply={apply} label={`Coupon for ${plan.name}`} /></View>
+      <T s={22} w="b" style={{ marginTop: 4 }}>{iapEnabled ? storePrice ?? '—' : `₹${price.toLocaleString('en-IN')}`}{preview ? <T s={14} w="m" c={C.muted} style={{ textDecorationLine: 'line-through' }}>  ₹{plan.amountRupees.toLocaleString('en-IN')}</T> : null}</T>
+      {iapEnabled ? null : <T s={12} c={C.muted}>₹{plan.rupeesPerCredit} per credit</T>}
+      {iapEnabled ? null : <View style={{ marginTop: 16 }}><CouponRow code={code} setCode={(t) => { setCode(t); setPreview(null) }} onApply={apply} label={`Coupon for ${plan.name}`} /></View>}
       {preview ? <T s={12} w="m" c={C.okText} style={{ marginTop: 6 }}>{preview.code} applied — you save ₹{preview.discountAmount.toLocaleString('en-IN')}</T> : null}
       {err ? <T s={12} c={C.bad} style={{ marginTop: 6 }}>{err}</T> : null}
       <Btn variant="primary" loading={busy} onPress={() => onBuy(plan, preview?.code)} style={{ marginTop: 16 }}>{`Buy ${plan.creditsGranted} credits`}</Btn>
@@ -242,7 +244,9 @@ function History() {
 
 export default function PlanCreditsScreen() {
   const { toast } = useWorkspace()
+  const { company } = useAuth()
   const [data, setData] = useState(null)
+  const [prices, setPrices] = useState({})
   const [error, setError] = useState(false)
   const [busy, setBusy] = useState('')
 
@@ -250,6 +254,7 @@ export default function PlanCreditsScreen() {
     try {
       const [sub, w, plans] = await Promise.all([getSubscription(), getWallet(), getPlans()])
       setData({ sub, wallet: w.wallet, rate: w.rupeesPerCredit, plans: plans.plans })
+      if (iapEnabled) getStorePrices([...(sub.plans ?? []).map((p) => p.appleProductId), ...plans.plans.map((p) => p.appleProductId)]).then(setPrices)
       setError(false)
     } catch {
       setError(true)
@@ -280,14 +285,24 @@ export default function PlanCreditsScreen() {
           <View style={{ gap: 20 }}><Skeleton h={128} r={16} /><Skeleton h={128} r={16} /></View>
         ) : (
           <>
-            <SubscriptionCard data={data.sub} busy={busy} onBuy={(plan, code) => run(plan.planCode, () => purchaseSubscription(plan.planCode, code), `${plan.planName} activated`)} />
+            <SubscriptionCard data={data.sub} busy={busy} prices={prices} onBuy={(plan, code) => run(plan.planCode, () => purchaseSubscription(plan, code, company?.id), `${plan.planName} activated`)} />
             <CreditsCard wallet={data.wallet} rate={data.rate} />
             <View style={{ gap: 12 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><Ticket size={16} color={C.muted} /><T s={15} w="s">Buy CV credits</T></View>
               {data.plans.length === 0 ? <T s={13} c={C.muted}>No credit packs are available right now.</T> : (
-                <View style={{ gap: 16 }}>{data.plans.map((p) => <PackCard key={p.id} plan={p} busy={busy === p.id} onBuy={(plan, code) => run(plan.id, () => purchaseCredits(plan.id, code), `${plan.creditsGranted} credits added`)} />)}</View>
+                <View style={{ gap: 16 }}>{data.plans.map((p) => <PackCard key={p.id} plan={p} storePrice={prices[p.appleProductId]} busy={busy === p.id} onBuy={(plan, code) => run(plan.id, () => purchaseCredits(plan, code, company?.id), `${plan.creditsGranted} credits added`)} />)}</View>
               )}
             </View>
+            {iapEnabled ? (
+              <View style={{ gap: 8, alignItems: 'center' }}>
+                <Btn size="sm" loading={busy === 'restore'} onPress={() => run('restore', async () => { await restorePurchases(company?.id); await refreshPlan() }, 'Purchases restored')}>Restore purchases</Btn>
+                <T s={12} c={C.muted} style={{ textAlign: 'center' }}>
+                  Payment is charged to your Apple ID account. By purchasing you agree to our{' '}
+                  <T s={12} c={C.accent} onPress={() => Linking.openURL('https://mzobs.com/terms-of-service')}>Terms</T> and{' '}
+                  <T s={12} c={C.accent} onPress={() => Linking.openURL('https://mzobs.com/privacy-policy')}>Privacy Policy</T>.
+                </T>
+              </View>
+            ) : null}
             <History />
           </>
         )}
