@@ -56,6 +56,7 @@ function DetailModal({ app, item }) {
       <ModalBody>
         <div className="rounded-xl bg-surface-sunken p-3.5 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12.5px]">
           <Row label="Status"><Badge tone={STATUS_TONE[item.status] ?? 'gray'}>{LABEL[item.status] ?? item.status}</Badge></Row>
+          {item.campusCode && <Row label="Campus code"><span className="font-mono font-semibold">{item.campusCode}</span></Row>}
           <Row label="Institution type">{item.institutionType}</Row>
           <Row label="Contact person">{item.contactPerson}</Row>
           <Row label="Phone">{item.phone}</Row>
