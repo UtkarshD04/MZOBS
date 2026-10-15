@@ -42,6 +42,9 @@ export const CAMPUS_PARTNER_API_URL = import.meta.env.VITE_CAMPUS_PARTNER_API_UR
 // approved and pushed live, for the home page's "Latest jobs" section.
 export const PUBLIC_JOBS_API_URL = import.meta.env.VITE_PUBLIC_JOBS_API_URL ?? 'http://localhost:4000/api/jobs'
 
+// Same Backend — candidate testimonials approved for public use.
+export const TESTIMONIALS_API_URL = import.meta.env.VITE_TESTIMONIALS_API_URL || `${API_ORIGIN}/api/testimonials`
+
 // Same Backend — the public, no-login account deletion page Play Store's
 // Account Deletion policy requires (see /delete-account). Deliberately not
 // under EMPLOYEE_API_URL: this must work for someone who can't log in.

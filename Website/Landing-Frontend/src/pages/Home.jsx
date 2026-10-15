@@ -13,6 +13,7 @@ import JobSidePanel from '../components/mz/home/JobSidePanel'
 import CategorySection from '../components/mz/home/CategorySection'
 import CompaniesSection from '../components/mz/home/CompaniesSection'
 import CampusSection from '../components/mz/home/CampusSection'
+import SuccessStoriesSection from '../components/mz/home/SuccessStoriesSection'
 import EmployerStrip from '../components/mz/home/EmployerStrip'
 
 // q and location are each a *list* of terms (searched as OR) — the search
@@ -91,6 +92,7 @@ export default function Home() {
         <HotJobsByCity />
         <CampusSection />
         <CompaniesSection onSelect={applyJobFilters} />
+        <SuccessStoriesSection />
         <EmployerStrip />
       </main>
       <Footer />
