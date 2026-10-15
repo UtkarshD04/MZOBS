@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Users, Search, Plus, Ban, Trash2, AlertTriangle, GraduationCap, Mail, Phone, Copy, Download, ExternalLink, FileText, MapPin, Briefcase } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
@@ -259,6 +259,10 @@ export default function Employees() {
   const { data: allRows = [] } = useEmployeesQuery({})
   const setStatus = useSetEmployeeStatusMutation()
   const [exporting, setExporting] = useState(false)
+  const [selected, setSelected] = useState(() => new Set())
+
+  // Selection is per-view: drop it when switching tab or search.
+  useEffect(() => setSelected(new Set()), [tab, query])
 
   const filtered = useMemo(() => {
     if (!query) return rows
@@ -271,10 +275,21 @@ export default function Employees() {
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
 
+  const allSelected = filtered.length > 0 && filtered.every((e) => selected.has(e.id))
+  const toggleOne = (id) =>
+    setSelected((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  const toggleAll = () => setSelected(allSelected ? new Set() : new Set(filtered.map((e) => e.id)))
+
   async function exportCsv() {
     setExporting(true)
     try {
-      await exportEmployeesCsv({ ...(status ? { status } : {}), ...(query ? { search: query } : {}) })
+      await exportEmployeesCsv(
+        selected.size > 0 ? { ids: [...selected].join(',') } : { ...(status ? { status } : {}), ...(query ? { search: query } : {}) }
+      )
     } catch {
       app.addToast('error', 'Could not export CSV')
     }
@@ -301,7 +316,7 @@ export default function Employees() {
         </div>
         <div className="flex items-center gap-2">
           <Button onClick={exportCsv} disabled={exporting}>
-            <Download size={15} /> {exporting ? 'Exporting...' : 'Export CSV'}
+            <Download size={15} /> {exporting ? 'Exporting...' : selected.size > 0 ? `Export selected (${selected.size})` : 'Export CSV'}
           </Button>
           <Button variant="primary" onClick={() => app.openModal(<CreateEmployeeModal app={app} onDone={refetch} />)}>
             <Plus size={15} /> Add employee
@@ -341,9 +356,16 @@ export default function Employees() {
         ) : (
           <Card className="overflow-hidden">
             <TableWrap className="border-none rounded-none">
-              <Table columns={['Candidate', 'Contact', 'Resume', 'Subscription', 'Last login', 'Status', '']}>
+              <Table columns={[
+                <input key="all" type="checkbox" checked={allSelected} onChange={toggleAll} aria-label="Select all" className="w-4 h-4 cursor-pointer accent-[var(--color-navy)]" />,
+                'Candidate', 'Contact', 'Resume', 'Subscription', 'Last login', 'Status', '']}>
                 {filtered.map((e) => (
                   <Tr key={e.id} onClick={() => app.openModal(<EmployeeDetailModal id={e.id} app={app} />, true)}>
+                    <Td>
+                      <div onClick={(ev) => ev.stopPropagation()}>
+                        <input type="checkbox" checked={selected.has(e.id)} onChange={() => toggleOne(e.id)} aria-label={`Select ${e.name}`} className="w-4 h-4 cursor-pointer accent-[var(--color-navy)]" />
+                      </div>
+                    </Td>
                     <Td>
                       <div className="flex items-center gap-3 min-w-[200px]">
                         <div className="w-9 h-9 rounded-[10px] bg-navy-tint text-navy flex items-center justify-center text-xs font-bold flex-shrink-0">
