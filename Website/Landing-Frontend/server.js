@@ -110,7 +110,7 @@ app.use(
         // Razorpay Checkout (src/lib/razorpay.js), Google Identity Services
         // (@react-oauth/google, used by GoogleAuthButton.jsx), and the
         // MSG91 OTP widget (src/lib/msg91Widget.js).
-        'script-src': ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`, 'https://checkout.razorpay.com', 'https://accounts.google.com', ...MSG91_WIDGET_ORIGINS],
+        'script-src': ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`, 'https://checkout.razorpay.com', 'https://accounts.google.com', 'https://www.googletagmanager.com', ...MSG91_WIDGET_ORIGINS],
         // Razorpay's checkout modal and Google's OAuth prompt both render
         // in an iframe, as does the Google Maps embed on /contact.
         'frame-src': ["'self'", 'https://api.razorpay.com', 'https://accounts.google.com', 'https://www.google.com'],
@@ -122,6 +122,10 @@ app.use(
           'https://checkout.razorpay.com',
           'https://api.razorpay.com',
           'https://accounts.google.com',
+          // GA4 (public/gtag-init.js) beacons.
+          'https://www.googletagmanager.com',
+          'https://*.google-analytics.com',
+          'https://*.analytics.google.com',
           ...MSG91_WIDGET_ORIGINS,
         ],
         'img-src': ["'self'", 'data:', 'https:'],
