@@ -189,7 +189,8 @@ app.use(
     maxAge: '1y',
     immutable: true,
     setHeaders(res, filePath) {
-      if (filePath.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache')
+      // gtag-init.js has a stable, un-fingerprinted name and holds consent logic, so it must never be served stale.
+      if (filePath.endsWith('.html') || filePath.endsWith('gtag-init.js')) res.setHeader('Cache-Control', 'no-cache')
     },
   })
 )

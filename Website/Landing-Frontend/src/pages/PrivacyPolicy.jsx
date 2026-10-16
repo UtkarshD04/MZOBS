@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import LegalPage from '../components/legal/LegalPage'
 
-const LAST_UPDATED = 'October 6, 2026'
+const LAST_UPDATED = 'October 16, 2026'
 const PRIVACY_EMAIL = 'support@mzobs.com'
 
 const linkCls = 'text-(--explorer-blue) font-bold hover:underline'
@@ -305,6 +305,20 @@ const SECTIONS = [
       },
       {
         p: 'Mzobs does not intentionally collect advertising identifiers for advertising purposes through the current Mzobs application. Mzobs does not use the device microphone, camera, contacts, calendar, or health data for the Services described in this Privacy Policy.',
+      },
+    ],
+  },
+  {
+    title: 'Cookies and website analytics',
+    blocks: [
+      {
+        p: 'With your permission only, the Mzobs website uses Google Analytics 4 (provided by Google) to understand how visitors use the site, for example which pages are viewed and how visitors arrive, so that we can improve it. Analytics is off by default: until you choose “Accept analytics” in the banner shown on your first visit, no Google Analytics script is loaded and no analytics cookies are set.',
+      },
+      {
+        p: 'If you accept, Google Analytics sets cookies (such as _ga and _ga_*) and receives page addresses (without query strings or fragments, other than campaign tags such as utm_source), page titles, the referring site, and device, browser and approximate location information derived from your IP address. We do not send your name, email address, phone number or account details to Google Analytics, and we do not use Google Analytics for advertising, remarketing or ad personalisation.',
+      },
+      {
+        p: 'You can reject analytics, or withdraw your consent at any time, by choosing “Cookie settings” in the website footer. Withdrawing consent stops further analytics collection and removes the analytics cookies from your browser. Your choice is stored in your browser (local storage), and rejecting analytics does not affect your use of the website. Essential storage used to keep you signed in and to run the site does not require this consent.',
       },
     ],
   },

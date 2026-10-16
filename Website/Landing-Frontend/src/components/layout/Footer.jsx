@@ -3,6 +3,7 @@ import { Mail, MapPin, Phone } from 'lucide-react'
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6'
 import { FOOTER_DATA } from '../../lib/content'
 import { Container } from '../mz/primitives'
+import { OPEN_COOKIE_SETTINGS_EVENT } from '../ui/CookieConsent'
 
 const SOCIAL_ICONS = {
   Instagram: FaInstagram,
@@ -112,7 +113,17 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col-reverse items-center justify-between gap-5 border-t border-mz-line pt-6 text-[13px] text-mz-muted sm:flex-row">
-          <p>© {new Date().getFullYear()} Mzobs. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Mzobs. All rights reserved.
+            <span aria-hidden="true"> · </span>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event(OPEN_COOKIE_SETTINGS_EVENT))}
+              className="underline hover:text-mz-primary-strong focus-visible:outline-2 focus-visible:outline-mz-primary"
+            >
+              Cookie settings
+            </button>
+          </p>
           {liveSocials.length > 0 && (
             <ul className="flex items-center gap-2" aria-label="Mzobs on social media">
               {liveSocials.map((item) => {
