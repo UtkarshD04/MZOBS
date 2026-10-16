@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Linking, Pressable, TextInput, View } from 'react-native'
-import { AlertTriangle, CheckCircle2, Coins, CreditCard, ShieldCheck, SlidersHorizontal, Tag, Ticket, XCircle } from 'lucide-react-native'
+import { AlertTriangle, CheckCircle2, Coins, CreditCard, ShieldCheck, SlidersHorizontal, Tag, XCircle } from 'lucide-react-native'
 import { PageScroll, PageTitle, Shell } from '../../components/web/Shell'
 import { Btn, C, EmptyState, F, Field, Input, Sheet, Skeleton, T, card } from '../../components/wk'
 import { useWorkspace } from '../../store/workspace'
 import { useAuth } from '../../context/AuthContext'
 import { getStorePrices, iapEnabled, restorePurchases } from '../../lib/iap'
 import { agoDate } from '../../lib/tfmt'
-import { getPlans, getSubscription, getWallet, isCancel, listPlanPayments, listPurchases, listUnlockHistory, paymentError, previewCoupon, previewSubscriptionCoupon, purchaseCredits, purchaseSubscription, refreshPlan, submitPlanEnquiry } from '../../services/plan'
+import { getSubscription, getWallet, isCancel, listPlanPayments, listPurchases, listUnlockHistory, paymentError, previewSubscriptionCoupon, purchaseSubscription, refreshPlan, submitPlanEnquiry } from '../../services/plan'
 
 const rupees = (paise) => `₹${(paise / 100).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 const dateOf = (iso) => (iso ? new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—')
@@ -31,7 +31,7 @@ function CouponRow({ code, setCode, onApply, label }) {
   )
 }
 
-function TierCard({ plan: p, onBuy, busy, storePrice }) {
+function TierCard({ plan: p, onBuy, busy, storePrice, upgrade }) {
   const [code, setCode] = useState('')
   const [preview, setPreview] = useState(null)
   const [err, setErr] = useState('')
@@ -54,7 +54,7 @@ function TierCard({ plan: p, onBuy, busy, storePrice }) {
       {iapEnabled ? null : <View style={{ marginTop: 12 }}><CouponRow code={code} setCode={(t) => { setCode(t); setPreview(null) }} onApply={apply} label={`Coupon for ${p.planName}`} /></View>}
       {preview ? <T s={12} w="m" c={C.okText} style={{ marginTop: 6 }}>{preview.code} applied — you save ₹{preview.discountAmount.toLocaleString('en-IN')}</T> : null}
       {err ? <T s={12} c={C.bad} style={{ marginTop: 6 }}>{err}</T> : null}
-      <Btn variant="primary" loading={busy} onPress={() => onBuy(p, preview?.code)} style={{ marginTop: 14 }}>{iapEnabled ? `Buy plan${storePrice ? ` · ${storePrice}` : ''}` : `Subscribe · ${rupees(preview ? preview.finalAmount * 100 : p.totalAmountPaise)}`}</Btn>
+      <Btn variant="primary" loading={busy} onPress={() => onBuy(p, preview?.code)} style={{ marginTop: 14 }}>{iapEnabled ? `${upgrade ? 'Upgrade' : 'Buy plan'}${storePrice ? ` · ${storePrice}` : ''}` : `${upgrade ? 'Upgrade' : 'Subscribe'} · ${rupees(preview ? preview.finalAmount * 100 : p.totalAmountPaise)}`}</Btn>
     </View>
   )
 }
@@ -64,28 +64,34 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 // "Customize plan" — for employers who don't fit the fixed tiers. Submissions go to the
 // Operations team (Plan enquiries), who call back with a quote.
 function CustomPlanCard() {
-  const { toast } = useWorkspace()
+  const { user, company } = useAuth()
+  const blank = () => ({ name: user?.name ?? '', companyName: company?.name ?? '', phone: '', email: user?.email ?? '' })
   const [open, setOpen] = useState(false)
-  const [form, setForm] = useState({ name: '', companyName: '', phone: '', email: '' })
-  const [busy, setBusy] = useState(false)
+  const [form, setForm] = useState(blank)
+  const [status, setStatus] = useState('form') // form | sending | done
   const [error, setError] = useState('')
+  const busy = status === 'sending'
   const set = (k) => (v) => setForm((f) => ({ ...f, [k]: k === 'phone' ? v.replace(/\D/g, '').slice(0, 10) : v }))
   const valid = form.name.trim() && form.companyName.trim() && form.phone.length === 10 && EMAIL_RE.test(form.email.trim())
-  const close = () => { if (!busy) { setOpen(false); setError('') } }
+  const close = () => {
+    if (busy) return
+    setOpen(false)
+    setForm(blank())
+    setStatus('form')
+    setError('')
+  }
   const submit = async () => {
-    setBusy(true)
+    setStatus('sending')
     setError('')
     try {
       await submitPlanEnquiry(form)
-      setOpen(false)
-      setForm({ name: '', companyName: '', phone: '', email: '' })
-      toast('Request sent — our team will call you soon')
+      setStatus('done')
     } catch (e) {
       setError(e.response?.data?.message ?? 'Couldn’t send your request. Please try again.')
-    } finally {
-      setBusy(false)
+      setStatus('form')
     }
   }
+  const done = status === 'done'
   return (
     <View style={{ borderRadius: 12, borderWidth: 1, borderStyle: 'dashed', borderColor: C.accent, backgroundColor: C.panel, padding: 16 }}>
       <T s={13} w="s" c={C.muted} style={{ letterSpacing: 0.6 }}>CUSTOMIZE PLAN</T>
@@ -95,17 +101,25 @@ function CustomPlanCard() {
       <Sheet
         open={open}
         onClose={close}
-        title="Customize your plan"
-        subtitle="Share your details and our team will get back to you."
-        footer={<><Btn onPress={close} disabled={busy}>Cancel</Btn><Btn variant="primary" loading={busy} disabled={!valid} onPress={submit}>Submit</Btn></>}
+        title={done ? undefined : 'Customize your plan'}
+        subtitle={done ? undefined : 'Tell us how to reach you and our team will get back with a plan that fits.'}
+        footer={done ? <Btn variant="primary" onPress={close} style={{ flex: 1 }}>Done</Btn> : <Btn variant="primary" loading={busy} disabled={!valid} onPress={submit} style={{ flex: 1 }}>{busy ? 'Sending…' : 'Submit'}</Btn>}
       >
-        <View style={{ gap: 14 }}>
-          <Field label="Your name"><Input value={form.name} onChangeText={set('name')} maxLength={120} autoComplete="name" /></Field>
-          <Field label="Company name"><Input value={form.companyName} onChangeText={set('companyName')} maxLength={200} /></Field>
-          <Field label="Phone number"><Input value={form.phone} onChangeText={set('phone')} keyboardType="number-pad" placeholder="98765 43210" /></Field>
-          <Field label="Email"><Input value={form.email} onChangeText={set('email')} keyboardType="email-address" autoCapitalize="none" autoComplete="email" maxLength={200} /></Field>
-          {error ? <T s={12.5} c={C.bad}>{error}</T> : null}
-        </View>
+        {done ? (
+          <View style={{ alignItems: 'center', paddingVertical: 12, gap: 8 }}>
+            <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: C.accentSoft, alignItems: 'center', justifyContent: 'center' }}><CheckCircle2 size={28} color={C.accent} /></View>
+            <T s={22} w="b">We’ll call you soon.</T>
+            <T s={13} c={C.muted} style={{ textAlign: 'center' }}>Thanks! Our team has your details and will reach out with a plan built for your hiring needs.</T>
+          </View>
+        ) : (
+          <View style={{ gap: 14 }}>
+            {error ? <T s={12.5} c={C.bad}>{error}</T> : null}
+            <Field label="Your name"><Input value={form.name} onChangeText={set('name')} maxLength={120} autoComplete="name" /></Field>
+            <Field label="Company name"><Input value={form.companyName} onChangeText={set('companyName')} maxLength={200} autoComplete="organization" /></Field>
+            <Field label="Phone number"><Input value={form.phone} onChangeText={set('phone')} keyboardType="number-pad" placeholder="98765 43210" autoComplete="tel-national" /></Field>
+            <Field label="Email"><Input value={form.email} onChangeText={set('email')} keyboardType="email-address" autoCapitalize="none" autoComplete="email" maxLength={200} /></Field>
+          </View>
+        )}
       </Sheet>
     </View>
   )
@@ -114,6 +128,9 @@ function CustomPlanCard() {
 function SubscriptionCard({ data, onBuy, busy, prices }) {
   const { subscription: s, isActive } = data
   const left = daysLeft(s?.expiresAt)
+  const tiers = data.plans ?? []
+  const currentBase = isActive ? tiers.find((p) => p.planCode === s?.planCode)?.baseAmountPaise ?? Infinity : -1
+  const upgrades = tiers.filter((p) => p.baseAmountPaise > currentBase)
   return (
     <Card title="Employer plan" icon={ShieldCheck}>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
@@ -129,15 +146,13 @@ function SubscriptionCard({ data, onBuy, busy, prices }) {
       ) : (
         <T s={13.5} c={C.ink2} style={{ marginTop: 4 }}>Needed to <T s={13.5} w="b">post jobs</T> and <T s={13.5} w="b">open candidate resumes</T>. Contact details are unlocked separately with CV credits. Choose a plan below.</T>
       )}
-      {!isActive ? (
-        <View style={{ marginTop: 16, gap: 16 }}>
-          {(data.plans ?? []).map((p) => <TierCard key={p.planCode} plan={p} busy={busy === p.planCode} onBuy={onBuy} storePrice={prices[p.appleProductId]} />)}
-          {!(data.plans ?? []).length ? <T s={13} c={C.muted}>Plans are not available from the server right now.</T> : null}
-          {iapEnabled ? null : <CustomPlanCard />}
-        </View>
-      ) : (
-        iapEnabled ? null : <View style={{ marginTop: 16 }}><CustomPlanCard /></View>
-      )}
+      <View style={{ marginTop: 16, gap: 16 }}>
+        {isActive && upgrades.length > 0 ? <T s={14} w="s">Upgrade your plan</T> : null}
+        {upgrades.map((p) => <TierCard key={p.planCode} plan={p} busy={busy === p.planCode} onBuy={onBuy} storePrice={prices[p.appleProductId]} upgrade={isActive} />)}
+        {isActive && upgrades.length === 0 ? <T s={13} c={C.muted}>You’re on our highest plan.</T> : null}
+        {!isActive && upgrades.length === 0 ? <T s={13} c={C.muted}>Plans are not available from the server right now.</T> : null}
+        <CustomPlanCard />
+      </View>
     </Card>
   )
 }
@@ -161,39 +176,10 @@ function CreditsCard({ wallet, rate }) {
       {left === 0 || low ? (
         <View style={{ marginTop: 12, flexDirection: 'row', gap: 8, borderRadius: 8, backgroundColor: C.warnSoft, paddingHorizontal: 12, paddingVertical: 8 }}>
           <AlertTriangle size={14} color={C.warn} style={{ marginTop: 2 }} />
-          <T s={13} c={C.warn} style={{ flex: 1 }}>{left === 0 ? 'You have no credits. Buy a pack below to unlock candidate contact details.' : 'Running low — top up so you can keep unlocking candidates.'}</T>
+          <T s={13} c={C.warn} style={{ flex: 1 }}>{left === 0 ? 'You have no credits left. Upgrade your plan to unlock candidate contact details.' : 'Running low — upgrade your plan to keep unlocking candidates.'}</T>
         </View>
       ) : null}
     </Card>
-  )
-}
-
-function PackCard({ plan, onBuy, busy, storePrice }) {
-  const [code, setCode] = useState('')
-  const [preview, setPreview] = useState(null)
-  const [err, setErr] = useState('')
-  const apply = async () => {
-    setErr('')
-    setPreview(null)
-    if (!code.trim()) return
-    try {
-      setPreview(await previewCoupon(plan.id, code.trim()))
-    } catch (e) {
-      setErr(e.response?.data?.message ?? 'Invalid coupon')
-    }
-  }
-  const price = preview ? preview.finalAmount : plan.amountRupees
-  return (
-    <View style={[card, { padding: 20 }]}>
-      <T s={13} w="s" c={C.muted} style={{ letterSpacing: 0.6 }}>{String(plan.name).toUpperCase()}</T>
-      <T s={30} w="b" style={{ marginTop: 6 }}>{plan.creditsGranted}<T s={14} w="m" c={C.muted}> credits</T></T>
-      <T s={22} w="b" style={{ marginTop: 4 }}>{iapEnabled ? storePrice ?? '—' : `₹${price.toLocaleString('en-IN')}`}{preview ? <T s={14} w="m" c={C.muted} style={{ textDecorationLine: 'line-through' }}>  ₹{plan.amountRupees.toLocaleString('en-IN')}</T> : null}</T>
-      {iapEnabled ? null : <T s={12} c={C.muted}>₹{plan.rupeesPerCredit} per credit</T>}
-      {iapEnabled ? null : <View style={{ marginTop: 16 }}><CouponRow code={code} setCode={(t) => { setCode(t); setPreview(null) }} onApply={apply} label={`Coupon for ${plan.name}`} /></View>}
-      {preview ? <T s={12} w="m" c={C.okText} style={{ marginTop: 6 }}>{preview.code} applied — you save ₹{preview.discountAmount.toLocaleString('en-IN')}</T> : null}
-      {err ? <T s={12} c={C.bad} style={{ marginTop: 6 }}>{err}</T> : null}
-      <Btn variant="primary" loading={busy} onPress={() => onBuy(plan, preview?.code)} style={{ marginTop: 16 }}>{`Buy ${plan.creditsGranted} credits`}</Btn>
-    </View>
   )
 }
 
@@ -252,9 +238,9 @@ export default function PlanCreditsScreen() {
 
   const load = useCallback(async () => {
     try {
-      const [sub, w, plans] = await Promise.all([getSubscription(), getWallet(), getPlans()])
-      setData({ sub, wallet: w.wallet, rate: w.rupeesPerCredit, plans: plans.plans })
-      if (iapEnabled) getStorePrices([...(sub.plans ?? []).map((p) => p.appleProductId), ...plans.plans.map((p) => p.appleProductId)]).then(setPrices)
+      const [sub, w] = await Promise.all([getSubscription(), getWallet()])
+      setData({ sub, wallet: w.wallet, rate: w.rupeesPerCredit })
+      if (iapEnabled) getStorePrices((sub.plans ?? []).map((p) => p.appleProductId)).then(setPrices)
       setError(false)
     } catch {
       setError(true)
@@ -287,12 +273,6 @@ export default function PlanCreditsScreen() {
           <>
             <SubscriptionCard data={data.sub} busy={busy} prices={prices} onBuy={(plan, code) => run(plan.planCode, () => purchaseSubscription(plan, code, company?.id), `${plan.planName} activated`)} />
             <CreditsCard wallet={data.wallet} rate={data.rate} />
-            <View style={{ gap: 12 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><Ticket size={16} color={C.muted} /><T s={15} w="s">Buy CV credits</T></View>
-              {data.plans.length === 0 ? <T s={13} c={C.muted}>No credit packs are available right now.</T> : (
-                <View style={{ gap: 16 }}>{data.plans.map((p) => <PackCard key={p.id} plan={p} storePrice={prices[p.appleProductId]} busy={busy === p.id} onBuy={(plan, code) => run(plan.id, () => purchaseCredits(plan, code, company?.id), `${plan.creditsGranted} credits added`)} />)}</View>
-              )}
-            </View>
             {iapEnabled ? (
               <View style={{ gap: 8, alignItems: 'center' }}>
                 <Btn size="sm" loading={busy === 'restore'} onPress={() => run('restore', async () => { await restorePurchases(company?.id); await refreshPlan() }, 'Purchases restored')}>Restore purchases</Btn>

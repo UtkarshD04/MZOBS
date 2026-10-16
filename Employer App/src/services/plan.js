@@ -51,7 +51,7 @@ async function waitUntil(check) {
 export const purchaseSubscription = async (plan, couponCode, companyId) => {
   if (iapEnabled) {
     await buyProduct(plan.appleProductId, companyId)
-    return waitUntil((snap) => snap.active)
+    return waitUntil((snap) => snap.active && snap.planName === plan.planName)
   }
   await buyPlan(plan.planCode, couponCode, openRazorpayCheckout)
   return refreshPlan()
