@@ -56,6 +56,7 @@ export default function AdminSidebar() {
     { to: '/app/mock-interviews', label: 'Mock Interviews', icon: Video },
     { to: '/app/hr-contacts', label: 'HR Contacts', icon: Contact },
     { to: '/app/companies', label: 'Companies', icon: Building2, badge: kpis.companyQueue },
+    { to: '/app/employers', label: 'Employers', icon: Users },
     { to: '/app/employees', label: 'Employees', icon: Users },
     { to: '/app/requirements', label: 'Requirements', icon: Briefcase },
     { to: '/app/applications', label: 'Applications', icon: ClipboardList },

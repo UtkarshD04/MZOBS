@@ -31,8 +31,13 @@ export function loginEmployer({ email, password }) {
   return postJSON('/auth/login', { email, password })
 }
 
-export function signupEmployer({ companyName, name, email, phone, password, industry, size, website, hq, phoneToken, gstin, gstLegalName }) {
-  return postJSON('/auth/signup', { companyName, name, email, phone, password, industry, size, website, hq, phoneToken, gstin, gstLegalName })
+export function signupEmployer({ companyName, name, email, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName }) {
+  return postJSON('/auth/signup', { companyName, name, email, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName })
+}
+
+// Passwordless sign-in for accounts registered with a verified mobile.
+export function phoneLoginEmployer({ phone, phoneToken }) {
+  return postJSON('/auth/phone-login', { phone, phoneToken })
 }
 
 export function loginEmployerWithGoogle({ credential }) {

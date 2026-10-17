@@ -13,6 +13,7 @@ import Overview from './pages/ops/Overview'
 import Resumes from './pages/ops/Resumes'
 import HRContacts from './pages/ops/HRContacts'
 import Companies from './pages/ops/Companies'
+import Employers from './pages/ops/Employers'
 import Requirements from './pages/ops/Requirements'
 import PostJob from './pages/ops/PostJob'
 import Shortlisted from './pages/ops/Shortlisted'
@@ -45,6 +46,7 @@ export default function App() {
             <Route element={<RequireAdmin />}>
               <Route path="hr-contacts" element={<HRContacts />} />
               <Route path="companies" element={<Companies />} />
+              <Route path="employers" element={<Employers />} />
               <Route path="requirements" element={<Requirements />} />
               <Route path="requirements/new" element={<PostJob />} />
               <Route path="queries" element={<Queries />} />

@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { GraduationCap, LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, UserCog, Send, Handshake, SlidersHorizontal, Download, MessageSquareText } from 'lucide-react'
+import { GraduationCap, LayoutDashboard, Inbox, Contact, Building2, Briefcase, Star, LifeBuoy, LogOut, PanelLeft, UserCog, Users, Send, Handshake, SlidersHorizontal, Download, MessageSquareText } from 'lucide-react'
 import { useApp } from '../../../lib/appContext'
 import { cn } from '../../../lib/utils'
 import { useDashboardQuery } from '../../../hooks/useDashboard'
@@ -69,6 +69,7 @@ export default function OpsSidebar() {
     { to: '/app', label: 'Overview', icon: LayoutDashboard },
     { to: '/app/hr-contacts', label: 'HR Contacts', icon: Contact },
     { to: '/app/companies', label: 'Companies', icon: Building2, badge: kpis.companyQueue },
+    { to: '/app/employers', label: 'Employers', icon: Users },
     { to: '/app/requirements', label: 'Requirements', icon: Briefcase },
     { to: '/app/queries', label: 'Queries', icon: LifeBuoy },
     { to: '/app/rejection-feedback', label: 'Rejection feedback', icon: MessageSquareText },

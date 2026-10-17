@@ -50,12 +50,13 @@ export default function LoginScreen({ navigation }) {
     }
   }
 
-  async function verifyOtp() {
-    if (otp.length !== 6) return setError('Enter the 6-digit code.')
+  async function verifyOtp(code = otp) {
+    if (loading) return
+    if (code.length !== 6) return setError('Enter the 6-digit code.')
     setError('')
     setLoading(true)
     try {
-      const phoneToken = await authService.verifyOtp(phone, otp)
+      const phoneToken = await authService.verifyOtp(phone, code)
       try {
         startSession(await authService.phoneLogin(phone, phoneToken))
         return
@@ -117,7 +118,7 @@ export default function LoginScreen({ navigation }) {
               <>
                 <OtpField phone={phone} value={otp} onChange={setOtp} onSubmit={verifyOtp} onResend={sendOtp} resetKey={otpSent} />
                 {error ? <Text variant="caption" color="red">{error}</Text> : null}
-                <Button title="Verify & login" onPress={verifyOtp} loading={loading} />
+                <Button title="Verify & login" onPress={() => verifyOtp()} loading={loading} />
                 <Pressable onPress={() => { setOtpSent(0); setOtp(''); setError('') }} hitSlop={10} style={{ alignSelf: 'center' }}>
                   <Text variant="label" color="navy">Change number</Text>
                 </Pressable>

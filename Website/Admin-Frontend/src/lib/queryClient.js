@@ -13,6 +13,7 @@ export const queryClient = new QueryClient({
 export const queryKeys = {
   dashboard: ['dashboard'],
   companies: (filters) => ['companies', filters],
+  employers: (filters) => ['employers', filters],
   company: (id) => ['companies', id],
   jobs: (filters) => ['jobs', filters],
   job: (id) => ['jobs', id],

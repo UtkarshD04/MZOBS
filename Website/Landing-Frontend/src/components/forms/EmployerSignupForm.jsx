@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { ArrowRight, ArrowLeft, Eye, EyeOff, CheckCircle2, User, Mail, Phone, Lock, Building2, Briefcase, Users, ShieldCheck, FileText, AlertCircle, Loader2 } from 'lucide-react'
+import { ArrowRight, ArrowLeft, CheckCircle2, User, Mail, Phone, Building2, Briefcase, Users, ShieldCheck, FileText, AlertCircle, Loader2 } from 'lucide-react'
 import { isValidGstin, normalizeGstin } from '../../lib/gstin'
 import { Field, Input, Select, SubmitButton } from '../ui/AuthField'
 import OtpInput from '../ui/OtpInput'
@@ -21,7 +21,6 @@ const initialForm = {
   name: '',
   email: '',
   phone: '',
-  password: '',
   companyName: '',
   industry: '',
   size: '',
@@ -32,7 +31,6 @@ const initialForm = {
 const STEP_META = {
   account: { title: 'Let’s start with you', sub: 'Your name and work email.' },
   phone: { title: 'Verify your phone', sub: 'We’ll text you a 6-digit code to confirm it’s you.' },
-  password: { title: 'Secure your account', sub: 'Choose a password with at least 8 characters.' },
   company: { title: 'Tell us about your company', sub: 'This helps us tailor candidates for you.' },
   gst: { title: 'Add your GSTIN (optional)', sub: 'Last step. You can skip this and add your GSTIN later.' },
 }
@@ -48,10 +46,6 @@ function validateStep(step, form, acceptedTerms, phoneVerified, hasGoogle) {
     if (!form.phone.trim()) errors.phone = 'Please enter your phone number.'
     else if (form.phone.replace(/\D/g, '').length !== 10) errors.phone = 'Enter a valid 10-digit phone number.'
     else if (!phoneVerified) errors.phone = 'Please confirm your phone number with the OTP.'
-  }
-  if (step === 'password') {
-    if (!form.password) errors.password = 'Please create a password.'
-    else if (form.password.length < 8) errors.password = 'Password must be at least 8 characters.'
   }
   if (step === 'company') {
     if (!form.companyName.trim()) errors.companyName = 'Please enter your company name.'
@@ -89,14 +83,13 @@ export default function EmployerSignupForm({ header }) {
   const [form, setForm] = useState({ ...initialForm, ...(state?.prefill ?? {}) })
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | submitting
-  const [showPassword, setShowPassword] = useState(false)
   const [googleCredential, setGoogleCredential] = useState(null)
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [stepIndex, setStepIndex] = useState(0)
   // Result of the optional "Verify GSTIN" check on the last step:
   // null | { kind: 'checking' | 'verified' | 'review' | 'unavailable' | 'error', message, field? }
   const [gstCheck, setGstCheck] = useState(null)
-  const steps = googleCredential ? ['account', 'phone', 'company', 'gst'] : ['account', 'phone', 'password', 'company', 'gst']
+  const steps = ['account', 'phone', 'company', 'gst']
   const step = steps[Math.min(stepIndex, steps.length - 1)]
   const isLast = stepIndex >= steps.length - 1
 
@@ -188,14 +181,15 @@ export default function EmployerSignupForm({ header }) {
     }
   }
 
-  async function handleVerifyOtp() {
+  async function handleVerifyOtp(code = otp) {
+    if (verifyingOtp) return
     setOtpError('')
     setVerifyingOtp(true)
     try {
       // MSG91's widget verifies the code itself and hands back a signed
       // access-token — that still has to be confirmed server-to-server
       // before it's trusted (see verifyEmployerPhoneWidget).
-      const widgetResult = await verifyWidgetOtp(otp)
+      const widgetResult = await verifyWidgetOtp(code)
       const { phoneToken: token } = await verifyEmployerPhoneWidget({ phone: form.phone, accessToken: widgetResult.message })
       setPhoneToken(token)
       setVerifiedPhone(form.phone)
@@ -210,7 +204,7 @@ export default function EmployerSignupForm({ header }) {
   function handleGoogleCredential(credential) {
     const { name, email } = decodeGoogleCredential(credential)
     setGoogleCredential(credential)
-    setForm((f) => ({ ...f, name: name || f.name, email: email || f.email, password: '' }))
+    setForm((f) => ({ ...f, name: name || f.name, email: email || f.email }))
     setErrors({})
     // Name + email come from Google, so the account step is already done.
     setStepIndex(1)
@@ -338,11 +332,11 @@ export default function EmployerSignupForm({ header }) {
 
           {otpStep === 'sent' && !phoneVerified && (
             <Field label={`Enter the 6-digit code sent to +91 ${form.phone}`}>
-              <OtpInput value={otp} onChange={setOtp} error={otpError} disabled={verifyingOtp} autoFocus />
+              <OtpInput value={otp} onChange={(v) => { setOtp(v); if (v.length === 6 && otp.length < 6) handleVerifyOtp(v) }} error={otpError} disabled={verifyingOtp} autoFocus />
               <div className="flex items-center gap-4 mt-3">
                 <button
                   type="button"
-                  onClick={handleVerifyOtp}
+                  onClick={() => handleVerifyOtp()}
                   disabled={verifyingOtp || otp.length !== 6}
                   className="h-9 px-4 rounded-lg text-[13px] font-bold text-white bg-[#075f55] hover:bg-[#0b7a6d] disabled:opacity-50 transition-colors"
                 >
@@ -360,31 +354,6 @@ export default function EmployerSignupForm({ header }) {
             </Field>
           )}
         </>
-      )}
-
-      {step === 'password' && (
-        <Field label="Password">
-          <div className="relative">
-            <Input
-              icon={Lock}
-              type={showPassword ? 'text' : 'password'}
-              autoFocus
-              value={form.password}
-              onChange={(e) => update('password', e.target.value)}
-              placeholder="At least 8 characters"
-              className="pr-10"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((s) => !s)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9E9E9E] hover:text-black transition-colors"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
-          {errors.password && <span className="text-xs text-red mt-1 block">{errors.password}</span>}
-        </Field>
       )}
 
       {step === 'company' && (

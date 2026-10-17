@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Image, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, View } from 'react-native'
+import { useEffect, useState } from 'react'
+import { BackHandler, Image, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, View } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import { useTheme } from '../../theme'
 import { useAuth } from '../../context/AuthContext'
@@ -25,11 +25,10 @@ export default function RegisterScreen({ navigation, route }) {
   const [otp, setOtp] = useState('')
   const [otpSent, setOtpSent] = useState(0)
   const [phoneToken, setPhoneToken] = useState(preset?.phoneToken ?? null)
-  const [form, setForm] = useState({ name: '', email: '', password: '', companyName: '', industry: '', size: '' })
+  const [form, setForm] = useState({ name: '', email: '', companyName: '', industry: '', size: '' })
   // Mandatory GST verification — the server checks it before creating the
   // account; until VERIFIED the app opens on the GST gate (RootNavigator).
   const [gst, setGst] = useState({ gstin: '', legalName: '' })
-  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -50,12 +49,13 @@ export default function RegisterScreen({ navigation, route }) {
     setLoading(false)
   }
 
-  async function verifyOtp() {
-    if (otp.length !== 6) return fail('Enter the 6-digit code.')
+  async function verifyOtp(code = otp) {
+    if (loading) return
+    if (code.length !== 6) return fail('Enter the 6-digit code.')
     setError('')
     setLoading(true)
     try {
-      const token = await authService.verifyOtp(phone, otp)
+      const token = await authService.verifyOtp(phone, code)
       try {
         // The number already has an account → sign straight in.
         startSession(await authService.phoneLogin(phone, token))
@@ -74,7 +74,6 @@ export default function RegisterScreen({ navigation, route }) {
   function nextFromDetails() {
     if (!form.name.trim()) return fail('Enter your full name.')
     if (!EMAIL_RE.test(form.email.trim())) return fail('Enter a valid work email.')
-    if (form.password.length < 8) return fail('Password must be at least 8 characters.')
     setError('')
     setStep(2)
   }
@@ -98,11 +97,32 @@ export default function RegisterScreen({ navigation, route }) {
     }
   }
 
+  // Arrow and the Android hardware back button both step back through the form
+  // instead of leaving registration. A number that arrived already verified
+  // (preset from Login) has no OTP step to return to, so step 1 leaves.
+  const firstStep = preset ? 1 : 0
   function back() {
+    if (loading) return true
     setError('')
-    if (step === 0) return navigation.goBack()
+    // Back from the OTP box returns to the number field first.
+    if (step === 0 && otpSent) {
+      setOtpSent(0)
+      setOtp('')
+      return true
+    }
+    if (step <= firstStep) {
+      if (navigation.canGoBack()) navigation.goBack()
+      else navigation.replace('Landing')
+      return true
+    }
     setStep(step - 1)
+    return true
   }
+
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', back)
+    return () => sub.remove()
+  })
 
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.bg }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -133,7 +153,7 @@ export default function RegisterScreen({ navigation, route }) {
               <>
                 <OtpField phone={phone} value={otp} onChange={setOtp} onSubmit={verifyOtp} onResend={sendOtp} resetKey={otpSent} />
                 {error ? <Text variant="caption" color="red">{error}</Text> : null}
-                <Button title="Verify & continue" onPress={verifyOtp} loading={loading} />
+                <Button title="Verify & continue" onPress={() => verifyOtp()} loading={loading} />
                 <Pressable onPress={() => { setOtpSent(0); setOtp(''); setError('') }} hitSlop={10} style={{ alignSelf: 'center' }}>
                   <Text variant="label" color="navy">Change number</Text>
                 </Pressable>
@@ -151,12 +171,6 @@ export default function RegisterScreen({ navigation, route }) {
           <>
             <TextField label="Full name" value={form.name} onChangeText={set('name')} autoComplete="name" placeholder="Rhea Kapoor" />
             <TextField label="Work email" value={form.email} onChangeText={set('email')} autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="you@company.com" />
-            <View>
-              <TextField label="Create password" value={form.password} onChangeText={set('password')} secureTextEntry={!showPassword} autoComplete="new-password" placeholder="At least 8 characters" />
-              <Pressable onPress={() => setShowPassword((s) => !s)} hitSlop={10} style={{ marginTop: 10, alignSelf: 'flex-start' }}>
-                <Text variant="label" color="navy">{showPassword ? 'Hide password' : 'Show password'}</Text>
-              </Pressable>
-            </View>
             {error ? <Text variant="caption" color="red">{error}</Text> : null}
             <Button title="Continue" onPress={nextFromDetails} />
           </>
