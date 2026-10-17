@@ -6,9 +6,9 @@
 export const GST_RATE_PERCENT = 18
 
 export const PLANS = [
-  { code: 'EMPLOYER_ANNUAL_999', name: 'MZOBS Employer Annual', baseAmount: 999, extras: [] },
-  { code: 'EMPLOYER_ANNUAL_1499', name: 'MZOBS Employer Annual Plus', baseAmount: 1499, extras: ['Enhanced candidate CVs'], popular: true },
-  { code: 'EMPLOYER_ANNUAL_2199', name: 'MZOBS Employer Annual Pro', baseAmount: 2199, extras: ['Enhanced candidate CVs'] },
+  { code: 'EMPLOYER_ANNUAL_1499', name: 'MZOBS Employer Annual', baseAmount: 1499, extras: [] },
+  { code: 'EMPLOYER_ANNUAL_1999', name: 'MZOBS Employer Annual Plus', baseAmount: 1999, extras: ['Enhanced candidate CVs'], popular: true },
+  { code: 'EMPLOYER_ANNUAL_2999', name: 'MZOBS Employer Annual Pro', baseAmount: 2999, extras: ['Enhanced candidate CVs'] },
 ]
 
 export const gstAmount = (base) => Math.round(base * (GST_RATE_PERCENT / 100) * 100) / 100

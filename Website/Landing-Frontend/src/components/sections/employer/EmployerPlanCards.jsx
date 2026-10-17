@@ -18,7 +18,7 @@ const CUSTOM_FEATURES = ['Built around your hiring volume', 'Multiple recruiters
 // small label above it so nothing about the plan is renamed.
 const shortName = (name) => name.replace(/^MZOBS Employer\s+/i, '')
 
-// The plan cards — ₹999 / ₹1499 / ₹2199 pay straight away through the guest
+// The plan cards — ₹1499 / ₹1999 / ₹2999 pay straight away through the guest
 // checkout, "Customize plan" opens the enquiry form. Used on /employers/pricing
 // and the /employers page.
 export default function EmployerPlanCards() {
