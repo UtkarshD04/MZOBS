@@ -7,16 +7,18 @@ import { DRAFT_CANDIDATE_STORIES } from '../../../lib/candidateStories'
 const NAVY = '#183451'
 const TEAL = '#078F80'
 
-// A candidate's photograph, or — until an approved photo exists — a clearly
-// replaceable portrait slot (neutral silhouette, never initials). Set `photo`
-// in lib/candidateStories.js and this swaps to the real image automatically.
-function Portrait({ name, photo, tone = 'mint', className = '' }) {
+// Candidate photo, or a neutral circular placeholder until an approved photo
+// exists. Set `photo` in lib/candidateStories.js (e.g. '/images/candidates/name.jpg')
+// and this swaps to the real image automatically.
+function Portrait({ name, photo, className = '' }) {
   const [failed, setFailed] = useState(false)
   if (photo && !failed) {
     return (
       <img
         src={photo}
         alt={`Photo of ${name}`}
+        width={80}
+        height={80}
         loading="lazy"
         decoding="async"
         onError={() => setFailed(true)}
@@ -24,45 +26,35 @@ function Portrait({ name, photo, tone = 'mint', className = '' }) {
       />
     )
   }
-  const tones = {
-    mint: 'bg-[#DDF1EC] text-[#078F80]/55',
-    sand: 'bg-[#EFE7DA] text-[#183451]/35',
-  }
   return (
     <div
       role="img"
       aria-label={`Photo placeholder for ${name}`}
-      className={`flex items-end justify-center overflow-hidden ${tones[tone]} ${className}`}
+      className={`flex items-end justify-center overflow-hidden bg-[#EEF1F4] text-[#183451]/30 ${className}`}
     >
-      <User className="h-[78%] w-[78%] translate-y-[8%]" strokeWidth={0.8} aria-hidden="true" />
+      <User className="h-[76%] w-[76%] translate-y-[10%]" strokeWidth={1} aria-hidden="true" />
     </div>
   )
 }
 
-const TONES = ['mint', 'sand']
-
-function StoryCard({ story, index }) {
+function StoryCard({ story }) {
   return (
     <li
       data-card
-      className="group relative flex shrink-0 snap-start list-none overflow-hidden rounded-[24px] border border-[#183451]/10 bg-white shadow-[0_2px_4px_rgba(24,52,81,0.04),0_12px_28px_-12px_rgba(24,52,81,0.14)] transition duration-300 [flex-basis:var(--card-w)] hover:-translate-y-1 hover:shadow-[0_2px_4px_rgba(24,52,81,0.04),0_20px_36px_-14px_rgba(24,52,81,0.22)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className="relative mt-10 flex shrink-0 snap-start list-none rounded-2xl border border-[#183451]/10 bg-white shadow-[0_1px_3px_rgba(24,52,81,0.05),0_10px_24px_-14px_rgba(24,52,81,0.16)] [flex-basis:var(--card-w)]"
     >
-      <figure className="m-0 flex min-h-[170px] w-full">
+      <figure className="m-0 flex w-full flex-col px-6 pb-6 pt-14">
         <Portrait
           name={story.name}
           photo={story.photo}
-          tone={TONES[index % TONES.length]}
-          className="m-2 w-[30%] shrink-0 rounded-[18px]"
+          className="absolute left-1/2 top-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white ring-1 ring-[#183451]/10"
         />
-        <div className="flex min-w-0 flex-1 flex-col py-3 pl-1 pr-4">
-          <Quote className="h-4 w-4 shrink-0" style={{ color: TEAL }} fill="currentColor" strokeWidth={0} aria-hidden="true" />
-          <blockquote className="m-0 mt-1.5 break-words text-[14px] leading-[1.5] text-[#344054]">{story.feedback}</blockquote>
-          <figcaption className="mt-auto border-t border-[#183451]/10 pt-2">
-            <p className="m-0 break-words text-[16px] font-bold leading-snug" style={{ color: NAVY }}>{story.name}</p>
-            {story.tagline && <p className="m-0 mt-0.5 break-words text-[13px] font-semibold leading-snug" style={{ color: TEAL }}>{story.tagline}</p>}
-            {story.placementVerified && <p className="m-0 mt-1 text-[12.5px] text-[#475467]">Placed through Mzobs</p>}
-          </figcaption>
-        </div>
+        <Quote className="h-7 w-7 shrink-0" style={{ color: TEAL }} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+        <blockquote className="m-0 mt-3 flex-1 break-words text-[15px] leading-[1.65] text-[#344054]">{story.feedback}</blockquote>
+        <figcaption className="mt-5 border-t border-[#183451]/10 pt-4">
+          <p className="m-0 break-words text-[16px] font-bold leading-snug" style={{ color: NAVY }}>{story.name}</p>
+          {story.tagline && <p className="m-0 mt-1 break-words text-[14px] font-medium leading-snug" style={{ color: TEAL }}>{story.tagline}</p>}
+        </figcaption>
       </figure>
     </li>
   )
@@ -117,7 +109,9 @@ function Carousel({ stories }) {
   }
 
   const arrow =
-    'flex h-10 w-10 items-center justify-center rounded-full border border-[#183451]/15 bg-white text-[#183451] shadow-sm transition hover:border-[#078F80] hover:text-[#078F80] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078F80] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-[#183451]/15 disabled:hover:text-[#183451]'
+    'flex h-10 w-10 items-center justify-center rounded-full border transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078F80] disabled:cursor-not-allowed disabled:opacity-40'
+  const arrowGhost = `${arrow} border-[#183451]/15 bg-white text-[#183451] hover:border-[#078F80] hover:text-[#078F80] disabled:hover:border-[#183451]/15 disabled:hover:text-[#183451]`
+  const arrowPrimary = `${arrow} border-[#078F80] bg-[#078F80] text-white hover:bg-[#067a6d]`
 
   return (
     <div role="region" aria-roledescription="carousel" aria-label="Candidate stories">
@@ -127,15 +121,15 @@ function Carousel({ stories }) {
         onScroll={update}
         onKeyDown={onKeyDown}
         aria-label="Candidate stories — use left and right arrow keys to browse"
-        style={{ '--gap': '20px' }}
-        className="m-0 flex snap-x snap-mandatory gap-[var(--gap)] overflow-x-auto overscroll-x-contain scroll-smooth p-0 py-1.5 [--card-w:100%] [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078F80] sm:[--card-w:calc((100%-var(--gap))/2.12)] lg:[--card-w:calc((100%-2*var(--gap))/3.12)] [&::-webkit-scrollbar]:hidden"
+        style={{ '--gap': '24px' }}
+        className="m-0 flex snap-x snap-mandatory gap-[var(--gap)] overflow-x-auto overscroll-x-contain scroll-smooth p-0 pb-3 [--card-w:100%] [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078F80] sm:[--card-w:calc((100%-var(--gap))/2)] lg:[--card-w:calc((100%-2*var(--gap))/3)] [&::-webkit-scrollbar]:hidden"
       >
-        {stories.map((s, i) => (
-          <StoryCard key={s.id} story={s} index={i} />
+        {stories.map((s) => (
+          <StoryCard key={s.id} story={s} />
         ))}
       </ul>
 
-      <div className="mt-1 flex items-center justify-between gap-4">
+      <div className="relative mt-4 flex items-center justify-center">
         <div className="flex items-center gap-1" role="group" aria-label="Choose story">
           {stories.map((s, i) => (
             <button
@@ -146,15 +140,15 @@ function Carousel({ stories }) {
               aria-current={i === active || undefined}
               className="flex h-8 w-6 items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#078F80]"
             >
-              <span className={`h-2 rounded-full transition-all ${i === active ? 'w-6 bg-[#078F80]' : 'w-2 bg-[#183451]/20'}`} />
+              <span className={`h-2 w-2 rounded-full transition-colors ${i === active ? 'bg-[#078F80]' : 'bg-[#183451]/20'}`} />
             </button>
           ))}
         </div>
-        <div className="flex gap-3">
-          <button type="button" className={arrow} onClick={() => step(-1)} disabled={atStart} aria-label="Previous stories">
+        <div className="absolute right-0 top-1/2 flex -translate-y-1/2 gap-3 max-sm:static max-sm:ml-6 max-sm:translate-y-0">
+          <button type="button" className={arrowGhost} onClick={() => step(-1)} disabled={atStart} aria-label="Previous stories">
             <ChevronLeft className="h-5 w-5" aria-hidden="true" />
           </button>
-          <button type="button" className={arrow} onClick={() => step(1)} disabled={atEnd} aria-label="Next stories">
+          <button type="button" className={`${arrowPrimary} disabled:!border-[#183451]/15 disabled:!bg-white disabled:!text-[#183451]`} onClick={() => step(1)} disabled={atEnd} aria-label="Next stories">
             <ChevronRight className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
@@ -192,19 +186,17 @@ export default function SuccessStoriesSection() {
   const ordered = list ? [...list].sort((a, b) => Number(!!b.featured) - Number(!!a.featured)) : null
 
   return (
-    <section id="success-stories" aria-labelledby="stories-title" className="relative scroll-mt-20 overflow-hidden border-t border-[#e8e2d8] bg-[#F8F5F0] py-6 lg:py-7">
-      <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full border-[40px] border-[#078F80]/[0.06]" />
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-32 -left-20 h-64 w-64 rounded-full bg-[#078F80]/[0.05]" />
-      <Container className="relative">
+    <section id="success-stories" aria-labelledby="stories-title" className="relative scroll-mt-20 overflow-hidden border-t border-[#183451]/10 bg-white py-10 lg:py-14">
+      <Container>
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em]" style={{ color: TEAL }}>
+          <p className="text-[12px] font-semibold uppercase tracking-[0.18em]" style={{ color: NAVY }}>
             Real stories. Real career journeys.
           </p>
-          <h2 id="stories-title" className="mt-1.5 text-[22px] font-black leading-[1.1] tracking-[-0.03em] sm:text-[26px] lg:text-[30px]" style={{ color: NAVY }}>
-            Big Dreams. <span style={{ color: TEAL }}>New Beginnings.</span>
+          <h2 id="stories-title" className="mt-2 text-[28px] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[34px] lg:text-[40px]" style={{ color: NAVY }}>
+            What Our <span style={{ color: TEAL }}>Candidates Say</span>
           </h2>
-          <p className="mt-1.5 text-[14px] leading-snug text-[#475467] sm:text-[15px]">
-            Every opportunity opens a new chapter. Discover the stories of candidates moving forward with Mzobs.
+          <p className="mt-3 text-[15px] leading-relaxed text-[#475467] sm:text-[16px]">
+            Every opportunity opens a new chapter. Here&apos;s what our candidates have to say about their journey with Mzobs.
           </p>
           {isFixture && (
             <p className="mt-4 inline-block rounded bg-amber-100 px-2.5 py-1 text-[12px] font-medium text-amber-900">
@@ -213,9 +205,9 @@ export default function SuccessStoriesSection() {
           )}
         </div>
 
-        <div className="mt-4">
+        <div className="mt-6">
           {ordered === null ? (
-            <div className="h-44 rounded-[24px] border border-[#183451]/10 bg-white/70 motion-safe:animate-pulse" aria-hidden="true" />
+            <div className="h-56 rounded-2xl border border-[#183451]/10 bg-white/70 motion-safe:animate-pulse" aria-hidden="true" />
           ) : (
             <Carousel stories={ordered} />
           )}

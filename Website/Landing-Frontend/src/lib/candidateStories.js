@@ -25,11 +25,11 @@ export const DRAFT_CANDIDATE_STORIES = [
     feedback: 'The right opportunity can change your direction. Mzobs helped me move closer to the future I was working towards.',
   },
   {
-    id: 'draft-sumit-kumar-mishra',
-    name: 'Sumit Kumar Mishra',
+    id: 'draft-atushi-srivastava',
+    name: 'Atushi Srivastava',
     photo: '',
-    tagline: 'Every Journey Starts Somewhere',
-    feedback: 'Every career has a starting point, and Mzobs helped make my next step feel possible.',
+    tagline: 'New Possibilities Begin Here',
+    feedback: 'For me, Mzobs represents a fresh start, new possibilities, and the courage to dream bigger.',
   },
   {
     id: 'draft-aadradhya-singh',
@@ -39,10 +39,17 @@ export const DRAFT_CANDIDATE_STORIES = [
     feedback: 'A new opportunity brought new confidence. I’m excited to keep learning, growing, and building my career.',
   },
   {
-    id: 'draft-atushi-srivastava',
-    name: 'Atushi Srivastava',
+    id: 'draft-purvi-sikka',
+    name: 'Purvi Sikka',
     photo: '',
-    tagline: 'New Possibilities Begin Here',
-    feedback: 'For me, Mzobs represents a fresh start, new possibilities, and the courage to dream bigger.',
+    tagline: 'Ready for What Comes Next',
+    feedback: 'Finding roles that truly matched my skills felt simple with Mzobs. It made me believe my next chapter was within reach.',
+  },
+  {
+    id: 'draft-vatsala-rai',
+    name: 'Vatsala Rai',
+    photo: '',
+    tagline: 'Taking the First Step Forward',
+    feedback: 'Mzobs made the job search feel clear and less overwhelming, and gave me the push I needed to start my career journey.',
   },
 ].map((s) => ({ ...s, placementVerified: false }))
