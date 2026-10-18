@@ -29,7 +29,7 @@ function CountText({ value, loading }) {
 export default function CategorySection({ onSelect }) {
   const { data: counts, status } = useCategoryCounts()
   const keywordCounts = useKeywordCategoryCounts()
-  // Categories with live openings lead; empty ones follow, dimmed. Sort is
+  // Categories with live openings lead; empty ones follow. Sort is
   // stable, so the original order holds within each group.
   const rows = CATEGORIES.map((c) => ({ ...c, value: c.count(counts, keywordCounts) })).sort(
     (a, b) => Number(a.value === 0) - Number(b.value === 0),
@@ -43,9 +43,8 @@ export default function CategorySection({ onSelect }) {
 
         <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
           {rows.map(({ key, title, icon: Icon, tone, params, count, value }) => {
-            const empty = value === 0
             return (
-              <li key={key} className={empty ? 'opacity-60 transition-opacity hover:opacity-100' : ''}>
+              <li key={key}>
                 <button
                   type="button"
                   onClick={() => onSelect?.({ q: [], location: [], experience: '', ...params })}
