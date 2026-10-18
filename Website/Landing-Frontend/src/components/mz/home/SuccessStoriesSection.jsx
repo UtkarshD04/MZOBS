@@ -37,23 +37,24 @@ function Portrait({ name, photo, className = '' }) {
   )
 }
 
-function StoryCard({ story }) {
+function StoryCard({ story, index }) {
   return (
     <li
       data-card
-      className="relative mt-10 flex shrink-0 snap-start list-none rounded-2xl border border-[#183451]/10 bg-white shadow-[0_1px_3px_rgba(24,52,81,0.05),0_10px_24px_-14px_rgba(24,52,81,0.16)] [flex-basis:var(--card-w)]"
+      style={{ '--i': Math.min(index, 5) }}
+      className="story-card group/card relative mt-10 flex shrink-0 snap-start list-none rounded-2xl border border-[#183451]/10 bg-white shadow-[0_1px_3px_rgba(24,52,81,0.05),0_10px_24px_-14px_rgba(24,52,81,0.16)] transition-[translate,box-shadow,border-color] duration-200 ease-out [flex-basis:var(--card-w)] hover:-translate-y-1 hover:border-[#078F80]/40 hover:shadow-[0_1px_3px_rgba(24,52,81,0.06),0_16px_30px_-14px_rgba(24,52,81,0.24)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       <figure className="m-0 flex w-full flex-col px-6 pb-6 pt-14">
         <Portrait
           name={story.name}
           photo={story.photo}
-          className="absolute left-1/2 top-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white ring-1 ring-[#183451]/10"
+          className="story-avatar absolute left-1/2 top-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white ring-1 ring-[#183451]/10"
         />
-        <Quote className="h-7 w-7 shrink-0" style={{ color: TEAL }} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+        <Quote className="h-7 w-7 shrink-0 opacity-80 transition-opacity duration-200 group-hover/card:opacity-100" style={{ color: TEAL }} fill="currentColor" strokeWidth={0} aria-hidden="true" />
         <blockquote className="m-0 mt-3 flex-1 break-words text-[15px] leading-[1.65] text-[#344054]">{story.feedback}</blockquote>
         <figcaption className="mt-5 border-t border-[#183451]/10 pt-4">
           <p className="m-0 break-words text-[16px] font-bold leading-snug" style={{ color: NAVY }}>{story.name}</p>
-          {story.tagline && <p className="m-0 mt-1 break-words text-[14px] font-medium leading-snug" style={{ color: TEAL }}>{story.tagline}</p>}
+          {story.tagline && <p className="m-0 mt-1 break-words text-[14px] font-medium leading-snug text-[#078F80] transition-colors duration-200 group-hover/card:text-[#056a5f]">{story.tagline}</p>}
         </figcaption>
       </figure>
     </li>
@@ -63,6 +64,7 @@ function StoryCard({ story }) {
 function Carousel({ stories }) {
   const trackRef = useRef(null)
   const [active, setActive] = useState(0)
+  const [positions, setPositions] = useState(stories.length)
   const [atStart, setAtStart] = useState(true)
   const [atEnd, setAtEnd] = useState(false)
 
@@ -70,8 +72,13 @@ function Carousel({ stories }) {
     const el = trackRef.current
     if (!el) return
     const max = el.scrollWidth - el.clientWidth
-    const progress = max > 0 ? el.scrollLeft / max : 0
-    setActive(Math.round(progress * (stories.length - 1)))
+    const card = el.querySelector('[data-card]')
+    const pitch = card ? card.offsetWidth + (parseFloat(getComputedStyle(el).columnGap) || 0) : 0
+    const visible = pitch ? Math.max(1, Math.round((el.clientWidth + (pitch - card.offsetWidth)) / pitch)) : 1
+    const count = Math.max(1, stories.length - visible + 1)
+    setPositions(count)
+    const idx = pitch ? Math.round(el.scrollLeft / pitch) : 0
+    setActive(max <= 2 ? 0 : el.scrollLeft >= max - 2 ? count - 1 : Math.min(idx, count - 1))
     setAtStart(el.scrollLeft <= 2)
     setAtEnd(max <= 2 || el.scrollLeft >= max - 2)
   }, [stories.length])
@@ -105,7 +112,7 @@ function Carousel({ stories }) {
     if (e.key === 'ArrowRight') { e.preventDefault(); step(1) }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1) }
     else if (e.key === 'Home') { e.preventDefault(); goTo(0) }
-    else if (e.key === 'End') { e.preventDefault(); goTo(stories.length - 1) }
+    else if (e.key === 'End') { e.preventDefault(); goTo(positions - 1) }
   }
 
   const arrow =
@@ -122,21 +129,21 @@ function Carousel({ stories }) {
         onKeyDown={onKeyDown}
         aria-label="Candidate stories — use left and right arrow keys to browse"
         style={{ '--gap': '24px' }}
-        className="m-0 flex snap-x snap-mandatory gap-[var(--gap)] overflow-x-auto overscroll-x-contain scroll-smooth p-0 pb-3 [--card-w:100%] [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078F80] sm:[--card-w:calc((100%-var(--gap))/2)] lg:[--card-w:calc((100%-2*var(--gap))/3)] [&::-webkit-scrollbar]:hidden"
+        className="m-0 flex snap-x snap-mandatory gap-[var(--gap)] overflow-x-auto overscroll-x-contain scroll-smooth -mt-1 p-0 pb-3 pt-1 [--card-w:100%] [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078F80] sm:[--card-w:calc((100%-var(--gap))/2)] lg:[--card-w:calc((100%-2*var(--gap))/3)] [&::-webkit-scrollbar]:hidden"
       >
-        {stories.map((s) => (
-          <StoryCard key={s.id} story={s} />
+        {stories.map((s, i) => (
+          <StoryCard key={s.id} story={s} index={i} />
         ))}
       </ul>
 
       <div className="relative mt-4 flex items-center justify-center">
         <div className="flex items-center gap-1" role="group" aria-label="Choose story">
-          {stories.map((s, i) => (
+          {positions > 1 && stories.slice(0, positions).map((s, i) => (
             <button
               key={s.id}
               type="button"
               onClick={() => goTo(i)}
-              aria-label={`Show ${s.name}`}
+              aria-label={`Show story ${i + 1} of ${positions}`}
               aria-current={i === active || undefined}
               className="flex h-8 w-6 items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#078F80]"
             >
@@ -160,6 +167,8 @@ function Carousel({ stories }) {
 export default function SuccessStoriesSection() {
   const [stories, setStories] = useState(null) // null = loading
   const [isFixture, setIsFixture] = useState(false)
+  const sectionRef = useRef(null)
+  const [reveal, setReveal] = useState('in') // 'in' = visible; 'pending' hides until scrolled into view
 
   useEffect(() => {
     const controller = new AbortController()
@@ -180,15 +189,40 @@ export default function SuccessStoriesSection() {
     return () => controller.abort()
   }, [])
 
+  // One-shot entrance: arm only when the section is below the fold, and fall
+  // back to visible if the observer is unavailable or never fires.
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el || typeof IntersectionObserver === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const r = el.getBoundingClientRect()
+    if (r.top < window.innerHeight * 0.85) return
+    setReveal('pending')
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setReveal('in')
+          io.disconnect()
+        }
+      },
+      { threshold: 0.15 },
+    )
+    io.observe(el)
+    const failsafe = setTimeout(() => setReveal('in'), 8000)
+    return () => {
+      io.disconnect()
+      clearTimeout(failsafe)
+    }
+  }, [])
+
   // Approved testimonials from the API win; the editable drafts fill in until then.
   const list = stories === null ? null : stories.length > 0 ? stories : DRAFT_CANDIDATE_STORIES
   // A story staff flagged as featured opens first.
   const ordered = list ? [...list].sort((a, b) => Number(!!b.featured) - Number(!!a.featured)) : null
 
   return (
-    <section id="success-stories" aria-labelledby="stories-title" className="relative scroll-mt-20 overflow-hidden border-t border-[#183451]/10 bg-white py-10 lg:py-14">
+    <section ref={sectionRef} data-reveal={reveal} id="success-stories" aria-labelledby="stories-title" className="relative scroll-mt-20 overflow-hidden border-t border-[#183451]/10 bg-white py-10 lg:py-14">
       <Container>
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="story-head mx-auto max-w-2xl text-center">
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em]" style={{ color: NAVY }}>
             Real stories. Real career journeys.
           </p>
