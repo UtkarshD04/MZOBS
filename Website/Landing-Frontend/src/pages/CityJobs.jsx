@@ -60,7 +60,7 @@ export default function CityJobs() {
     setJobsLoading(true)
     setJobsError(false)
     fetchLatestJobs(
-      { location: city.city, track: activeFilter !== 'all' ? activeFilter : undefined, limit: JOBS_LIMIT, sort: 'newest' },
+      { location: city.locationTerms ?? city.city, track: activeFilter !== 'all' ? activeFilter : undefined, limit: JOBS_LIMIT, sort: 'newest' },
       { signal: controller.signal }
     )
       .then(({ jobs: fetchedJobs, total }) => {

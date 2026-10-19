@@ -156,6 +156,210 @@ export const STATIC_PAGE_SEO = {
     title: 'Bhopal Jobs: Openings Hiring Now | Mzobs',
     description: 'Browse job openings in Bhopal from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
   },
+  '/jobs/city/agra': {
+    title: 'Agra Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Agra from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/kanpur': {
+    title: 'Kanpur Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Kanpur from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/varanasi': {
+    title: 'Varanasi Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Varanasi from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/prayagraj': {
+    title: 'Prayagraj Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Prayagraj from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/dehradun': {
+    title: 'Dehradun Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Dehradun from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/haridwar': {
+    title: 'Haridwar Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Haridwar from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/jodhpur': {
+    title: 'Jodhpur Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Jodhpur from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/ludhiana': {
+    title: 'Ludhiana Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Ludhiana from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/amritsar': {
+    title: 'Amritsar Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Amritsar from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/jammu': {
+    title: 'Jammu Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Jammu from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/srinagar': {
+    title: 'Srinagar Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Srinagar from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/coimbatore': {
+    title: 'Coimbatore Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Coimbatore from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/thiruvananthapuram': {
+    title: 'Thiruvananthapuram Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Thiruvananthapuram from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/kozhikode': {
+    title: 'Kozhikode Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Kozhikode from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/mysuru': {
+    title: 'Mysuru Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Mysuru from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/mangaluru': {
+    title: 'Mangaluru Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Mangaluru from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/visakhapatnam': {
+    title: 'Visakhapatnam Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Visakhapatnam from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/vijayawada': {
+    title: 'Vijayawada Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Vijayawada from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/tirupati': {
+    title: 'Tirupati Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Tirupati from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/madurai': {
+    title: 'Madurai Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Madurai from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/tiruchirappalli': {
+    title: 'Tiruchirappalli Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Tiruchirappalli from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/salem': {
+    title: 'Salem Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Salem from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/nashik': {
+    title: 'Nashik Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Nashik from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/nagpur': {
+    title: 'Nagpur Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Nagpur from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/thane': {
+    title: 'Thane Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Thane from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/navi-mumbai': {
+    title: 'Navi Mumbai Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Navi Mumbai from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/aurangabad': {
+    title: 'Aurangabad Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Aurangabad from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/surat': {
+    title: 'Surat Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Surat from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/vadodara': {
+    title: 'Vadodara Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Vadodara from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/rajkot': {
+    title: 'Rajkot Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Rajkot from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/gandhinagar': {
+    title: 'Gandhinagar Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Gandhinagar from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/bhubaneswar': {
+    title: 'Bhubaneswar Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Bhubaneswar from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/cuttack': {
+    title: 'Cuttack Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Cuttack from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/guwahati': {
+    title: 'Guwahati Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Guwahati from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/ranchi': {
+    title: 'Ranchi Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Ranchi from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/jamshedpur': {
+    title: 'Jamshedpur Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Jamshedpur from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/patna': {
+    title: 'Patna Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Patna from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/gaya': {
+    title: 'Gaya Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Gaya from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/raipur': {
+    title: 'Raipur Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Raipur from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/jabalpur': {
+    title: 'Jabalpur Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Jabalpur from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/gwalior': {
+    title: 'Gwalior Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Gwalior from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/faridabad': {
+    title: 'Faridabad Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Faridabad from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/ghaziabad': {
+    title: 'Ghaziabad Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Ghaziabad from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/greater-noida': {
+    title: 'Greater Noida Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Greater Noida from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/sonipat': {
+    title: 'Sonipat Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Sonipat from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/panipat': {
+    title: 'Panipat Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Panipat from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/meerut': {
+    title: 'Meerut Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Meerut from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/bhiwadi': {
+    title: 'Bhiwadi Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Bhiwadi from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/tiruppur': {
+    title: 'Tiruppur Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Tiruppur from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/hubballi': {
+    title: 'Hubballi Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Hubballi from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
+  '/jobs/city/belagavi': {
+    title: 'Belagavi Jobs: Openings Hiring Now | Mzobs',
+    description: 'Browse job openings in Belagavi from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',
+  },
   '/jobs/city/kochi': {
     title: 'Kochi Jobs: Openings Hiring Now | Mzobs',
     description: 'Browse job openings in Kochi from employers hiring now, with salary, experience and work mode on each listing, updated as new roles come in.',

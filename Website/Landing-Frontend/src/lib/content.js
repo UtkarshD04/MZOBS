@@ -1001,6 +1001,426 @@ export const HOT_CITIES_DATA = {
       landmark: "Taj-ul-Masajid",
       imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Taj-ul-Masjid%2C_Bhopal%2C_India.jpg?width=1200",
       imageAttribution: "Yann / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Agra",
+      slug: "agra",
+      state: "Uttar Pradesh",
+      landmark: "Taj Mahal",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Taj_Mahal%2C_Agra%2C_India.jpg?width=1200",
+      imageAttribution: "Yann / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Kanpur",
+      slug: "kanpur",
+      state: "Uttar Pradesh",
+      landmark: "JK Temple",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/JKTemple.JPG?width=1200",
+      imageAttribution: "Sunshineroshan / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Varanasi",
+      slug: "varanasi",
+      state: "Uttar Pradesh",
+      landmark: "Dashashwamedh Ghat",
+      locationTerms: "Varanasi,Banaras",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Dashashwamedh_Ghat%2C_Varanasi_(8717529602).jpg?width=1200",
+      imageAttribution: "Matt Stabile / Wikimedia Commons (CC BY 2.0)"
+    },
+    {
+      city: "Prayagraj",
+      slug: "prayagraj",
+      state: "Uttar Pradesh",
+      landmark: "Triveni Sangam",
+      locationTerms: "Prayagraj,Allahabad",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Prayagraj_Sangam_2.jpg?width=1200",
+      imageAttribution: "Rangan Datta Wiki / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Dehradun",
+      slug: "dehradun",
+      state: "Uttarakhand",
+      landmark: "Forest Research Institute",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Forest_Research_Institute_in_Dehradun_39.jpg?width=1200",
+      imageAttribution: "DesiBoy101 / Wikimedia Commons (CC BY 4.0)"
+    },
+    {
+      city: "Haridwar",
+      slug: "haridwar",
+      state: "Uttarakhand",
+      landmark: "Har Ki Pauri",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Har_ki_Pauri%2C_Haridwar_2.jpg?width=1200",
+      imageAttribution: "आशीष_भटनागर / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Jodhpur",
+      slug: "jodhpur",
+      state: "Rajasthan",
+      landmark: "Mehrangarh Fort",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Mehrangarh_Fort_2%2C_Jodhpur%2C_Rajasthan%2C_India.jpg?width=1200",
+      imageAttribution: "Yann / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Ludhiana",
+      slug: "ludhiana",
+      state: "Punjab",
+      landmark: "Thapar Hall, Punjab Agricultural University",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Thapar_Hall_PAU.jpg?width=1200",
+      imageAttribution: "Jagmit Singh Brar / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Amritsar",
+      slug: "amritsar",
+      state: "Punjab",
+      landmark: "Golden Temple",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Temple%2C_Amritsar_01.jpg?width=1200",
+      imageAttribution: "Bernard Gagnon / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Jammu",
+      slug: "jammu",
+      state: "Jammu & Kashmir",
+      landmark: "Bahu Fort",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Bahu_Fort%2C_Jammu%2C_India.jpg?width=1200",
+      imageAttribution: "Nvvchar / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Srinagar",
+      slug: "srinagar",
+      state: "Jammu & Kashmir",
+      landmark: "Dal Lake",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Dal_Lake%2C_Srinagar%2C_Jammu_and_Kashmir.jpg?width=1200",
+      imageAttribution: "Dashrathgoyal85 / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Coimbatore",
+      slug: "coimbatore",
+      state: "Tamil Nadu",
+      landmark: "Adiyogi Shiva Statue",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Adiyogi-2-Isha_yoga_centre-coimbatore-India.jpg?width=1200",
+      imageAttribution: "Yercaud-elango / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Thiruvananthapuram",
+      slug: "thiruvananthapuram",
+      state: "Kerala",
+      landmark: "Padmanabhaswamy Temple",
+      locationTerms: "Thiruvananthapuram,Trivandrum",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/TVM_Padmanabhaswamy_Temple.jpg?width=1200",
+      imageAttribution: "Shishirdasika / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Kozhikode",
+      slug: "kozhikode",
+      state: "Kerala",
+      landmark: "Kozhikode Beach",
+      locationTerms: "Kozhikode,Calicut",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Kozhikode_Beach_Coastline.jpg?width=1200",
+      imageAttribution: "Sulyab Thottungal / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Mysuru",
+      slug: "mysuru",
+      state: "Karnataka",
+      landmark: "Mysore Palace",
+      locationTerms: "Mysuru,Mysore",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Mysore_Palace_WLM_2022_India_12.jpg?width=1200",
+      imageAttribution: "Pavanaja / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Mangaluru",
+      slug: "mangaluru",
+      state: "Karnataka",
+      landmark: "St Aloysius Chapel",
+      locationTerms: "Mangaluru,Mangalore",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/St.Aloysius_Chapel%2CMangalore.jpg?width=1200",
+      imageAttribution: "Vinay bhat / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Visakhapatnam",
+      slug: "visakhapatnam",
+      state: "Andhra Pradesh",
+      landmark: "RK Beach",
+      locationTerms: "Visakhapatnam,Vizag",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/RK_Beach_Visakhapatnam_Nov_2012_-_02.JPG?width=1200",
+      imageAttribution: "Rishabh Tatiraju / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Vijayawada",
+      slug: "vijayawada",
+      state: "Andhra Pradesh",
+      landmark: "Prakasam Barrage",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Prakasam_Barrage%2CVijayawada_01.jpg?width=1200",
+      imageAttribution: "Raghavan2010 / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Tirupati",
+      slug: "tirupati",
+      state: "Andhra Pradesh",
+      landmark: "Tirumala Hills",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Tirupati_city_from_Tirumala_ghat_road_(May_2019)_3.jpg?width=1200",
+      imageAttribution: "IM3847 / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Madurai",
+      slug: "madurai",
+      state: "Tamil Nadu",
+      landmark: "Meenakshi Temple",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Meenakshi_Temple%2C_Madurai%2C_India.jpg?width=1200",
+      imageAttribution: "Vyacheslav Argenberg / Wikimedia Commons (CC BY 4.0)"
+    },
+    {
+      city: "Tiruchirappalli",
+      slug: "tiruchirappalli",
+      state: "Tamil Nadu",
+      landmark: "Rockfort Temple",
+      locationTerms: "Tiruchirappalli,Trichy",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/ROCKFORT_TEMPLE%2C_Trichy.jpg?width=1200",
+      imageAttribution: "Vijayshinde107 / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Salem",
+      slug: "salem",
+      state: "Tamil Nadu",
+      landmark: "Salem city view",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/View_of_Salem_2.jpg?width=1200",
+      imageAttribution: "Nancy Anburaj / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Nashik",
+      slug: "nashik",
+      state: "Maharashtra",
+      landmark: "Ram Kund",
+      locationTerms: "Nashik,Nasik",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Ram_Kund%2C_Nashik_01.jpg?width=1200",
+      imageAttribution: "Akshatha Inamdar / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Nagpur",
+      slug: "nagpur",
+      state: "Maharashtra",
+      landmark: "Deekshabhoomi",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Deekshabhoomi%2C_Nagpur_in_India.jpg?width=1200",
+      imageAttribution: "Prakash Lokhande / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Thane",
+      slug: "thane",
+      state: "Maharashtra",
+      landmark: "Thane Creek",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/ThaneCreek_-_August_2016.jpg?width=1200",
+      imageAttribution: "Rehman Abubakr / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Navi Mumbai",
+      slug: "navi-mumbai",
+      state: "Maharashtra",
+      landmark: "Navi Mumbai skyline",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Navi_Mumbai_Skyline.jpg?width=1200",
+      imageAttribution: "Anurupa Chowdhury / Wikimedia Commons (CC BY 3.0)"
+    },
+    {
+      city: "Aurangabad",
+      slug: "aurangabad",
+      state: "Maharashtra",
+      landmark: "Bibi Ka Maqbara",
+      locationTerms: "Aurangabad,Sambhajinagar",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/BIBI_KA_MAQBARA_(TOMB_OF_THE_LADY).jpg?width=1200",
+      imageAttribution: "Abhideo21 / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Surat",
+      slug: "surat",
+      state: "Gujarat",
+      landmark: "Surat Fort",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Surat_Fort_(15345082318).jpg?width=1200",
+      imageAttribution: "yndesai / Wikimedia Commons (CC BY-SA 2.0)"
+    },
+    {
+      city: "Vadodara",
+      slug: "vadodara",
+      state: "Gujarat",
+      landmark: "Laxmi Vilas Palace",
+      locationTerms: "Vadodara,Baroda",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Laxmi_Vilas_Palace_-_Vadodara.jpg?width=1200",
+      imageAttribution: "Emmanuel DYAN / Wikimedia Commons (CC BY 2.0)"
+    },
+    {
+      city: "Rajkot",
+      slug: "rajkot",
+      state: "Gujarat",
+      landmark: "Watson Museum",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Watson_Museum.jpg?width=1200",
+      imageAttribution: "Sneha N Shetty / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Gandhinagar",
+      slug: "gandhinagar",
+      state: "Gujarat",
+      landmark: "Mahatma Mandir",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Mahatma_Mandir-Gandhinagar.jpg?width=1200",
+      imageAttribution: "92saeedshaikh / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Bhubaneswar",
+      slug: "bhubaneswar",
+      state: "Odisha",
+      landmark: "Lingaraj Temple",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Lingaraja_Temple_01.jpg?width=1200",
+      imageAttribution: "Bernard Gagnon / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Cuttack",
+      slug: "cuttack",
+      state: "Odisha",
+      landmark: "Barabati Fort",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Barabati_durga_Cuttack_Barabati_Fort_Front-1.JPG?width=1200",
+      imageAttribution: "Daniel Limma / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Guwahati",
+      slug: "guwahati",
+      state: "Assam",
+      landmark: "Kamakhya Temple",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Kamakhya_Temple%2C_Guwahati.jpg?width=1200",
+      imageAttribution: "Kunal Dalui / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Ranchi",
+      slug: "ranchi",
+      state: "Jharkhand",
+      landmark: "Pahari Mandir",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Pahari_Mandir_-_Ranchi_Hill_9242.JPG?width=1200",
+      imageAttribution: "Biswarup Ganguly / Wikimedia Commons (CC BY 3.0)"
+    },
+    {
+      city: "Jamshedpur",
+      slug: "jamshedpur",
+      state: "Jharkhand",
+      landmark: "Jubilee Park",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Jubilee_Park_Jamshedpur.jpg?width=1200",
+      imageAttribution: "Anupmahato / Wikimedia Commons (CC BY 3.0)"
+    },
+    {
+      city: "Patna",
+      slug: "patna",
+      state: "Bihar",
+      landmark: "Golghar",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Golghar%2C_Patna.jpg?width=1200",
+      imageAttribution: "Nandanupadhyay / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Gaya",
+      slug: "gaya",
+      state: "Bihar",
+      landmark: "Vishnupad Temple",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Vishnupad_Temple-_Riverview.JPG?width=1200",
+      imageAttribution: "Keymaker31 / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Raipur",
+      slug: "raipur",
+      state: "Chhattisgarh",
+      landmark: "Purkhouti Muktangan",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Purkhoti_Muktangan.jpg?width=1200",
+      imageAttribution: "Shapeofyou20 / Wikimedia Commons (CC BY 4.0)"
+    },
+    {
+      city: "Jabalpur",
+      slug: "jabalpur",
+      state: "Madhya Pradesh",
+      landmark: "Marble Rocks, Bhedaghat",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Marble_Rocks_-_Jabalpur.jpg?width=1200",
+      imageAttribution: "Anshikasjv12 / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Gwalior",
+      slug: "gwalior",
+      state: "Madhya Pradesh",
+      landmark: "Gwalior Fort",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Gwalior_Fort_-_Morning_View.jpg?width=1200",
+      imageAttribution: "Abhishek Dwivedi / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Faridabad",
+      slug: "faridabad",
+      state: "Haryana",
+      landmark: "Surajkund",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Suraj_Kund_Masonary_004.jpg?width=1200",
+      imageAttribution: "Anupamg / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Ghaziabad",
+      slug: "ghaziabad",
+      state: "Uttar Pradesh",
+      landmark: "Indirapuram",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Indirapuram.jpg?width=1200",
+      imageAttribution: "Mnstwr2418 / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Greater Noida",
+      slug: "greater-noida",
+      state: "Uttar Pradesh",
+      landmark: "Greater Noida skyline",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Panoramic_view_of_Greater_Noida.jpg?width=1200",
+      imageAttribution: "Him2586 / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Sonipat",
+      slug: "sonipat",
+      state: "Haryana",
+      landmark: "Sonipat city view",
+      locationTerms: "Sonipat,Sonepat",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/View_of_sonipat_city_from_one_corner_of_tomb.jpg?width=1200",
+      imageAttribution: "Chiragb678 / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Panipat",
+      slug: "panipat",
+      state: "Haryana",
+      landmark: "Kabuli Bagh Mosque",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Kabuli_Bagh_Mosque.JPG?width=1200",
+      imageAttribution: "Ramesh lalwani / Wikimedia Commons (CC BY-SA 3.0)"
+    },
+    {
+      city: "Meerut",
+      slug: "meerut",
+      state: "Uttar Pradesh",
+      landmark: "Ghantaghar",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Meerut_Ghantaghar.jpg?width=1200",
+      imageAttribution: "Ravi Dwivedi / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Bhiwadi",
+      slug: "bhiwadi",
+      state: "Rajasthan"
+    },
+    {
+      city: "Tiruppur",
+      slug: "tiruppur",
+      state: "Tamil Nadu",
+      landmark: "Tiruppur Kumaran Memorial",
+      locationTerms: "Tiruppur,Tirupur",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Tiruppur_Kumaran_Memorial_20250418_01.jpg?width=1200",
+      imageAttribution: "PJeganathan / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Hubballi",
+      slug: "hubballi",
+      state: "Karnataka",
+      landmark: "Unkal Lake",
+      locationTerms: "Hubballi,Hubli",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Unkal_lake.jpg?width=1200",
+      imageAttribution: "Mohammed aquib / Wikimedia Commons (CC BY-SA 4.0)"
+    },
+    {
+      city: "Belagavi",
+      slug: "belagavi",
+      state: "Karnataka",
+      landmark: "Kamal Basadi",
+      locationTerms: "Belagavi,Belgaum",
+      imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Kamal_Basadi%2C_Belagavi%2C_Karnataka.jpg?width=1200",
+      imageAttribution: "Nagaraj Sinhasan / Wikimedia Commons (CC BY-SA 4.0)"
     }
   ]
 }
