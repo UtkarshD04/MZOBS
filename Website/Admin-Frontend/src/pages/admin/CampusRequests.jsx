@@ -12,6 +12,7 @@ import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
 import { Field, Textarea } from '../../components/ui/Field'
 import { useApp } from '../../lib/appContext'
+import { listCampusRequests } from '../../services/campusRequestsService'
 import { useCampusRequestsQuery, useCampusRequestStatsQuery, useUpdateCampusRequestMutation } from '../../hooks/useCampusRequests'
 
 const STATUSES = ['pending', 'under_review', 'verified', 'rejected']
@@ -56,7 +57,8 @@ function DetailModal({ app, item }) {
       <ModalBody>
         <div className="rounded-xl bg-surface-sunken p-3.5 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12.5px]">
           <Row label="Status"><Badge tone={STATUS_TONE[item.status] ?? 'gray'}>{LABEL[item.status] ?? item.status}</Badge></Row>
-          {item.campusCode && <Row label="Campus code">{item.campusCode}</Row>}
+          {item.campusCode && <Row label="Campus code"><span className="font-mono">{item.campusCode}</span></Row>}
+          {item.codeIssuedOn && <Row label="Code issued">{new Date(item.codeIssuedOn).toLocaleString('en-IN')}</Row>}
           <Row label="Institution type">{item.institutionType}</Row>
           <Row label="Contact person">{item.contactPerson}</Row>
           <Row label="Phone">{item.phone}</Row>
@@ -90,6 +92,7 @@ export default function CampusRequests() {
   const app = useApp()
   const [tab, setTab] = useState(0)
   const [query, setQuery] = useState('')
+  const [exporting, setExporting] = useState(false)
 
   const status = tab === 0 ? null : STATUSES[tab - 1]
   const { data: rows = [], isLoading, isError, refetch } = useCampusRequestsQuery(status ? { status } : {})
@@ -98,8 +101,37 @@ export default function CampusRequests() {
   const filtered = useMemo(() => {
     if (!query) return rows
     const q = query.toLowerCase()
-    return rows.filter((r) => `${r.campusName} ${r.contactPerson} ${r.officialEmail} ${r.phone} ${r.city} ${r.state}`.toLowerCase().includes(q))
+    return rows.filter((r) => `${r.campusName} ${r.campusCode ?? ''} ${r.contactPerson} ${r.officialEmail} ${r.phone} ${r.city} ${r.state}`.toLowerCase().includes(q))
   }, [rows, query])
+
+  // Every verified campus with its code, all pages (the API caps one page at 200).
+  async function exportCodes() {
+    setExporting(true)
+    try {
+      const all = []
+      for (let page = 1; ; page += 1) {
+        const batch = await listCampusRequests({ status: 'verified', limit: 200, page })
+        all.push(...batch)
+        if (batch.length < 200) break
+      }
+      const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`
+      const head = ['Campus code', 'Campus', 'Institution type', 'City', 'State', 'Contact person', 'Official email', 'Phone', 'Code issued']
+      const lines = all
+        .filter((r) => r.campusCode)
+        .sort((a, b) => a.campusCode.localeCompare(b.campusCode, undefined, { numeric: true }))
+        .map((r) => [r.campusCode, r.campusName, r.institutionType, r.city, r.state, r.contactPerson, r.officialEmail, r.phone, r.codeIssuedOn ? new Date(r.codeIssuedOn).toLocaleDateString('en-IN') : ''].map(cell).join(','))
+      const url = URL.createObjectURL(new Blob(['﻿' + [head.map(cell).join(','), ...lines].join('\n')], { type: 'text/csv;charset=utf-8' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'campus-codes.csv'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      app.addToast('error', 'Could not export campus codes')
+    } finally {
+      setExporting(false)
+    }
+  }
 
   if (isLoading) return <PageSkeleton />
   if (isError) return <ErrorState onRetry={refetch} />
@@ -127,14 +159,17 @@ export default function CampusRequests() {
 
       <StaggerItem className="flex items-center justify-between gap-3 flex-wrap mb-4">
         <PillTabs items={TABS} active={tab} onChange={setTab} />
-        <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search campus, contact or city"
-            className="h-9 pl-8 pr-3 rounded-[9px] border border-border-strong bg-surface text-[12.5px] w-[260px] max-sm:w-full outline-none focus:border-navy focus:shadow-[0_0_0_3.5px_var(--color-navy-ring)] transition-[border-color,box-shadow]"
-          />
+        <div className="flex items-center gap-2 flex-wrap max-sm:w-full">
+          <Button size="sm" onClick={exportCodes} disabled={exporting}>{exporting ? 'Exporting...' : 'Export campus codes'}</Button>
+          <div className="relative max-sm:w-full">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search campus, code, contact or city"
+              className="h-9 pl-8 pr-3 rounded-[9px] border border-border-strong bg-surface text-[12.5px] w-[260px] max-sm:w-full outline-none focus:border-navy focus:shadow-[0_0_0_3.5px_var(--color-navy-ring)] transition-[border-color,box-shadow]"
+            />
+          </div>
         </div>
       </StaggerItem>
 
@@ -153,6 +188,7 @@ export default function CampusRequests() {
                       <span className="text-[14.5px] font-semibold">{r.campusName}</span>
                       <Badge tone={STATUS_TONE[r.status] ?? 'gray'}>{LABEL[r.status] ?? r.status}</Badge>
                       <Badge tone="gray">{r.institutionType}</Badge>
+                      {r.campusCode && <Badge tone="navy"><span className="font-mono">{r.campusCode}</span></Badge>}
                     </div>
                     <div className="flex items-center gap-x-4 gap-y-1 flex-wrap text-xs text-ink-tertiary mt-1.5">
                       <span className="inline-flex items-center gap-1.5"><MapPin size={11} />{r.city}, {r.state}</span>
