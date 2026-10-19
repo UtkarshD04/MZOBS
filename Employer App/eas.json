@@ -11,6 +11,9 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.mzobs.com"
+      },
+      "ios": {
+        "simulator": false
       }
     },
     "production": {
@@ -20,6 +23,9 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.mzobs.com"
+      },
+      "ios": {
+        "buildConfiguration": "Release"
       }
     }
   },

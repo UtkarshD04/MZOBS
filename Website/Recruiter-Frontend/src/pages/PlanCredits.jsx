@@ -21,7 +21,7 @@ function Card({ title, icon: Icon, children, className }) {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const EMPTY = { name: '', companyName: '', phone: '', email: '' }
+const EMPTY = { name: '', companyName: '', phone: '', email: '', employeesNeeded: '' }
 const inputCls = 'h-10 w-full rounded-lg border border-line px-3 text-[13.5px] outline-none focus:border-accent'
 
 // "Customize plan" — for employers who don't fit the fixed tiers. Submissions go to the
@@ -31,8 +31,8 @@ function CustomPlanCard() {
   const [form, setForm] = useState(EMPTY)
   const [status, setStatus] = useState('form') // form | sending | done
   const [error, setError] = useState('')
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: k === 'phone' ? e.target.value.replace(/\D/g, '').slice(0, 10) : e.target.value }))
-  const valid = form.name.trim() && form.companyName.trim() && form.phone.length === 10 && EMAIL_RE.test(form.email.trim())
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: k === 'phone' ? e.target.value.replace(/\D/g, '').slice(0, 10) : k === 'employeesNeeded' ? e.target.value.replace(/\D/g, '').slice(0, 6) : e.target.value }))
+  const valid = form.name.trim() && form.companyName.trim() && form.phone.length === 10 && Number(form.employeesNeeded) >= 1 && EMAIL_RE.test(form.email.trim())
   const busy = status === 'sending'
   const done = status === 'done'
   const close = () => {
@@ -85,6 +85,7 @@ function CustomPlanCard() {
             {field('Your name', 'pe-name', { value: form.name, onChange: set('name'), maxLength: 120, autoComplete: 'name' })}
             {field('Company name', 'pe-company', { value: form.companyName, onChange: set('companyName'), maxLength: 200, autoComplete: 'organization' })}
             {field('Phone number', 'pe-phone', { type: 'tel', inputMode: 'numeric', value: form.phone, onChange: set('phone'), placeholder: '98765 43210', autoComplete: 'tel-national' })}
+            {field('Number of employees you need', 'pe-count', { type: 'tel', inputMode: 'numeric', value: form.employeesNeeded, onChange: set('employeesNeeded'), placeholder: 'e.g. 10' })}
             {field('Email', 'pe-email', { type: 'email', value: form.email, onChange: set('email'), maxLength: 200, autoComplete: 'email' })}
             <button type="submit" className="hidden" />
           </form>

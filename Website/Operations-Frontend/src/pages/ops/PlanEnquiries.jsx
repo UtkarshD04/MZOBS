@@ -47,6 +47,7 @@ function DetailModal({ app, item }) {
           <div><span className="text-ink-tertiary">Company · </span><span className="font-semibold">{item.companyName}</span></div>
           <div><span className="text-ink-tertiary">Phone · </span><span className="font-semibold">{item.phone}</span></div>
           <div><span className="text-ink-tertiary">Email · </span><span className="font-semibold break-all">{item.email}</span></div>
+          {item.employeesNeeded != null && <div><span className="text-ink-tertiary">Employees needed · </span><span className="font-semibold">{item.employeesNeeded}</span></div>}
           <div><span className="text-ink-tertiary">Came from · </span><span className="font-semibold">{SOURCE_LABEL[item.source] ?? item.source}</span></div>
           <div><span className="text-ink-tertiary">Submitted · </span><span className="font-semibold">{new Date(item.createdAt).toLocaleString('en-IN')}</span></div>
         </div>
@@ -137,6 +138,7 @@ export default function PlanEnquiries() {
                       <span className="inline-flex items-center gap-1.5"><Building2 size={11} />{r.name}</span>
                       <span className="inline-flex items-center gap-1.5"><Mail size={11} />{r.email}</span>
                       <span className="inline-flex items-center gap-1.5"><Phone size={11} />{r.phone}</span>
+                      {r.employeesNeeded != null && <span>· {r.employeesNeeded} employee{r.employeesNeeded === 1 ? '' : 's'} needed</span>}
                       <span>· {new Date(r.createdAt).toLocaleDateString('en-IN')}</span>
                     </div>
                   </div>

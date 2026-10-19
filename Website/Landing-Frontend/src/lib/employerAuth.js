@@ -70,8 +70,8 @@ export function createGuestSubscriptionOrder(planCode) {
 }
 
 // The "Customize plan" form — lands in the Operations portal's Plan enquiries page.
-export function submitPlanEnquiry({ name, companyName, phone, email }) {
-  return postJSON('/plan-enquiries', { name, companyName, phone, email, source: 'website' })
+export function submitPlanEnquiry({ name, companyName, phone, email, employeesNeeded }) {
+  return postJSON('/plan-enquiries', { name, companyName, phone, email, employeesNeeded: Number(employeesNeeded), source: 'website' })
 }
 
 // ...then this single call both settles the payment and creates the

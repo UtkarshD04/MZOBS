@@ -9,6 +9,10 @@
 
 import { apiClient, fetchAll as fetchAllPages } from '../lib/api'
 import { revealedFromApi } from '../lib/reveal'
+
+// The phone preview shown before a candidate is unlocked never carries real digits —
+// not even the last four — whatever the server sends.
+const hidePhone = (preview) => (preview ? { ...preview, phone: preview.phone ? '••••••••••' : preview.phone } : preview)
 import { rankPool, similarTo, computeMatch, computeTrust } from '../lib/talent/engine'
 import { setVocabularyFrom } from '../lib/talent/vocab'
 
@@ -98,7 +102,7 @@ export function mapApiCandidate(c, jobTitles = {}) {
     rejectionReason: c.rejectionReason ?? null,
     contact: c.unlocked ? { email: c.email, phone: c.phone } : null,
     links: [],
-    _live: { kind: 'applicant', candidateId: c.id, employeeId: c.employeeId ?? null, stage: c.stage, unlocked: !!c.unlocked, revealed: revealedFromApi(c), contactPreview: c.contactPreview },
+    _live: { kind: 'applicant', candidateId: c.id, employeeId: c.employeeId ?? null, stage: c.stage, unlocked: !!c.unlocked, revealed: revealedFromApi(c), contactPreview: hidePhone(c.contactPreview) },
   }
 }
 
@@ -159,7 +163,7 @@ export function mapResdexCandidate(e) {
     rejectionReason: null,
     contact: e.unlocked ? { email: e.email, phone: e.phone } : null,
     links,
-    _live: { kind: 'resdex', candidateId: e.candidateId ?? null, employeeId: e.employeeId, stage: null, unlocked: !!e.unlocked, revealed: revealedFromApi(e), contactPreview: e.contactPreview },
+    _live: { kind: 'resdex', candidateId: e.candidateId ?? null, employeeId: e.employeeId, stage: null, unlocked: !!e.unlocked, revealed: revealedFromApi(e), contactPreview: hidePhone(e.contactPreview) },
   }
 }
 

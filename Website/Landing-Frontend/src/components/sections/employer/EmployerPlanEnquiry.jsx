@@ -6,7 +6,7 @@ import { submitPlanEnquiry } from '../../../lib/employerAuth'
 const inputClass =
   'w-full h-11 px-3.5 rounded-xl border border-(--explorer-border) bg-white text-[13.5px] text-(--explorer-navy) outline-none transition-colors placeholder:text-(--explorer-navy)/35 focus:border-(--explorer-blue) focus:ring-[3px] focus:ring-(--explorer-blue)/15'
 
-const EMPTY = { name: '', companyName: '', phone: '', email: '' }
+const EMPTY = { name: '', companyName: '', phone: '', email: '', employeesNeeded: '' }
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 // "Customize plan" — for employers who don't fit the fixed tiers. The Operations
@@ -16,8 +16,8 @@ export default function EmployerPlanEnquiry({ open, onClose }) {
   const [status, setStatus] = useState('form') // form | sending | done
   const [error, setError] = useState('')
 
-  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: key === 'phone' ? e.target.value.replace(/\D/g, '').slice(0, 10) : e.target.value }))
-  const valid = form.name.trim() && form.companyName.trim() && form.phone.length === 10 && EMAIL_RE.test(form.email.trim())
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: key === 'phone' ? e.target.value.replace(/\D/g, '').slice(0, 10) : key === 'employeesNeeded' ? e.target.value.replace(/\D/g, '').slice(0, 6) : e.target.value }))
+  const valid = form.name.trim() && form.companyName.trim() && form.phone.length === 10 && Number(form.employeesNeeded) >= 1 && EMAIL_RE.test(form.email.trim())
 
   function handleClose() {
     if (status === 'sending') return
@@ -105,6 +105,10 @@ export default function EmployerPlanEnquiry({ open, onClose }) {
                   <div>
                     <label className="block text-[12.5px] font-bold text-(--explorer-navy) mb-1.5" htmlFor="pe-phone">Phone number</label>
                     <input id="pe-phone" type="tel" inputMode="numeric" className={inputClass} value={form.phone} onChange={set('phone')} placeholder="98765 43210" autoComplete="tel-national" />
+                  </div>
+                  <div>
+                    <label className="block text-[12.5px] font-bold text-(--explorer-navy) mb-1.5" htmlFor="pe-count">Number of employees you need</label>
+                    <input id="pe-count" type="tel" inputMode="numeric" className={inputClass} value={form.employeesNeeded} onChange={set('employeesNeeded')} placeholder="e.g. 10" />
                   </div>
                   <div>
                     <label className="block text-[12.5px] font-bold text-(--explorer-navy) mb-1.5" htmlFor="pe-email">Email</label>

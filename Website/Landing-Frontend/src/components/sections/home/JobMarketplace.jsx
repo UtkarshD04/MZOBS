@@ -15,7 +15,6 @@ import {
   filterParams,
   listParams,
   marketplaceChips,
-  toggleIn,
 } from '../../../lib/marketplaceFilters'
 
 // ============================================================
@@ -278,7 +277,7 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
         </div>
       </div>
 
-      {/* Department tabs — a quick single-row filter, scrolls on small screens */}
+      {/* Department tabs — a quick single-select row (click again to clear); multi-select lives in All filters. Scrolls on small screens */}
       <div className="mz-scroll-x mz-fade-end -mx-4 mt-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
         <div className="flex min-w-max items-center gap-1.5 border-b border-mz-line" role="group" aria-label="Filter by department">
           {CATEGORIES.map((c) => {
@@ -287,7 +286,7 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
               <button
                 key={c.key || 'all'}
                 type="button"
-                onClick={() => setFilterState((prev) => ({ ...prev, tracks: c.key ? toggleIn(prev.tracks, c.key) : [] }))}
+                onClick={() => setFilterState((prev) => ({ ...prev, tracks: c.key && !(prev.tracks.length === 1 && prev.tracks[0] === c.key) ? [c.key] : [] }))}
                 aria-pressed={active}
                 className={`-mb-px shrink-0 rounded-t-[8px] border-b-[3px] px-3 pb-2.5 pt-1 text-[13.5px] font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[#078B7D] ${
                   active ? 'border-[#078B7D] bg-[#E8F7F4]/70 text-[#078B7D]' : 'border-transparent text-mz-muted hover:text-[#12304A]'
