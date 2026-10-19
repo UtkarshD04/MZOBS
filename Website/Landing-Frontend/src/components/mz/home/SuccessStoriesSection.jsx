@@ -229,8 +229,10 @@ export default function SuccessStoriesSection() {
           <h2 id="stories-title" className="mt-2 text-[28px] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[34px] lg:text-[40px]" style={{ color: NAVY }}>
             What Our <span style={{ color: TEAL }}>Candidates Say</span>
           </h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-[#475467] sm:text-[16px]">
-            Every opportunity opens a new chapter. Here&apos;s what our candidates have to say about their journey with Mzobs.
+          <p className="mx-auto mt-2.5 max-w-[30rem] text-balance text-[14.5px] font-normal leading-[1.6] text-[#475467] sm:max-w-none sm:text-[15px]">
+            Behind every career move is a story of ambition, growth, and new possibilities.
+            <br className="hidden sm:block" />{' '}
+            Discover the journeys shaped with <span className="font-semibold" style={{ color: NAVY }}>Mzobs</span>.
           </p>
           {isFixture && (
             <p className="mt-4 inline-block rounded bg-amber-100 px-2.5 py-1 text-[12px] font-medium text-amber-900">
