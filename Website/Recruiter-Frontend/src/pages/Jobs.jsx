@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 import { Eye, EyeOff, ExternalLink, Plus, MapPin, Clock, IndianRupee, Users, Pencil, Copy, Trash2, Search, Power, Rocket, Briefcase, CheckCircle2 } from 'lucide-react'
 import { Button, CardSkeleton, EmptyState, Modal } from '../components/ui'
+import LocationFilters, { EMPTY_LOCATION, hasLocationFilter, locationParams } from '../components/LocationFilters'
+import { distanceLabel } from '../services/geoService'
 import { useWorkspace } from '../store/workspace'
 import { listMyJobs, listPublicJobIds, publicJobUrl, setJobStatus, duplicateJob, deleteJob, STATUS_META, rupeesToLpa, jobError } from '../services/jobsService'
 import { agoDate } from '../lib/format'
@@ -33,7 +35,7 @@ function Visibility({ job, publicIds }) {
   )
 }
 
-function JobRow({ job, onChanged, onAsk, publicIds }) {
+function JobRow({ job, onChanged, onAsk, publicIds, radius }) {
   const nav = useNavigate()
   const { toast } = useWorkspace()
   const [busy, setBusy] = useState(false)
@@ -69,6 +71,12 @@ function JobRow({ job, onChanged, onAsk, publicIds }) {
       </div>
       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-[13px] text-ink-2">
         <span className="inline-flex items-center gap-1.5"><MapPin size={13} className="text-[#7d93a6]" /> {job.location} · {job.workMode}</span>
+        {(job.locationDetails?.locality || job.locationDetails?.pincode) && <span className="text-muted">{[job.locationDetails.locality, job.locationDetails.city, job.locationDetails.pincode].filter(Boolean).join(' · ')}</span>}
+        {job.distanceMeters != null && (
+          <span className="inline-flex items-center gap-1 rounded-md bg-blue-soft px-2 py-0.5 text-[12px] font-semibold text-[#1f6fb2]" title={job.locationDetails?.accuracy === 'precise' ? 'Measured from a precisely pinned workplace' : 'Approximate: this job’s location is address-level, not a precise pin'}>
+            {distanceLabel(job.distanceMeters, radius)}{job.locationDetails?.accuracy === 'precise' ? '' : ' (approx.)'}
+          </span>
+        )}
         <span className="inline-flex items-center gap-1.5"><Clock size={13} className="text-[#7d93a6]" /> {job.experienceMin}–{job.experienceMax} yrs</span>
         {salary && <span className="inline-flex items-center gap-1.5"><IndianRupee size={13} className="text-[#7d93a6]" /> {salary}</span>}
         <span className="inline-flex items-center gap-1.5"><Users size={13} className="text-[#7d93a6]" /> Apply by {job.deadline}</span>
@@ -98,12 +106,27 @@ export default function Jobs() {
   const [publicIds, setPublicIds] = useState(null)
   const [tab, setTab] = useState('all')
   const [toDelete, setToDelete] = useState(null)
+  const [loc, setLoc] = useState(EMPTY_LOCATION)
+  const [locError, setLocError] = useState('')
+  const [locBusy, setLocBusy] = useState(false)
+  const req = useRef(0)
   const justPosted = location.state?.justPosted
 
+  const locActive = !IS_DEMO && hasLocationFilter(loc)
   const load = useCallback(() => {
     listPublicJobIds().then(setPublicIds).catch(() => setPublicIds(null))
-    return listMyJobs().then((j) => { setJobs(j); setError(false) }).catch(() => setError(true))
-  }, [])
+    const mine = ++req.current // drop answers that a newer filter change has overtaken
+    setLocBusy(locActive)
+    return listMyJobs(locActive ? locationParams(loc) : undefined)
+      .then((j) => { if (mine !== req.current) return; setJobs(j); setError(false); setLocError('') })
+      .catch((e) => {
+        if (mine !== req.current) return
+        // A failed location search keeps the list on screen and says why; a plain load failure behaves as before.
+        if (locActive) setLocError(jobError(e).message)
+        else setError(true)
+      })
+      .finally(() => mine === req.current && setLocBusy(false))
+  }, [loc, locActive])
   useEffect(() => { load() }, [load])
 
   const shown = useMemo(() => (jobs ?? []).filter(TABS.find((t) => t.id === tab).match), [jobs, tab])
@@ -137,6 +160,8 @@ export default function Jobs() {
         </div>
       )}
 
+      {!IS_DEMO && <LocationFilters applied={loc} onApply={(f) => { setLocError(''); setLoc(f) }} error={locError} total={locActive && jobs ? jobs.length : null} busy={locBusy} />}
+
       <div className="mt-5 flex gap-1 border-b border-line" role="tablist">
         {TABS.map((t) => {
           const n = (jobs ?? []).filter(t.match).length
@@ -154,9 +179,9 @@ export default function Jobs() {
         ) : !jobs ? (
           <div className="space-y-3">{[0, 1, 2].map((i) => <CardSkeleton key={i} />)}</div>
         ) : shown.length === 0 ? (
-          <EmptyState icon={Briefcase} title={tab === 'all' ? 'No jobs yet' : 'Nothing here'} body={tab === 'all' ? 'Post your first requirement and Mzobs will start sourcing verified candidates.' : undefined} action={tab === 'all' && <Button variant="primary" icon={Plus} onClick={() => nav('/jobs/new')}>Post a job</Button>} />
+          <EmptyState icon={Briefcase} title={locActive ? 'No jobs match these location filters' : tab === 'all' ? 'No jobs yet' : 'Nothing here'} body={locActive ? 'Try a larger radius, a different area, or reset the location filters.' : tab === 'all' ? 'Post your first requirement and Mzobs will start sourcing verified candidates.' : undefined} action={!locActive && tab === 'all' && <Button variant="primary" icon={Plus} onClick={() => nav('/jobs/new')}>Post a job</Button>} />
         ) : (
-          <ul className="space-y-3">{shown.map((j) => <JobRow key={j.id} job={j} onChanged={load} onAsk={setToDelete} publicIds={publicIds} />)}</ul>
+          <ul className="space-y-3">{shown.map((j) => <JobRow key={j.id} job={j} onChanged={load} onAsk={setToDelete} publicIds={publicIds} radius={locActive && loc.place ? loc.radius : undefined} />)}</ul>
         )}
       </div>
 

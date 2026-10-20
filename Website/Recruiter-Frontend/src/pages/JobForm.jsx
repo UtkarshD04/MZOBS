@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { ArrowLeft, Briefcase, MapPin, Clock, IndianRupee, Users, Sparkles, AlertTriangle } from 'lucide-react'
 import { Button, Chip, Skeleton, EmptyState } from '../components/ui'
 import { TagInput } from '../components/FilterPanel'
+import LocationPicker from '../components/LocationPicker'
 import { vocab } from '../lib/talent/vocab'
 import { useWorkspace } from '../store/workspace'
 import { getPlanSnapshot, subscribePlan } from '../services/planService'
@@ -137,6 +138,16 @@ export default function JobForm() {
             <Field label="Work mode">
               <div className="flex gap-1.5">{WORK_MODES.map((m) => <button type="button" key={m} onClick={() => set({ workMode: m })} className={clsx('h-10 flex-1 rounded-lg border text-[13px] font-medium', f.workMode === m ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line hover:bg-line-2')}>{m}</button>)}</div>
             </Field>
+            {!IS_DEMO && (
+              <div className="sm:col-span-2">
+                <span className="text-[12.5px] font-medium text-ink-2">Exact workplace <span className="font-normal text-muted">(optional)</span></span>
+                <p className="mb-1 text-[12px] text-muted">Pin where the work happens so employers and candidates can find this job by distance. {f.workMode === 'Remote' ? 'Remote jobs are left out of nearby searches.' : 'Drop a pin for a precise location; an address search is stored as approximate.'}</p>
+                <LocationPicker
+                  value={f.locationDetails ?? null}
+                  onChange={(place) => set({ locationDetails: place, ...(place && !f.location.trim() ? { location: place.city || place.label.split(',')[0] } : {}) })}
+                />
+              </div>
+            )}
           </Section>
 
           <Section title="Requirements">

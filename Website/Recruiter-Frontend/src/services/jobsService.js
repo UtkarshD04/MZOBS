@@ -41,6 +41,19 @@ export const STATUS_META = {
 export const lpaToRupees = (lpa) => Math.round(Number(lpa) * 100000)
 export const rupeesToLpa = (r) => (r == null ? '' : Math.round((r / 100000) * 100) / 100)
 
+// Picker place ({ label, lat, lng, … }) → API locationDetails; the server re-validates everything.
+function toLocationDetails(p) {
+  if (!p) return null
+  return { state: p.state, city: p.city, locality: p.locality, pincode: p.pincode, formattedAddress: p.label, lat: p.lat, lng: p.lng, accuracy: p.accuracy, source: p.source }
+}
+
+// Stored job locationDetails → picker place.
+function fromLocationDetails(d) {
+  const [lng, lat] = d?.geo?.coordinates ?? []
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  return { label: d.formattedAddress || [d.locality, d.city, d.state].filter(Boolean).join(', ') || `${lat.toFixed(5)}, ${lng.toFixed(5)}`, state: d.state ?? '', city: d.city ?? '', locality: d.locality ?? '', pincode: d.pincode ?? '', lat, lng, accuracy: d.accuracy, source: d.source }
+}
+
 /** Form values → API body. */
 export function toPayload(f) {
   return {
@@ -53,6 +66,8 @@ export function toPayload(f) {
     salaryMax: lpaToRupees(f.salaryMax),
     vacancies: Number(f.vacancies),
     location: f.location.trim(),
+    // Exact workplace (optional): undefined leaves it alone, null clears it.
+    ...(f.locationDetails !== undefined && { locationDetails: toLocationDetails(f.locationDetails) }),
     workMode: f.workMode,
     skills: f.skills,
     track: f.track,
@@ -74,6 +89,8 @@ export function toForm(j) {
     salaryMax: rupeesToLpa(j.salaryMax),
     vacancies: j.vacancies ?? 1,
     location: j.location ?? '',
+    // undefined (not null) when there's no pin, so saving other edits never clears stored location text.
+    locationDetails: fromLocationDetails(j.locationDetails) ?? undefined,
     workMode: j.workMode ?? 'Hybrid',
     skills: j.skills ?? [],
     track: j.track ?? '',
@@ -121,11 +138,12 @@ function localPatch(id, patch) {
   return out
 }
 
-export async function listMyJobs() {
+// `filters` are optional extra GET /jobs params (the location filters); omitted, this is the same unfiltered call as before.
+export async function listMyJobs(filters) {
   if (IS_DEMO) return readLocalJobs()
   const rows = []
   for (let page = 1; page <= 10; page++) {
-    const r = await apiClient.get('/jobs', { params: { page, limit: 200 } })
+    const r = await apiClient.get('/jobs', { params: { ...filters, page, limit: 200 } })
     rows.push(...r.data)
     if (rows.length >= Number(r.headers['x-total-count'] ?? rows.length) || r.data.length < 200) break
   }
