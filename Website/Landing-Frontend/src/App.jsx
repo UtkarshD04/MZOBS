@@ -5,6 +5,7 @@ import ScrollToTop from './components/layout/ScrollToTop'
 import { ToastProvider } from './components/mz/Toast'
 import ScrollToTopButton from './components/ui/ScrollToTopButton'
 import CookieConsent from './components/ui/CookieConsent'
+import DussehraGreeting from './components/ui/DussehraGreeting'
 import Home from './pages/Home'
 // Everything below stays a regular (eager) import because server.js/
 // scripts/prerender.js call entry-server.jsx's render() — a synchronous
@@ -79,6 +80,7 @@ export default function App() {
       <ScrollToTop />
       <ScrollToTopButton />
       <CookieConsent />
+      <DussehraGreeting />
       {/* No AnimatePresence/exit animation — the old page unmounts the
           instant the route changes (no ~350ms wait for an exit transition
           before the new one appears); this key'd div only fades the new

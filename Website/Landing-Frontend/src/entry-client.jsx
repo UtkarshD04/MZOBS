@@ -57,12 +57,25 @@ const initialLoader = document.getElementById('initial-loader')
 // single page load, discarding and rebuilding the whole tree (a visible
 // flash — the navbar included — right after first paint). Checking for an
 // actual Element child instead of any child node fixes that.
+// Normally the loader goes the moment there's something to show. The one
+// exception is the festival splash (index.html sets window.__dussehraSplash on
+// the first open of a session during Dussehra): hold it briefly, then fade.
+function removeLoader() {
+  if (!initialLoader) return
+  if (!window.__dussehraSplash) return initialLoader.remove()
+  setTimeout(() => {
+    initialLoader.style.transition = 'opacity .5s ease'
+    initialLoader.style.opacity = '0'
+    setTimeout(() => initialLoader.remove(), 500)
+  }, 1800)
+}
+
 if (container.firstElementChild) {
   // Real content is already on screen — the static loader in index.html
   // would only ever cover it for a single paint, so drop it now.
-  initialLoader?.remove()
+  removeLoader()
   hydrateRoot(container, app)
 } else {
   createRoot(container).render(app)
-  initialLoader?.remove()
+  removeLoader()
 }
