@@ -7,6 +7,7 @@ import Footer from '../components/layout/Footer'
 import { Container, CompanyLogo } from '../components/mz/primitives'
 import { useToast } from '../components/mz/Toast'
 import ApplicationFeedback from '../components/mz/ApplicationFeedback'
+import { ConversionBand, JourneyWorkspace, NextMove, PageIntro, PremiumValue } from '../components/mz/ApplicationCommandCenter'
 import { getEmployeeSession } from '../lib/employeeSession'
 import { getEmployeeProfile } from '../lib/employeeProfile'
 import { fetchApplications, fetchInterviews, fetchMockInterview, withdrawApplication } from '../lib/employeeApi'
@@ -97,47 +98,20 @@ function Progress({ app }) {
   )
 }
 
-// Application tracking is a Premium perk, so Basic accounts see this instead of the page.
-function TrackingGate({ paid, onRetry }) {
-  if (paid === null) {
-    return (
-      <div className="space-y-3" aria-busy="true" aria-label="Loading">
-        <div className="mz-skeleton h-8 w-56 rounded" />
-        <div className="mz-skeleton h-40 w-full rounded-[12px]" />
-      </div>
-    )
-  }
-  if (paid === 'error') {
-    return (
-      <div className="flex flex-col items-center gap-2 rounded-[12px] border border-dashed border-mz-line-strong bg-white px-6 py-12 text-center">
-        <SearchX size={24} className="text-mz-muted" aria-hidden="true" />
-        <p className="text-[15px] font-semibold text-mz-ink">Couldn’t load this page</p>
-        <p className="max-w-sm text-[14px] text-mz-muted">Check your connection and try again.</p>
-        <button
-          type="button"
-          onClick={onRetry}
-          className="mz-btn-teal mt-2 inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-mz-primary px-4 text-[13.5px] font-semibold text-white hover:bg-mz-primary-strong"
-        >
-          <RotateCw size={14} aria-hidden="true" /> Retry
-        </button>
-      </div>
-    )
-  }
+// The plan check failed, so we can't tell which tracking features to show.
+function PlanCheckError({ onRetry }) {
   return (
-    <div className="mx-auto flex max-w-[520px] flex-col items-center gap-2 rounded-[14px] border border-mz-line bg-white px-6 py-12 text-center">
-      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-mz-primary-tint text-mz-primary-strong">
-        <Lock size={20} aria-hidden="true" />
-      </span>
-      <h1 className="mt-2 text-[22px] font-bold tracking-[-0.02em] text-mz-ink">Application tracking is a Premium feature</h1>
-      <p className="max-w-sm text-[14px] leading-relaxed text-mz-muted">
-        Upgrade to Mzobs Premium to follow every application stage by stage, see when employers view your profile, and keep your interviews in one place.
-      </p>
-      <Link
-        to="/employees/subscription"
-        className="mz-btn-teal mt-3 inline-flex h-11 items-center gap-1.5 rounded-[10px] bg-mz-primary px-5 text-[14px] font-semibold text-white hover:bg-mz-primary-strong"
+    <div className="flex flex-col items-center gap-2 rounded-[12px] border border-dashed border-mz-line-strong bg-white px-6 py-12 text-center">
+      <SearchX size={24} className="text-mz-muted" aria-hidden="true" />
+      <p className="text-[15px] font-semibold text-mz-ink">Couldn’t load this page</p>
+      <p className="max-w-sm text-[14px] text-mz-muted">Check your connection and try again.</p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="mz-btn-teal mt-2 inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-mz-primary px-4 text-[13.5px] font-semibold text-white hover:bg-mz-primary-strong"
       >
-        See Premium <ArrowRight size={14} aria-hidden="true" />
-      </Link>
+        <RotateCw size={14} aria-hidden="true" /> Retry
+      </button>
     </div>
   )
 }
@@ -244,7 +218,13 @@ function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
             history.map((h, i) => (
               <li key={`${h.status}-${h.changedOn}-${i}`} className="flex items-center justify-between gap-3 text-[13px]">
                 <span className="font-medium text-mz-ink">{STATUS[h.status]?.label ?? h.status}</span>
-                <span className="text-mz-muted">{fmtDate(h.changedOn)}</span>
+                {app.historyLocked ? (
+                  <span className="inline-flex items-center gap-1 text-mz-muted">
+                    <Lock size={11} aria-hidden="true" /> Date with Premium
+                  </span>
+                ) : (
+                  <span className="text-mz-muted">{fmtDate(h.changedOn)}</span>
+                )}
               </li>
             ))
           )}
@@ -395,8 +375,9 @@ export default function EmployeeApplications() {
   const [retry, setRetry] = useState(0)
   const [tab, setTab] = useState('all')
   const [withdrawingId, setWithdrawingId] = useState(null)
-  // null = still checking the plan, 'error' = couldn't check. Application tracking is Premium-only.
+  // null = still checking the plan, 'error' = couldn't check. Only the dated timeline is Premium; the server enforces that.
   const [paid, setPaid] = useState(null)
+  const [stage, setStage] = useState(2)
   const [interviews, setInterviews] = useState({ status: 'loading', list: null, mock: null })
 
   useEffect(() => {
@@ -432,7 +413,7 @@ export default function EmployeeApplications() {
   }, [token, retry, signInAgainIfExpired])
 
   useEffect(() => {
-    if (!token || paid !== true) return
+    if (!token) return
     const controller = new AbortController()
     setStatus('loading')
     fetchApplications(token, { page: 1, limit: PAGE_SIZE }, { signal: controller.signal })
@@ -448,10 +429,10 @@ export default function EmployeeApplications() {
         setStatus('error')
       })
     return () => controller.abort()
-  }, [token, paid, retry, signInAgainIfExpired])
+  }, [token, retry, signInAgainIfExpired])
 
   useEffect(() => {
-    if (!token || paid !== true) return
+    if (!token) return
     let cancelled = false
     Promise.allSettled([fetchInterviews(token), fetchMockInterview(token)]).then(([iv, mock]) => {
       if (cancelled) return
@@ -461,7 +442,7 @@ export default function EmployeeApplications() {
     return () => {
       cancelled = true
     }
-  }, [token, paid])
+  }, [token, retry])
 
   async function loadMore() {
     setLoadingMore(true)
@@ -497,31 +478,38 @@ export default function EmployeeApplications() {
       <Seo path="/employees/applications" title="My applications | Mzobs" noindex />
       <Navbar />
       <main className="pb-14 pt-[88px] sm:pt-[96px]">
-        <Container className="max-w-[920px]">
-          {paid !== true ? (
-            <TrackingGate paid={paid} onRetry={() => setRetry((n) => n + 1)} />
-          ) : (
-            <>
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h1 className="text-[24px] font-bold tracking-[-0.02em] text-mz-ink sm:text-[28px]">My applications</h1>
-              <p className="mt-1 text-[14px] text-mz-muted">
-                {status === 'ready' ? `${total} ${total === 1 ? 'application' : 'applications'} · track where each one stands` : 'Track where each application stands'}
-              </p>
+        <Container className="max-w-[1040px]">
+          {paid === null ? (
+            <div className="space-y-3" aria-busy="true" aria-label="Loading">
+              <div className="mz-skeleton h-8 w-72 rounded" />
+              <div className="mz-skeleton h-72 w-full rounded-[14px]" />
             </div>
-            <Link to="/#latest-jobs" className="group inline-flex items-center gap-1 text-[14px] font-semibold text-mz-primary-strong hover:underline underline-offset-4">
-              Browse jobs <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-            </Link>
-          </div>
+          ) : paid === 'error' ? (
+            <PlanCheckError onRetry={() => setRetry((n) => n + 1)} />
+          ) : (
+            <div className="space-y-6">
+              <PageIntro paid={paid} />
+              <div id="journey" className="scroll-mt-24 space-y-4">
+                <JourneyWorkspace apps={apps} paid={paid} selected={stage} onSelect={setStage} />
+                <NextMove selected={stage} onSelect={setStage} paid={paid} />
+              </div>
 
-          <div className="mt-6">
-            <InterviewsSection interviews={interviews.list} mock={interviews.mock} status={interviews.status} />
-          </div>
+              <InterviewsSection interviews={interviews.list} mock={interviews.mock} status={interviews.status} />
 
-          <section aria-labelledby="applications-title" className="mt-6">
-            <h2 id="applications-title" className="sr-only">Applications</h2>
+              <section id="applications" aria-labelledby="applications-title" className="scroll-mt-24">
+                <div className="flex flex-wrap items-end justify-between gap-3">
+                  <div>
+                    <h2 id="applications-title" className="text-[17px] font-bold text-mz-ink">Your applications</h2>
+                    <p className="mt-0.5 text-[13.5px] text-mz-muted">
+                      {status === 'ready' ? `${total} ${total === 1 ? 'application' : 'applications'} · live from your account` : 'Live from your account'}
+                    </p>
+                  </div>
+                  <Link to="/#latest-jobs" className="group inline-flex items-center gap-1 text-[14px] font-semibold text-mz-primary-strong hover:underline underline-offset-4">
+                    Browse jobs <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  </Link>
+                </div>
             {status === 'ready' && apps.length > 0 && (
-              <div className="mz-scroll-x mz-fade-end -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+              <div className="mz-scroll-x mz-fade-end -mx-4 mt-3 overflow-x-auto px-4 sm:mx-0 sm:px-0">
                 <div className="flex min-w-max gap-1.5 border-b border-mz-line" role="group" aria-label="Filter applications by status">
                   {TABS.map((t) => (
                     <button
@@ -604,8 +592,15 @@ export default function EmployeeApplications() {
                 </div>
               )}
             </div>
-          </section>
-            </>
+              </section>
+
+              <PremiumValue paid={paid} hasApps={apps.length > 0} />
+              {!paid && (
+                <ConversionBand
+                  onContinue={() => document.getElementById('journey')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' })}
+                />
+              )}
+            </div>
           )}
         </Container>
       </main>
