@@ -55,12 +55,14 @@ export const DRAFT_CANDIDATE_STORIES = [
   {
     id: 'draft-sumit-kumar-mishra',
     name: 'Sumit Kumar Mishra',
+    photo: '/images/candidates/sumit-kumar-mishra.svg',
     tagline: 'Clarity on the Path Ahead',
     feedback: 'Mzobs gave my job search a clear direction. I could focus on roles that suited me and move ahead with more confidence.',
   },
   {
     id: 'draft-vaishnavi-shukla',
     name: 'Vaishnavi Shukla',
+    photo: '/images/candidates/vaishnavi-shukla.svg',
     tagline: 'Believing in My Next Chapter',
     feedback: 'With Mzobs, I felt supported at every step. It helped me present my skills better and look forward to what comes next.',
   },
