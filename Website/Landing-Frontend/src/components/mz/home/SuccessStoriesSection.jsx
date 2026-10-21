@@ -6,6 +6,7 @@ import { DRAFT_CANDIDATE_STORIES } from '../../../lib/candidateStories'
 
 const NAVY = '#183451'
 const TEAL = '#078F80'
+const AUTOPLAY_MS = 4500
 
 // Candidate photo, or a neutral circular placeholder until an approved photo
 // exists. Set `photo` in lib/candidateStories.js (e.g. '/images/candidates/name.jpg')
@@ -63,6 +64,7 @@ function StoryCard({ story, index }) {
 
 function Carousel({ stories }) {
   const trackRef = useRef(null)
+  const rootRef = useRef(null)
   const [active, setActive] = useState(0)
   const [positions, setPositions] = useState(stories.length)
   const [atStart, setAtStart] = useState(true)
@@ -93,80 +95,156 @@ function Carousel({ stories }) {
   }, [update])
 
   const busy = useRef(false)
+  const [epoch, setEpoch] = useState(0) // bumps after every move so the autoplay timer restarts
+  const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  const [inView, setInView] = useState(false)
+  const [tabVisible, setTabVisible] = useState(() => typeof document === 'undefined' || document.visibilityState !== 'hidden')
+  const [calm, setCalm] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
 
-  // DepthFlow + Cascade: the visible cards ease out one after another (a short
-  // slide away, slight push back in depth, fade), the track jumps to the new
-  // position, then the new visible cards cascade in from the opposite side.
-  // Plain Web Animations on transform/opacity only; the track is clipped while it
-  // runs so the sliding cards can't create horizontal overflow, and clicks that
-  // arrive mid-transition are ignored.
-  const moveTo = async (target) => {
+  // Card pitch (width + gap) and the scroll offset of every snap position.
+  const metrics = () => {
     const el = trackRef.current
-    if (!el || busy.current) return
+    const cards = el ? [...el.querySelectorAll('[data-card]')] : []
+    if (!cards.length) return null
+    const base = cards[0].offsetLeft
+    return { el, cards, offsets: cards.map((c) => c.offsetLeft - base) }
+  }
+
+  // StoryFlow reveal. The card outlines never move: the visible cards' contents
+  // ease up and fade out (cards staggered ~120ms), the track jumps to the target
+  // while the contents are invisible, then each card re-reveals in order: avatar
+  // (scale + fade), quote, name, tagline. Scroll-snap is off while it runs so the
+  // browser can't re-snap the jump; clicks mid-transition are ignored.
+  const moveTo = async (target) => {
+    const m = metrics()
+    if (!m || busy.current) return
+    const { el, cards } = m
     const max = el.scrollWidth - el.clientWidth
     const left = Math.max(0, Math.min(max, target))
     if (Math.abs(left - el.scrollLeft) < 2) return
-    const dir = left > el.scrollLeft ? 1 : -1
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || typeof el.animate !== 'function') {
-      el.scrollTo({ left, behavior: 'instant' })
+    const jump = () => el.scrollTo({ left, behavior: 'instant' })
+    if (typeof el.animate !== 'function') {
+      jump()
       return
     }
     const visible = () => {
       const box = el.getBoundingClientRect()
-      const cards = [...el.querySelectorAll('[data-card]')].filter((c) => {
+      return cards.filter((c) => {
         const r = c.getBoundingClientRect()
         return r.right > box.left + 8 && r.left < box.right - 8
       })
-      // Cascade follows the direction of travel.
-      return dir > 0 ? cards : cards.reverse()
     }
+    // Per card: the avatar, then quote mark + text, then name, then tagline.
+    const parts = (c) => {
+      const caption = c.querySelector('figcaption')
+      const [name, tagline] = caption ? caption.querySelectorAll('p') : []
+      return [
+        [c.querySelector('.story-avatar'), 0, true],
+        [c.querySelector('svg'), 30, false],
+        [c.querySelector('blockquote'), 30, false],
+        [name, 70, false],
+        [tagline, 100, false],
+      ].filter(([node]) => node)
+    }
+    const move = calm ? 'none' : 'translate3d(0,10px,0)'
     busy.current = true
+    el.style.scrollSnapType = 'none'
     el.style.overflowX = 'hidden'
+    let out = []
     try {
-      const out = visible().map((c, i) =>
-        c.animate(
-          [
-            { opacity: 1, transform: 'translate3d(0,0,0) scale(1)' },
-            { opacity: 0, transform: `translate3d(${-dir * 28}px,0,-60px) scale(0.96)` },
-          ],
-          { duration: 200, delay: i * 40, easing: 'cubic-bezier(0.4,0,1,1)', fill: 'forwards' },
+      out = visible().flatMap((c, i) =>
+        parts(c).map(([node, , isAvatar]) =>
+          node.animate(
+            [
+              { opacity: 1, transform: 'translate3d(0,0,0)', scale: 1 },
+              { opacity: 0, transform: calm ? 'none' : 'translate3d(0,-8px,0)', scale: isAvatar && !calm ? 0.94 : 1 },
+            ],
+            { duration: calm ? 250 : 110, delay: calm ? 0 : i * 30, easing: 'cubic-bezier(0.4,0,1,1)', fill: 'forwards' },
+          ),
         ),
       )
       await Promise.all(out.map((a) => a.finished))
-      el.scrollTo({ left, behavior: 'instant' })
-      const incoming = visible().map((c, i) =>
-        c.animate(
-          [
-            { opacity: 0, transform: `translate3d(${dir * 48}px,14px,-60px) scale(0.96)` },
-            { opacity: 1, transform: 'translate3d(0,0,0) scale(1)' },
-          ],
-          { duration: 380, delay: i * 80, easing: 'cubic-bezier(0.22,1,0.36,1)', fill: 'backwards' },
+      jump()
+      const incoming = visible().flatMap((c, i) =>
+        parts(c).map(([node, lag, isAvatar]) =>
+          node.animate(
+            [
+              { opacity: 0, transform: move, scale: isAvatar && !calm ? 0.88 : 1 },
+              { opacity: 1, transform: 'translate3d(0,0,0)', scale: 1 },
+            ],
+            { duration: calm ? 450 : 280, delay: calm ? 0 : i * 80 + lag, easing: 'cubic-bezier(0.22,1,0.36,1)', fill: 'backwards' },
+          ),
         ),
       )
       out.forEach((a) => a.cancel())
       await Promise.all(incoming.map((a) => a.finished))
     } catch {
       // An interrupted animation (e.g. unmount) just snaps to the target.
-      el.scrollTo({ left, behavior: 'instant' })
+      out.forEach((a) => a.cancel())
+      jump()
     } finally {
       el.style.overflowX = ''
+      el.style.scrollSnapType = ''
       busy.current = false
+      setEpoch((n) => n + 1)
     }
   }
 
   const goTo = (i) => {
-    const el = trackRef.current
-    const card = el?.querySelectorAll('[data-card]')[i]
-    if (card) moveTo(card.offsetLeft - el.offsetLeft)
+    const m = metrics()
+    if (m && m.offsets[i] != null) moveTo(m.offsets[i])
   }
 
-  const step = (dir) => {
-    const el = trackRef.current
-    const card = el?.querySelector('[data-card]')
-    if (!el || !card) return
-    const gap = parseFloat(getComputedStyle(el).columnGap) || 0
-    moveTo(el.scrollLeft + dir * (card.offsetWidth + gap))
+  // Index of the snap position nearest the current scroll.
+  const nearest = (m) => {
+    let cur = 0
+    m.offsets.forEach((o, i) => { if (Math.abs(o - m.el.scrollLeft) < Math.abs(m.offsets[cur] - m.el.scrollLeft)) cur = i })
+    return cur
   }
+
+  // Arrows move one card at a time.
+  const step = (dir) => {
+    const m = metrics()
+    if (!m) return
+    moveTo(m.offsets[Math.max(0, Math.min(m.offsets.length - 1, nearest(m) + dir))])
+  }
+
+  // Autoplay advances a whole set of visible cards and wraps to the start.
+  const advance = () => {
+    const m = metrics()
+    if (!m) return
+    const { el, offsets } = m
+    if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 2) return moveTo(0)
+    const next = offsets[nearest(m) + (stories.length - positions + 1)]
+    moveTo(next ?? el.scrollWidth)
+  }
+  const advanceRef = useRef(advance)
+  advanceRef.current = advance
+
+  // Pause while off-screen, in a background tab, hovered or keyboard-focused.
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const onMq = () => setCalm(mq.matches)
+    const onVis = () => setTabVisible(document.visibilityState !== 'hidden')
+    mq.addEventListener('change', onMq)
+    document.addEventListener('visibilitychange', onVis)
+    const io = typeof IntersectionObserver === 'undefined' ? null : new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.4 })
+    if (io && rootRef.current) io.observe(rootRef.current)
+    else setInView(true)
+    return () => {
+      mq.removeEventListener('change', onMq)
+      document.removeEventListener('visibilitychange', onVis)
+      io?.disconnect()
+    }
+  }, [])
+
+  const playing = inView && tabVisible && !hovered && !focused && positions > 1
+  useEffect(() => {
+    if (!playing) return
+    const id = setTimeout(() => advanceRef.current(), AUTOPLAY_MS)
+    return () => clearTimeout(id)
+  }, [playing, epoch])
 
   const onKeyDown = (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); step(1) }
@@ -181,7 +259,16 @@ function Carousel({ stories }) {
   const arrowPrimary = `${arrow} border-[#078F80] bg-[#078F80] text-white hover:bg-[#067a6d]`
 
   return (
-    <div role="region" aria-roledescription="carousel" aria-label="Candidate stories">
+    <div
+      ref={rootRef}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Candidate stories"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={(e) => e.target.matches(':focus-visible') && setFocused(true)}
+      onBlur={() => setFocused(false)}
+    >
       <ul
         ref={trackRef}
         tabIndex={0}
