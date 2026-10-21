@@ -52,4 +52,16 @@ export const DRAFT_CANDIDATE_STORIES = [
     tagline: 'Taking the First Step Forward',
     feedback: 'Mzobs made the job search feel clear and less overwhelming, and gave me the push I needed to start my career journey.',
   },
+  {
+    id: 'draft-sumit-kumar-mishra',
+    name: 'Sumit Kumar Mishra',
+    tagline: 'Clarity on the Path Ahead',
+    feedback: 'Mzobs gave my job search a clear direction. I could focus on roles that suited me and move ahead with more confidence.',
+  },
+  {
+    id: 'draft-vaishnavi-shukla',
+    name: 'Vaishnavi Shukla',
+    tagline: 'Believing in My Next Chapter',
+    feedback: 'With Mzobs, I felt supported at every step. It helped me present my skills better and look forward to what comes next.',
+  },
 ].map((s) => ({ ...s, placementVerified: false }))
