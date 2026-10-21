@@ -141,10 +141,10 @@ function Carousel({ stories }) {
       const [name, tagline] = caption ? caption.querySelectorAll('p') : []
       return [
         [c.querySelector('.story-avatar'), 0, true],
-        [c.querySelector('svg'), 30, false],
-        [c.querySelector('blockquote'), 30, false],
-        [name, 70, false],
-        [tagline, 100, false],
+        [c.querySelector('svg'), 20, false],
+        [c.querySelector('blockquote'), 20, false],
+        [name, 50, false],
+        [tagline, 70, false],
       ].filter(([node]) => node)
     }
     const move = calm ? 'none' : 'translate3d(0,10px,0)'
@@ -160,7 +160,7 @@ function Carousel({ stories }) {
               { opacity: 1, transform: 'translate3d(0,0,0)', scale: 1 },
               { opacity: 0, transform: calm ? 'none' : 'translate3d(0,-8px,0)', scale: isAvatar && !calm ? 0.94 : 1 },
             ],
-            { duration: calm ? 250 : 110, delay: calm ? 0 : i * 30, easing: 'cubic-bezier(0.4,0,1,1)', fill: 'forwards' },
+            { duration: calm ? 250 : 90, delay: calm ? 0 : i * 25, easing: 'cubic-bezier(0.4,0,1,1)', fill: 'forwards' },
           ),
         ),
       )
@@ -173,7 +173,7 @@ function Carousel({ stories }) {
               { opacity: 0, transform: move, scale: isAvatar && !calm ? 0.88 : 1 },
               { opacity: 1, transform: 'translate3d(0,0,0)', scale: 1 },
             ],
-            { duration: calm ? 450 : 280, delay: calm ? 0 : i * 80 + lag, easing: 'cubic-bezier(0.22,1,0.36,1)', fill: 'backwards' },
+            { duration: calm ? 450 : 220, delay: calm ? 0 : i * 60 + lag, easing: 'cubic-bezier(0.22,1,0.36,1)', fill: 'backwards' },
           ),
         ),
       )
