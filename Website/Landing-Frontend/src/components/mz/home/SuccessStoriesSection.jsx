@@ -92,12 +92,72 @@ function Carousel({ stories }) {
     return () => ro.disconnect()
   }, [update])
 
-  const behavior = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth')
+  const busy = useRef(false)
+
+  // DepthFlow + Cascade: the visible cards ease out one after another (a short
+  // slide away, slight push back in depth, fade), the track jumps to the new
+  // position, then the new visible cards cascade in from the opposite side.
+  // Plain Web Animations on transform/opacity only; the track is clipped while it
+  // runs so the sliding cards can't create horizontal overflow, and clicks that
+  // arrive mid-transition are ignored.
+  const moveTo = async (target) => {
+    const el = trackRef.current
+    if (!el || busy.current) return
+    const max = el.scrollWidth - el.clientWidth
+    const left = Math.max(0, Math.min(max, target))
+    if (Math.abs(left - el.scrollLeft) < 2) return
+    const dir = left > el.scrollLeft ? 1 : -1
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || typeof el.animate !== 'function') {
+      el.scrollTo({ left, behavior: 'instant' })
+      return
+    }
+    const visible = () => {
+      const box = el.getBoundingClientRect()
+      const cards = [...el.querySelectorAll('[data-card]')].filter((c) => {
+        const r = c.getBoundingClientRect()
+        return r.right > box.left + 8 && r.left < box.right - 8
+      })
+      // Cascade follows the direction of travel.
+      return dir > 0 ? cards : cards.reverse()
+    }
+    busy.current = true
+    el.style.overflowX = 'hidden'
+    try {
+      const out = visible().map((c, i) =>
+        c.animate(
+          [
+            { opacity: 1, transform: 'translate3d(0,0,0) scale(1)' },
+            { opacity: 0, transform: `translate3d(${-dir * 28}px,0,-60px) scale(0.96)` },
+          ],
+          { duration: 200, delay: i * 40, easing: 'cubic-bezier(0.4,0,1,1)', fill: 'forwards' },
+        ),
+      )
+      await Promise.all(out.map((a) => a.finished))
+      el.scrollTo({ left, behavior: 'instant' })
+      const incoming = visible().map((c, i) =>
+        c.animate(
+          [
+            { opacity: 0, transform: `translate3d(${dir * 48}px,14px,-60px) scale(0.96)` },
+            { opacity: 1, transform: 'translate3d(0,0,0) scale(1)' },
+          ],
+          { duration: 380, delay: i * 80, easing: 'cubic-bezier(0.22,1,0.36,1)', fill: 'backwards' },
+        ),
+      )
+      out.forEach((a) => a.cancel())
+      await Promise.all(incoming.map((a) => a.finished))
+    } catch {
+      // An interrupted animation (e.g. unmount) just snaps to the target.
+      el.scrollTo({ left, behavior: 'instant' })
+    } finally {
+      el.style.overflowX = ''
+      busy.current = false
+    }
+  }
 
   const goTo = (i) => {
     const el = trackRef.current
     const card = el?.querySelectorAll('[data-card]')[i]
-    if (card) el.scrollTo({ left: card.offsetLeft - el.offsetLeft, behavior: behavior() })
+    if (card) moveTo(card.offsetLeft - el.offsetLeft)
   }
 
   const step = (dir) => {
@@ -105,7 +165,7 @@ function Carousel({ stories }) {
     const card = el?.querySelector('[data-card]')
     if (!el || !card) return
     const gap = parseFloat(getComputedStyle(el).columnGap) || 0
-    el.scrollBy({ left: dir * (card.offsetWidth + gap), behavior: behavior() })
+    moveTo(el.scrollLeft + dir * (card.offsetWidth + gap))
   }
 
   const onKeyDown = (e) => {
@@ -128,8 +188,8 @@ function Carousel({ stories }) {
         onScroll={update}
         onKeyDown={onKeyDown}
         aria-label="Candidate stories — use left and right arrow keys to browse"
-        style={{ '--gap': '24px' }}
-        className="m-0 flex snap-x snap-mandatory gap-[var(--gap)] overflow-x-auto overscroll-x-contain scroll-smooth -mt-1 p-0 pb-3 pt-1 [--card-w:100%] [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078F80] sm:[--card-w:calc((100%-var(--gap))/2)] lg:[--card-w:calc((100%-2*var(--gap))/3)] [&::-webkit-scrollbar]:hidden"
+        style={{ '--gap': '24px', perspective: '1200px' }}
+        className="m-0 flex snap-x snap-mandatory gap-[var(--gap)] overflow-x-auto overscroll-x-contain -mt-1 p-0 pb-3 pt-1 [--card-w:100%] [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078F80] sm:[--card-w:calc((100%-var(--gap))/2)] lg:[--card-w:calc((100%-2*var(--gap))/3)] [&::-webkit-scrollbar]:hidden"
       >
         {stories.map((s, i) => (
           <StoryCard key={s.id} story={s} index={i} />
