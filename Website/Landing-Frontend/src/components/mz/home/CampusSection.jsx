@@ -34,11 +34,13 @@ export default function CampusSection() {
         <ul className="mt-6 grid gap-4 md:grid-cols-4">
           <Reveal
             as="li"
-            className="flex flex-col items-center justify-center rounded-2xl p-5 text-center text-white"
+            className="relative flex flex-col items-center justify-center overflow-hidden rounded-2xl p-5 text-center text-white shadow-mz-lift"
             style={{ backgroundImage: 'var(--mz-gradient)' }}
           >
-            <span className="text-[32px] font-extrabold leading-none tracking-[-0.02em]">100+</span>
-            <span className="mt-1.5 text-[13px] font-semibold text-white/90">Campuses on Mzobs</span>
+            <span className="pointer-events-none absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-white/10" aria-hidden="true" />
+            <span className="pointer-events-none absolute -left-8 -top-8 h-24 w-24 rounded-full bg-white/10" aria-hidden="true" />
+            <span className="relative text-[40px] font-extrabold leading-none tracking-[-0.03em]">100+</span>
+            <span className="relative mt-2 text-[13px] font-semibold text-white/90">Campuses on Mzobs</span>
           </Reveal>
 
           {CARDS.map(({ icon: Icon, title, body, cta }, i) => (

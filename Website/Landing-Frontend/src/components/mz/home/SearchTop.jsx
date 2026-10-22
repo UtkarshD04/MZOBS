@@ -50,8 +50,21 @@ export default function SearchTop({ filters, onSearch }) {
       <div className="pointer-events-none absolute -right-16 -top-24 h-80 w-80 rounded-full bg-[#12A89D]/35 blur-2xl" aria-hidden="true" />
       <div className="pointer-events-none absolute -left-24 bottom-[-40px] h-64 w-64 rounded-full bg-[#9b8cf0]/30 blur-2xl" aria-hidden="true" />
 
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.35] [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
+        style={{ backgroundImage: 'radial-gradient(#12304A1f 1px, transparent 1px)', backgroundSize: '22px 22px' }}
+        aria-hidden="true"
+      />
+
       <Container className="relative">
-        <h1 id="search-title" className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-[#12304A] sm:text-[40px]">
+        <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[12px] font-semibold text-[#078B7D] shadow-[0_1px_2px_rgba(18,48,74,0.08)] ring-1 ring-[#078B7D]/20 backdrop-blur">
+          <span className="relative flex h-2 w-2" aria-hidden="true">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-[#12A89D] opacity-60 motion-safe:animate-ping" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#12A89D]" />
+          </span>
+          Live openings, updated daily
+        </span>
+        <h1 id="search-title" className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-[#12304A] sm:text-[44px]">
           Your ambition deserves the <span className="bg-gradient-to-r from-[#078B7D] to-[#12A89D] bg-clip-text text-transparent">right job.</span>
         </h1>
         <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-mz-muted">

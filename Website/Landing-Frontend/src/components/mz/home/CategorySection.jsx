@@ -42,18 +42,19 @@ export default function CategorySection({ onSelect }) {
         <p className="mt-1 text-[14px] text-mz-muted">Live opening counts. Pick one to filter the job feed.</p>
 
         <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
-          {rows.map(({ key, title, icon: Icon, tone, params, count, value }) => {
+          {rows.map(({ key, title, icon: Icon, tone, params, value }) => {
             return (
-              <li key={key}>
+              <li key={key} style={{ '--tone': tone }}>
                 <button
                   type="button"
                   onClick={() => onSelect?.({ q: [], location: [], experience: '', ...params })}
-                  className="group flex h-full w-full flex-col items-center justify-center gap-3 rounded-[18px] border border-mz-line bg-white px-3 py-7 text-center transition-all duration-150 hover:-translate-y-0.5 hover:border-mz-line-strong hover:shadow-[0_10px_24px_-14px_rgba(18,48,74,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
+                  className="group relative flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-[18px] border border-mz-line bg-white px-3 py-7 text-center transition-all duration-200 ease-out motion-safe:hover:-translate-y-1 hover:border-(--tone) hover:shadow-[0_16px_32px_-16px_var(--tone)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-[14px] text-white shadow-[0_8px_18px_-8px_var(--tone)] transition-transform duration-150 group-hover:scale-110" style={{ background: tone, '--tone': tone }}>
+                  <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-[0.06]" style={{ background: tone }} aria-hidden="true" />
+                  <span className="relative flex h-12 w-12 items-center justify-center rounded-[14px] text-white shadow-[0_8px_18px_-8px_var(--tone)] transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-3" style={{ background: tone }}>
                     <Icon size={22} aria-hidden="true" />
                   </span>
-                  <span className="block">
+                  <span className="relative block">
                     <span className="block text-[15px] font-semibold text-mz-ink">{title}</span>
                     <span className="mt-0.5 block text-[12.5px] text-mz-muted">
                       <CountText value={value} loading={KEYWORD_CATEGORIES[key] ? !(key in keywordCounts) : status === 'loading'} />
