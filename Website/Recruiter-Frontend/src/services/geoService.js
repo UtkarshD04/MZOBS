@@ -59,3 +59,47 @@ export function deviceError(e) {
   if (e.code === 'TIMEOUT') return 'Couldn’t get your location in time. Try again, or pick a point on the map.'
   return 'Your location is unavailable right now. Search an address or pick a point on the map.'
 }
+
+// PIN → { district, state, areas } from the India Post directory (GET /geo/pincode/:pin).
+// Cached per PIN, and paced so a long PIN list can't exhaust the backend's 40-requests-a-minute geo limit.
+const pinCache = new Map() // pin → { info, error } once settled
+const pinPending = new Map()
+const BUCKET = { tokens: 8, max: 8, last: Date.now() }
+const REFILL_MS = 1700
+
+const takeToken = async () => {
+  for (;;) {
+    const now = Date.now()
+    BUCKET.tokens = Math.min(BUCKET.max, BUCKET.tokens + (now - BUCKET.last) / REFILL_MS)
+    BUCKET.last = now
+    if (BUCKET.tokens >= 1) { BUCKET.tokens -= 1; return }
+    await new Promise((r) => setTimeout(r, REFILL_MS))
+  }
+}
+
+/** Already-fetched info for a PIN (or null) — never triggers a request. */
+export const peekPinInfo = (pin) => pinCache.get(pin)?.info ?? null
+
+/** @returns {Promise<{district:string,state:string,areas:string[]}|null>} null when the directory has no entry for the PIN. */
+export function getPinInfo(pin) {
+  if (!isPin(pin)) return Promise.resolve(null)
+  const hit = pinCache.get(pin)
+  if (hit) return hit.error ? Promise.reject(hit.error) : Promise.resolve(hit.info)
+  if (pinPending.has(pin)) return pinPending.get(pin)
+  const p = takeToken()
+    .then(() => lookupPincode(pin))
+    .then((r) => { const info = { district: r.district ?? '', state: r.state ?? '', areas: r.areas ?? [] }; pinCache.set(pin, { info }); return info })
+    .catch((e) => {
+      if (e?.response?.status === 404) { pinCache.set(pin, { info: null }); return null }
+      throw e // provider down / rate-limited: not cached, so a later look retries
+    })
+    .finally(() => pinPending.delete(pin))
+  pinPending.set(pin, p)
+  return p
+}
+
+/** "Gomti Nagar, Vikas Nagar +2" — the postal areas a PIN covers, never one area standing in for all. */
+export function areaSummary(areas, max = 2) {
+  if (!areas?.length) return ''
+  return areas.slice(0, max).join(', ') + (areas.length > max ? ` +${areas.length - max}` : '')
+}

@@ -15,7 +15,7 @@ const topKey = (o) => Object.entries(o).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '
  * @returns {{
  *   states: Map<string, {name:string,total:number,verified:number,match:number}>,
  *   cities: Map<string, {key:string,name:string,states:Set<string>,total:number,verified:number,match:number,jobs:number,active:number}>,
- *   pins: Map<string, {pin:string,cities:Set<string>,total:number,verified:number,match:number}>,
+ *   pins: Map<string, {pin:string,cities:Set<string>,states:Set<string>,cityNames:Set<string>,total:number,verified:number,match:number}>,
  * }}
  */
 export function buildLocationStats(rows, crit, facets = []) {
@@ -51,8 +51,10 @@ export function buildLocationStats(rows, crit, facets = []) {
     const pin = String(c.pincode ?? '').trim()
     if (/^[1-9]\d{5}$/.test(pin)) {
       let p = pins.get(pin)
-      if (!p) pins.set(pin, (p = { pin, cities: new Set(), total: 0, verified: 0, match: 0 }))
+      if (!p) pins.set(pin, (p = { pin, cities: new Set(), states: new Set(), cityNames: new Set(), total: 0, verified: 0, match: 0 }))
       p.cities.add(key)
+      p.cityNames.add(c.location.trim())
+      if (stKey) p.states.add(stKey)
       add(p)
     }
   }

@@ -6,7 +6,7 @@ import { IS_DEMO } from '../lib/config'
 import { canonCity } from '../lib/talent/vocab'
 import { buildLocationStats } from '../lib/talent/geoStats'
 import { getPoolRows } from '../services/talentService'
-import { getLocationFacets, getStates, lookupPincode, geoError, isPin, RADIUS_OPTIONS } from '../services/geoService'
+import { getLocationFacets, getStates, getPinInfo, peekPinInfo, areaSummary, isPin, RADIUS_OPTIONS } from '../services/geoService'
 
 // Mzobs Talent Radar — the Location filter. Four connected steps (state → city → PIN → reach)
 // that all write to the same search criteria (state, locations, pincode, pinNearby, prefLocations, relocate).
@@ -62,7 +62,7 @@ function Picker({ id, label, icon: Icon, value, placeholder, options, selected =
   useEffect(() => { if (open) { setQ(''); setActive(0); setTimeout(() => input.current?.focus(), 0) } }, [open])
   useEffect(() => setActive(0), [q])
 
-  const shown = options.filter((o) => !q.trim() || o.label.toLowerCase().includes(q.trim().toLowerCase()) || o.alt?.toLowerCase().includes(q.trim().toLowerCase()))
+  const shown = options.filter((o) => !q.trim() || o.label.toLowerCase().includes(q.trim().toLowerCase()) || (typeof o.alt === 'function' ? o.alt() : o.alt)?.toLowerCase().includes(q.trim().toLowerCase()))
   const pick = (o) => { onPick(o); setOpen(false) }
   const onKey = (e) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => Math.min(shown.length - 1, i + 1)) }
@@ -117,12 +117,21 @@ function Picker({ id, label, icon: Icon, value, placeholder, options, selected =
               return (
                 <li key={o.key} id={`${id}-opt-${i}`} role="option" aria-selected={on}>
                   <button type="button" onMouseEnter={() => setActive(i)} onMouseDown={(e) => e.preventDefault()} onClick={() => pick(o)} className={clsx('block w-full rounded-lg px-2.5 py-2 text-left transition-colors', i === active && 'bg-line-2/80', on && 'bg-accent-soft')}>
-                    <span className="flex items-center gap-1.5">
-                      <span className={clsx('truncate text-[13px]', on ? 'font-bold text-[#0a6f64]' : 'font-semibold text-ink')}>{o.label}</span>
-                      {on && <Check size={13} className="ml-auto shrink-0 text-accent" />}
-                      {!on && o.badge != null && <span className="ml-auto shrink-0 text-[11.5px] font-semibold text-muted">{o.badge}</span>}
-                    </span>
-                    {o.meta}
+                    {o.body ? (
+                      <span className="relative block pr-5">
+                        {o.body(on)}
+                        {on && <Check size={13} className="absolute right-0 top-0.5 text-accent" />}
+                      </span>
+                    ) : (
+                      <>
+                        <span className="flex items-center gap-1.5">
+                          <span className={clsx('truncate text-[13px]', on ? 'font-bold text-[#0a6f64]' : 'font-semibold text-ink')}>{o.label}</span>
+                          {on && <Check size={13} className="ml-auto shrink-0 text-accent" />}
+                          {!on && o.badge != null && <span className="ml-auto shrink-0 text-[11.5px] font-semibold text-muted">{o.badge}</span>}
+                        </span>
+                        {o.meta}
+                      </>
+                    )}
                   </button>
                 </li>
               )
@@ -143,6 +152,58 @@ function Stat({ icon: Icon, value, label, tone }) {
   )
 }
 
+/** Locality info for a PIN: status idle | loading | ok | none (no directory entry / demo) | error. */
+function usePinInfo(pin, enabled) {
+  const valid = enabled && isPin(pin)
+  const [st, setSt] = useState({ pin: '', status: 'idle', info: null })
+  useEffect(() => {
+    if (!valid) return
+    const known = peekPinInfo(pin)
+    if (known) { setSt({ pin, status: 'ok', info: known }); return }
+    if (IS_DEMO) { setSt({ pin, status: 'none', info: null }); return }
+    let live = true
+    setSt({ pin, status: 'loading', info: null })
+    getPinInfo(pin)
+      .then((info) => live && setSt({ pin, status: info ? 'ok' : 'none', info }))
+      .catch(() => live && setSt({ pin, status: 'error', info: null }))
+    return () => { live = false }
+  }, [pin, valid])
+  if (!valid) return { status: 'idle', info: null }
+  return st.pin === pin ? st : { status: 'loading', info: null }
+}
+
+/** One PIN suggestion: PIN — postal localities, district & state, then the real counts. Looks up lazily once scrolled into view. */
+function PinBody({ pin, cityNames, verified, match, max }) {
+  const ref = useRef(null)
+  const [seen, setSeen] = useState(!!peekPinInfo(pin))
+  useEffect(() => {
+    if (seen || !ref.current) return
+    if (typeof IntersectionObserver === 'undefined') { setSeen(true); return }
+    const io = new IntersectionObserver((e) => { if (e[0].isIntersecting) { setSeen(true); io.disconnect() } })
+    io.observe(ref.current)
+    return () => io.disconnect()
+  }, [seen])
+  const { status, info } = usePinInfo(pin, seen)
+  const areas = info ? areaSummary(info.areas) : ''
+  const where = info ? [info.district, info.state].filter(Boolean).join(', ') : cityNames.join(', ')
+  return (
+    <span ref={ref} className="block">
+      <span className="flex min-w-0 items-start gap-1.5">
+        <span className="shrink-0 text-[13px] font-bold tabular-nums text-ink">{pin}</span>
+        {status === 'ok' && areas ? <span className="min-w-0 break-words text-[12.5px] font-medium leading-snug text-ink-2" title={info.areas.join(', ')}>— {areas}</span>
+          : status === 'idle' || status === 'loading' ? <span className="skeleton inline-block h-3 w-24 self-center" aria-label="Loading locality" />
+          : <span className="truncate text-[12px] italic text-muted">— Locality unavailable</span>}
+      </span>
+      <span className="mt-0.5 block truncate text-[11.5px] text-muted">{where}</span>
+      <span className="mt-1 flex items-center gap-3">
+        <Stat icon={BadgeCheck} value={verified} label="verified candidates" />
+        <Stat icon={Users} value={match} label="matching candidates" tone="strong" />
+      </span>
+      <span className="mt-1 block"><Meter value={match} max={max} tone="blue" /></span>
+    </span>
+  )
+}
+
 export default function LocationRadar({ criteria: c, set, meta, relocationEnabled, customPanel }) {
   const [rows, setRows] = useState([])
   const [facets, setFacets] = useState([])
@@ -153,7 +214,6 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
   const [pinSort, setPinSort] = useState('match')
   const [customOpen, setCustomOpen] = useState(c.prefLocations.length > 0 || c.relocate)
   const [distOpen, setDistOpen] = useState(false)
-  const [pinInfo, setPinInfo] = useState(null)
 
   // Reference data: the candidate pool, this company's job cities, and the state / UT list.
   useEffect(() => {
@@ -216,34 +276,18 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
   // ---- Step 3: PIN codes of the chosen cities ----
   const pinOptions = useMemo(() => {
     if (!stats || !selKeys.length) return []
-    const list = [...stats.pins.values()].filter((p) => selKeys.some((k) => p.cities.has(k)))
+    const list = [...stats.pins.values()].filter((p) => selKeys.some((k) => p.cities.has(k)) && (!stateKey || p.states.size === 0 || p.states.has(stateKey)))
     const max = Math.max(1, ...list.map((p) => p.match))
     return list.map((p) => ({
       key: p.pin, label: p.pin, match: p.match, total: p.total,
-      meta: (
-        <span className="mt-1 block">
-          <span className="flex items-center gap-3">
-            <Stat icon={BadgeCheck} value={p.verified} label="verified candidates" />
-            <Stat icon={Users} value={p.match} label="match your filters" tone="strong" />
-          </span>
-          <span className="mt-1 block"><Meter value={p.match} max={max} tone="blue" /></span>
-        </span>
-      ),
+      alt: () => (peekPinInfo(p.pin)?.areas ?? []).join(' '),
+      body: () => <PinBody pin={p.pin} cityNames={[...p.cityNames]} verified={p.verified} match={p.match} max={max} />,
     }))
-  }, [stats, selKeys.join('|')]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stats, stateKey, selKeys.join('|')]) // eslint-disable-line react-hooks/exhaustive-deps
   const sortedPins = useMemo(() => [...pinOptions].sort(PIN_SORTS[pinSort].by), [pinOptions, pinSort])
   const pinStat = c.pincode && stats?.pins.get(c.pincode)
 
-  // Reference info (district / areas) for the chosen PIN.
-  useEffect(() => {
-    setPinInfo(null)
-    if (IS_DEMO || !isPin(c.pincode)) return
-    let live = true
-    lookupPincode(c.pincode)
-      .then((r) => live && setPinInfo(`${r.district}, ${r.state}`))
-      .catch((e) => live && setPinInfo(e?.response?.status === 404 ? '' : geoError(e)))
-    return () => { live = false }
-  }, [c.pincode])
+  const chosen = usePinInfo(c.pincode, true)
 
   // ---- Handlers: a parent change resets only the dependent picks that no longer fit ----
   const cityFits = (name, sKey) => {
@@ -354,7 +398,7 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
           {c.pincode && (
             <p className="mt-1.5 text-[11.5px] text-muted" role="status">
               {pinStat ? `${n(pinStat.match)} of ${n(pinStat.total)} candidates here match your filters` : 'No candidate on file with this PIN code'}
-              {pinInfo ? ` · ${pinInfo}` : ''}
+              {chosen.status === 'ok' ? ` · ${areaSummary(chosen.info.areas, 3)}, ${chosen.info.district}, ${chosen.info.state}` : chosen.status === 'loading' ? '' : ' · Locality unavailable'}
             </p>
           )}
         </div>
@@ -414,12 +458,16 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
 function PinTyped({ current, known, onUse }) {
   const [v, setV] = useState('')
   const ok = isPin(v)
+  const typed = usePinInfo(v, ok)
   return (
+    <>
     <div className="mt-1.5 flex items-center gap-1.5">
       <input inputMode="numeric" maxLength={6} value={v} onChange={(e) => setV(e.target.value.replace(/\D/g, ''))} onKeyDown={(e) => { if (e.key === 'Enter' && ok) { onUse(v); setV('') } }} placeholder="Or type a 6-digit PIN" aria-label="Type a PIN code" className="h-8 min-w-0 flex-1 rounded-lg border border-line bg-white px-2.5 text-[12.5px] outline-none placeholder:text-[#8aa0b2] focus:border-accent" />
       <button type="button" disabled={!ok || v === current} onClick={() => { onUse(v); setV('') }} className="h-8 rounded-lg border border-line px-2.5 text-[12px] font-semibold text-accent hover:bg-accent-soft disabled:text-muted disabled:opacity-50 disabled:hover:bg-transparent">
         {known?.has(v) ? 'Use' : 'Use PIN'}
       </button>
     </div>
+    {ok && <p className="mt-1 text-[11.5px] text-muted" role="status">{typed.status === 'loading' ? 'Looking up locality…' : typed.status === 'ok' ? `${areaSummary(typed.info.areas, 3)} · ${typed.info.district}, ${typed.info.state}` : 'Locality unavailable'}</p>}
+    </>
   )
 }
