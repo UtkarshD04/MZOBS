@@ -176,6 +176,8 @@ function passes(c, crit, trust, exclude) {
   }
   if (crit.expMin != null && c.experienceYears < crit.expMin) return false
   if (crit.expMax != null && c.experienceYears > crit.expMax) return false
+  if (crit.state && canonCity(c.state) !== canonCity(crit.state)) return false
+  if (crit.pincode?.length === 6 && String(c.pincode ?? '').trim() !== crit.pincode) return false
   if (crit.locations.length) {
     const w = crit.locations.map(canonCity)
     const here = w.includes(canonCity(c.location))

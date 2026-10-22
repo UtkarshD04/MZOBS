@@ -11,6 +11,7 @@ export const vocab = {
   skills: KNOWN_SKILLS,
   roles: KNOWN_ROLES,
   cities: KNOWN_CITIES,
+  states: [],
   industries: KNOWN_INDUSTRIES,
   companyTypes: KNOWN_COMPANY_TYPES,
   departments: KNOWN_DEPARTMENTS,
@@ -27,6 +28,7 @@ export function setVocabularyFrom(pool) {
   vocab.skills = uniq(pool.flatMap((c) => c.skills))
   vocab.roles = uniq(pool.flatMap((c) => [c.designation, ...c.workHistory.map((w) => w.role)]))
   vocab.cities = uniq(pool.flatMap((c) => [c.location, ...c.preferredLocations]))
+  vocab.states = uniq(pool.map((c) => c.state))
   vocab.industries = uniq(pool.map((c) => c.industry))
   vocab.companyTypes = uniq(pool.map((c) => c.companyType))
   vocab.departments = uniq(pool.map((c) => c.department))

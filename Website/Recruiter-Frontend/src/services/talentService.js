@@ -127,6 +127,8 @@ export function mapResdexCandidate(e) {
     currentSalaryLPA: toLpa(e.currentCtc),
     expectedSalaryLPA: toLpa(e.expectedSalary),
     location: e.location ?? '',
+    state: e.state ?? '',
+    pincode: e.pincode ?? '',
     preferredLocations: e.preferredLocations?.length ? e.preferredLocations : e.location ? [e.location] : [],
     relocationOk: e.relocationOk,
     noticePeriodDays: toNoticeDays(e.noticePeriod),
