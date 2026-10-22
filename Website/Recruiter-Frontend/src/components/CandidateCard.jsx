@@ -1,7 +1,7 @@
 import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
-import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin, Lock, Sparkles, ChevronDown } from 'lucide-react'
+import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin, Lock, ChevronDown } from 'lucide-react'
 import { Avatar, Button, Chip, Highlight, MatchBadge, TrustScore, VerifiedBadge, IconButton } from './ui'
 import { lpa, years, notice, ago, agoDate } from '../lib/format'
 import { STAGE_LABELS } from '../lib/talent/criteria'
@@ -68,10 +68,7 @@ function ProfessionalSummary({ candidate: c, match }) {
   return (
     <div className="mt-3 rounded-xl border border-line-2 border-l-[3px] border-l-accent bg-[#f6fafb] px-3.5 py-2.5">
       <div className="flex items-center justify-between gap-2">
-        <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-accent">
-          <Sparkles size={12} /> Professional Summary
-          {summary && <span className="rounded-full bg-white px-1.5 py-px text-[10px] font-medium normal-case tracking-normal text-muted ring-1 ring-line-2">{summary.kind === 'cv' ? 'From résumé' : 'From profile'}</span>}
-        </p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">Resume-based insights</p>
         {expandable && (
           <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="inline-flex items-center gap-0.5 rounded-md px-1 text-[12px] font-semibold text-accent hover:bg-accent-soft">
             {open ? 'Show less' : 'Read more'} <ChevronDown size={13} className={clsx('transition-transform', open && 'rotate-180')} />
