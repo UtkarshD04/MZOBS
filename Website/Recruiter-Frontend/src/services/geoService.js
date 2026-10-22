@@ -22,6 +22,8 @@ export const isPin = (v) => /^[1-9]\d{5}$/.test(v)
 
 export const getStates = () => apiClient.get('/geo/states').then((r) => r.data.states)
 export const getLocationFacets = () => apiClient.get('/jobs/location-facets').then((r) => r.data)
+// This company's active openings (status 'sourcing') per { state, city, pincode } — only jobs that carry a PIN.
+export const getHiringPincodes = () => apiClient.get('/jobs/hiring-pincodes').then((r) => r.data)
 export const searchPlaces = (q, { state, city, signal } = {}) =>
   apiClient.get('/geo/places', { params: { q, state: state || undefined, city: city || undefined }, signal }).then((r) => r.data)
 export const reverseGeocode = (lat, lng) => apiClient.get('/geo/reverse', { params: { lat, lng } }).then((r) => r.data)

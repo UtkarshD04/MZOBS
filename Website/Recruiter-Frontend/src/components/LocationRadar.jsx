@@ -6,7 +6,7 @@ import { IS_DEMO } from '../lib/config'
 import { canonCity } from '../lib/talent/vocab'
 import { buildLocationStats } from '../lib/talent/geoStats'
 import { getPoolRows } from '../services/talentService'
-import { getLocationFacets, getStates, getPinInfo, peekPinInfo, areaSummary, isPin, RADIUS_OPTIONS } from '../services/geoService'
+import { getHiringPincodes, getLocationFacets, getStates, getPinInfo, peekPinInfo, areaSummary, isPin, RADIUS_OPTIONS } from '../services/geoService'
 
 // Mzobs Talent Radar — the Location filter. Four connected steps (state → city → PIN → reach)
 // that all write to the same search criteria (state, locations, pincode, pinNearby, prefLocations, relocate).
@@ -17,7 +17,11 @@ const SORTS = {
   hiring: { label: 'Most active hiring', by: (a, b) => (b.active ?? 0) - (a.active ?? 0) || b.match - a.match },
   az: { label: 'A–Z', by: (a, b) => a.label.localeCompare(b.label) },
 }
-const PIN_SORTS = { match: SORTS.match, az: { label: 'PIN order', by: (a, b) => a.label.localeCompare(b.label) } }
+const PIN_SORTS = {
+  hiring: { label: 'Most active hiring', by: (a, b) => b.active - a.active || a.label.localeCompare(b.label) },
+  az: { label: 'PIN A–Z', by: (a, b) => a.label.localeCompare(b.label) },
+  match: { label: 'Most matching candidates', by: (a, b) => b.match - a.match || b.active - a.active || a.label.localeCompare(b.label) },
+}
 
 const n = (v) => Number(v).toLocaleString('en-IN')
 
@@ -42,13 +46,17 @@ function Meter({ value, max, tone = 'accent' }) {
 }
 
 /**
- * Searchable dropdown with a compact popover. Options: { key, label, meta?, render? }.
+ * Searchable picker that opens *in the flow* of the sidebar (no floating popover, no inner scroller), so the one
+ * sidebar scroll container always handles wheel / touch. Long lists reveal PAGE rows at a time.
+ * Options: { key, label, badge?, meta?, body?, alt? }.
  * Multi-pick keeps `selected` keys highlighted; the caller decides what a pick does.
  */
-function Picker({ id, label, icon: Icon, value, placeholder, options, selected = [], onPick, onClear, sorts, sort, onSort, searchPlaceholder, emptyText, status, disabled, headerNote }) {
+const PAGE = 8
+function Picker({ id, resetKey, label, icon: Icon, value, placeholder, options, selected = [], onPick, onClear, sorts, sort, onSort, searchPlaceholder, emptyText, status, disabled, headerNote }) {
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
   const [active, setActive] = useState(0)
+  const [limit, setLimit] = useState(PAGE)
   const root = useRef(null)
   const input = useRef(null)
   const listId = `${id}-list`
@@ -56,16 +64,18 @@ function Picker({ id, label, icon: Icon, value, placeholder, options, selected =
   useEffect(() => {
     if (!open) return
     const off = (e) => { if (!root.current?.contains(e.target)) setOpen(false) }
-    document.addEventListener('mousedown', off)
-    return () => document.removeEventListener('mousedown', off)
+    document.addEventListener('pointerdown', off)
+    return () => document.removeEventListener('pointerdown', off)
   }, [open])
-  useEffect(() => { if (open) { setQ(''); setActive(0); setTimeout(() => input.current?.focus(), 0) } }, [open])
-  useEffect(() => setActive(0), [q])
+  // A parent selection changed underneath this list: close it rather than leave stale options open.
+  useEffect(() => setOpen(false), [resetKey])
+  useEffect(() => { if (open) { setQ(''); setActive(0); setLimit(PAGE); setTimeout(() => input.current?.focus(), 0) } }, [open])
+  useEffect(() => { setActive(0); setLimit(PAGE) }, [q])
 
   const shown = options.filter((o) => !q.trim() || o.label.toLowerCase().includes(q.trim().toLowerCase()) || (typeof o.alt === 'function' ? o.alt() : o.alt)?.toLowerCase().includes(q.trim().toLowerCase()))
   const pick = (o) => { onPick(o); setOpen(false) }
   const onKey = (e) => {
-    if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => Math.min(shown.length - 1, i + 1)) }
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => { const next = Math.min(shown.length - 1, i + 1); if (next >= limit) setLimit((l) => l + PAGE); return next }) }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((i) => Math.max(0, i - 1)) }
     else if (e.key === 'Enter') { e.preventDefault(); if (shown[active]) pick(shown[active]) }
     else if (e.key === 'Escape') { e.preventDefault(); setOpen(false) }
@@ -97,7 +107,7 @@ function Picker({ id, label, icon: Icon, value, placeholder, options, selected =
       </div>
 
       {open && (
-        <div className="fade-up absolute inset-x-0 top-full z-30 mt-1.5 overflow-hidden rounded-xl border border-line bg-white shadow-lift">
+        <div className="fade-up mt-1.5 overflow-hidden rounded-xl border border-line bg-white">
           <div className="relative border-b border-line-2 p-2">
             <Search size={13} className="pointer-events-none absolute left-4 top-[19px] text-muted" aria-hidden />
             <input ref={input} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={onKey} placeholder={searchPlaceholder} role="combobox" aria-expanded aria-controls={listId} aria-activedescendant={shown[active] ? `${id}-opt-${active}` : undefined} aria-label={searchPlaceholder} className="h-8 w-full rounded-md bg-line-2/70 pl-7 pr-2 text-[13px] outline-none placeholder:text-[#8aa0b2] focus:bg-white focus:ring-1 focus:ring-accent" />
@@ -110,9 +120,9 @@ function Picker({ id, label, icon: Icon, value, placeholder, options, selected =
             </div>
           )}
           {headerNote && <p className="border-b border-line-2 px-3 py-1.5 text-[11px] text-muted">{headerNote}</p>}
-          <ul id={listId} role="listbox" aria-label={label} className="max-h-64 overflow-y-auto p-1">
+          <ul id={listId} role="listbox" aria-label={label} className="p-1">
             {shown.length === 0 && <li className="px-3 py-4 text-center text-[12.5px] text-muted">{emptyText}</li>}
-            {shown.slice(0, 80).map((o, i) => {
+            {shown.slice(0, limit).map((o, i) => {
               const on = selected.includes(o.key)
               return (
                 <li key={o.key} id={`${id}-opt-${i}`} role="option" aria-selected={on}>
@@ -136,7 +146,11 @@ function Picker({ id, label, icon: Icon, value, placeholder, options, selected =
                 </li>
               )
             })}
-            {shown.length > 80 && <li className="px-3 py-1.5 text-center text-[11px] text-muted">Showing 80 of {shown.length} — type to narrow</li>}
+            {shown.length > limit && (
+              <li>
+                <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => setLimit((l) => l + PAGE)} className="w-full rounded-lg px-3 py-1.5 text-center text-[12px] font-semibold text-accent hover:bg-accent-soft">Show {Math.min(PAGE, shown.length - limit)} more <span className="font-normal text-muted">· {shown.length - limit} left</span></button>
+              </li>
+            )}
           </ul>
         </div>
       )}
@@ -173,7 +187,7 @@ function usePinInfo(pin, enabled) {
 }
 
 /** One PIN suggestion: PIN — postal localities, district & state, then the real counts. Looks up lazily once scrolled into view. */
-function PinBody({ pin, cityNames, verified, match, max }) {
+function PinBody({ pin, cityNames, active, match, maxActive }) {
   const ref = useRef(null)
   const [seen, setSeen] = useState(!!peekPinInfo(pin))
   useEffect(() => {
@@ -196,10 +210,10 @@ function PinBody({ pin, cityNames, verified, match, max }) {
       </span>
       <span className="mt-0.5 block truncate text-[11.5px] text-muted">{where}</span>
       <span className="mt-1 flex items-center gap-3">
-        <Stat icon={BadgeCheck} value={verified} label="verified candidates" />
-        <Stat icon={Users} value={match} label="matching candidates" tone="strong" />
+        <Stat icon={Briefcase} value={active} label={active === 1 ? 'active opening' : 'active openings'} tone="strong" />
+        <Stat icon={Users} value={match} label="matching candidates" />
       </span>
-      <span className="mt-1 block"><Meter value={match} max={max} tone="blue" /></span>
+      <span className="mt-1 block"><Meter value={active} max={maxActive} tone="blue" /></span>
     </span>
   )
 }
@@ -207,11 +221,13 @@ function PinBody({ pin, cityNames, verified, match, max }) {
 export default function LocationRadar({ criteria: c, set, meta, relocationEnabled, customPanel }) {
   const [rows, setRows] = useState([])
   const [facets, setFacets] = useState([])
+  const [hiring, setHiring] = useState([])
+  const [hiringFailed, setHiringFailed] = useState(false)
   const [geoStates, setGeoStates] = useState([])
   const [status, setStatus] = useState('loading') // loading | ready | error
   const [attempt, setAttempt] = useState(0)
   const [citySort, setCitySort] = useState('match')
-  const [pinSort, setPinSort] = useState('match')
+  const [pinSort, setPinSort] = useState('hiring')
   const [customOpen, setCustomOpen] = useState(c.prefLocations.length > 0 || c.relocate)
   const [distOpen, setDistOpen] = useState(false)
 
@@ -223,8 +239,9 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
       getPoolRows(),
       IS_DEMO ? [] : getLocationFacets().catch(() => []),
       IS_DEMO ? [] : getStates().catch(() => []),
+      IS_DEMO ? { rows: [], failed: false } : getHiringPincodes().then((rows) => ({ rows, failed: false })).catch(() => ({ rows: [], failed: true })),
     ])
-      .then(([r, f, s]) => { if (live) { setRows(r); setFacets(f); setGeoStates(s); setStatus('ready') } })
+      .then(([r, f, s, h]) => { if (live) { setRows(r); setFacets(f); setGeoStates(s); setHiring(h.rows); setHiringFailed(h.failed); setStatus('ready') } })
       .catch(() => live && setStatus('error'))
     return () => { live = false }
   }, [meta?.syncedAt, attempt])
@@ -273,19 +290,38 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
   }, [stats, stateKey])
   const sortedCities = useMemo(() => [...cityOptions].sort(SORTS[citySort].by), [cityOptions, citySort])
 
-  // ---- Step 3: PIN codes of the chosen cities ----
+  // ---- Step 3: PIN codes where this company has active openings in the chosen cities ----
+  // Driven by the jobs' own PIN (GET /jobs/hiring-pincodes), not by where candidates live: a PIN shows up
+  // even with zero candidates. Jobs without a PIN are never given one.
+  const hiringPins = useMemo(() => {
+    if (!selKeys.length) return []
+    const by = new Map()
+    for (const h of hiring) {
+      if (!selKeys.includes(canonCity(h.city))) continue
+      if (stateKey && h.state && canonCity(h.state) !== stateKey) continue
+      const e = by.get(h.pincode) ?? { pin: h.pincode, active: 0, cityNames: new Set() }
+      e.active += h.active
+      e.cityNames.add(h.city)
+      by.set(h.pincode, e)
+    }
+    return [...by.values()]
+  }, [hiring, stateKey, selKeys.join('|')]) // eslint-disable-line react-hooks/exhaustive-deps
+  const pinnedOpenings = hiringPins.reduce((t, p) => t + p.active, 0)
+  const cityOpenings = selKeys.reduce((t, k) => t + (stats?.cities.get(k)?.active ?? 0), 0)
   const pinOptions = useMemo(() => {
-    if (!stats || !selKeys.length) return []
-    const list = [...stats.pins.values()].filter((p) => selKeys.some((k) => p.cities.has(k)) && (!stateKey || p.states.size === 0 || p.states.has(stateKey)))
-    const max = Math.max(1, ...list.map((p) => p.match))
-    return list.map((p) => ({
-      key: p.pin, label: p.pin, match: p.match, total: p.total,
-      alt: () => (peekPinInfo(p.pin)?.areas ?? []).join(' '),
-      body: () => <PinBody pin={p.pin} cityNames={[...p.cityNames]} verified={p.verified} match={p.match} max={max} />,
-    }))
-  }, [stats, stateKey, selKeys.join('|')]) // eslint-disable-line react-hooks/exhaustive-deps
+    const maxActive = Math.max(1, ...hiringPins.map((p) => p.active))
+    return hiringPins.map((p) => {
+      const cs = stats?.pins.get(p.pin)
+      return {
+        key: p.pin, label: p.pin, active: p.active, match: cs?.match ?? 0,
+        alt: () => (peekPinInfo(p.pin)?.areas ?? []).join(' '),
+        body: () => <PinBody pin={p.pin} cityNames={[...p.cityNames]} active={p.active} match={cs?.match ?? 0} maxActive={maxActive} />,
+      }
+    })
+  }, [hiringPins, stats])
   const sortedPins = useMemo(() => [...pinOptions].sort(PIN_SORTS[pinSort].by), [pinOptions, pinSort])
   const pinStat = c.pincode && stats?.pins.get(c.pincode)
+  const pinOpen = hiringPins.find((p) => p.pin === c.pincode)?.active
 
   const chosen = usePinInfo(c.pincode, true)
 
@@ -355,7 +391,7 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
       <div className="fade-up">
         <StepLabel num="2" title="Hiring city" hint={c.state || undefined} />
         <Picker
-          id="radar-city" label="Hiring city" icon={Building2}
+          id="radar-city" label="Hiring city" icon={Building2} resetKey={stateKey}
           value={selCities.length ? `${selCities.length} ${selCities.length === 1 ? 'city' : 'cities'} selected` : ''} placeholder={loading ? 'Loading cities…' : hasCandidateGeo ? 'Search & pick cities' : 'No cities yet'}
           options={sortedCities} selected={selKeys}
           onPick={toggleCity}
@@ -377,27 +413,39 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
         )}
       </div>
 
-      {/* Step 3 — PIN code */}
+      {/* Step 3 — active hiring PIN codes */}
       {showPin && (
         <div className="fade-up">
-          <StepLabel num="3" title="PIN code" hint="Optional" />
-          {pinOptions.length === 0 ? (
-            <p className="rounded-lg bg-line-2/70 px-3 py-2 text-[12px] text-muted">No candidate in {selCities.length === 1 ? selCities[0] : 'these cities'} has a PIN code on file yet. You can still type one below.</p>
-          ) : null}
-          <Picker
-            id="radar-pin" label="PIN code" icon={Crosshair}
-            value={c.pincode} placeholder={pinOptions.length ? `${pinOptions.length} PIN codes with candidates` : 'Enter a 6-digit PIN code'}
-            options={sortedPins}
-            selected={[c.pincode]} onPick={pickPin} onClear={c.pincode ? () => set({ pincode: '', pinNearby: false }) : undefined}
-            sorts={PIN_SORTS} sort={pinSort} onSort={setPinSort}
-            searchPlaceholder="Search 6-digit PIN code" emptyText="No PIN codes match — type all six digits to use it"
-            status={loading ? 'loading' : undefined}
-            headerNote="Counts are candidates by the PIN code on their profile. Nothing is shown as a map: candidates have no coordinates."
-          />
+          <StepLabel num="3" title="Active hiring PIN codes" />
+          <p className="mb-1.5 text-[11.5px] text-muted">Discover the local areas where your jobs are actively hiring.</p>
+          {hiringFailed ? (
+            <p role="alert" className="rounded-lg bg-[#fdecec] px-3 py-2 text-[12px] text-bad">Couldn’t load hiring PIN codes. <button type="button" onClick={() => setAttempt((x) => x + 1)} className="font-semibold underline">Retry</button></p>
+          ) : (
+            <>
+              {!loading && hiringPins.length === 0 && (
+                <p className="rounded-lg bg-line-2/70 px-3 py-2 text-[12px] leading-snug text-muted">
+                  PIN-level hiring locations aren’t available yet for {selCities.length === 1 ? selCities[0] : 'these cities'}
+                  {cityOpenings > 0 ? `: your ${n(cityOpenings)} active opening${cityOpenings === 1 ? '' : 's'} here ${cityOpenings === 1 ? 'has' : 'have'} a city but no PIN code.` : ' — you have no active openings with a PIN code here.'} You can still type a PIN below.
+                </p>
+              )}
+              {hiringPins.length > 0 && (
+                <Picker
+                  id="radar-pin" label="Active hiring PIN code" icon={Crosshair} resetKey={selKeys.join('|') + stateKey}
+                  value={c.pincode} placeholder={`${hiringPins.length} PIN code${hiringPins.length === 1 ? '' : 's'} hiring`}
+                  options={sortedPins}
+                  selected={[c.pincode]} onPick={pickPin} onClear={c.pincode ? () => set({ pincode: '', pinNearby: false }) : undefined}
+                  sorts={PIN_SORTS} sort={pinSort} onSort={setPinSort}
+                  searchPlaceholder="Search PIN code or locality" emptyText="No hiring PIN code matches"
+                  status={loading ? 'loading' : undefined}
+                  headerNote={`Openings are your active jobs saved with that PIN${cityOpenings > pinnedOpenings ? ` · ${n(cityOpenings - pinnedOpenings)} more in these cities have no PIN` : ''}. Matching = candidates with that PIN who fit your other filters.`}
+                />
+              )}
+            </>
+          )}
           <PinTyped current={c.pincode} known={stats?.pins} onUse={(pin) => set({ pincode: pin, pinNearby: false })} />
           {c.pincode && (
             <p className="mt-1.5 text-[11.5px] text-muted" role="status">
-              {pinStat ? `${n(pinStat.match)} of ${n(pinStat.total)} candidates here match your filters` : 'No candidate on file with this PIN code'}
+              {pinOpen != null ? `${n(pinOpen)} active opening${pinOpen === 1 ? '' : 's'} · ` : ''}{pinStat ? `${n(pinStat.match)} of ${n(pinStat.total)} candidates here match your filters` : 'No candidate on file with this PIN code'}
               {chosen.status === 'ok' ? ` · ${areaSummary(chosen.info.areas, 3)}, ${chosen.info.district}, ${chosen.info.state}` : chosen.status === 'loading' ? '' : ' · Locality unavailable'}
             </p>
           )}
