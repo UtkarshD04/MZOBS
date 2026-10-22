@@ -20,7 +20,36 @@ export function scrub(text) {
 }
 
 const clip = (s, n) => (s.length <= n ? s : `${s.slice(0, n).replace(/\s+\S*$/, '')}…`)
-const sentenceCase = (s) => s.replace(/\s+/g, ' ').trim()
+const oneLine = (s) => s.replace(/\s+/g, ' ').trim()
+
+/** Fixes stray spacing and punctuation typed into profile fields ("B tech , College" -> "B tech, College"). */
+export function tidyText(text) {
+  const t = String(text ?? '')
+    .replace(/\s+\.\s+/g, ', ')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/([,;:])(?=\S)/g, '$1 ')
+    .replace(/([,;:.])\1+/g, '$1')
+    .replace(/[\s,;:.]+$/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return t ? t[0].toUpperCase() + t.slice(1) : ''
+}
+
+/** Candidates often type a whole skill list into one entry ("Java. Spring boot. My sql ."); split it into real skills. */
+export function splitSkills(skills) {
+  const out = []
+  const seen = new Set()
+  for (const entry of skills ?? []) {
+    for (const part of String(entry ?? '').split(/\s*(?:[,;|•\n]|\.(?=\s|$))\s*/)) {
+      const name = part.trim()
+      const key = name.toLowerCase()
+      if (!name || seen.has(key)) continue
+      seen.add(key)
+      out.push(name[0].toUpperCase() + name.slice(1))
+    }
+  }
+  return out
+}
 
 /** The candidate's own "Summary / Objective" paragraph, when the CV has one. */
 function narrativeFromResume(resumeText) {
@@ -34,7 +63,7 @@ function narrativeFromResume(resumeText) {
     const clean = scrub(line.replace(/^[\s•\-–*▪●]+/, ''))
     if (clean) body.push(clean)
   }
-  const text = sentenceCase(body.join(' '))
+  const text = oneLine(body.join(' '))
   return text.length >= 60 ? clip(text, MAX_NARRATIVE) : ''
 }
 
@@ -48,39 +77,39 @@ function isDistinctProse(text, c) {
   return t.length >= 60 && t !== norm(c.designation)
 }
 
-function composeFromProfile(c, strong) {
-  const parts = []
+const yrs = (n) => (n % 1 === 0 ? n : n.toFixed(1))
+
+// One short fact per row, never repeating what the card already shows (current
+// role, skills, education, location).
+function pointsFromProfile(c, strong) {
+  const points = []
   const exp = c.experienceYears
-  const hist = (c.workHistory ?? []).filter((w) => w.role || w.company)
-  const path = []
+  const earlier = []
   const seen = new Set()
-  for (const w of hist) {
-    const label = [w.role, w.company].filter(Boolean).join(' at ')
-    if (label && !seen.has(label.toLowerCase())) { seen.add(label.toLowerCase()); path.push(label) }
-    if (path.length === 3) break
+  for (const w of c.workHistory ?? []) {
+    const label = [w.role, w.company].filter(Boolean).map(tidyText).join(' at ')
+    const key = norm(label)
+    const isCurrent = norm(w.role) === norm(c.designation) && norm(w.company) === norm(c.currentCompany)
+    if (!label || seen.has(key) || isCurrent) continue
+    seen.add(key)
+    earlier.push(label)
   }
-  if (path.length > 1) {
-    parts.push(`${exp ? `${exp % 1 === 0 ? exp : exp.toFixed(1)} years of experience across ` : 'Experience across '}${path.slice(0, 3).join(', ')}.`)
-  } else if (exp > 0 && (c.skills ?? []).length) {
-    parts.push(`${exp % 1 === 0 ? exp : exp.toFixed(1)} years of hands-on experience${path[0] && !c.currentCompany ? `, most recently ${path[0]}` : ''}.`)
-  }
+  if (earlier.length) points.push({ label: 'Background', text: `${exp > 0 ? `${yrs(exp)} yrs in the field. ` : ''}Also worked as ${earlier.slice(0, 2).join('; ')}.` })
+  else if (exp > 0) points.push({ label: 'Background', text: `${yrs(exp)} years of hands-on experience.` })
 
   const project = (c.projects ?? []).find((p) => p.name && p.description) ?? (c.projects ?? []).find((p) => p.name)
   if (project) {
-    const tech = (project.tech ?? []).slice(0, 3).join(', ')
-    const desc = project.description ? `: ${clip(sentenceCase(scrub(project.description)), 110)}` : ''
-    parts.push(`Built ${project.name}${desc}${tech ? ` (${tech})` : ''}${/[.…]$/.test(desc) ? '' : '.'}`)
+    const desc = project.description ? clip(tidyText(scrub(project.description)), 130) : ''
+    const tech = (project.tech ?? []).slice(0, 4).join(', ')
+    points.push({ label: 'Project', text: `${tidyText(project.name)}${desc ? ` — ${desc}` : ''}${tech ? ` (${tech})` : ''}` })
   }
-
-  const edu = c.education?.[0]
-  if (edu?.degree) parts.push(`${edu.degree}${edu.institute ? `, ${edu.institute}` : ''}.`)
-
-  if (strong.length) parts.push(`Relevant to your search: ${strong.slice(0, 4).join(', ')}.`)
-  return parts.join(' ')
+  if (strong.length) points.push({ label: 'Fit', text: `Matches your search on ${strong.slice(0, 4).join(', ')}.` })
+  return points
 }
 
 /**
- * @returns {{ text: string } | null} null when there is nothing honest to say.
+ * @returns {{ kind: 'cv' | 'profile', text?: string, points: { label: string, text: string }[] } | null}
+ * null when there is nothing honest to say.
  */
 export function buildSummary(c, match) {
   const strong = match?.strong ?? []
@@ -88,13 +117,15 @@ export function buildSummary(c, match) {
   if (cache.has(key)) return cache.get(key)
 
   let text = narrativeFromResume(c.resumeText)
-  if (!text && isDistinctProse(c.summary, c)) text = clip(sentenceCase(scrub(c.summary)), MAX_NARRATIVE)
-  if (text && strong.length && !strong.some((s) => text.toLowerCase().includes(s.toLowerCase()))) {
-    text += ` Relevant to your search: ${strong.slice(0, 3).join(', ')}.`
-  }
-  if (!text) text = composeFromProfile(c, strong)
+  if (!text && isDistinctProse(c.summary, c)) text = clip(oneLine(scrub(c.summary)), MAX_NARRATIVE)
 
-  const result = text.trim() ? { text: text.trim() } : null
+  let result = null
+  if (text) {
+    result = { kind: 'cv', text, points: strong.length ? [{ label: 'Fit', text: `Matches your search on ${strong.slice(0, 4).join(', ')}.` }] : [] }
+  } else {
+    const points = pointsFromProfile(c, strong)
+    if (points.length) result = { kind: 'profile', points }
+  }
   if (cache.size > 2000) cache.clear()
   cache.set(key, result)
   return result

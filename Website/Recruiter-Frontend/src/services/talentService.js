@@ -10,6 +10,7 @@
 
 import { apiClient } from '../lib/api'
 import { IS_DEMO, FILE_BASE_URL } from '../lib/config'
+import { splitSkills, tidyText } from '../lib/talent/summary'
 import { revealedFromApi } from '../lib/reveal'
 import { DEMO_POOL } from '../lib/talent/demoPool'
 import { rankPool, similarTo, computeMatch, computeTrust } from '../lib/talent/engine'
@@ -71,12 +72,12 @@ export function mapApiCandidate(c, jobTitles = {}) {
     location: c.location ?? '',
     preferredLocations: c.location ? [c.location] : [],
     noticePeriodDays: toNoticeDays(c.availability),
-    skills: c.skills ?? [],
+    skills: splitSkills(c.skills),
     industry: '',
     companyType: '',
     workMode: '',
     employmentType: '',
-    education: (c.education ?? []).map((e) => ({ degree: e.degree, institute: e.institute, year: Number(e.year) || null })),
+    education: (c.education ?? []).map((e) => ({ degree: tidyText(e.degree), institute: tidyText(e.institute), year: Number(e.year) || null })),
     workHistory: hist,
     projects: (c.projects ?? []).map((p) => ({ name: p.name, description: p.description })),
     certifications: c.certificates ? [`${c.certificates} certificate${c.certificates === 1 ? '' : 's'} on profile`] : [],
@@ -133,7 +134,7 @@ export function mapResdexCandidate(e) {
     preferredLocations: e.preferredLocations?.length ? e.preferredLocations : e.location ? [e.location] : [],
     relocationOk: e.relocationOk,
     noticePeriodDays: toNoticeDays(e.noticePeriod),
-    skills: e.skills ?? [],
+    skills: splitSkills(e.skills),
     industry: '',
     companyType: '',
     workMode: workModes.join(' / '),
@@ -141,7 +142,7 @@ export function mapResdexCandidate(e) {
     employmentType: employmentTypes.join(' / '),
     employmentTypes,
     college: e.college || '',
-    education: (e.education ?? []).map((x) => ({ degree: x.degree, institute: x.institute, year: Number(x.year) || null })),
+    education: (e.education ?? []).map((x) => ({ degree: tidyText(x.degree), institute: tidyText(x.institute), year: Number(x.year) || null })),
     workHistory: hist,
     projects: (e.projects ?? []).map((p) => ({ name: p.name, description: p.description, tech: p.tech ?? [] })),
     certifications: [],

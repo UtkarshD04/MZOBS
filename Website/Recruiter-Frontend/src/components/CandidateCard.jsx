@@ -1,7 +1,7 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
-import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin, Lock } from 'lucide-react'
+import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin, Lock, Sparkles, ChevronDown } from 'lucide-react'
 import { Avatar, Button, Chip, Highlight, MatchBadge, TrustScore, VerifiedBadge, IconButton } from './ui'
 import { lpa, years, notice, ago, agoDate } from '../lib/format'
 import { STAGE_LABELS } from '../lib/talent/criteria'
@@ -44,19 +44,50 @@ function ShortlistButton({ candidate, onAction }) {
 // Free preview: reads only data already on the card, so expanding it never touches credits or the unlock flow.
 function ProfessionalSummary({ candidate: c, match }) {
   const [open, setOpen] = useState(false)
+  const [overflow, setOverflow] = useState(false)
+  const bodyRef = useRef(null)
   const summary = useMemo(() => buildSummary(c, match), [c, match])
-  const long = !!summary && summary.text.length > 190
+
+  // "Read more" only appears when the clamped text is really cut off (re-measured on resize).
+  useLayoutEffect(() => {
+    const el = bodyRef.current
+    if (!el || open) return undefined
+    const measure = () => setOverflow([...el.querySelectorAll('[data-clamp]')].some((n) => n.scrollHeight > n.clientHeight + 1))
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [summary, open])
+
+  const rows = summary?.points ?? []
+  const hiddenRows = summary?.kind === 'profile' && !open ? rows.slice(2) : []
+  const visibleRows = hiddenRows.length ? rows.slice(0, 2) : rows
+  const expandable = open || overflow || hiddenRows.length > 0
+  const clamp = !open && 'line-clamp-2'
+
   return (
-    <div className="mt-3">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">Professional Summary</p>
-      {summary ? (
-        <p className={clsx('mt-0.5 text-[13px] leading-5 text-ink-2', long && !open && 'line-clamp-3')}>
-          {summary.text}
-          {long && <> <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="font-semibold text-accent hover:underline">{open ? 'Show less' : 'Read more'}</button></>}
+    <div className="mt-3 rounded-xl border border-line-2 border-l-[3px] border-l-accent bg-[#f6fafb] px-3.5 py-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-accent">
+          <Sparkles size={12} /> Professional Summary
+          {summary && <span className="rounded-full bg-white px-1.5 py-px text-[10px] font-medium normal-case tracking-normal text-muted ring-1 ring-line-2">{summary.kind === 'cv' ? 'From résumé' : 'From profile'}</span>}
         </p>
-      ) : (
-        <p className="mt-0.5 text-[13px] text-muted">Professional summary unavailable.</p>
-      )}
+        {expandable && (
+          <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="inline-flex items-center gap-0.5 rounded-md px-1 text-[12px] font-semibold text-accent hover:bg-accent-soft">
+            {open ? 'Show less' : 'Read more'} <ChevronDown size={13} className={clsx('transition-transform', open && 'rotate-180')} />
+          </button>
+        )}
+      </div>
+      <div ref={bodyRef} className="mt-1.5 space-y-1">
+        {!summary && <p className="text-[13px] text-muted">Professional summary unavailable.</p>}
+        {summary?.kind === 'cv' && <p data-clamp className={clsx('text-[13px] leading-5 text-ink-2', clamp)}>{summary.text}</p>}
+        {visibleRows.map((r) => (
+          <p key={r.label} className="grid grid-cols-[68px_1fr] gap-x-2 text-[13px] leading-5">
+            <span className="pt-px text-[11px] font-semibold uppercase tracking-wide text-muted">{r.label}</span>
+            <span {...(summary.kind === 'profile' ? { 'data-clamp': '' } : {})} className={clsx('text-ink-2', summary.kind === 'profile' && clamp)}>{r.text}</span>
+          </p>
+        ))}
+      </div>
     </div>
   )
 }
