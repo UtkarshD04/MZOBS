@@ -57,13 +57,6 @@ export default function SearchTop({ filters, onSearch }) {
       />
 
       <Container className="relative">
-        <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[12px] font-semibold text-[#078B7D] shadow-[0_1px_2px_rgba(18,48,74,0.08)] ring-1 ring-[#078B7D]/20 backdrop-blur">
-          <span className="relative flex h-2 w-2" aria-hidden="true">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-[#12A89D] opacity-60 motion-safe:animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#12A89D]" />
-          </span>
-          Live openings, updated daily
-        </span>
         <h1 id="search-title" className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-[#12304A] sm:text-[44px]">
           Your ambition deserves the <span className="bg-gradient-to-r from-[#078B7D] to-[#12A89D] bg-clip-text text-transparent">right job.</span>
         </h1>
