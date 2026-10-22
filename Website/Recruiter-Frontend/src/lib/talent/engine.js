@@ -43,6 +43,26 @@ function locationScore(c, want) {
   return 40
 }
 
+/**
+ * How a candidate relates to the cities the recruiter picked (current + preferred):
+ * lives there, wants to work there, or is open to relocating. Null when no city is picked or none fits.
+ * @returns {{kind:'here'|'wants'|'relocate', city:string}|null}
+ */
+export function locationFit(c, crit) {
+  const picked = [...(crit.locations ?? []), ...(crit.prefLocations ?? [])]
+  if (!picked.length) return null
+  const w = picked.map(canonCity)
+  const here = picked.find((p) => canonCity(p) === canonCity(c.location))
+  if (here) return { kind: 'here', city: here }
+  const wants = (c.preferredLocations ?? []).find((l) => w.includes(canonCity(l)))
+  if (wants) return { kind: 'wants', city: wants }
+  if (c.relocationOk) return { kind: 'relocate', city: picked[0] }
+  return null
+}
+
+const FIT_TIER = { here: 0, wants: 1, relocate: 2 }
+const fitTier = (r) => (r.fit ? FIT_TIER[r.fit.kind] : 3)
+
 /** @returns {{overall:number|null, parts:Record<string,number|null>, strong:string[], weak:string[], notes:string[]}} */
 export function computeMatch(c, crit) {
   const parts = { skills: null, experience: null, location: null, industry: null, salary: null, availability: null }
@@ -234,6 +254,7 @@ const days = (v) => (v == null ? Number.MAX_SAFE_INTEGER : v)
 
 const SORTERS = {
   relevance: (a, b) => (b.match.overall ?? 0) - (a.match.overall ?? 0) || b.kw - a.kw || b.trust.score - a.trust.score || days(a.candidate.lastActiveDaysAgo ?? a.candidate.sharedDaysAgo) - days(b.candidate.lastActiveDaysAgo ?? b.candidate.sharedDaysAgo),
+  location: (a, b) => fitTier(a) - fitTier(b) || (b.match.overall ?? 0) - (a.match.overall ?? 0),
   match: (a, b) => (b.match.overall ?? -1) - (a.match.overall ?? -1),
   experience: (a, b) => b.candidate.experienceYears - a.candidate.experienceYears,
   active: (a, b) => days(a.candidate.lastActiveDaysAgo ?? a.candidate.sharedDaysAgo) - days(b.candidate.lastActiveDaysAgo ?? b.candidate.sharedDaysAgo),
@@ -258,7 +279,7 @@ export function rankPool(pool, crit, sort = 'relevance', exclude = null) {
     if (!passes(candidate, crit, trust, exclude)) continue
     const match = computeMatch(candidate, crit)
     if (crit.minMatch != null && (match.overall ?? 0) <= crit.minMatch) continue
-    rows.push({ candidate, match, trust, kw: keywordScore(candidate, crit) })
+    rows.push({ candidate, match, trust, fit: locationFit(candidate, crit), kw: keywordScore(candidate, crit) })
   }
   return rows.sort(SORTERS[sort] ?? SORTERS.relevance)
 }

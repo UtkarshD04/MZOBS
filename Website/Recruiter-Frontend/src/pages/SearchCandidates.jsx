@@ -33,6 +33,14 @@ export default function SearchCandidates() {
   const { recent, pushRecent, clearRecent, saveSearch, selected, selectMany, clearSelection, toast, messages, shortlists, viewed } = useWorkspace()
   const [criteria, setCriteria] = useState(() => makeCriteria(location.state?.criteria ?? {}))
   const [sort, setSort] = useState('relevance')
+  // Picking a city for the first time puts the people who live there (then those who want to move there) on top.
+  const hadCity = useRef(false)
+  const hasCity = criteria.locations.length + criteria.prefLocations.length > 0
+  useEffect(() => {
+    if (hasCity && !hadCity.current) setSort((s) => (s === 'relevance' ? 'location' : s))
+    if (!hasCity && sort === 'location') setSort('relevance')
+    hadCity.current = hasCity
+  }, [hasCity, sort])
   const [view, setView] = useState('list')
   const [rows, setRows] = useState([])
   const [total, setTotal] = useState(null)

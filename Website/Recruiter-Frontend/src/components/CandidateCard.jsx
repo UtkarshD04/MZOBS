@@ -41,7 +41,7 @@ function ShortlistButton({ candidate, onAction }) {
 }
 
 function CandidateCard({ row, terms, compact, onAction }) {
-  const { candidate: c, match, trust } = row
+  const { candidate: c, match, trust, fit } = row
   const { selected, toggleSelect, compare, toggleCompare, savedIds, toggleSaved, viewed } = useWorkspace()
   const [menu, setMenu] = useState(false)
   const isSel = selected.includes(c.id)
@@ -83,6 +83,11 @@ function CandidateCard({ row, terms, compact, onAction }) {
             <Meta icon={Briefcase}>{years(c.experienceYears)}</Meta>
             {c.expectedSalaryLPA != null && <Meta icon={IndianRupee} title="Current → expected salary">{c.currentSalaryLPA != null ? `${lpa(c.currentSalaryLPA)} → ` : 'Expects '}{lpa(c.expectedSalaryLPA)}</Meta>}
             <Meta icon={MapPin}>{c.location || '—'}</Meta>
+            {fit && (
+              <span className={clsx('inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11.5px] font-semibold', fit.kind === 'here' ? 'bg-ok-soft text-[#1a8f5a]' : fit.kind === 'wants' ? 'bg-accent-soft text-[#0a6f64]' : 'bg-warn-soft text-warn')}>
+                {fit.kind === 'here' ? `Lives in ${fit.city}` : fit.kind === 'wants' ? `Wants to work in ${fit.city}` : 'Open to relocate'}
+              </span>
+            )}
             {c.noticePeriodDays != null && <Meta icon={Clock} title="Notice period">{notice(c.noticePeriodDays)} notice</Meta>}
             {c.contact?.phone ? (
               <Meta icon={Phone} title="Unlocked contact">{c.contact.phone}</Meta>

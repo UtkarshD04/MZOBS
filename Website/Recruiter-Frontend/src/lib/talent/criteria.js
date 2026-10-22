@@ -83,6 +83,7 @@ export const SCOPES = [
 
 export const SORTS = [
   { id: 'relevance', label: 'Relevance' },
+  { id: 'location', label: 'Location fit' },
   { id: 'match', label: 'AI match' },
   { id: 'experience', label: 'Experience' },
   { id: 'active', label: 'Recently active' },
