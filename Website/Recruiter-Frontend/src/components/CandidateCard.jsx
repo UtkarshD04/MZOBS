@@ -1,10 +1,11 @@
-import { memo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin, Lock } from 'lucide-react'
 import { Avatar, Button, Chip, Highlight, MatchBadge, TrustScore, VerifiedBadge, IconButton } from './ui'
 import { lpa, years, notice, ago, agoDate } from '../lib/format'
 import { STAGE_LABELS } from '../lib/talent/criteria'
+import { buildSummary } from '../lib/talent/summary'
 import { IS_DEMO } from '../lib/config'
 import { isRevealed, creditSpent } from '../lib/reveal'
 import { useWorkspace } from '../store/workspace'
@@ -37,6 +38,26 @@ function ShortlistButton({ candidate, onAction }) {
     <Button size="sm" variant={inList ? 'outline' : 'outline'} onClick={() => onAction('shortlist', candidate)} className={clsx(inList && 'border-[#bfe8cf] bg-ok-soft text-[#1a8f5a]')}>
       {inList ? <Check size={14} className="pop" /> : <Bookmark size={14} />} {inList ? 'Shortlisted' : 'Shortlist'}
     </Button>
+  )
+}
+
+// Free preview: reads only data already on the card, so expanding it never touches credits or the unlock flow.
+function ProfessionalSummary({ candidate: c, match }) {
+  const [open, setOpen] = useState(false)
+  const summary = useMemo(() => buildSummary(c, match), [c, match])
+  const long = !!summary && summary.text.length > 190
+  return (
+    <div className="mt-3">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">Professional Summary</p>
+      {summary ? (
+        <p className={clsx('mt-0.5 text-[13px] leading-5 text-ink-2', long && !open && 'line-clamp-3')}>
+          {summary.text}
+          {long && <> <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="font-semibold text-accent hover:underline">{open ? 'Show less' : 'Read more'}</button></>}
+        </p>
+      ) : (
+        <p className="mt-0.5 text-[13px] text-muted">Professional summary unavailable.</p>
+      )}
+    </div>
   )
 }
 
@@ -105,6 +126,8 @@ function CandidateCard({ row, terms, compact, onAction }) {
           {!compact && c.preferredLocations.length > 0 && (
             <p className="mt-2 flex items-center gap-1.5 text-[12.5px] text-muted"><Building2 size={12} /> Prefers: {c.preferredLocations.join(' · ')}</p>
           )}
+
+          <ProfessionalSummary candidate={c} match={match} />
 
           <div className="mt-3 flex flex-wrap gap-1.5">
             {shown.map((s) => <Chip key={s} tone={strong.has(s.toLowerCase()) ? 'hit' : 'neutral'}>{s}</Chip>)}

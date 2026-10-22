@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import { X, Check, AlertTriangle, ShieldCheck, Clock, Minus } from 'lucide-react'
 import { useWorkspace } from '../store/workspace'
@@ -13,6 +13,10 @@ function tint(id) {
 }
 
 export function Avatar({ candidate, size = 44 }) {
+  const [failed, setFailed] = useState(false)
+  if (candidate.photoUrl && !failed) {
+    return <img src={candidate.photoUrl} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFailed(true)} className="shrink-0 rounded-full bg-line-2 object-cover" style={{ width: size, height: size }} aria-hidden />
+  }
   return (
     <div className={clsx('grid shrink-0 place-items-center rounded-full font-semibold', tint(candidate.id))} style={{ width: size, height: size, fontSize: size * 0.36 }} aria-hidden>
       {candidate.initials}

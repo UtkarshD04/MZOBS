@@ -9,7 +9,7 @@
 //         the company's pipeline state for them.
 
 import { apiClient } from '../lib/api'
-import { IS_DEMO } from '../lib/config'
+import { IS_DEMO, FILE_BASE_URL } from '../lib/config'
 import { revealedFromApi } from '../lib/reveal'
 import { DEMO_POOL } from '../lib/talent/demoPool'
 import { rankPool, similarTo, computeMatch, computeTrust } from '../lib/talent/engine'
@@ -120,6 +120,7 @@ export function mapResdexCandidate(e) {
     id: e.id,
     name: e.name,
     initials: e.initials,
+    photoUrl: e.photoUrl ? `${FILE_BASE_URL}${e.photoUrl}` : '',
     designation: e.designation || e.preferredRole || e.headline || '',
     appliedFor: '',
     currentCompany: e.currentCompany || hist[0]?.company || '',
