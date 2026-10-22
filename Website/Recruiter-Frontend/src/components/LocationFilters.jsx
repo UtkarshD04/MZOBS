@@ -45,7 +45,7 @@ function usePlaces(q, { state, city, enabled }) {
 const label = 'text-[12.5px] font-medium text-ink-2'
 
 export default function LocationFilters({ applied, onApply, error, total, busy }) {
-  const [open, setOpen] = useState(hasLocationFilter(applied))
+  const [open, setOpen] = useState(true)
   const [draft, setDraft] = useState(applied)
   const [errors, setErrors] = useState({})
   const [states, setStates] = useState([])
@@ -96,6 +96,22 @@ export default function LocationFilters({ applied, onApply, error, total, busy }
     const found = localityPlaces.rows.map((p) => p.locality)
     return uniq([...own, ...pinAreas, ...found]).filter((l) => !draft.locality || has(l, draft.locality)).map((l) => ({ key: l, label: l }))
   }, [facets, pinAreas, localityPlaces.rows, draft.city, draft.locality])
+
+  // Quick pick: this company's own job-opening cities (busiest first), then the
+  // areas it already hires in for the chosen city.
+  const cityPicks = useMemo(() => {
+    const by = new Map()
+    facets.forEach((f) => { if (f.city) by.set(f.city, { city: f.city, state: f.state, count: (by.get(f.city)?.count ?? 0) + (f.count ?? 1) }) })
+    return [...by.values()].sort((a, b) => b.count - a.count || a.city.localeCompare(b.city))
+  }, [facets])
+  const areaPicks = useMemo(() => {
+    if (!draft.city) return []
+    return facets.filter((f) => f.city === draft.city && f.locality).sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
+  }, [facets, draft.city])
+  const pickCity = (name) => {
+    const c = cityPicks.find((x) => x.city === name)
+    set(c ? { city: c.city, state: c.state || draft.state, locality: '' } : { city: '', locality: '' })
+  }
 
   // Unified search: states, cities, a PIN, nearby-me, then geocoder addresses.
   const searchOptions = useMemo(() => {
@@ -174,6 +190,35 @@ export default function LocationFilters({ applied, onApply, error, total, busy }
 
       {open && (
         <div className="space-y-4 border-t border-line-2 px-4 pb-4 pt-3">
+          <div className="rounded-xl border border-line-2 bg-line-2/40 p-3">
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,260px)_1fr] sm:items-start">
+              <div>
+                <label htmlFor="loc-quick-city" className={label}>Job city</label>
+                <select id="loc-quick-city" value={cityPicks.some((c) => c.city === draft.city) ? draft.city : ''} onChange={(e) => pickCity(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-line bg-white px-3 text-[14px] outline-none focus:border-accent">
+                  <option value="">{cityPicks.length ? 'All cities with openings' : 'No job cities yet'}</option>
+                  {cityPicks.map((c) => <option key={c.city} value={c.city}>{c.city} ({c.count})</option>)}
+                </select>
+              </div>
+              <div>
+                <span className={label}>Popular hiring locations{draft.city ? ` in ${draft.city}` : ''}</span>
+                {!draft.city ? (
+                  <p className="mt-2 text-[12.5px] text-muted">Pick a city to see where you already hire, then choose a preferred location.</p>
+                ) : areaPicks.length === 0 ? (
+                  <p className="mt-2 text-[12.5px] text-muted">No area saved on your jobs in {draft.city} yet — type one in Area / locality below.</p>
+                ) : (
+                  <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Preferred location">
+                    <button type="button" aria-pressed={!draft.locality} onClick={() => set({ locality: '' })} className={clsx('inline-flex h-8 items-center rounded-full border px-3 text-[12.5px] font-semibold', !draft.locality ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line bg-white text-ink-2 hover:bg-line-2')}>Any area</button>
+                    {areaPicks.map((a) => (
+                      <button key={a.locality} type="button" aria-pressed={draft.locality === a.locality} onClick={() => set({ locality: a.locality })} className={clsx('inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-[12.5px] font-semibold', draft.locality === a.locality ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line bg-white text-ink-2 hover:bg-line-2')}>
+                        <MapPin size={12} aria-hidden /> {a.locality} <span className="text-muted">{a.count}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="relative">
             <Combobox
               hideLabel
