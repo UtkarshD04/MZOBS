@@ -301,6 +301,11 @@ export async function getPoolMeta(force = false) {
   return { ...poolMeta(p.rows, p.jobs), syncedAt: p.at }
 }
 
+/** Every loaded candidate, for the Location filter's per-place counts. */
+export async function getPoolRows() {
+  return (await loadPool()).rows
+}
+
 // ---- search ---------------------------------------------------------------
 
 const CACHE_TTL = 60_000

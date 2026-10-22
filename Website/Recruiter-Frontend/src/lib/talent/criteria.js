@@ -19,6 +19,7 @@ export const EMPTY_CRITERIA = {
   locations: [],
   state: '', // candidate's state (exact match)
   pincode: '', // candidate's 6-digit PIN code (exact match)
+  pinNearby: false, // with a PIN: match the whole 3-digit PIN area instead of the exact PIN
   salaryMin: null, // expected salary, LPA
   salaryMax: null,
   noticeMax: null, // days
@@ -118,7 +119,7 @@ export function criteriaToChips(c) {
     chips.push({ key: 'exp', label: c.expMax != null ? `${lo}–${c.expMax} yrs` : `${lo}+ yrs`, group: 'Experience' })
   }
   if (c.state) chips.push({ key: 'state', label: `State: ${c.state}`, group: 'Location' })
-  if (c.pincode) chips.push({ key: 'pincode', label: `PIN ${c.pincode}`, group: 'Location' })
+  if (c.pincode) chips.push({ key: 'pincode', label: c.pinNearby ? `PIN area ${c.pincode.slice(0, 3)}xxx` : `PIN ${c.pincode}`, group: 'Location' })
   c.locations.forEach((l) => chips.push({ key: `loc:${l}`, label: c.alsoPreferred ? l : `${l} (current)`, group: 'Location' }))
   c.prefLocations.forEach((l) => chips.push({ key: `pref:${l}`, label: `Prefers ${l}`, group: 'Location' }))
   if (c.relocate) chips.push({ key: 'relocate', label: 'Open to relocate', group: 'Location' })
@@ -171,7 +172,7 @@ export function removeChip(c, key) {
   else if (key.startsWith('ex:')) n.exclude = c.exclude.filter((s) => s !== key.slice(3))
   else if (key === 'exp') { n.expMin = null; n.expMax = null }
   else if (key === 'state') n.state = ''
-  else if (key === 'pincode') n.pincode = ''
+  else if (key === 'pincode') { n.pincode = ''; n.pinNearby = false }
   else if (key.startsWith('loc:')) n.locations = c.locations.filter((s) => s !== key.slice(4))
   else if (key === 'salary') { n.salaryMin = null; n.salaryMax = null }
   else if (key === 'notice') n.noticeMax = null

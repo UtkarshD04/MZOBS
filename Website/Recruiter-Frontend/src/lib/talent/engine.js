@@ -197,7 +197,10 @@ function passes(c, crit, trust, exclude) {
   if (crit.expMin != null && c.experienceYears < crit.expMin) return false
   if (crit.expMax != null && c.experienceYears > crit.expMax) return false
   if (crit.state && canonCity(c.state) !== canonCity(crit.state)) return false
-  if (crit.pincode?.length === 6 && String(c.pincode ?? '').trim() !== crit.pincode) return false
+  if (crit.pincode?.length === 6) {
+    const pin = String(c.pincode ?? '').trim()
+    if (crit.pinNearby ? pin.slice(0, 3) !== crit.pincode.slice(0, 3) : pin !== crit.pincode) return false
+  }
   if (crit.locations.length) {
     const w = crit.locations.map(canonCity)
     const here = w.includes(canonCity(c.location))
@@ -269,6 +272,13 @@ function keywordScore(c, crit) {
   if (!terms.length) return 0
   const hay = norm(textFor(c, crit.scope))
   return terms.reduce((n, t) => n + hay.split(norm(t)).length - 1, 0)
+}
+
+const NO_PLACE = { state: '', pincode: '', pinNearby: false, locations: [], prefLocations: [], relocate: false }
+
+/** Whether a candidate passes every filter except the geographic ones — for per-place "matching" counts. */
+export function passesExceptLocation(c, crit) {
+  return passes(c, { ...crit, ...NO_PLACE }, computeTrust(c), null)
 }
 
 /** Filters, scores and sorts a pool. Returns every hit — callers paginate. */

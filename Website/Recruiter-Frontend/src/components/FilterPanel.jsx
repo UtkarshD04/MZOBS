@@ -7,6 +7,7 @@ import { vocab } from '../lib/talent/vocab'
 import { Chip } from './ui'
 import { IS_DEMO } from '../lib/config'
 import { getLocationFacets } from '../services/geoService'
+import LocationRadar from './LocationRadar'
 
 // This company's own job-opening cities (busiest first) — the cities it is hiring in.
 function useJobCities() {
@@ -234,55 +235,34 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
         </Section>
 
         <Section title="Location" defaultOpen count={c.locations.length + c.prefLocations.length + n(c.relocate, c.state, c.pincode)}>
-          {vocab.states.length > 0 && (
-            <>
-              <Label first>State</Label>
-              <select value={c.state} onChange={(e) => set({ state: e.target.value })} className="h-10 w-full rounded-lg border border-line bg-white px-3 text-[13px] outline-none focus:border-accent">
-                <option value="">Any state</option>
-                {vocab.states.map((st) => <option key={st} value={st}>{st}</option>)}
-              </select>
-            </>
-          )}
-          {jobCities.length > 0 && (
-            <>
-              <Label>Job city</Label>
-              <select
-                value=""
-                onChange={(e) => { const v = e.target.value; if (v && !c.locations.includes(v)) set({ locations: [...c.locations, v] }) }}
-                className="h-10 w-full rounded-lg border border-line bg-white px-3 text-[13px] outline-none focus:border-accent"
-              >
-                <option value="">Cities you are hiring in…</option>
-                {hiringPicks.map((j) => <option key={j.city} value={j.city}>{j.city} ({j.count} {j.count === 1 ? 'job' : 'jobs'})</option>)}
-              </select>
-            </>
-          )}
-          <Label>PIN code</Label>
-          <input inputMode="numeric" maxLength={6} value={c.pincode} onChange={(e) => set({ pincode: e.target.value.replace(/D/g, '') })} placeholder="6-digit PIN code" className="h-10 w-full rounded-lg border border-line bg-white px-3 text-[13px] outline-none placeholder:text-[#8aa0b2] focus:border-accent" />
-          <Label>Current location</Label>
-          <TagInput values={c.locations} onChange={(locations) => set({ locations })} placeholder="City…" suggestions={vocab.cities} />
-          {c.locations.length > 0 && <div className="mt-1.5"><Check checked={c.alsoPreferred} onChange={(alsoPreferred) => set({ alsoPreferred })}>Include people who prefer to relocate here</Check></div>}
-          {show('relocation') && (
-            <>
-              {c.locations.length > 0 && hiringPicks.length > 0 && (
-                <>
-                  <Label>Popular hiring locations</Label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {hiringPicks.map((j) => {
-                      const on = c.prefLocations.includes(j.city)
-                      return (
-                        <button key={j.city} type="button" aria-pressed={on} onClick={() => set({ prefLocations: on ? c.prefLocations.filter((x) => x !== j.city) : [...c.prefLocations, j.city] })} className={clsx('inline-flex h-7 items-center gap-1 rounded-full border px-2.5 text-[12px] font-semibold', on ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line bg-white text-ink-2 hover:bg-line-2')}>
-                          {j.city} <span className="text-muted">{j.count}</span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </>
-              )}
-              <Label>Preferred location</Label>
-              <TagInput values={c.prefLocations} onChange={(prefLocations) => set({ prefLocations })} placeholder="Where they want to work…" suggestions={vocab.cities} />
-              <div className="mt-1.5"><Check checked={c.relocate} onChange={(relocate) => set({ relocate })}>Open to relocation</Check></div>
-            </>
-          )}
+          <LocationRadar
+            criteria={c}
+            set={set}
+            meta={m}
+            relocationEnabled={show('relocation')}
+            customPanel={
+              <>
+                {hiringPicks.length > 0 && (
+                  <>
+                    <Label>Popular hiring locations</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {hiringPicks.map((j) => {
+                        const on = c.prefLocations.includes(j.city)
+                        return (
+                          <button key={j.city} type="button" aria-pressed={on} onClick={() => set({ prefLocations: on ? c.prefLocations.filter((x) => x !== j.city) : [...c.prefLocations, j.city] })} className={clsx('inline-flex h-7 items-center gap-1 rounded-full border px-2.5 text-[12px] font-semibold', on ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line bg-white text-ink-2 hover:bg-line-2')}>
+                            {j.city} <span className="text-muted">{j.count}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </>
+                )}
+                <Label>Preferred location</Label>
+                <TagInput values={c.prefLocations} onChange={(prefLocations) => set({ prefLocations })} placeholder="Cities where they want to work…" suggestions={vocab.cities} />
+                <div className="mt-1.5"><Check checked={c.relocate} onChange={(relocate) => set({ relocate })}>Open to relocation</Check></div>
+              </>
+            }
+          />
         </Section>
 
         {(show('salary') || show('currentSalary')) && (
