@@ -30,9 +30,13 @@ export default function Navbar() {
   // The employer link is for hiring teams — hide it on the student-facing Ally
   // page and whenever a candidate is signed in.
   const showEmployer = pathname !== CLIENT_ONLY_ROUTES.ally && !session?.token
-  // The Resources menu (Our Story, Ally, Associate, Campus) is for visitors — a
-  // signed-in candidate doesn't need it, so it's dropped from their navbar.
-  const navLinks = NAV_LINKS.filter((link) => !(link.children && session?.token))
+  // Items flagged hideWhenSignedIn (e.g. "Associate with Mzobs") are for visitors
+  // only — dropped from a signed-in candidate's Resources menu.
+  const navLinks = NAV_LINKS.map((link) =>
+    link.children && session?.token
+      ? { ...link, children: link.children.filter((child) => !child.hideWhenSignedIn) }
+      : link
+  )
 
   useEffect(() => {
     const onScroll = () => {
