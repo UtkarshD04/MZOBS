@@ -77,22 +77,23 @@ function Progress({ app }) {
   return (
     <ol className="mt-4 flex items-center" aria-label="Application progress">
       {stepLabels(app).map((label, i, steps) => {
-        const done = i <= reached
         const current = !closed && i === reached
+        const done = i < reached || (closed && i === reached)
         return (
           <li key={label} className="flex min-w-0 flex-1 items-center last:flex-none">
             <span className="flex flex-col items-center gap-1">
               <span
                 className={`flex h-5 w-5 items-center justify-center rounded-full text-white ${
-                  done ? (closed ? 'bg-[#9AA3AF]' : 'bg-mz-primary') : 'bg-white ring-2 ring-mz-line'
-                } ${current ? 'ring-4 ring-mz-primary/20' : ''}`}
+                  done ? (closed ? 'bg-[#9AA3AF]' : 'bg-mz-primary') : current ? 'bg-white ring-2 ring-mz-primary' : 'bg-white ring-2 ring-mz-line'
+                }`}
                 aria-hidden="true"
               >
                 {done && <Check size={11} strokeWidth={3.5} />}
+                {current && <span className="h-2 w-2 rounded-full bg-mz-primary" />}
               </span>
-              <span className={`whitespace-nowrap text-[11px] ${current ? 'font-semibold text-mz-ink' : 'text-mz-muted'}`}>
+              <span className={`whitespace-nowrap text-[11px] ${current ? 'font-bold text-mz-primary-strong' : done ? 'font-medium text-mz-ink-2' : 'text-mz-muted'}`}>
                 {label}
-                <span className="sr-only">{done ? ' (reached)' : ''}</span>
+                <span className="sr-only">{current ? ' (current stage)' : done ? ' (reached)' : ' (not reached yet)'}</span>
               </span>
             </span>
             {i < steps.length - 1 && <span className={`mx-1 mb-4 h-0.5 flex-1 rounded ${i < reached ? (closed ? 'bg-[#C9CED6]' : 'bg-mz-primary') : 'bg-mz-line'}`} aria-hidden="true" />}
@@ -145,7 +146,7 @@ function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
   ].filter((m) => m.text)
 
   return (
-    <li className="rounded-[14px] border border-mz-line bg-white p-4 shadow-[0_1px_2px_rgba(22,50,79,0.05)] transition-[border-color,box-shadow] duration-200 hover:border-mz-line-strong hover:shadow-[0_6px_18px_-10px_rgba(22,50,79,0.28)] motion-reduce:transition-none sm:p-5">
+    <li className="rounded-[14px] border border-mz-line bg-white p-4 shadow-[0_1px_2px_rgba(22,50,79,0.05)] transition-[border-color,box-shadow] duration-200 focus-within:border-mz-primary/40 hover:border-mz-line-strong hover:shadow-[0_6px_18px_-10px_rgba(22,50,79,0.28)] motion-reduce:transition-none sm:p-5">
       <div className="flex items-start gap-3.5">
         <CompanyLogo name={company || job?.title || '?'} logo={job?.company?.logo} size={44} className="rounded-[10px]" />
         <div className="min-w-0 flex-1">
@@ -153,7 +154,7 @@ function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
             <div className="min-w-0">
               <h3 className="text-[16px] font-semibold leading-snug text-mz-ink">
                 {job ? (
-                  <Link to={`/jobs/${job.id}`} className="hover:text-mz-primary-strong hover:underline underline-offset-4">
+                  <Link to={`/jobs/${job.id}`} className="rounded-[4px] hover:text-mz-primary-strong hover:underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary">
                     {job.title}
                   </Link>
                 ) : (

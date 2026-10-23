@@ -107,6 +107,10 @@ function JumpLink({ to, children, className }) {
 // One surface treatment for every card on the page: hairline border, 1px lift.
 const cardCls = 'rounded-[14px] border border-mz-line bg-white shadow-[0_1px_2px_rgba(22,50,79,0.05)]'
 
+// Button-weight link for the one action a section wants you to find.
+const ctaCls =
+  'group inline-flex h-9 items-center gap-1.5 rounded-[9px] border border-mz-primary/30 bg-white px-3.5 text-[13.5px] font-semibold text-mz-primary-strong transition-colors hover:border-mz-primary hover:bg-mz-primary-tint/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary motion-reduce:transition-none'
+
 const linkCls = 'group inline-flex items-center gap-1 rounded-[6px] text-[13.5px] font-semibold text-mz-primary-strong underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary'
 
 export function PageIntro({ paid }) {
@@ -339,7 +343,7 @@ export function NextMove({ selected, onSelect, paid }) {
   return (
     <section aria-labelledby={`${baseId}-title`} className={`${cardCls} p-4 sm:p-5`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id={`${baseId}-title`} className="text-[17px] font-bold tracking-[-0.01em] text-mz-ink">Know Your Next Move</h2>
+        <h2 id={`${baseId}-title`} className="text-[18px] font-bold tracking-[-0.015em] text-mz-ink">Know Your Next Move</h2>
         <div className="mz-scroll-x -mx-1 flex max-w-full gap-1 overflow-x-auto px-1" role="group" aria-label="Choose a stage">
           {STAGES.map((s, i) => (
             <button
@@ -348,7 +352,7 @@ export function NextMove({ selected, onSelect, paid }) {
               onClick={() => onSelect(i)}
               aria-pressed={selected === i}
               className={`shrink-0 rounded-full px-3 py-1.5 text-[12.5px] font-semibold transition-colors motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary ${
-                selected === i ? 'bg-mz-primary text-white' : 'bg-mz-bg text-mz-ink-2 ring-1 ring-mz-line hover:text-mz-ink'
+                selected === i ? 'bg-mz-primary-tint text-mz-primary-strong ring-1 ring-mz-primary/40' : 'bg-white text-mz-ink-2 ring-1 ring-mz-line hover:bg-mz-bg hover:text-mz-ink'
               }`}
             >
               {s.label}
@@ -357,11 +361,11 @@ export function NextMove({ selected, onSelect, paid }) {
         </div>
       </div>
       <div aria-live="polite" key={stage.key} className="mz-fade-in mt-3.5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 rounded-[10px] bg-mz-bg px-4 py-3.5 ring-1 ring-mz-line motion-reduce:animate-none">
-        <p className="flex max-w-[560px] items-start gap-2 text-[14.5px] leading-snug text-mz-ink">
+        <p className="flex max-w-[560px] items-start gap-2.5 text-[15px] font-medium leading-snug text-mz-ink">
           <Sparkles size={16} className="mt-0.5 shrink-0 text-mz-primary-strong" aria-hidden="true" />
           {move.text}
         </p>
-        <JumpLink to={moveTarget(move.to, paid)} className={linkCls}>
+        <JumpLink to={moveTarget(move.to, paid)} className={ctaCls}>
           {move.to === 'premium-services' && !paid ? 'Explore Premium support' : move.label}
           <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden="true" />
         </JumpLink>
@@ -405,20 +409,20 @@ export function PremiumValue({ paid, hasApps }) {
   return (
     <section aria-labelledby={`${baseId}-title`}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-        <h2 id={`${baseId}-title`} className="text-[17px] font-bold tracking-[-0.01em] text-mz-ink">What this page gives you</h2>
+        <h2 id={`${baseId}-title`} className="text-[18px] font-bold tracking-[-0.015em] text-mz-ink">What this page gives you</h2>
         <p className="text-[12.5px] text-mz-muted">Updates appear as employers act; timing isn’t guaranteed.</p>
       </div>
       <ul className="mt-3 grid divide-y divide-mz-line overflow-hidden rounded-[14px] border border-mz-line bg-white shadow-[0_1px_2px_rgba(22,50,79,0.05)] md:grid-cols-3 md:divide-x md:divide-y-0">
         {items.map(({ icon: Icon, title, text, tag, action }) => (
           <li key={title} className="flex flex-col p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-mz-bg text-mz-primary-strong ring-1 ring-mz-line">
+              <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-mz-primary-tint text-mz-primary-strong">
                 <Icon size={17} aria-hidden="true" />
               </span>
               <span className={`rounded-full px-2.5 py-1 text-[11.5px] font-semibold ${TAG[tag[0]]}`}>{tag[1]}</span>
             </div>
-            <h3 className="mt-3 text-[14.5px] font-semibold text-mz-ink">{title}</h3>
-            <p className="mt-1 flex-1 text-[13.5px] leading-relaxed text-mz-muted">{text}</p>
+            <h3 className="mt-3.5 text-[15px] font-semibold text-mz-ink">{title}</h3>
+            <p className="mt-1.5 flex-1 text-[13.5px] leading-[1.6] text-mz-ink-2">{text}</p>
             {action && (
               <JumpLink to={action.to} className={`${linkCls} mt-3`}>
                 {action.label} <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden="true" />
