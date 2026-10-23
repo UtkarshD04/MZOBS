@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, CalendarClock, Check, ChevronDown, ExternalLink, Loader2, Lock, MapPin, Monitor, RotateCw, SearchX, Video, Building2 } from 'lucide-react'
+import { ArrowRight, Calendar, CalendarClock, Check, ChevronDown, ExternalLink, Loader2, Lock, MapPin, Monitor, RotateCw, SearchX, Video, Building2 } from 'lucide-react'
 import Seo from '../components/Seo'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -57,7 +57,12 @@ const fmtDate = (d) => (d ? dateFmt.format(new Date(d)) : '')
 
 function StatusBadge({ status, viewed }) {
   const s = STATUS[status === 'shared' && viewed ? 'viewed' : status] ?? { label: status, tone: 'neutral' }
-  return <span className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[12px] font-semibold ${TONE[s.tone]}`}>{s.label}</span>
+  return (
+    <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold ${TONE[s.tone]}`}>
+      <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" aria-hidden="true" />
+      {s.label}
+    </span>
+  )
 }
 
 // Furthest step this application has actually reached, from its history.
@@ -140,7 +145,7 @@ function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
   ].filter((m) => m.text)
 
   return (
-    <li className="rounded-[12px] border border-mz-line bg-white p-4 sm:p-5">
+    <li className="rounded-[14px] border border-mz-line bg-white p-4 shadow-[0_1px_2px_rgba(22,50,79,0.05)] transition-[border-color,box-shadow] duration-200 hover:border-mz-line-strong hover:shadow-[0_6px_18px_-10px_rgba(22,50,79,0.28)] motion-reduce:transition-none sm:p-5">
       <div className="flex items-start gap-3.5">
         <CompanyLogo name={company || job?.title || '?'} logo={job?.company?.logo} size={44} className="rounded-[10px]" />
         <div className="min-w-0 flex-1">
@@ -166,7 +171,10 @@ function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
                 {text}
               </span>
             ))}
-            <span>Applied {fmtDate(app.appliedOn)}</span>
+            <span className="inline-flex items-center gap-1.5">
+              <Calendar size={13.5} aria-hidden="true" />
+              Applied {fmtDate(app.appliedOn)}
+            </span>
           </p>
         </div>
       </div>
@@ -244,8 +252,13 @@ function InterviewsSection({ interviews, mock, status }) {
   const mockShown = mock && mock.status && mock.status !== 'not_scheduled'
 
   return (
-    <section id="interviews" aria-labelledby="interviews-title" className="scroll-mt-24 rounded-[12px] border border-mz-line bg-white p-4 sm:p-5">
-      <h2 id="interviews-title" className="text-[17px] font-bold text-mz-ink">Interviews</h2>
+    <section id="interviews" aria-labelledby="interviews-title" className="scroll-mt-24 rounded-[14px] border border-mz-line bg-white p-4 shadow-[0_1px_2px_rgba(22,50,79,0.05)] sm:p-5">
+      <h2 id="interviews-title" className="flex items-center gap-2.5 text-[17px] font-bold tracking-[-0.01em] text-mz-ink">
+        <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-mz-primary-tint text-mz-primary-strong">
+          <CalendarClock size={16} aria-hidden="true" />
+        </span>
+        Interviews
+      </h2>
       {status === 'loading' ? (
         <div className="mt-3 space-y-2" aria-hidden="true">
           <div className="mz-skeleton h-4 w-2/3 rounded" />
@@ -256,16 +269,16 @@ function InterviewsSection({ interviews, mock, status }) {
       ) : (
         <>
           {upcoming.length === 0 && past.length === 0 && !mockShown && (
-            <p className="mt-2 text-[13.5px] leading-relaxed text-mz-muted">
+            <p className="mt-3 rounded-[10px] bg-mz-bg px-4 py-3 text-[13.5px] leading-relaxed text-mz-muted ring-1 ring-mz-line">
               Nothing scheduled yet. When an employer or the Mzobs team schedules an interview with you, the time, mode and joining details show up here.
             </p>
           )}
           {(upcoming.length > 0 || past.length > 0) && (
-            <ul className="mt-3 divide-y divide-mz-line">
+            <ul className="mt-3 divide-y divide-mz-line rounded-[10px] border border-mz-line px-3.5">
               {[...upcoming, ...past].map((iv) => {
                 const isUpcoming = upcoming.includes(iv)
                 return (
-                  <li key={iv.id} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
+                  <li key={iv.id} className="flex items-start gap-3 py-3.5">
                     <CompanyLogo name={iv.company || iv.role} logo={iv.logo} size={36} className="rounded-[8px]" />
                     <div className="min-w-0 flex-1">
                       <p className="text-[14.5px] font-semibold text-mz-ink">
@@ -499,7 +512,7 @@ export default function EmployeeApplications() {
               <section id="applications" aria-labelledby="applications-title" className="scroll-mt-24">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                   <div>
-                    <h2 id="applications-title" className="text-[17px] font-bold text-mz-ink">Your applications</h2>
+                    <h2 id="applications-title" className="text-[17px] font-bold tracking-[-0.01em] text-mz-ink">Your applications</h2>
                     <p className="mt-0.5 text-[13.5px] text-mz-muted">
                       {status === 'ready' ? `${total} ${total === 1 ? 'application' : 'applications'} · live from your account` : 'Live from your account'}
                     </p>

@@ -1,6 +1,6 @@
 import { useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, BadgeCheck, CalendarClock, Check, Eye, FileText, Lock, Send, Sparkles, Star, Trophy, UserCheck } from 'lucide-react'
+import { ArrowRight, BadgeCheck, CalendarClock, Check, Eye, FileText, Info, Lock, Send, Sparkles, Star, Trophy, UserCheck } from 'lucide-react'
 import { CompanyLogo } from './primitives'
 
 // The five-stage journey shown on /employees/applications. Real applications
@@ -104,6 +104,9 @@ function JumpLink({ to, children, className }) {
   )
 }
 
+// One surface treatment for every card on the page: hairline border, 1px lift.
+const cardCls = 'rounded-[14px] border border-mz-line bg-white shadow-[0_1px_2px_rgba(22,50,79,0.05)]'
+
 const linkCls = 'group inline-flex items-center gap-1 rounded-[6px] text-[13.5px] font-semibold text-mz-primary-strong underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary'
 
 export function PageIntro({ paid }) {
@@ -116,12 +119,12 @@ export function PageIntro({ paid }) {
           <p className="mt-1.5 text-[14.5px] leading-relaxed text-mz-muted">Every opportunity has a journey. Get a clearer view of yours with Mzobs.</p>
         </div>
         {paid ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-mz-primary-tint px-3 py-1.5 text-[12.5px] font-semibold text-mz-primary-strong">
-            <BadgeCheck size={14} aria-hidden="true" /> Premium · full tracking on
+          <span className="inline-flex items-center gap-2 rounded-[10px] border border-mz-primary/20 bg-mz-primary-tint/60 px-3 py-2 text-[12.5px] font-semibold text-mz-primary-strong">
+            <BadgeCheck size={15} aria-hidden="true" /> Premium · full tracking on
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-mz-line bg-white px-3 py-1.5 text-[12.5px] font-medium text-mz-ink-2">
-            <Lock size={13} className="text-mz-primary-strong" aria-hidden="true" /> Complete application tracking requires Premium
+          <span className="inline-flex items-center gap-2 rounded-[10px] border border-mz-line border-l-[3px] border-l-mz-primary bg-white px-3 py-2 text-[12.5px] font-medium text-mz-ink-2 shadow-[0_1px_2px_rgba(22,50,79,0.05)]">
+            <Lock size={14} className="text-mz-primary-strong" aria-hidden="true" /> Complete application tracking requires Premium
           </span>
         )}
       </div>
@@ -148,7 +151,7 @@ function StageNode({ stage, index, reached, closed, selected, lockedDates, onSel
         onClick={() => onSelect(index)}
         aria-pressed={selected}
         className={`group flex w-full items-start gap-3.5 rounded-[12px] p-2 text-left transition-colors motion-reduce:transition-none md:flex-col md:items-center md:gap-2 md:px-1.5 md:py-2.5 md:text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary ${
-          selected ? 'bg-mz-primary-tint/70' : 'hover:bg-mz-bg'
+          selected ? 'bg-mz-primary-tint/70 ring-1 ring-mz-primary/20' : active ? 'bg-mz-primary-tint/35 hover:bg-mz-primary-tint/60' : 'hover:bg-mz-bg'
         }`}
       >
         <span className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${circle} ${active ? 'shadow-[0_0_0_5px_var(--color-mz-primary-ring)]' : ''}`}>
@@ -162,6 +165,11 @@ function StageNode({ stage, index, reached, closed, selected, lockedDates, onSel
         <span className="min-w-0">
           <span className={`block text-[14px] leading-tight ${selected ? 'font-bold text-mz-ink' : 'font-semibold text-mz-ink'}`}>{stage.label}</span>
           <span className="mt-0.5 block text-[12.5px] leading-snug text-mz-muted md:px-1">{stage.short}</span>
+          {active && (
+            <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-mz-primary px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-[0.08em] text-white" aria-hidden="true">
+              <span className="h-1.5 w-1.5 rounded-full bg-white" /> Current
+            </span>
+          )}
           <span className="sr-only">
             {state}
             {lockedDates && index > 0 ? ', dated details need Premium' : ''}
@@ -206,8 +214,8 @@ function OpportunityPreview({ opp, onViewJourney }) {
 function TimelinePanel({ stage, paid, state, panelRef, titleId }) {
   const Icon = stage.icon
   return (
-    <aside ref={panelRef} tabIndex={-1} aria-labelledby={titleId} className="rounded-[14px] border border-mz-line bg-white p-4 outline-none sm:p-5">
-      <h2 id={titleId} className="text-[16px] font-bold text-mz-ink">Your Application Timeline</h2>
+    <aside ref={panelRef} tabIndex={-1} aria-labelledby={titleId} className={`${cardCls} p-4 outline-none sm:p-5`}>
+      <h2 id={titleId} className="text-[17px] font-bold tracking-[-0.01em] text-mz-ink">Your Application Timeline</h2>
       <div aria-live="polite" key={stage.key} className="mz-fade-in mt-3.5 space-y-4 motion-reduce:animate-none">
         <div className="flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-mz-primary-tint text-mz-primary-strong">
@@ -218,19 +226,20 @@ function TimelinePanel({ stage, paid, state, panelRef, titleId }) {
             <p className="text-[12px] text-mz-muted">{state}</p>
           </div>
         </div>
-        <dl className="space-y-3.5 text-[13.5px] leading-relaxed">
-          <div>
-            <dt className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-mz-muted">What it means</dt>
-            <dd className="mt-0.5 text-mz-ink-2">{stage.meaning}</dd>
-          </div>
-          <div>
-            <dt className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-mz-muted">What you can see</dt>
-            <dd className="mt-0.5 text-mz-ink-2">{stage.info}</dd>
-          </div>
-          <div>
-            <dt className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-mz-muted">What you can do next</dt>
-            <dd className="mt-0.5 text-mz-ink-2">{stage.next}</dd>
-          </div>
+        <dl className="relative space-y-4 text-[13.5px] leading-relaxed before:absolute before:bottom-3 before:left-[11px] before:top-3 before:w-px before:bg-mz-line-strong">
+          {[
+            [Info, 'What it means', stage.meaning],
+            [Eye, 'What you can see', stage.info],
+            [ArrowRight, 'What you can do next', stage.next],
+          ].map(([DetailIcon, term, text]) => (
+            <div key={term} className="relative pl-9">
+              <span className="absolute left-0 top-0 flex h-[23px] w-[23px] items-center justify-center rounded-full bg-white text-mz-primary-strong ring-1 ring-mz-line-strong">
+                <DetailIcon size={12} aria-hidden="true" />
+              </span>
+              <dt className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-mz-muted">{term}</dt>
+              <dd className="mt-0.5 text-mz-ink-2">{text}</dd>
+            </div>
+          ))}
         </dl>
         <div className={`rounded-[10px] px-3.5 py-3 ${paid ? 'bg-mz-primary-tint/70' : 'bg-mz-bg ring-1 ring-mz-line'}`}>
           <p className="flex items-center gap-1.5 text-[12.5px] font-semibold text-mz-ink">
@@ -277,10 +286,10 @@ export function JourneyWorkspace({ apps, paid, selected, onSelect }) {
 
   return (
     <section aria-labelledby={`${baseId}-map`} className="grid gap-4 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:items-start">
-      <div className="rounded-[14px] border border-mz-line bg-white p-4 sm:p-5">
+      <div className={`${cardCls} p-4 sm:p-5`}>
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <div>
-            <h2 id={`${baseId}-map`} className="text-[16px] font-bold text-mz-ink">Application Journey</h2>
+            <h2 id={`${baseId}-map`} className="text-[17px] font-bold tracking-[-0.01em] text-mz-ink">Application Journey</h2>
             <p className="text-[12.5px] text-mz-muted">Select a stage to see what it means.</p>
           </div>
           <label className="flex items-center gap-2 text-[12.5px] text-mz-muted">
@@ -328,9 +337,9 @@ export function NextMove({ selected, onSelect, paid }) {
   const stage = STAGES[selected]
   const move = stage.move
   return (
-    <section aria-labelledby={`${baseId}-title`} className="rounded-[14px] border border-mz-line bg-white p-4 sm:p-5">
+    <section aria-labelledby={`${baseId}-title`} className={`${cardCls} p-4 sm:p-5`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id={`${baseId}-title`} className="text-[16px] font-bold text-mz-ink">Know Your Next Move</h2>
+        <h2 id={`${baseId}-title`} className="text-[17px] font-bold tracking-[-0.01em] text-mz-ink">Know Your Next Move</h2>
         <div className="mz-scroll-x -mx-1 flex max-w-full gap-1 overflow-x-auto px-1" role="group" aria-label="Choose a stage">
           {STAGES.map((s, i) => (
             <button
@@ -347,7 +356,7 @@ export function NextMove({ selected, onSelect, paid }) {
           ))}
         </div>
       </div>
-      <div aria-live="polite" key={stage.key} className="mz-fade-in mt-3.5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 motion-reduce:animate-none">
+      <div aria-live="polite" key={stage.key} className="mz-fade-in mt-3.5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 rounded-[10px] bg-mz-bg px-4 py-3.5 ring-1 ring-mz-line motion-reduce:animate-none">
         <p className="flex max-w-[560px] items-start gap-2 text-[14.5px] leading-snug text-mz-ink">
           <Sparkles size={16} className="mt-0.5 shrink-0 text-mz-primary-strong" aria-hidden="true" />
           {move.text}
@@ -396,10 +405,10 @@ export function PremiumValue({ paid, hasApps }) {
   return (
     <section aria-labelledby={`${baseId}-title`}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-        <h2 id={`${baseId}-title`} className="text-[16px] font-bold text-mz-ink">What this page gives you</h2>
+        <h2 id={`${baseId}-title`} className="text-[17px] font-bold tracking-[-0.01em] text-mz-ink">What this page gives you</h2>
         <p className="text-[12.5px] text-mz-muted">Updates appear as employers act; timing isn’t guaranteed.</p>
       </div>
-      <ul className="mt-3 grid divide-y divide-mz-line overflow-hidden rounded-[14px] border border-mz-line bg-white md:grid-cols-3 md:divide-x md:divide-y-0">
+      <ul className="mt-3 grid divide-y divide-mz-line overflow-hidden rounded-[14px] border border-mz-line bg-white shadow-[0_1px_2px_rgba(22,50,79,0.05)] md:grid-cols-3 md:divide-x md:divide-y-0">
         {items.map(({ icon: Icon, title, text, tag, action }) => (
           <li key={title} className="flex flex-col p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2">
