@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { useRouteAnalytics } from './lib/useRouteAnalytics'
 import { motion, useReducedMotion } from 'framer-motion'
 import ScrollToTop from './components/layout/ScrollToTop'
 import { ToastProvider } from './components/mz/Toast'
@@ -65,6 +66,7 @@ function RouteFallback() {
 export default function App() {
   const location = useLocation()
   const prefersReducedMotion = useReducedMotion()
+  useRouteAnalytics()
   // The very first render has to match the server-rendered/prerendered
   // markup exactly (no inline opacity style framer-motion would add for an
   // `initial={{ opacity: 0 }}` enter transition), or React discards the

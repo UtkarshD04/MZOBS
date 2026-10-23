@@ -1,4 +1,5 @@
 import { EMPLOYEE_API_URL } from './config'
+import { trackOnSuccess } from './analytics'
 
 async function request(path, { method = 'GET', token, body, isFormData } = {}) {
   const headers = {}
@@ -25,11 +26,11 @@ export function fetchEmployeeProfile(token) {
 export function uploadEmployeeResume(token, file) {
   const formData = new FormData()
   formData.append('resume', file)
-  return request('/resume', { method: 'POST', token, body: formData, isFormData: true })
+  return trackOnSuccess(request('/resume', { method: 'POST', token, body: formData, isFormData: true }), 'resume_uploaded')
 }
 
 export function applyToJob(token, jobId) {
-  return request('/applications', { method: 'POST', token, body: { jobId } })
+  return trackOnSuccess(request('/applications', { method: 'POST', token, body: { jobId } }), 'job_applied', { job_id: jobId })
 }
 
 // How many applications this employee has sent — read off the paginated

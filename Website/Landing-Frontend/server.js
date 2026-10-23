@@ -55,6 +55,8 @@ function originOf(url) {
 // URLs (jobs/employer/employee/contact/account-deletion) that don't have to
 // share an origin — de-duped so the same host isn't repeated in the header.
 const API_ORIGINS = [...new Set([PUBLIC_JOBS_API_URL, EMPLOYER_API_URL, EMPLOYEE_API_URL, CONTACT_API_URL, ACCOUNT_DELETION_API_URL].map(originOf).filter(Boolean))]
+// Grafana Faro collector (src/lib/analytics.js) — same value the client bundle was built with.
+const FARO_ORIGINS = [originOf(process.env.GRAFANA_FARO_URL || process.env.VITE_PUBLIC_GRAFANA_FARO_URL)].filter(Boolean)
 
 // Matches SCRIPT_URLS in src/lib/msg91Widget.js exactly — the widget tries
 // the first, falls back to the second, and does its own XHR config fetch
@@ -127,6 +129,8 @@ app.use(
           'https://*.google-analytics.com',
           'https://*.analytics.google.com',
           ...MSG91_WIDGET_ORIGINS,
+          // Grafana Faro collector (src/lib/analytics.js).
+          ...FARO_ORIGINS,
         ],
         'img-src': ["'self'", 'data:', 'https:'],
         // Tailwind/inline `style={...}` props throughout this codebase rely

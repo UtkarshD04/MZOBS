@@ -17,6 +17,7 @@ import '@fontsource/playfair-display/700-italic.css'
 import './index.css'
 import App from './App.jsx'
 import { installClickShine } from './lib/clickShine'
+import { initAnalytics } from './lib/analytics'
 
 // server.js embeds the job it already fetched for /jobs/:id here (see
 // buildJobSeo's caller) so JobDetail.jsx can reuse it on hydration instead
@@ -30,6 +31,7 @@ const initialJob = typeof window !== 'undefined' ? (window.__INITIAL_JOB__ ?? nu
 const initialHomeData = typeof window !== 'undefined' ? (window.__INITIAL_HOME_DATA__ ?? null) : null
 
 installClickShine()
+initAnalytics()
 
 const app = (
   <StrictMode>

@@ -1,4 +1,5 @@
 import { EMPLOYEE_API_URL } from './config'
+import { trackOnSuccess } from './analytics'
 
 async function postJSON(path, body, token) {
   const headers = { 'Content-Type': 'application/json' }
@@ -32,7 +33,7 @@ export function loginEmployee({ email, password }) {
 }
 
 export function signupEmployee({ name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken, emailToken }) {
-  return postJSON('/auth/signup', { name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken, emailToken })
+  return trackOnSuccess(postJSON('/auth/signup', { name, email, phone, password, experience, graduation, city, state, pincode, paymentOrderId, phoneToken, emailToken }), 'signup_completed', { audience: 'employee', method: 'email' })
 }
 
 // Server-side OTP for the one reserved test/review number (Backend
@@ -76,7 +77,7 @@ export function loginEmployeeWithGoogle({ credential }) {
 }
 
 export function signupEmployeeWithGoogle({ credential, phone, experience, graduation, city, state, pincode, paymentOrderId, phoneToken }) {
-  return postJSON('/auth/google-signup', { credential, phone, experience, graduation, city, state, pincode, paymentOrderId, phoneToken })
+  return trackOnSuccess(postJSON('/auth/google-signup', { credential, phone, experience, graduation, city, state, pincode, paymentOrderId, phoneToken }), 'signup_completed', { audience: 'employee', method: 'google' })
 }
 
 // The MSG91 widget verifies the OTP itself client-side and hands back an

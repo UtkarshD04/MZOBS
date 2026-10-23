@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
+import { track } from '../lib/analytics'
 import { ArrowLeft, Loader2, SearchX } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -50,6 +51,10 @@ export default function JobDetail() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
+
+  useEffect(() => {
+    if (status === 'ready' && job?.id) track('job_viewed', { job_id: job.id })
+  }, [status, job?.id])
 
   const seo = job ? buildJobSeo(job, location.pathname) : null
 

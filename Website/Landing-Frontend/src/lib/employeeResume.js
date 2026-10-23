@@ -1,4 +1,5 @@
 import { EMPLOYEE_API_URL } from './config'
+import { track } from './analytics'
 
 // Same allowlist/size the backend enforces (see Backend/src/utils/fileValidation.js
 // and middleware/upload.js) — checked here too just for fast, friendly
@@ -36,5 +37,6 @@ export async function uploadEmployeeResume(token, file) {
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.message ?? 'Could not upload your resume.')
+  track('resume_uploaded')
   return data
 }

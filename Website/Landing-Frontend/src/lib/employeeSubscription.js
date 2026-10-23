@@ -1,4 +1,5 @@
 import { EMPLOYEE_API_URL } from './config'
+import { trackOnSuccess } from './analytics'
 
 async function authedJSON(path, token, options = {}) {
   const res = await fetch(`${EMPLOYEE_API_URL}${path}`, {
@@ -15,7 +16,7 @@ async function authedJSON(path, token, options = {}) {
 }
 
 export function createSubscriptionOrder(token, couponCode) {
-  return authedJSON('/subscription/order', token, { method: 'POST', body: JSON.stringify({ couponCode: couponCode || undefined }) })
+  return trackOnSuccess(authedJSON('/subscription/order', token, { method: 'POST', body: JSON.stringify({ couponCode: couponCode || undefined }) }), 'subscription_checkout_started', { audience: 'employee' })
 }
 
 // No auth required (see Backend's employeeSubscriptionRoutes.js) — previews
@@ -37,12 +38,12 @@ export async function previewSubscriptionCoupon(code) {
 }
 
 export function verifySubscriptionPayment(token, payload) {
-  return authedJSON('/subscription/verify', token, { method: 'POST', body: JSON.stringify(payload) })
+  return trackOnSuccess(authedJSON('/subscription/verify', token, { method: 'POST', body: JSON.stringify(payload) }), 'payment_success', { audience: 'employee' })
 }
 
 // Dev/testing shortcut used when the order came back with mock: true
 // (Razorpay isn't configured on the server) — skips the Checkout widget
 // entirely and just confirms the simulated order.
 export function confirmMockSubscriptionPayment(token, orderId) {
-  return authedJSON('/subscription/mock-confirm', token, { method: 'POST', body: JSON.stringify({ orderId }) })
+  return trackOnSuccess(authedJSON('/subscription/mock-confirm', token, { method: 'POST', body: JSON.stringify({ orderId }) }), 'payment_success', { audience: 'employee' })
 }

@@ -1,4 +1,5 @@
 import { EMPLOYER_API_URL, EMPLOYER_APP_URL } from './config'
+import { track, trackOnSuccess } from './analytics'
 
 async function postJSON(path, body, token) {
   const headers = { 'Content-Type': 'application/json' }
@@ -32,7 +33,7 @@ export function loginEmployer({ email, password }) {
 }
 
 export function signupEmployer({ companyName, name, email, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName }) {
-  return postJSON('/auth/signup', { companyName, name, email, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName })
+  return trackOnSuccess(postJSON('/auth/signup', { companyName, name, email, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName }), 'employer_signup_completed', { method: 'email' })
 }
 
 // Passwordless sign-in for accounts registered with a verified mobile.
@@ -45,7 +46,7 @@ export function loginEmployerWithGoogle({ credential }) {
 }
 
 export function signupEmployerWithGoogle({ credential, companyName, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName }) {
-  return postJSON('/auth/google-signup', { credential, companyName, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName })
+  return trackOnSuccess(postJSON('/auth/google-signup', { credential, companyName, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName }), 'employer_signup_completed', { method: 'google' })
 }
 
 export function forgotPasswordEmployer({ email }) {
@@ -66,7 +67,7 @@ export function verifyEmployerPhoneWidget({ phone, accessToken }) {
 // The pricing-page "pay, no signup form" flow: order first (no account
 // needed yet)...
 export function createGuestSubscriptionOrder(planCode) {
-  return postJSON('/subscription/guest-order', { planCode })
+  return trackOnSuccess(postJSON('/subscription/guest-order', { planCode }), 'subscription_checkout_started', { audience: 'employer', plan: planCode })
 }
 
 // The "Customize plan" form — lands in the Operations portal's Plan enquiries page.
@@ -79,7 +80,12 @@ export function submitPlanEnquiry({ name, companyName, phone, email, employeesNe
 // generated password (the account has no email the visitor chose, so this
 // is their only way back in without the token).
 export function guestSubscribeSignup({ phone, phoneToken, razorpay_order_id, razorpay_payment_id, razorpay_signature, mockOrderId }) {
-  return postJSON('/subscription/guest-verify', { phone, phoneToken, razorpay_order_id, razorpay_payment_id, razorpay_signature, mockOrderId })
+  return postJSON('/subscription/guest-verify', { phone, phoneToken, razorpay_order_id, razorpay_payment_id, razorpay_signature, mockOrderId }).then((result) => {
+    // Settles the payment and creates the employer account in one call.
+    track('payment_success', { audience: 'employer' })
+    track('employer_signup_completed', { method: 'subscription' })
+    return result
+  })
 }
 
 // A long-lived JWT in a redirect URL leaks into browser history, server
