@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Briefcase, Check, ChevronDown, Compass, CreditCard, Crown, FileText, GraduationCap, Maximize2, Mic, Minimize2, Minus, Loader2, RotateCw, Send, ShieldCheck, CalendarClock, ExternalLink, Lock, Sparkles, UserRound, X } from 'lucide-react'
+import { Briefcase, Infinity as InfinityIcon, Users, Check, ChevronDown, Compass, CreditCard, Crown, FileText, GraduationCap, Maximize2, Mic, Minimize2, Minus, Loader2, RotateCw, Send, ShieldCheck, CalendarClock, ExternalLink, Lock, Sparkles, UserRound, X } from 'lucide-react'
 import Seo from '../components/Seo'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -65,8 +65,8 @@ function Cell({ value, premium }) {
 function Price({ amount, original }) {
   return (
     <p className="flex items-baseline gap-2">
-      {original != null && original !== amount && <span className="text-[16px] text-mz-muted line-through">₹{original}</span>}
-      <span className="text-[34px] font-bold tracking-[-0.02em] text-mz-ink">₹{amount}</span>
+      {original != null && original !== amount && <span className="text-[18px] text-mz-muted line-through">₹{original}</span>}
+      <span className="text-[44px] font-bold leading-none tracking-[-0.03em] text-mz-ink">₹{amount}</span>
     </p>
   )
 }
@@ -82,16 +82,17 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {/* Basic */}
-      <section aria-labelledby="plan-basic" className="flex flex-col rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
+      <section aria-labelledby="plan-basic" className="flex flex-col rounded-[16px] border border-mz-line bg-white p-5 shadow-[0_1px_2px_rgba(22,50,79,0.05)] transition-shadow duration-200 hover:shadow-[0_10px_28px_-16px_rgba(22,50,79,0.3)] motion-reduce:transition-none sm:p-6">
         <div className="flex items-center justify-between gap-2">
           <h2 id="plan-basic" className="text-[17px] font-bold text-mz-ink">{plan.basic.name}</h2>
           {signedIn && !isPaid && <span className="rounded-full bg-mz-bg px-2.5 py-1 text-[12px] font-semibold text-mz-ink-2 ring-1 ring-mz-line">Your plan</span>}
         </div>
-        <div className="mt-3">
+        <div className="mt-4 border-b border-mz-line pb-5">
           <Price amount={0} />
-          <p className="text-[13px] text-mz-muted">Free, no card needed</p>
+          <p className="mt-2 text-[13px] text-mz-muted">Free, no card needed</p>
         </div>
-        <ul className="mt-4 flex-1 space-y-2 text-[14px] text-mz-ink-2">
+        <p className="mt-5 text-[11.5px] font-semibold uppercase tracking-[0.12em] text-mz-muted">What’s included</p>
+        <ul className="mt-3 flex-1 space-y-2.5 text-[14px] text-mz-ink-2">
           {['Browse every job with no limits', `Apply to your first ${limit} jobs`, 'Create your profile and upload your resume', 'Get basic job matching and application tracking'].map((t) => (
             <li key={t} className="flex gap-2">
               <Check size={16} className="mt-0.5 shrink-0 text-mz-ink-2" aria-hidden="true" />
@@ -107,8 +108,8 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
                 {Math.min(appCount, limit)} of {limit}
               </span>
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-mz-bg ring-1 ring-mz-line" aria-hidden="true">
-              <div className={`h-full rounded-full ${appCount >= limit ? 'bg-[#B42318]' : 'bg-mz-primary'}`} style={{ width: `${Math.min(100, (appCount / limit) * 100)}%` }} />
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-mz-bg ring-1 ring-mz-line" aria-hidden="true">
+              <div className={`h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none ${appCount >= limit ? 'bg-[#B42318]' : 'bg-mz-primary'}`} style={{ width: `${Math.min(100, (appCount / limit) * 100)}%` }} />
             </div>
             {appCount >= limit && <p className="mt-1.5 text-[12.5px] text-[#B42318]">You’ve used every free application. Premium removes the limit.</p>}
           </div>
@@ -121,7 +122,7 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
       </section>
 
       {/* Premium */}
-      <section aria-labelledby="plan-premium" className="flex flex-col rounded-[14px] border-2 border-mz-primary bg-white p-5 sm:p-6">
+      <section aria-labelledby="plan-premium" className="relative flex flex-col overflow-hidden rounded-[16px] border-2 border-mz-primary bg-gradient-to-b from-mz-primary-tint/60 via-white to-white p-5 shadow-[0_14px_34px_-18px_rgba(11,122,109,0.45)] transition-shadow duration-200 hover:shadow-[0_18px_40px_-18px_rgba(11,122,109,0.55)] motion-reduce:transition-none sm:p-6">
         <div className="flex items-center justify-between gap-2">
           <h2 id="plan-premium" className="flex items-center gap-1.5 text-[17px] font-bold text-mz-ink">
             <Sparkles size={17} className="text-mz-primary" aria-hidden="true" />
@@ -135,11 +136,12 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
             <span className="rounded-full bg-mz-primary-tint px-2.5 py-1 text-[12px] font-semibold text-mz-primary-strong">One-time payment</span>
           )}
         </div>
-        <div className="mt-3">
+        <div className="mt-4 border-b border-mz-primary/15 pb-5">
           <Price amount={isPaid ? fee : finalFee} original={!isPaid && payment.coupon ? fee : null} />
-          <p className="text-[13px] text-mz-muted">{isPaid ? `Paid once${paidOn ? ` on ${dateFmt.format(new Date(paidOn))}` : ''} · valid for life` : 'Paid once, valid for life. No renewals.'}</p>
+          <p className="mt-2 text-[13px] text-mz-muted">{isPaid ? `Paid once${paidOn ? ` on ${dateFmt.format(new Date(paidOn))}` : ''} · valid for life` : 'Paid once, valid for life. No renewals.'}</p>
         </div>
-        <ul className="mt-4 flex-1 space-y-2 text-[14px] text-mz-ink">
+        <p className="mt-5 text-[11.5px] font-semibold uppercase tracking-[0.12em] text-mz-primary-strong">Everything in Basic, plus</p>
+        <ul className="mt-3 flex-1 space-y-2.5 text-[14px] text-mz-ink">
           {['Get unlimited job applications', 'Get your CV enhanced by an expert, plus an ATS score', 'Attend live technical, behavioral, and HR mock interviews', 'Experience one-to-one HR and career coaching with a personal roadmap', 'Get more job-fit picks from a wider pool'].map((t) => (
             <li key={t} className="flex gap-2">
               <Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />
@@ -151,7 +153,7 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
         {!isPaid &&
           (signedIn ? (
             <div className="mt-5">
-              <button type="button" onClick={payment.pay} disabled={payment.paying} className={`${tealBtn} w-full`}>
+              <button type="button" onClick={payment.pay} disabled={payment.paying} className={`${tealBtn} h-12 w-full text-[15.5px] shadow-[0_10px_22px_-10px_rgba(11,122,109,0.7)]`}>
                 {payment.paying && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
                 {payment.paying ? 'Processing…' : `Upgrade for ₹${finalFee}`}
               </button>
@@ -179,18 +181,26 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
 
 function HowItWorks() {
   const steps = [
-    ['Request', 'Pick a service and tell us what you need.'],
-    ['We schedule', 'The Mzobs team confirms a time or starts the work.'],
-    ['Session / work', 'A live session, or our experts work on your CV or plan.'],
-    ['Delivered', 'Feedback, files and next steps land in your account.'],
+    ['Request', 'Pick a service and tell us what you need.', 'bg-[#EAF2FF] text-[#1D4ED8] ring-[#C9DBFB]'],
+    ['We schedule', 'The Mzobs team confirms a time or starts the work.', 'bg-[#FFF4E5] text-[#B45309] ring-[#F7DDB8]'],
+    ['Session / work', 'A live session, or our experts work on your CV or plan.', 'bg-[#EFEBFF] text-[#5B3FD1] ring-[#D9D1FA]'],
+    ['Delivered', 'Feedback, files and next steps land in your account.', 'bg-[#E6F6EC] text-[#1E7B45] ring-[#BFE5CD]'],
   ]
   return (
-    <ol className="grid gap-3 sm:grid-cols-4">
-      {steps.map(([title, body], i) => (
-        <li key={title} className="rounded-[12px] border border-mz-line bg-white p-4">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mz-primary-tint text-[13px] font-bold text-mz-primary-strong">{i + 1}</span>
-          <p className="mt-2.5 text-[14.5px] font-semibold text-mz-ink">{title}</p>
-          <p className="mt-0.5 text-[13px] leading-relaxed text-mz-muted">{body}</p>
+    <ol className="grid gap-4 sm:grid-cols-4 sm:gap-0">
+      {steps.map(([title, body, tone], i) => (
+        <li key={title} className="relative flex gap-3.5 sm:flex-col sm:gap-0 sm:pr-4">
+          {i < steps.length - 1 && (
+            <>
+              <span className="absolute left-[17px] top-10 h-[calc(100%-1rem)] w-px bg-mz-line-strong sm:hidden" aria-hidden="true" />
+              <span className="absolute left-[46px] right-[10px] top-[17px] hidden h-px bg-mz-line-strong sm:block" aria-hidden="true" />
+            </>
+          )}
+          <span className={`relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[14px] font-bold ring-1 ${tone}`}>{i + 1}</span>
+          <div className="sm:mt-3">
+            <p className="text-[14.5px] font-semibold text-mz-ink">{title}</p>
+            <p className="mt-0.5 text-[13px] leading-relaxed text-mz-muted">{body}</p>
+          </div>
         </li>
       ))}
     </ol>
@@ -279,7 +289,10 @@ function RequestCard({ request, service, onCancel, cancelling }) {
   )
 }
 
-function ServiceOption({ service, openRequest, locked, onRequest }) {
+const CATEGORY_ICON = { resume: FileText, interview: Mic, skills: Compass, career: Compass, coaching: GraduationCap }
+
+function ServiceOption({ service, category, openRequest, locked, onRequest }) {
+  const CategoryIcon = CATEGORY_ICON[category] ?? Sparkles
   const [open, setOpen] = useState(false)
   const [note, setNote] = useState('')
   const [preferredTime, setPreferredTime] = useState('')
@@ -303,14 +316,19 @@ function ServiceOption({ service, openRequest, locked, onRequest }) {
   }
 
   return (
-    <li className="rounded-[12px] border border-mz-line bg-white p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+    <li className="rounded-[14px] border border-mz-line bg-white p-4 shadow-[0_1px_2px_rgba(22,50,79,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-mz-line-strong hover:shadow-[0_8px_20px_-14px_rgba(22,50,79,0.3)] motion-reduce:transition-none">
+      <div className="flex items-start gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-mz-primary-tint text-mz-primary-strong">
+          <CategoryIcon size={17} aria-hidden="true" />
+        </span>
+        <div className="min-w-0 flex-1">
           <h4 className="text-[14.5px] font-semibold text-mz-ink">{service.label}</h4>
           <p className="mt-0.5 text-[13px] leading-relaxed text-mz-muted">{service.description}</p>
         </div>
         {locked ? (
-          <Lock size={15} className="mt-1 shrink-0 text-mz-muted" aria-label="Premium only" role="img" />
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-mz-bg px-2 py-1 text-[11.5px] font-semibold text-mz-ink-2 ring-1 ring-mz-line">
+            <Lock size={11} aria-hidden="true" /> Premium
+          </span>
         ) : openRequest ? (
           <span className="shrink-0 rounded-full bg-mz-primary-tint px-2.5 py-1 text-[12px] font-semibold text-mz-primary-strong">Requested</span>
         ) : (
@@ -421,8 +439,8 @@ function ServicesSection({ plan, session, isPaid, requests, onRequest, onCancel,
                 type="button"
                 onClick={() => setCategory(c.key)}
                 aria-pressed={category === c.key}
-                className={`-mb-px shrink-0 border-b-2 px-2.5 pb-2.5 pt-1 text-[13.5px] font-medium transition-colors ${
-                  category === c.key ? 'border-mz-primary text-mz-primary-strong' : 'border-transparent text-mz-muted hover:text-mz-ink'
+                className={`-mb-px shrink-0 rounded-t-[8px] border-b-[3px] px-3.5 pb-2.5 pt-2 text-[13.5px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-mz-primary motion-reduce:transition-none ${
+                  category === c.key ? 'border-mz-primary bg-mz-primary-tint/60 font-semibold text-mz-primary-strong' : 'border-transparent font-medium text-mz-muted hover:bg-mz-bg hover:text-mz-ink'
                 }`}
               >
                 {c.label}
@@ -430,9 +448,9 @@ function ServicesSection({ plan, session, isPaid, requests, onRequest, onCancel,
             ))}
           </div>
         </div>
-        <ul className="mt-4 grid gap-3 md:grid-cols-2">
+        <ul key={category} className="mz-fade-in mt-4 grid gap-3 motion-reduce:animate-none md:grid-cols-2">
           {shown.map((s) => (
-            <ServiceOption key={s.key} service={s} locked={!isPaid} openRequest={openByService.has(s.key)} onRequest={onRequest} />
+            <ServiceOption key={s.key} service={s} category={category} locked={!isPaid} openRequest={openByService.has(s.key)} onRequest={onRequest} />
           ))}
         </ul>
       </div>
@@ -685,11 +703,25 @@ export default function EmployeeSubscription() {
       <Navbar />
       <main className="pb-14 pt-[88px] sm:pt-[96px]">
         <Container className="max-w-[1040px]">
-          <header className="max-w-2xl">
-            <h1 className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-mz-ink sm:text-[32px]">Choose how you want to grow</h1>
-            <p className="mt-2 text-[15px] leading-relaxed text-mz-muted">
+          <header className="max-w-3xl">
+            <h1 className="text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-mz-ink sm:text-[40px]">Choose how you want to grow</h1>
+            <p className="mt-3 text-[16px] leading-relaxed text-mz-ink-2">
               Start free with Mzobs Basic. Upgrade to Mzobs Premium to get unlimited applications and hands-on support from our team, from your CV to your final offer.
             </p>
+            <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2.5 text-[13.5px] font-medium text-mz-ink-2">
+              {[
+                [InfinityIcon, 'Unlimited job applications'],
+                [FileText, 'Expert CV support'],
+                [Users, 'One-to-one career guidance'],
+              ].map(([HeroIcon, text]) => (
+                <li key={text} className="inline-flex items-center gap-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mz-primary-tint text-mz-primary-strong">
+                    <HeroIcon size={14} aria-hidden="true" />
+                  </span>
+                  {text}
+                </li>
+              ))}
+            </ul>
           </header>
 
           {plan.status === 'loading' || waitingForProfile || session === undefined ? (

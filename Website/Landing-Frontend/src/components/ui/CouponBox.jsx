@@ -55,14 +55,14 @@ export default function CouponBox({ onPreview, applied, onApply, onRemove }) {
               setError('')
             }}
             onKeyDown={(e) => e.key === 'Enter' && apply()}
-            className="w-full h-10 pl-9 pr-3 rounded-lg border border-(--jobs-border) text-[13.5px] text-(--jobs-navy) outline-none focus:border-(--jobs-teal-dark) transition-colors"
+            className="w-full h-10 pl-9 pr-3 rounded-[10px] border border-(--jobs-border) bg-white text-[13.5px] text-(--jobs-navy) outline-none transition-[border-color,box-shadow] focus:border-(--jobs-teal-dark) focus:ring-2 focus:ring-(--jobs-teal-dark)/15 motion-reduce:transition-none"
           />
         </div>
         <button
           type="button"
           onClick={apply}
           disabled={loading || !code.trim()}
-          className="h-10 px-4 rounded-lg border border-(--jobs-border) text-[13px] font-bold text-(--jobs-navy) hover:bg-(--jobs-teal-tint) transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
+          className="h-10 px-4 rounded-[10px] border border-(--jobs-border) bg-white text-[13px] font-bold text-(--jobs-navy) hover:border-(--jobs-teal-dark) hover:bg-(--jobs-teal-tint) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--jobs-teal-dark) disabled:opacity-50 disabled:hover:bg-transparent motion-reduce:transition-none"
         >
           {loading ? <Loader2 size={14} className="animate-spin" /> : 'Apply'}
         </button>
