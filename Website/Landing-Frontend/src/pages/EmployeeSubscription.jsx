@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, ChevronDown, Minus, Loader2, RotateCw, ShieldCheck, CalendarClock, ExternalLink, Lock, Sparkles, UserRound, X } from 'lucide-react'
+import { Briefcase, Check, ChevronDown, Compass, CreditCard, Crown, FileText, GraduationCap, Maximize2, Mic, Minimize2, Minus, Loader2, RotateCw, Send, ShieldCheck, CalendarClock, ExternalLink, Lock, Sparkles, UserRound, X } from 'lucide-react'
 import Seo from '../components/Seo'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -57,7 +57,7 @@ function useSession() {
 // --- small pieces ------------------------------------------------------------
 
 function Cell({ value, premium }) {
-  if (value === true) return <Check size={17} className={premium ? 'text-mz-primary' : 'text-mz-ink-2'} aria-label="Included" role="img" />
+  if (value === true) return <Check size={17} className="text-mz-primary" aria-label="Included" role="img" />
   if (value === false) return <Minus size={17} className="text-mz-line-strong" aria-label="Not included" role="img" />
   return <span className={premium ? 'font-medium text-mz-ink' : 'text-mz-ink-2'}>{value}</span>
 }
@@ -442,64 +442,118 @@ function ServicesSection({ plan, session, isPaid, requests, onRequest, onCancel,
 
 // --- comparison table --------------------------------------------------------
 
-function ComparisonGroup({ group, defaultOpen }) {
-  const [open, setOpen] = useState(defaultOpen)
+// Accent per feature group (keyed by the plan config's group key). Full class
+// strings so Tailwind can see them.
+const GROUP_STYLE = {
+  jobs: { icon: Briefcase, head: 'bg-[#EAF2FF] text-[#1D4ED8]', badge: 'bg-white/80 text-[#1D4ED8]' },
+  profile: { icon: FileText, head: 'bg-[#E4F6F1] text-[#0B6F63]', badge: 'bg-white/80 text-[#0B6F63]' },
+  skills: { icon: Compass, head: 'bg-[#EFEBFF] text-[#5B3FD1]', badge: 'bg-white/80 text-[#5B3FD1]' },
+  interview: { icon: Mic, head: 'bg-[#FFF1E3] text-[#C2570C]', badge: 'bg-white/80 text-[#C2570C]' },
+  coaching: { icon: GraduationCap, head: 'bg-[#FFE9F1] text-[#BE1F5C]', badge: 'bg-white/80 text-[#BE1F5C]' },
+}
+const FALLBACK_STYLE = { icon: Sparkles, head: 'bg-mz-bg text-mz-ink', badge: 'bg-white/80 text-mz-ink-2' }
+const ROW_COLS = 'sm:grid-cols-[1.1fr_1fr_1.4fr]'
+
+function ComparisonGroup({ group, open, onToggle }) {
+  const style = GROUP_STYLE[group.key] ?? FALLBACK_STYLE
+  const Icon = style.icon
+  const panelId = `compare-${group.key}`
   return (
-    <div className="border-b border-mz-line last:border-b-0">
+    <div className="px-2 pt-2 last:pb-2 sm:px-3">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={onToggle}
         aria-expanded={open}
-        className="flex w-full items-center gap-2 bg-mz-bg px-4 py-3 text-left focus-visible:outline-2 focus-visible:outline-mz-primary sm:px-5"
+        aria-controls={panelId}
+        className={`flex w-full items-center gap-2.5 rounded-[10px] px-3 py-2.5 text-left transition-[filter] hover:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary ${style.head}`}
       >
-        <span className="text-[14.5px] font-semibold text-mz-ink">{group.label}</span>
-        <span className="text-[12.5px] text-mz-muted">{group.features.length}</span>
-        <ChevronDown size={16} className={`ml-auto text-mz-muted transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
+        <Icon size={17} aria-hidden="true" />
+        <span className="text-[14.5px] font-semibold">{group.label}</span>
+        <span className={`rounded-full px-2 py-0.5 text-[11.5px] font-bold tabular-nums ${style.badge}`}>{group.features.length}</span>
+        <ChevronDown size={17} className={`ml-auto transition-transform duration-300 ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
       </button>
-      {open && (
-        <div role="rowgroup">
-          {group.features.map((f) => (
-            <div key={f.label} role="row" className="grid grid-cols-2 gap-x-4 gap-y-1 border-t border-mz-line px-4 py-3 text-[13.5px] sm:grid-cols-[1.1fr_1fr_1.4fr] sm:px-5">
-              <div role="rowheader" className="col-span-2 font-medium text-mz-ink sm:col-span-1">
-                {f.label}
+      <div
+        id={panelId}
+        className={`grid transition-[grid-template-rows,visibility] duration-300 ease-out ${open ? 'visible grid-rows-[1fr]' : 'invisible grid-rows-[0fr]'}`}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div role="rowgroup" className="pt-1">
+            {group.features.map((f) => (
+              <div key={f.label} role="row" className={`grid grid-cols-2 border-b border-mz-line/70 text-[13.5px] last:border-b-0 ${ROW_COLS}`}>
+                <div role="rowheader" className="col-span-2 px-3 pb-1 pt-3 font-medium text-mz-ink sm:col-span-1 sm:py-3">
+                  {f.label}
+                </div>
+                <div role="cell" className="flex items-start gap-1.5 px-3 pb-3 sm:py-3">
+                  <span className="mr-1 text-[11.5px] font-semibold uppercase tracking-wide text-mz-muted sm:hidden">Basic</span>
+                  <Cell value={f.basic} />
+                </div>
+                <div role="cell" className="flex items-start gap-1.5 bg-mz-primary-tint/50 px-3 pb-3 sm:border-x sm:border-mz-primary/10 sm:py-3">
+                  <span className="mr-1 text-[11.5px] font-semibold uppercase tracking-wide text-mz-primary-strong sm:hidden">Premium</span>
+                  <Cell value={f.premium} premium />
+                </div>
               </div>
-              <div role="cell">
-                <span className="mr-1 text-[11.5px] font-semibold uppercase tracking-wide text-mz-muted sm:hidden">Basic</span>
-                <Cell value={f.basic} />
-              </div>
-              <div role="cell">
-                <span className="mr-1 text-[11.5px] font-semibold uppercase tracking-wide text-mz-primary-strong sm:hidden">Premium</span>
-                <Cell value={f.premium} premium />
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
 
 function ComparisonTable({ plan }) {
-  const [expandAll, setExpandAll] = useState(0)
+  const groups = plan.groups
+  // The first two groups start open; the button flips to "Collapse all" once
+  // everything is open.
+  const [openKeys, setOpenKeys] = useState(() => new Set(groups.slice(0, 2).map((g) => g.key)))
+  const allOpen = groups.every((g) => openKeys.has(g.key))
+  const toggle = (key) =>
+    setOpenKeys((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+
   return (
     <section aria-labelledby="compare-title">
-      <div className="flex flex-wrap items-end justify-between gap-2">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 id="compare-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Compare plans</h2>
+          <h2 id="compare-title" className="text-[22px] font-bold tracking-[-0.02em] text-mz-ink sm:text-[26px]">Compare plans</h2>
           <p className="mt-1 text-[14px] text-mz-muted">Everything in {plan.basic.name} and {plan.premium.name}, side by side.</p>
         </div>
-        <button type="button" onClick={() => setExpandAll((n) => n + 1)} className="text-[13.5px] font-semibold text-mz-primary-strong hover:underline">
-          Expand all
+        <button
+          type="button"
+          onClick={() => setOpenKeys(allOpen ? new Set() : new Set(groups.map((g) => g.key)))}
+          className="inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-mz-primary/30 bg-mz-primary-tint px-3.5 text-[13.5px] font-semibold text-mz-primary-strong transition-colors hover:border-mz-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
+        >
+          {allOpen ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />}
+          {allOpen ? 'Collapse all' : 'Expand all'}
         </button>
       </div>
-      <div role="table" aria-label="Plan comparison" className="mt-4 overflow-hidden rounded-[14px] border border-mz-line bg-white">
-        <div role="row" className="hidden grid-cols-[1.1fr_1fr_1.4fr] gap-x-4 border-b border-mz-line px-5 py-3 text-[13px] font-semibold sm:grid">
-          <div role="columnheader" className="text-mz-muted">Feature</div>
-          <div role="columnheader" className="text-mz-ink">{plan.basic.name}</div>
-          <div role="columnheader" className="text-mz-primary-strong">{plan.premium.name}</div>
+      <div role="table" aria-label="Plan comparison" className="mt-5 overflow-hidden rounded-[16px] border border-mz-line bg-white shadow-[0_10px_30px_-18px_rgba(22,50,79,0.25)]">
+        <div role="row" className={`hidden border-b border-mz-line text-[13px] sm:grid ${ROW_COLS}`}>
+          <div role="columnheader" className="flex items-center px-5 py-4 text-[14px] font-bold text-mz-ink">Feature</div>
+          <div role="columnheader" className="flex items-center gap-2.5 px-3 py-4">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EAF2FF] text-[#1D4ED8]">
+              <Send size={16} aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[14px] font-bold text-mz-ink">{plan.basic.name}</span>
+              <span className="block text-[12px] font-normal text-mz-muted">Free, no card needed</span>
+            </span>
+          </div>
+          <div role="columnheader" className="flex items-center gap-2.5 border-x border-mz-primary/10 bg-mz-primary-tint/60 px-3 py-4">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mz-primary/15 text-mz-primary-strong">
+              <Crown size={16} aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[14px] font-bold text-mz-primary-strong">{plan.premium.name}</span>
+              <span className="block text-[12px] font-normal text-mz-muted">₹{PREMIUM_PRICE} one-time payment</span>
+            </span>
+          </div>
         </div>
-        {plan.groups.map((g, i) => (
-          <ComparisonGroup key={`${g.key}-${expandAll}`} group={g} defaultOpen={expandAll > 0 || i < 2} />
+        {groups.map((g) => (
+          <ComparisonGroup key={g.key} group={g} open={openKeys.has(g.key)} onToggle={() => toggle(g.key)} />
         ))}
       </div>
     </section>
@@ -675,16 +729,22 @@ export default function EmployeeSubscription() {
               <ComparisonTable plan={plan.data} />
 
               <section aria-labelledby="never-title" className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
-                  <h2 id="never-title" className="text-[16px] font-bold text-mz-ink">You’re never charged for</h2>
+                <div className="rounded-[16px] border border-mz-primary/15 bg-gradient-to-br from-mz-primary-tint/70 to-white p-5 sm:p-6">
+                  <h2 id="never-title" className="flex items-center gap-2 text-[16px] font-bold text-mz-ink">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-mz-primary/15 text-mz-primary-strong"><ShieldCheck size={16} aria-hidden="true" /></span>
+                    You’re never charged for
+                  </h2>
                   <ul className="mt-3 space-y-2.5 text-[14px] text-mz-ink-2">
                     <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Being shortlisted: it is always free for you.</li>
                     <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Getting placed, no success fee and no cut of your salary.</li>
                     <li className="flex gap-2"><X size={16} className="mt-0.5 shrink-0 text-mz-muted" aria-hidden="true" />No renewals: Premium is a single payment.</li>
                   </ul>
                 </div>
-                <div className="rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
-                  <h2 className="text-[16px] font-bold text-mz-ink">Payment history</h2>
+                <div className="rounded-[16px] border border-mz-line bg-white p-5 sm:p-6">
+                  <h2 className="flex items-center gap-2 text-[16px] font-bold text-mz-ink">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EAF2FF] text-[#1D4ED8]"><CreditCard size={16} aria-hidden="true" /></span>
+                    Payment history
+                  </h2>
                   {isPaid ? (
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[14px]">
                       <div>
