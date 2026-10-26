@@ -79,30 +79,46 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
   const limit = plan.basic.applicationLimit
   const fee = PREMIUM_PRICE
   const finalFee = payment.coupon?.finalAmount ?? fee
+  const basicIncluded = ['Browse every job with no limits', `Apply to your first ${limit} jobs`, 'Create your profile and upload your resume', 'Basic job matching and application tracking']
+  const basicExcluded = ['Expert CV enhancement and ATS score', 'Live mock interviews', 'One-to-one career coaching']
+  // [text, bold] segments
+  const premiumItems = [
+    [['Unlimited', true], [' job applications']],
+    [['Your CV enhanced by an '], ['expert', true], [', plus an ATS score']],
+    [['Live', true], [' technical, behavioural and HR mock interviews']],
+    [['One-to-one', true], [' HR and career coaching with a personal roadmap']],
+    [['More job-fit picks from a '], ['wider pool', true]],
+  ]
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid items-stretch gap-5 md:grid-cols-2">
       {/* Basic */}
-      <section aria-labelledby="plan-basic" className="flex flex-col rounded-[16px] border border-mz-line bg-white p-5 shadow-[0_1px_2px_rgba(22,50,79,0.05)] transition-shadow duration-200 hover:shadow-[0_10px_28px_-16px_rgba(22,50,79,0.3)] motion-reduce:transition-none sm:p-6">
+      <section aria-labelledby="plan-basic" className="flex flex-col rounded-[20px] border border-mz-line bg-white p-6 shadow-[0_1px_2px_rgba(22,50,79,0.05)] transition-shadow duration-200 hover:shadow-[0_14px_32px_-18px_rgba(22,50,79,0.3)] motion-reduce:transition-none sm:p-7">
         <div className="flex items-center justify-between gap-2">
-          <h2 id="plan-basic" className="text-[17px] font-bold text-mz-ink">{plan.basic.name}</h2>
+          <h2 id="plan-basic" className="text-[15px] font-bold text-mz-ink">{plan.basic.name}</h2>
           {signedIn && !isPaid && <span className="rounded-full bg-mz-bg px-2.5 py-1 text-[12px] font-semibold text-mz-ink-2 ring-1 ring-mz-line">Your plan</span>}
         </div>
-        <div className="mt-4 border-b border-mz-line pb-5">
-          <Price amount={0} />
-          <p className="mt-2 text-[13px] text-mz-muted">Free, no card needed</p>
+        <div className="mt-4">
+          <p className="text-[56px] font-extrabold leading-none tracking-[-0.03em] text-mz-ink">₹0</p>
+          <p className="mt-3 text-[13px] text-mz-muted">Free forever, no card needed</p>
         </div>
-        <p className="mt-5 text-[11.5px] font-semibold uppercase tracking-[0.12em] text-mz-muted">What’s included</p>
-        <ul className="mt-3 flex-1 space-y-2.5 text-[14px] text-mz-ink-2">
-          {['Browse every job with no limits', `Apply to your first ${limit} jobs`, 'Create your profile and upload your resume', 'Get basic job matching and application tracking'].map((t) => (
-            <li key={t} className="flex gap-2">
-              <Check size={16} className="mt-0.5 shrink-0 text-mz-ink-2" aria-hidden="true" />
+        <ul className="mt-6 flex-1 space-y-3 text-[14px] text-mz-ink-2">
+          {basicIncluded.map((t) => (
+            <li key={t} className="flex items-start gap-2.5">
+              <span className="mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border border-mz-primary text-mz-primary" aria-hidden="true"><Check size={11} strokeWidth={3} /></span>
+              {t}
+            </li>
+          ))}
+          {basicExcluded.map((t) => (
+            <li key={t} className="flex items-start gap-2.5 text-mz-muted">
+              <span className="mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border border-mz-line-strong text-mz-muted" aria-hidden="true"><X size={10} strokeWidth={3} /></span>
+              <span className="sr-only">Not included: </span>
               {t}
             </li>
           ))}
         </ul>
         {signedIn && !isPaid && appCount != null && (
-          <div className="mt-5">
+          <div className="mt-6">
             <div className="flex justify-between text-[12.5px] text-mz-muted">
               <span>Applications used</span>
               <span className="font-semibold tabular-nums text-mz-ink">
@@ -116,60 +132,75 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
           </div>
         )}
         {!signedIn && (
-          <Link to="/employees/signup" className={`${outlineBtn} mt-5`}>
+          <Link to="/employees/signup" className="mt-8 inline-flex h-12 items-center justify-center rounded-[12px] border-2 border-mz-ink bg-white px-5 text-[14.5px] font-bold text-mz-ink transition-colors hover:bg-mz-ink hover:text-white">
             Create free account
           </Link>
         )}
       </section>
 
       {/* Premium */}
-      <section aria-labelledby="plan-premium" className="relative flex flex-col overflow-hidden rounded-[16px] border-2 border-mz-primary bg-gradient-to-b from-mz-primary-tint/60 via-white to-white p-5 shadow-[0_14px_34px_-18px_rgba(11,122,109,0.45)] transition-shadow duration-200 hover:shadow-[0_18px_40px_-18px_rgba(11,122,109,0.55)] motion-reduce:transition-none sm:p-6">
-        <div className="flex items-center justify-between gap-2">
-          <h2 id="plan-premium" className="flex items-center gap-1.5 text-[17px] font-bold text-mz-ink">
-            <Sparkles size={17} className="text-mz-primary" aria-hidden="true" />
-            {plan.premium.name}
-          </h2>
+      <section aria-labelledby="plan-premium" className="relative flex flex-col overflow-hidden rounded-[20px] bg-[#064E43] p-6 text-white shadow-[0_24px_48px_-24px_rgba(6,78,67,0.75)] transition-shadow duration-200 hover:shadow-[0_28px_56px_-24px_rgba(6,78,67,0.9)] motion-reduce:transition-none sm:p-7">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/[0.04]" aria-hidden="true" />
+        <div className="relative flex items-center justify-between gap-2">
+          <h2 id="plan-premium" className="text-[15px] font-bold text-white">{plan.premium.name}</h2>
           {isPaid ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-mz-primary-tint px-2.5 py-1 text-[12px] font-semibold text-mz-primary-strong">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#F5B83D] px-3 py-1 text-[12px] font-bold text-[#3B2A00]">
               <ShieldCheck size={13} aria-hidden="true" /> Active
             </span>
           ) : (
-            <span className="rounded-full bg-mz-primary-tint px-2.5 py-1 text-[12px] font-semibold text-mz-primary-strong">One-time payment</span>
+            <span className="rounded-full bg-[#F5B83D] px-3 py-1 text-[12px] font-bold text-[#3B2A00]">One-time payment</span>
           )}
         </div>
-        <div className="mt-4 border-b border-mz-primary/15 pb-5">
-          <Price amount={isPaid ? fee : finalFee} original={!isPaid && payment.coupon ? fee : null} />
-          <p className="mt-2 text-[13px] text-mz-muted">{isPaid ? `Paid once${paidOn ? ` on ${dateFmt.format(new Date(paidOn))}` : ''} · valid for life` : 'Paid once, valid for life. No renewals.'}</p>
+        <div className="relative mt-4 flex items-end gap-3">
+          <div className="flex items-baseline gap-2">
+            {!isPaid && payment.coupon && fee !== finalFee && <span className="text-[20px] text-white/60 line-through">₹{fee}</span>}
+            <span className="text-[56px] font-extrabold leading-none tracking-[-0.03em]">₹{isPaid ? fee : finalFee}</span>
+          </div>
+          <p className="pb-1 text-[16px] font-bold leading-tight text-[#F5B83D]">
+            {isPaid ? (
+              <>Paid once{paidOn ? <><br />on {dateFmt.format(new Date(paidOn))}</> : null}.<br />Yours for life.</>
+            ) : (
+              <>once.<br />Yours for life.</>
+            )}
+          </p>
         </div>
-        <p className="mt-5 text-[11.5px] font-semibold uppercase tracking-[0.12em] text-mz-primary-strong">Everything in Basic, plus</p>
-        <ul className="mt-3 flex-1 space-y-2.5 text-[14px] text-mz-ink">
-          {['Get unlimited job applications', 'Get your CV enhanced by an expert, plus an ATS score', 'Attend live technical, behavioral, and HR mock interviews', 'Experience one-to-one HR and career coaching with a personal roadmap', 'Get more job-fit picks from a wider pool'].map((t) => (
-            <li key={t} className="flex gap-2">
-              <Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />
-              {t}
+        <p className="relative mt-4 text-[13px] text-white/80">No subscription, no renewals. Everything in Basic, plus:</p>
+        <ul className="relative mt-4 flex-1 space-y-3 text-[14px] text-white/90">
+          {premiumItems.map((segs) => (
+            <li key={segs.map((s) => s[0]).join('')} className="flex items-start gap-2.5">
+              <span className="mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-[#F5B83D] text-[#3B2A00]" aria-hidden="true"><Check size={11} strokeWidth={3.5} /></span>
+              <span>
+                {segs.map(([text, bold]) => (bold ? <strong key={text} className="font-bold text-white">{text}</strong> : text))}
+              </span>
             </li>
           ))}
         </ul>
 
         {!isPaid &&
           (signedIn ? (
-            <div className="mt-5">
-              <button type="button" onClick={payment.pay} disabled={payment.paying} className={`${tealBtn} h-12 w-full text-[15.5px] shadow-[0_10px_22px_-10px_rgba(11,122,109,0.7)]`}>
+            <div className="relative mt-7">
+              <button type="button" onClick={payment.pay} disabled={payment.paying} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-white px-5 text-[15.5px] font-bold text-mz-ink transition-colors hover:bg-[#FFF7E0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-60">
                 {payment.paying && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
-                {payment.paying ? 'Processing…' : `Upgrade for ₹${finalFee}`}
+                {payment.paying ? 'Processing…' : `Get Premium for ₹${finalFee}`}
               </button>
-              <div className="mt-3">
+              <div className="mt-3 rounded-[12px] bg-white p-3 text-mz-ink">
                 <CouponBox onPreview={previewSubscriptionCoupon} applied={payment.coupon} onApply={payment.setCoupon} onRemove={() => payment.setCoupon(null)} />
               </div>
-              {payment.error && <p className="mt-2 text-[13px] text-[#B42318]">{payment.error}</p>}
+              {payment.error && <p className="mt-2 text-[13px] text-[#FFB4AB]">{payment.error}</p>}
             </div>
           ) : (
-            <Link to={SIGN_IN_TO} className={`${tealBtn} mt-5`}>
-              Sign in to upgrade
-            </Link>
+            <div className="relative mt-7">
+              <Link to={SIGN_IN_TO} className="inline-flex h-12 w-full items-center justify-center rounded-[12px] bg-white px-5 text-[15.5px] font-bold text-mz-ink transition-colors hover:bg-[#FFF7E0]">
+                Get Premium for ₹{fee}
+              </Link>
+              <p className="mt-3 text-center text-[12.5px] text-white/75">
+                Already have an account?{' '}
+                <Link to={SIGN_IN_TO} className="font-bold text-white underline underline-offset-2">Sign in</Link>
+              </p>
+            </div>
           ))}
         {isPaid && (
-          <a href="#premium-services" className={`${outlineBtn} mt-5`}>
+          <a href="#premium-services" className="relative mt-7 inline-flex h-12 items-center justify-center rounded-[12px] bg-white px-5 text-[15px] font-bold text-mz-ink transition-colors hover:bg-[#FFF7E0]">
             Request a Premium service
           </a>
         )}
