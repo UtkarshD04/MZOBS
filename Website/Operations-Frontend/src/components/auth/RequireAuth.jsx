@@ -8,7 +8,7 @@ export default function RequireAuth() {
 
   if (isLoading) return <PageSkeleton />
   if (isError) {
-    logout()
+    logout({ keepCache: true })
     return <Navigate to="/login" replace />
   }
 
