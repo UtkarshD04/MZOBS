@@ -7,5 +7,6 @@ export function useMeQuery({ enabled = true } = {}) {
 }
 
 export function logout() {
-  localStorage.removeItem('mzobs-staff-token')
+  // Clears the httpOnly session cookie server-side; nothing to remove locally.
+  return authService.logoutStaff().catch(() => {})
 }

@@ -16,6 +16,7 @@ import { useWorkspace } from '../store/workspace'
 import { lpa, years, notice, ago } from '../lib/format'
 import { IS_DEMO } from '../lib/config'
 import { isRevealed, creditSpent } from '../lib/reveal'
+import { safeHref } from '../lib/safeUrl'
 
 // Email and phone are opened one at a time: each has its own View button. The
 // first one opens costs 1 credit for the candidate; the other is then free.
@@ -328,7 +329,7 @@ export default function CandidateProfile() {
             </div>
             {c.links?.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
-                {c.links.map((l) => <a key={l.label} href={l.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-line px-2.5 py-1 text-[12.5px] font-medium text-blue hover:bg-line-2"><ExternalLink size={12} /> {l.label}</a>)}
+                {c.links.map((l) => <a key={l.label} href={safeHref(l.url)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border border-line px-2.5 py-1 text-[12.5px] font-medium text-blue hover:bg-line-2"><ExternalLink size={12} /> {l.label}</a>)}
               </div>
             )}
           </SectionCard>

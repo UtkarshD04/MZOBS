@@ -32,7 +32,8 @@ export async function uploadEmployeeResume(token, file) {
 
   const res = await fetch(`${EMPLOYEE_API_URL}/resume`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: 'include',
+    headers: { 'X-Requested-With': 'mzobs-web' },
     body,
   })
   const data = await res.json().catch(() => ({}))

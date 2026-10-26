@@ -13,6 +13,7 @@ import { fetchApplicationCount } from '../lib/employeeApi'
 import { fetchPlan, fetchServiceRequests, requestService, cancelServiceRequest } from '../lib/premium'
 import { createSubscriptionOrder, verifySubscriptionPayment, confirmMockSubscriptionPayment, previewSubscriptionCoupon } from '../lib/employeeSubscription'
 import { openRazorpayCheckout, loadRazorpay } from '../lib/razorpay'
+import { safeHref } from '../lib/safeUrl'
 
 // Premium is a single ₹499 one-time payment; shown even if the plan API still returns an older price.
 const PREMIUM_PRICE = 499
@@ -262,7 +263,7 @@ function RequestCard({ request, service, onCancel, cancelling }) {
               <CalendarClock size={15} className="text-mz-primary" aria-hidden="true" />
               {dateTimeFmt.format(new Date(request.scheduledFor))}
               {request.meetingLink && (
-                <a href={request.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-mz-primary-strong hover:underline">
+                <a href={safeHref(request.meetingLink)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-mz-primary-strong hover:underline">
                   Join <ExternalLink size={13} aria-hidden="true" />
                 </a>
               )}
@@ -270,7 +271,7 @@ function RequestCard({ request, service, onCancel, cancelling }) {
           )}
           {request.candidateMessage && <p className="whitespace-pre-line leading-relaxed text-mz-ink-2">{request.candidateMessage}</p>}
           {request.deliverableLink && (
-            <a href={request.deliverableLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-mz-primary-strong hover:underline">
+            <a href={safeHref(request.deliverableLink)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-mz-primary-strong hover:underline">
               Open your deliverable <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}

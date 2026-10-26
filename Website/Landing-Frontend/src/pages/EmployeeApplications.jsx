@@ -11,6 +11,7 @@ import { ConversionBand, JourneyWorkspace, NextMove, PageIntro, PremiumValue } f
 import { getEmployeeSession } from '../lib/employeeSession'
 import { getEmployeeProfile } from '../lib/employeeProfile'
 import { fetchApplications, fetchInterviews, fetchMockInterview, withdrawApplication } from '../lib/employeeApi'
+import { safeHref } from '../lib/safeUrl'
 
 const PAGE_SIZE = 50
 const SIGN_IN_TO = `/employees/signin?next=${encodeURIComponent('/employees/applications')}`
@@ -302,7 +303,7 @@ function InterviewsSection({ interviews, mock, status }) {
                     </div>
                     {isUpcoming && iv.mode === 'Video Call' && iv.link && (
                       <a
-                        href={iv.link}
+                        href={safeHref(iv.link)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="mz-btn-teal inline-flex shrink-0 items-center gap-1 rounded-[8px] bg-mz-primary px-3 py-1.5 text-[13px] font-semibold text-white hover:bg-mz-primary-strong"
@@ -341,7 +342,7 @@ function MockInterview({ mock }) {
           {mock.link && (
             <>
               {' · '}
-              <a href={mock.link} target="_blank" rel="noopener noreferrer" className="font-semibold text-mz-primary-strong hover:underline">
+              <a href={safeHref(mock.link)} target="_blank" rel="noopener noreferrer" className="font-semibold text-mz-primary-strong hover:underline">
                 Joining link
               </a>
             </>

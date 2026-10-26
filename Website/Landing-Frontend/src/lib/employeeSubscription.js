@@ -4,7 +4,8 @@ import { trackOnSuccess } from './analytics'
 async function authedJSON(path, token, options = {}) {
   const res = await fetch(`${EMPLOYEE_API_URL}${path}`, {
     ...options,
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(options.headers ?? {}) },
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'mzobs-web', ...(options.headers ?? {}) },
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {

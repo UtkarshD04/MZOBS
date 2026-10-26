@@ -34,6 +34,7 @@ import { getEmployeeSession, saveEmployeeSession } from '../lib/employeeSession'
 import { getEmployeeProfile, updateEmployeeProfile } from '../lib/employeeProfile'
 import { resumeDownloadUrl, uploadEmployeeResume, validateResumeFileClientSide } from '../lib/employeeResume'
 import { profileCompletion } from '../lib/profileCompletion'
+import { safeHref } from '../lib/safeUrl'
 
 const SECTIONS = [
   { id: 'subscription', label: 'Subscription', icon: CreditCard },
@@ -190,7 +191,7 @@ export default function EmployeeProfile() {
       const updated = await updateEmployeeProfile(token, fields)
       setProfile(updated)
       // Keep this site's own nav/session name in sync if it changed.
-      if (fields.name) saveEmployeeSession({ token, employee: updated })
+      if (fields.name) saveEmployeeSession({ employee: updated })
       setEditing(null)
       setDraft({})
     } catch (err) {
@@ -958,21 +959,21 @@ export default function EmployeeProfile() {
                   <ul className="space-y-2 text-[13.5px]">
                     {profile.portfolioLink && (
                       <li>
-                        <a href={profile.portfolioLink} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
+                        <a href={safeHref(profile.portfolioLink)} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
                           Portfolio
                         </a>
                       </li>
                     )}
                     {profile.linkedin && (
                       <li>
-                        <a href={profile.linkedin} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
+                        <a href={safeHref(profile.linkedin)} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
                           LinkedIn
                         </a>
                       </li>
                     )}
                     {profile.github && (
                       <li>
-                        <a href={profile.github} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
+                        <a href={safeHref(profile.github)} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
                           GitHub
                         </a>
                       </li>

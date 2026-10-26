@@ -1,5 +1,6 @@
 import { CalendarClock, Clock, Mail, MapPin, Users, Video } from 'lucide-react'
 import clsx from 'clsx'
+import { safeHref } from '../lib/safeUrl'
 
 // One scheduled interview, laid out so the date and time read at a glance: a calendar tile on the left,
 // who/what in the middle, status on the right. Works with the API's interview shape (see normalizeInterview).
@@ -100,7 +101,7 @@ export default function InterviewCard({ interview: i, past = false, onReschedule
 
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
           {i.meetingLink && !past && !cancelled && (
-            <a href={i.meetingLink} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 rounded-full bg-accent px-4 text-[13px] font-bold text-white transition-colors hover:bg-[#075f55]">
+            <a href={safeHref(i.meetingLink)} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-1.5 rounded-full bg-accent px-4 text-[13px] font-bold text-white transition-colors hover:bg-[#075f55]">
               <Video size={14} aria-hidden="true" /> Join interview
             </a>
           )}

@@ -6,6 +6,7 @@ import { isJobSaved, toggleJobSaved } from '../../../lib/savedJobs'
 import { Avatar, NewBadge, BulletList, TagList, FactTile, SectionHeading, Divider, IconButton, TrustRow } from './jobCardPrimitives'
 import { initialsOf } from '../../../lib/jobCardHelpers'
 import { jobPath } from '../../mz/JobCard'
+import { safeHref } from '../../../lib/safeUrl'
 
 const DESCRIPTION_PREVIEW_CHARS = 320
 
@@ -58,7 +59,7 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
 
   const applyButton = (
     <ExplorerButton
-      href={job.applyUrl}
+      href={safeHref(job.applyUrl)}
       onClick={job.applyUrl ? undefined : (e) => { e.preventDefault(); setApplyOpen(true) }}
       size="xl"
       className="flex-1"

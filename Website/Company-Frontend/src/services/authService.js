@@ -4,6 +4,10 @@ export function loginStaff({ email, password }) {
   return apiClient.post('/auth/login', { email, password }).then((r) => r.data)
 }
 
+export function logoutStaff() {
+  return apiClient.post('/auth/logout').then((r) => r.data)
+}
+
 export function getMe() {
   return apiClient.get('/auth/me').then((r) => r.data)
 }

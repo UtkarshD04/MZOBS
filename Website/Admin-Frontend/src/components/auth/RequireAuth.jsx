@@ -4,10 +4,8 @@ import { logout } from '../../hooks/useAuth'
 import { PageSkeleton } from '../ui/Skeleton'
 
 export default function RequireAuth() {
-  const token = localStorage.getItem('mzobs-admin-token')
-  const { data: me, isLoading, isError } = useMeQuery({ enabled: !!token })
+  const { data: me, isLoading, isError } = useMeQuery()
 
-  if (!token) return <Navigate to="/login" replace />
   if (isLoading) return <PageSkeleton />
   if (isError) {
     logout()

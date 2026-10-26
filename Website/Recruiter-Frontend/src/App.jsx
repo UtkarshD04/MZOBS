@@ -20,13 +20,13 @@ import PlanCredits from './pages/PlanCredits'
 import { refreshPlan } from './services/planService'
 import { useCompany } from './services/companyService'
 import GstGate from './components/GstGate'
-import { IS_DEMO, GST_REQUIRED, TOKEN_KEY, EMPLOYER_SIGNIN_URL } from './lib/config'
+import { IS_DEMO, GST_REQUIRED, SESSION_KEY, EMPLOYER_SIGNIN_URL } from './lib/config'
 
 // Live mode needs an employer session, issued by the marketing site's
 // employer sign-in and handed over as a one-time code (see main.jsx). With no
 // session we send the recruiter there; demo mode runs without one.
 function useSession() {
-  const [ok, setOk] = useState(IS_DEMO || !!localStorage.getItem(TOKEN_KEY))
+  const [ok, setOk] = useState(IS_DEMO || !!localStorage.getItem(SESSION_KEY))
   useEffect(() => {
     const out = () => setOk(false)
     window.addEventListener('mzt-signed-out', out)

@@ -14,7 +14,8 @@ export async function fetchRecommendedJobs({ sort = 'match', limit } = {}, { sig
   if (!session?.token) return []
 
   const res = await fetch(`${EMPLOYEE_API_URL}/jobs/recommended?${new URLSearchParams({ sort })}`, {
-    headers: { Authorization: `Bearer ${session.token}` },
+    credentials: 'include',
+    headers: { 'X-Requested-With': 'mzobs-web' },
     signal,
   })
   if (!res.ok) throw new Error('Failed to load recommended jobs')

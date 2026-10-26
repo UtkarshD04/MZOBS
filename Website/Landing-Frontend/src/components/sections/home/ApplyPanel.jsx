@@ -412,8 +412,8 @@ export default function ApplyPanel({ job, onClose }) {
   useEffect(() => onEmployeeSessionChange(() => setToken(getEmployeeSession()?.token ?? null)), [])
 
   function handleLoggedIn(newToken, employee) {
-    saveEmployeeSession({ token: newToken, employee })
-    setToken(newToken)
+    saveEmployeeSession({ employee })
+    setToken(getEmployeeSession()?.token ?? null)
   }
 
   async function handleUpload(e) {

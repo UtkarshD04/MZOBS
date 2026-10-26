@@ -59,8 +59,9 @@ export default function Navbar() {
     if (session?.token) subscribeToWebPush(session.token)
   }, [session?.token])
 
-  function handleSignOut() {
-    unsubscribeFromWebPush(session?.token)
+  async function handleSignOut() {
+    // Unsubscribe while the session cookie still exists; clearing it comes after.
+    await unsubscribeFromWebPush(session?.token)
     clearEmployeeSession()
     setOpen(false)
     navigate('/')

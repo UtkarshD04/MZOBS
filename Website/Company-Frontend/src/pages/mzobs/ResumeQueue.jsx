@@ -23,6 +23,7 @@ import { useMockInterviewsQuery } from '../../hooks/useMockInterviews'
 import { ScheduleMockModal } from './MockInterviews'
 import { openResumeViewer } from '../../lib/resumeViewer'
 import { FILE_BASE_URL } from '../../lib/config'
+import { safeHref } from '../../lib/safeUrl'
 
 const TABS = ['Pending', 'Changes requested', 'Verified', 'Not uploaded']
 const TAB_KEYS = ['pending', 'changes', 'verified', 'none']
@@ -228,17 +229,17 @@ export function CandidateProfilePanel({ app, employee: c }) {
           <ProfileSection title="Links">
             <div className="flex flex-col gap-1.5">
               {c.portfolioLink && (
-                <a href={c.portfolioLink} target="_blank" rel="noreferrer" className="text-[13px] text-navy font-semibold hover:underline flex items-center gap-1.5">
+                <a href={safeHref(c.portfolioLink)} target="_blank" rel="noreferrer" className="text-[13px] text-navy font-semibold hover:underline flex items-center gap-1.5">
                   <Link2 size={13} /> Portfolio
                 </a>
               )}
               {c.linkedin && (
-                <a href={c.linkedin} target="_blank" rel="noreferrer" className="text-[13px] text-navy font-semibold hover:underline flex items-center gap-1.5">
+                <a href={safeHref(c.linkedin)} target="_blank" rel="noreferrer" className="text-[13px] text-navy font-semibold hover:underline flex items-center gap-1.5">
                   <Link2 size={13} /> LinkedIn
                 </a>
               )}
               {c.github && (
-                <a href={c.github} target="_blank" rel="noreferrer" className="text-[13px] text-navy font-semibold hover:underline flex items-center gap-1.5">
+                <a href={safeHref(c.github)} target="_blank" rel="noreferrer" className="text-[13px] text-navy font-semibold hover:underline flex items-center gap-1.5">
                   <Link2 size={13} /> GitHub
                 </a>
               )}

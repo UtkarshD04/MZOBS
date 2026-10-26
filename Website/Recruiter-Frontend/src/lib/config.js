@@ -25,4 +25,7 @@ const originOf = (u) => {
 export const FILE_BASE_URL = (ENV.VITE_FILE_BASE_URL || originOf(API_URL)).replace(/\/+$/, '')
 export const LANDING_APP_URL = ENV.VITE_LANDING_URL ?? 'http://localhost:5176'
 export const EMPLOYER_SIGNIN_URL = `${LANDING_APP_URL}/employers/signin`
+// Legacy: the JWT used to live here; it is now an httpOnly cookie. Only used to purge old values.
 export const TOKEN_KEY = 'mzobs-employer-token'
+// Non-secret signed-in hint (user + company summary) — the real session is the cookie.
+export const SESSION_KEY = 'mzt-session'

@@ -4,9 +4,10 @@ import { EMPLOYEE_API_URL } from './config'
 // (Website/Frontend, which used to own this, was removed — session already
 // lives in this site's own localStorage via employeeSession.js, so no
 // cross-app ?token= handoff is needed here).
-export async function getEmployeeProfile(token) {
+export async function getEmployeeProfile(_token) {
   const res = await fetch(`${EMPLOYEE_API_URL}/profile`, {
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: 'include',
+    headers: { 'X-Requested-With': 'mzobs-web' },
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
@@ -20,7 +21,8 @@ export async function getEmployeeProfile(token) {
 export async function updateEmployeeProfile(token, fields) {
   const res = await fetch(`${EMPLOYEE_API_URL}/profile`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'mzobs-web' },
     body: JSON.stringify(fields),
   })
   const data = await res.json().catch(() => ({}))

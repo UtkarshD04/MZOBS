@@ -15,7 +15,8 @@ function urlBase64ToUint8Array(base64String) {
 async function postJSON(path, token, body) {
   await fetch(`${EMPLOYEE_API_URL}${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'mzobs-web' },
     body: JSON.stringify(body),
   })
 }

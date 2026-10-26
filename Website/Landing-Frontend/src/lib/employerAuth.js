@@ -1,11 +1,12 @@
 import { EMPLOYER_API_URL, EMPLOYER_APP_URL } from './config'
 import { track, trackOnSuccess } from './analytics'
 
-async function postJSON(path, body, token) {
+async function postJSON(path, body) {
   const headers = { 'Content-Type': 'application/json' }
-  if (token) headers.Authorization = `Bearer ${token}`
+  headers['X-Requested-With'] = 'mzobs-web'
   const res = await fetch(`${EMPLOYER_API_URL}${path}`, {
     method: 'POST',
+    credentials: 'include',
     headers,
     body: JSON.stringify(body),
   })

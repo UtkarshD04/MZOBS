@@ -1,31 +1,36 @@
 // Thin wrappers over the existing employer API (Backend/src/routes). Live
 // mode only — demo mode never calls these.
 import { apiClient } from '../lib/api'
-import { TOKEN_KEY } from '../lib/config'
+import { API_URL, SESSION_KEY } from '../lib/config'
 import { invalidatePool, fetchAll } from './talentService'
 
 export const login = (email, password) =>
   apiClient.post('/auth/login', { email, password }).then((r) => {
-    localStorage.setItem(TOKEN_KEY, r.data.token)
-    localStorage.setItem('mzt-session', JSON.stringify({ user: r.data.user, company: r.data.company }))
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ user: r.data.user, company: r.data.company }))
     return r.data
   })
 
 export const exchangeHandoff = (code) =>
   apiClient.post('/auth/exchange', { code }).then((r) => {
-    localStorage.setItem(TOKEN_KEY, r.data.token)
-    localStorage.setItem('mzt-session', JSON.stringify({ user: r.data.user, company: r.data.company }))
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ user: r.data.user, company: r.data.company }))
     return r.data
   })
 
 export function logout() {
-  localStorage.removeItem(TOKEN_KEY)
-  localStorage.removeItem('mzt-session')
+  localStorage.removeItem(SESSION_KEY)
+  // Ends the httpOnly cookie session. keepalive lets the request finish even
+  // when the caller navigates away right after.
+  fetch(`${API_URL}/auth/logout`, {
+    method: 'POST',
+    credentials: 'include',
+    keepalive: true,
+    headers: { 'X-Requested-With': 'mzobs-web' },
+  }).catch(() => {})
 }
 
 export const getSession = () => {
   try {
-    return JSON.parse(localStorage.getItem('mzt-session') ?? 'null')
+    return JSON.parse(localStorage.getItem(SESSION_KEY) ?? 'null')
   } catch {
     return null
   }
