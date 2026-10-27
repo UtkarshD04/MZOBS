@@ -45,12 +45,12 @@ export default function Home() {
   // Replaces (not merges) the search, jumps to the job feed, and records the
   // #latest-jobs hash (JobDetail's "Back to jobs" links and old bookmarks
   // point at it).
-  function applyJobFilters(next) {
+  const applyJobFilters = useCallback((next) => {
     setJobFilters(normalizeFilters(next))
     setOpenJob(null)
     if (typeof window !== 'undefined') window.history.replaceState(null, '', '#latest-jobs')
     document.getElementById('latest-jobs')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  }, [])
 
   return (
     // id="services" preserves the old "/#services" footer link used on other pages.

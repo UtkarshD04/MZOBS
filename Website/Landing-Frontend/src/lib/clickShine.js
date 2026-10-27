@@ -85,7 +85,10 @@ export function installClickShine() {
       if (reduced.matches || !(e.target instanceof Element)) return
       const el = e.target.closest(SELECTOR)
       if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true' || el.closest('[data-no-shine]')) return
-      play(el)
+      // The shine reads computed style and canvas pixels (forced style/layout),
+      // so run it after the click's own work has painted rather than inside
+      // the handler, where it counts against the click's INP.
+      requestAnimationFrame(() => setTimeout(() => el.isConnected && play(el), 0))
     },
     true
   )

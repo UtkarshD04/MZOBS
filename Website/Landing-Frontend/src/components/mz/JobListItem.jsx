@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, BadgeCheck, Bookmark, BookmarkCheck, Briefcase, MapPin, Monitor, Zap } from 'lucide-react'
 import { CompanyLogo } from './primitives'
@@ -35,7 +35,7 @@ const SKILL_TONES = [
 // the job in the side panel instead (see opensInline); `selected` marks the
 // row that panel is showing. `index` only drives the subtle left-edge accent
 // (teal for the first row, alternating teal/soft-blue after).
-export default function JobListItem({ job, index = 0, onOpen, selected = false }) {
+function JobListItem({ job, index = 0, onOpen, selected = false }) {
   const toast = useToast()
   // Read after mount — localStorage doesn't exist during prerender.
   const [saved, setSaved] = useState(false)
@@ -166,3 +166,5 @@ export function JobListItemSkeleton() {
     </div>
   )
 }
+
+export default memo(JobListItem)
