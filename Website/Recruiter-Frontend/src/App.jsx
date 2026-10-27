@@ -94,7 +94,7 @@ function GstGatedApp({ ai, setAi, location }) {
       <main key={location.pathname} className="fade-up">
         <ErrorBoundary key={location.pathname}>
         <Routes>
-          <Route path="/" element={<Navigate to="/talent-pool" replace />} />
+          <Route path="/" element={<Navigate to="/search" replace />} />
           <Route path="/overview" element={<Overview />} />
           <Route path="/search" element={<SearchCandidates />} />
           <Route path="/applicants" element={<Applicants />} />

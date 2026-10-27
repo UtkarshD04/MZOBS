@@ -2,11 +2,11 @@
 // perm: any one of these permissions shows the item (the API enforces the same rules; this only hides dead ends).
 // match: extra paths that count as "inside" this item, so e.g. a job's applicant pipeline highlights Applicants, not Jobs.
 export const ROUTES = [
+  { path: '/search', label: 'Talent Search', nav: 'primary', perm: ['candidates.view'] },
   { path: '/talent-pool', label: 'Talent Pool', nav: 'primary', perm: ['candidates.view'] },
   { path: '/overview', label: 'Overview', nav: 'primary' },
   { path: '/jobs', label: 'Jobs', nav: 'primary', perm: ['jobs.manage', 'candidates.view'], exclude: /^\/jobs\/[^/]+\/applicants/ },
   { path: '/applicants', label: 'Applicants', nav: 'primary', perm: ['candidates.view', 'candidates.viewAssigned'], match: /^\/jobs\/[^/]+\/applicants/ },
-  { path: '/search', label: 'Talent Search', nav: 'primary', perm: ['candidates.view'] },
   { path: '/interviews', label: 'Interviews', nav: 'primary', perm: ['candidates.view', 'candidates.viewAssigned'] },
   { path: '/offers', label: 'Offers', nav: 'primary', perm: ['offers.manage', 'candidates.view'] },
   { path: '/messages', label: 'Messages', nav: 'primary', perm: ['candidates.view'] },
