@@ -37,6 +37,7 @@ export function Button({ variant = 'outline', size = 'md', className, icon: Icon
       {...rest}
       className={clsx(
         'inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border font-bold transition-all duration-200 hover:-translate-y-px active:translate-y-0 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none disabled:translate-y-0',
+        (variant === 'primary' || variant === 'ai') && 'btn-sheen',
         size === 'sm' ? 'h-8 px-3.5 text-[12.5px]' : size === 'lg' ? 'h-11 px-6 text-[14.5px]' : 'h-9 px-4 text-[13px]',
         BUTTON[variant],
         className

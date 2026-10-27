@@ -152,6 +152,7 @@ function Presets({ items, active, onPick }) {
 }
 
 const EXP_PRESETS = [['Fresher', [0, 1]], ['1–3', [1, 3]], ['3–5', [3, 5]], ['5–8', [5, 8]], ['8–12', [8, 12]], ['12+', [12, null]]]
+const APPLIED_OPTIONS = [['Any time', null], ['Last 1 day', 1], ['Last 3 days', 3], ['Last 7 days', 7], ['Last 14 days', 14], ['Last 30 days', 30]]
 const ACTIVE_OPTIONS = [['Any time', null], ['Last 1 day', 1], ['Last 7 days', 7], ['Last 14 days', 14], ['Last 30 days', 30], ['Last 90 days', 90]]
 const FRESH_OPTIONS = [['Any time', null], ['Last 7 days', 7], ['Last 30 days', 30], ['Last 90 days', 90], ['Last 6 months', 180]]
 const PROFILE_OPTIONS = [['Any', null], ['≥ 50%', 50], ['≥ 70%', 70], ['≥ 90%', 90]]
@@ -296,7 +297,8 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
         </Section>
 
         {(show('workMode') || show('employmentType')) && (
-          <Section title="Work preferences" count={n(c.workMode, c.employmentType)}>
+          <Section title="Work preferences" count={n(c.workMode, c.employmentType, c.experienceLevel)}>
+            {m.experienceLevel && (<><Label>Career stage</Label>{[['', 'Any'], ['fresher', 'Fresher'], ['experienced', 'Experienced']].map(([v, l]) => <Radio key={l} name="level" checked={c.experienceLevel === v} onChange={() => set({ experienceLevel: v })}>{l}</Radio>)}</>)}
             {show('workMode') && (<><Label>Work mode</Label>{['', 'Remote', 'Hybrid', 'On-site'].map((w) => <Radio key={w || 'any'} name="mode" checked={c.workMode === w} onChange={() => set({ workMode: w })}>{w || 'Any'}</Radio>)}</>)}
             {show('employmentType') && (<><Label>Employment type</Label><Select value={c.employmentType} onChange={(employmentType) => set({ employmentType })} options={EMPLOYMENT_TYPE_LIST} placeholder="Any type" /></>)}
           </Section>
@@ -310,17 +312,24 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
         )}
 
         {(show('activity') || show('resumeDate')) && (
-          <Section title="Candidate activity" count={n(c.activeDays != null, c.resumeFreshDays != null)}>
+          <Section title="Candidate activity" count={n(c.activeDays != null, c.resumeFreshDays != null, c.appliedDays != null)}>
+            {m.appliedDate && (<><Label>Applied to your jobs</Label><Choice name="applied" value={c.appliedDays} options={APPLIED_OPTIONS} onChange={(appliedDays) => set({ appliedDays })} /></>)}
             {show('activity') && (<><Label>Active in</Label><Choice name="active" value={c.activeDays} options={ACTIVE_OPTIONS} onChange={(activeDays) => set({ activeDays })} /></>)}
             {show('resumeDate') && (<><Label>Resume updated</Label><Choice name="fresh" value={c.resumeFreshDays} options={FRESH_OPTIONS} onChange={(resumeFreshDays) => set({ resumeFreshDays })} /></>)}
           </Section>
         )}
 
-        <Section title="Verification & quality" defaultOpen count={n(c.verifiedOnly, c.contactVerified, c.verifiedEducation, c.verifiedEmployment, c.minMatch != null, c.profileMin != null, c.trustMin != null, c.hasPortfolio, c.hasVideo)}>
+        <Section title="Verification & quality" defaultOpen count={n(c.verifiedOnly, c.contactVerified, c.phoneVerified, c.emailVerified, c.hasLinkedin, c.hasGithub, c.hasPhoto, c.premiumOnly, c.verifiedEducation, c.verifiedEmployment, c.minMatch != null, c.profileMin != null, c.trustMin != null, c.hasPortfolio, c.hasVideo)}>
           <Check checked={c.verifiedOnly} onChange={(verifiedOnly) => set({ verifiedOnly })}>Identity verified</Check>
           {show('contactVerified') && <Check checked={c.contactVerified} onChange={(contactVerified) => set({ contactVerified })}>Phone &amp; email verified</Check>}
+          {show('contactVerified') && <Check checked={c.phoneVerified} onChange={(phoneVerified) => set({ phoneVerified })}>Phone verified</Check>}
+          {show('contactVerified') && <Check checked={c.emailVerified} onChange={(emailVerified) => set({ emailVerified })}>Email verified</Check>}
           <Check checked={c.verifiedEducation} onChange={(verifiedEducation) => set({ verifiedEducation })}>Education verified</Check>
           <Check checked={c.verifiedEmployment} onChange={(verifiedEmployment) => set({ verifiedEmployment })}>Employment verified</Check>
+          {m.linkedin && <Check checked={c.hasLinkedin} onChange={(hasLinkedin) => set({ hasLinkedin })}>Has LinkedIn</Check>}
+          {m.github && <Check checked={c.hasGithub} onChange={(hasGithub) => set({ hasGithub })}>Has GitHub</Check>}
+          {m.photo && <Check checked={c.hasPhoto} onChange={(hasPhoto) => set({ hasPhoto })}>Has profile photo</Check>}
+          {m.premium && <Check checked={c.premiumOnly} onChange={(premiumOnly) => set({ premiumOnly })}>Premium candidates only</Check>}
           {m.portfolio && <Check checked={c.hasPortfolio} onChange={(hasPortfolio) => set({ hasPortfolio })}>Has portfolio</Check>}
           {m.video && <Check checked={c.hasVideo} onChange={(hasVideo) => set({ hasVideo })}>Has video intro</Check>}
           <Check checked={c.minMatch != null} onChange={(v) => set({ minMatch: v ? 80 : null })}>AI match &gt; 80</Check>

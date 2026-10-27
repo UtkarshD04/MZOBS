@@ -14,7 +14,13 @@ import FeedbackFollowUps from './pages/FeedbackFollowUps'
 import JobTalent from './pages/JobTalent'
 import Jobs from './pages/Jobs'
 import JobForm from './pages/JobForm'
-import { Messages, Interviews, AITalent, Reports } from './pages/Workspaces'
+import { Interviews, AITalent } from './pages/Workspaces'
+import Overview from './pages/Overview'
+import Applicants from './pages/Applicants'
+import Offers from './pages/Offers'
+import Team from './pages/Team'
+import Messages from './pages/Messages'
+import Reports from './pages/Reports'
 import { Notifications, Help, Settings } from './pages/Account'
 import PlanCredits from './pages/PlanCredits'
 import { refreshPlan } from './services/planService'
@@ -88,7 +94,13 @@ function GstGatedApp({ ai, setAi, location }) {
       <main key={location.pathname} className="fade-up">
         <ErrorBoundary key={location.pathname}>
         <Routes>
-          <Route path="/" element={<SearchCandidates />} />
+          <Route path="/" element={<Navigate to="/talent-pool" replace />} />
+          <Route path="/overview" element={<Overview />} />
+          <Route path="/search" element={<SearchCandidates />} />
+          <Route path="/applicants" element={<Applicants />} />
+          <Route path="/jobs/:id/applicants" element={<Applicants />} />
+          <Route path="/offers" element={<Offers />} />
+          <Route path="/team" element={<Team />} />
           <Route path="/candidate/:id" element={<CandidateProfile />} />
           <Route path="/saved-searches" element={<SavedSearches />} />
           <Route path="/shortlists" element={<Shortlists />} />

@@ -79,7 +79,7 @@ export default function UnlockedCvs() {
           icon={Unlock}
           title={IS_DEMO ? 'Demo data has no unlocks' : 'No CVs unlocked yet'}
           body="View a candidate's email, phone or CV from search — one CV credit per candidate. They'll be listed here."
-          action={<Link to="/" className="text-[13px] font-medium text-accent hover:underline">Search candidates</Link>}
+          action={<Link to="/search" className="text-[13px] font-medium text-accent hover:underline">Search candidates</Link>}
         />
       ) : shown.length === 0 ? (
         <EmptyState icon={Search} title="No unlocked CVs match" body="Try a different name, job or skill." />

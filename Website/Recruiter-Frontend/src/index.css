@@ -2,13 +2,13 @@
 
 @theme {
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --color-bg:#f6f8fb;
+  --color-bg:#f7f5f0;
   --color-surface: #ffffff;
   --color-ink:#0e2237;
   --color-ink-2:#33506a;
   --color-muted:#5a7488;
-  --color-line:#dfe7ee;
-  --color-line-2:#eef3f6;
+  --color-line:#dde3e8;
+  --color-line-2:#eceff0;
   --color-accent:#08685e;
   --color-accent-2:#0a8a7a;
   --color-accent-soft:#e6f7f3;
@@ -30,11 +30,7 @@
 
 html, body, #root { min-height: 100%; }
 body {
-  background:
-    radial-gradient(1000px 460px at 94% -100px, rgba(186, 216, 253, 0.4), transparent 70%),
-    radial-gradient(760px 420px at 2% -130px, rgba(224, 246, 241, 0.85), transparent 70%),
-    var(--color-bg);
-  background-attachment: fixed;
+  background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 14px;
@@ -68,8 +64,20 @@ button:disabled { cursor: not-allowed; }
 @keyframes ai-shimmer { 0%,100% { opacity: 1 } 50% { opacity: 0.55 } }
 .ai-pulse { animation: ai-shimmer 1.4s ease-in-out infinite; }
 
+/* Premium hover sheen: a single soft light sweep across dark, filled buttons. Decorative only. */
+.btn-sheen { position: relative; overflow: hidden; isolation: isolate; }
+.btn-sheen::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.2) 50%, transparent 62%);
+  transform: translateX(-130%); transition: transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.btn-sheen:hover:not(:disabled)::after { transform: translateX(130%); }
+
+.num { font-variant-numeric: tabular-nums; }
+
 mark.kw { background: #d9f3ee; color: inherit; border-radius: 3px; padding: 0 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .btn-sheen::after { display: none; }
 }

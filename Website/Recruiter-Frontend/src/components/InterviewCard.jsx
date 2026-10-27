@@ -32,7 +32,7 @@ export function relativeDay(date, now = new Date()) {
 // API rows and the demo's locally-stored plans share one shape here.
 export function normalizeInterview(r) {
   if (r.startsAt) {
-    return { id: r.id, candidateName: r.candidateName, role: r.role, round: r.round, startsAt: new Date(r.startsAt), durationMins: r.durationMins, mode: r.mode, meetingLink: r.meetingLink, location: r.location, panel: r.panel ?? [], status: r.status, email: r.email }
+    return { id: r.id, candidateName: r.candidateName, role: r.role, round: r.round, startsAt: new Date(r.startsAt), durationMins: r.durationMins, mode: r.mode, meetingLink: r.meetingLink, location: r.location, panel: r.panel ?? [], status: r.status, email: r.email, interviewers: r.interviewers ?? [], scorecards: r.scorecards ?? [], feedbackState: r.feedbackState ?? null, feedbackDueOn: r.feedbackDueOn ? new Date(r.feedbackDueOn) : null, overallRating: r.overallRating ?? null }
   }
   return {
     id: r.id,
@@ -65,7 +65,8 @@ function EmailNote({ email }) {
   )
 }
 
-export default function InterviewCard({ interview: i, past = false, onReschedule, onCancel, onComplete }) {
+export default function InterviewCard({ interview: i, past = false, onReschedule, onCancel, onComplete, onScorecard }) {
+  const fb = i.feedbackState
   const end = i.durationMins ? new Date(i.startsAt.getTime() + i.durationMins * 60000) : null
   const cancelled = i.status === 'Cancelled'
   const video = i.mode !== 'On-site'
@@ -92,6 +93,19 @@ export default function InterviewCard({ interview: i, past = false, onReschedule
           {!past && !cancelled && <span className="inline-flex items-center gap-1.5 text-[#0a6f64]"><CalendarClock size={14} aria-hidden="true" /> {relativeDay(i.startsAt)}</span>}
         </div>
 
+        {fb?.pending && (
+          <p className={clsx('mt-2.5 rounded-lg px-3 py-2 text-[13px] font-semibold', fb.overdue ? 'bg-[#f5e9e7] text-[#9a3a2c]' : 'bg-warn-soft text-warn')}>
+            {fb.overdue ? 'Feedback overdue' : 'Feedback pending'}
+            {fb.awaiting.length > 0 && <span className="font-normal"> · waiting on {fb.awaiting.map((a) => a.name).join(', ')}</span>}
+            {i.feedbackDueOn && <span className="font-normal"> · due {i.feedbackDueOn.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>}
+          </p>
+        )}
+        {i.scorecards.length > 0 && (
+          <div className="mt-2.5 rounded-lg border border-line-2 bg-[#faf9f6] px-3 py-2">
+            <p className="text-[12px] font-bold uppercase tracking-[0.04em] text-ink-2">Scorecards{i.overallRating != null && <span className="ml-1.5 normal-case tracking-normal text-ink">· <b className="num">{i.overallRating}</b>/5 average</span>}</p>
+            <ul className="mt-1 space-y-0.5 text-[12.5px]">{i.scorecards.map((s) => <li key={s.interviewer} className="flex justify-between gap-3"><span>{s.interviewerName}</span><span className="font-semibold">{s.recommendation}</span></li>)}</ul>
+          </div>
+        )}
         {i.panel.length > 0 && (
           <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[12.5px] text-muted">
             <Users size={13} aria-hidden="true" />
@@ -105,11 +119,12 @@ export default function InterviewCard({ interview: i, past = false, onReschedule
               <Video size={14} aria-hidden="true" /> Join interview
             </a>
           )}
-          {i.status !== 'Cancelled' && i.status !== 'Completed' && (onReschedule || onCancel || onComplete) && (
+          {i.status !== 'Cancelled' && ((onScorecard && i.startsAt <= new Date()) || (i.status !== 'Completed' && (onReschedule || onCancel || onComplete))) && (
             <span className="inline-flex flex-wrap items-center gap-2">
-              {onReschedule && <button type="button" onClick={() => onReschedule(i)} className="h-8 rounded-full border border-line px-3 text-[12.5px] font-semibold text-ink-2 hover:bg-line-2">Reschedule</button>}
+              {i.status !== 'Completed' && onReschedule && <button type="button" onClick={() => onReschedule(i)} className="h-8 rounded-full border border-line px-3 text-[12.5px] font-semibold text-ink-2 hover:bg-line-2">Reschedule</button>}
+              {onScorecard && i.startsAt <= new Date() && i.status !== 'Cancelled' && <button type="button" onClick={() => onScorecard(i)} className="h-8 rounded-full border border-accent px-3 text-[12.5px] font-semibold text-accent hover:bg-accent-soft">Scorecard</button>}
               {onComplete && past && <button type="button" onClick={() => onComplete(i)} className="h-8 rounded-full border border-line px-3 text-[12.5px] font-semibold text-ink-2 hover:bg-line-2">Mark completed</button>}
-              {onCancel && <button type="button" onClick={() => onCancel(i)} className="h-8 rounded-full px-3 text-[12.5px] font-semibold text-red-600 hover:bg-red-50">Cancel</button>}
+              {i.status !== 'Completed' && onCancel && <button type="button" onClick={() => onCancel(i)} className="h-8 rounded-full px-3 text-[12.5px] font-semibold text-red-600 hover:bg-red-50">Cancel</button>}
             </span>
           )}
           <EmailNote email={i.email} />

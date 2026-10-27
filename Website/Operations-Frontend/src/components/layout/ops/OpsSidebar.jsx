@@ -57,6 +57,7 @@ export default function OpsSidebar() {
     { to: '/app/associates', label: 'Associates', icon: Handshake },
     { to: '/app/campus-requests', label: 'Campus Requests', icon: GraduationCap },
     { to: '/app/plan-enquiries', label: 'Plan enquiries', icon: SlidersHorizontal },
+    ...(isAdmin ? [{ to: '/app/shortlist-requests', label: 'Shortlist requests', icon: Handshake }] : []),
     { to: '/app/notifications/send', label: 'Send Notification', icon: Send },
   ]
 

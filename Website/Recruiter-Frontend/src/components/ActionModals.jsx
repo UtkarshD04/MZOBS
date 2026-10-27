@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 import { refreshPlan } from '../services/planService'
 import { getCredits, unlockCandidate, scheduleInterview, setCandidateStage, sendOutreach, getSession } from '../services/liveApi'
 import { listJobs, getTalentMany } from '../services/talentService'
+import { listTeam } from '../services/recruiterService'
 import { agoDate } from '../lib/format'
 import { PARTS, PART_LABEL, isRevealed, creditSpent } from '../lib/reveal'
 import { dial } from '../lib/dial'
@@ -269,9 +270,16 @@ function emailOutcome(asked, email) {
   }
 }
 
+const REMINDER_MINS = { 'None': undefined, '15 minutes before': 15, '1 hour before': 60, '1 day before': 1440 }
+const CAN_INTERVIEW = ['Owner', 'Admin', 'Hiring Manager', 'Recruiter', 'Interviewer']
+
 export function InterviewModal({ candidate, onClose, onScheduled }) {
   const { addInterview, toast } = useWorkspace()
-  const [f, setF] = useState({ type: 'Video', date: '', time: '', interviewers: '', link: '', reminder: '1 hour before', email: true })
+  const [f, setF] = useState({ type: 'Video', date: '', time: '', interviewers: '', interviewerIds: [], feedbackDue: '', link: '', reminder: '1 hour before', email: true })
+  const [team, setTeam] = useState([])
+  useEffect(() => {
+    if (!IS_DEMO && candidate) listTeam().then((m) => setTeam(m.filter((x) => x.status !== 'disabled' && CAN_INTERVIEW.includes(x.role)))).catch(() => setTeam([]))
+  }, [candidate])
   const set = (p) => setF((x) => ({ ...x, ...p }))
   const valid = f.date && f.time
   const [busy, setBusy] = useState(false)
@@ -288,7 +296,9 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
           mode: f.type === 'On-site' ? 'On-site' : 'Video Call',
           meetingLink: f.link || undefined,
           location: f.type === 'On-site' ? 'Office' : undefined,
-          panel: f.interviewers.split(',').map((x) => x.trim()).filter(Boolean),
+          ...(team.length ? { interviewerIds: f.interviewerIds } : { panel: f.interviewers.split(',').map((x) => x.trim()).filter(Boolean) }),
+          feedbackDueOn: f.feedbackDue ? new Date(`${f.feedbackDue}T23:59`).toISOString() : undefined,
+          reminderMinsBefore: REMINDER_MINS[f.reminder],
           notifyByEmail: f.email,
         })
         const mail = emailOutcome(f.email, created?.email)
@@ -337,7 +347,25 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
           <label className="text-[12px] text-muted">Date<input type="date" value={f.date} onChange={(e) => set({ date: e.target.value })} className={clsx(field, 'mt-1')} /></label>
           <label className="text-[12px] text-muted">Time<input type="time" value={f.time} onChange={(e) => set({ time: e.target.value })} className={clsx(field, 'mt-1')} /></label>
         </div>
-        <label className="block text-[12px] text-muted">Interviewers<input value={f.interviewers} onChange={(e) => set({ interviewers: e.target.value })} placeholder="Names, comma separated" className={clsx(field, 'mt-1')} /></label>
+        {team.length > 0 ? (
+          <fieldset>
+            <legend className="text-[12px] text-muted">Interviewers (each gets a scorecard to fill in)</legend>
+            <div className="mt-1 grid max-h-32 grid-cols-2 gap-1.5 overflow-y-auto">
+              {team.map((m) => {
+                const on = f.interviewerIds.includes(m.id)
+                return (
+                  <label key={m.id} className={clsx('flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[13px]', on ? 'border-accent bg-accent-soft/40' : 'border-line hover:bg-line-2')}>
+                    <input type="checkbox" checked={on} onChange={() => set({ interviewerIds: on ? f.interviewerIds.filter((x) => x !== m.id) : [...f.interviewerIds, m.id] })} className="h-3.5 w-3.5 accent-[#08685e]" />
+                    <span className="truncate">{m.name}<span className="ml-1 text-[11px] text-muted">{m.role}</span></span>
+                  </label>
+                )
+              })}
+            </div>
+          </fieldset>
+        ) : (
+          <label className="block text-[12px] text-muted">Interviewers<input value={f.interviewers} onChange={(e) => set({ interviewers: e.target.value })} placeholder="Names, comma separated" className={clsx(field, 'mt-1')} /></label>
+        )}
+        {!IS_DEMO && <label className="block text-[12px] text-muted">Feedback due by (optional)<input type="date" value={f.feedbackDue} min={f.date || undefined} onChange={(e) => set({ feedbackDue: e.target.value })} className={clsx(field, 'mt-1')} /></label>}
         {(f.type === 'Video' || f.type === 'Technical') && <label className="block text-[12px] text-muted">Meeting link<input value={f.link} onChange={(e) => set({ link: e.target.value })} placeholder="https://meet…" className={clsx(field, 'mt-1')} /></label>}
         <label className="block text-[12px] text-muted">Reminder
           <select value={f.reminder} onChange={(e) => set({ reminder: e.target.value })} className={clsx(field, 'mt-1')}>{['None', '15 minutes before', '1 hour before', '1 day before'].map((r) => <option key={r}>{r}</option>)}</select>

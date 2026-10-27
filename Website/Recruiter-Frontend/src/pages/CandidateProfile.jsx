@@ -202,7 +202,7 @@ export default function CandidateProfile() {
       </div>
     )
   }
-  if (c === null) return <EmptyState title="Candidate not found" body="They may have been removed from the pool." action={<Button onClick={() => nav('/')}>Back to search</Button>} />
+  if (c === null) return <EmptyState title="Candidate not found" body="They may have been removed from the pool." action={<Button onClick={() => nav('/search')}>Back to search</Button>} />
 
   const row = { candidate: c, match, trust }
   const pos = results.indexOf(c.id)
@@ -233,7 +233,7 @@ export default function CandidateProfile() {
   return (
     <div className="mx-auto max-w-[1280px] px-4 pb-28 pt-5 lg:px-6">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <button onClick={() => (window.history.length > 1 ? nav(-1) : nav('/'))} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted hover:text-ink"><ArrowLeft size={14} /> Back to results</button>
+        <button onClick={() => (window.history.length > 1 ? nav(-1) : nav('/search'))} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted hover:text-ink"><ArrowLeft size={14} /> Back to results</button>
         {pos >= 0 && results.length > 1 && (
           <nav aria-label="Search results" className="flex items-center gap-1">
             <Button size="sm" variant="ghost" icon={ChevronLeft} disabled={!prevId} onClick={() => step(prevId)}>Previous</Button>

@@ -1,4 +1,4 @@
-import { BarChart3, Sparkles, MessageSquare, CalendarDays, CalendarPlus, Search } from 'lucide-react'
+import { Sparkles, MessageSquare, CalendarDays, CalendarPlus, Search } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Avatar, Button, Chip, EmptyState, Modal } from '../components/ui'
 import { useActions } from '../components/useActions'
@@ -6,6 +6,9 @@ import InterviewCard, { isOverdue, isUpcoming, normalizeInterview } from '../com
 import { makeCriteria, STAGE_LABELS } from '../lib/talent/criteria'
 import { listInterviewable } from '../services/talentService'
 import { cancelInterview, completeInterview, listInterviews, rescheduleInterview } from '../services/liveApi'
+import ScorecardModal from '../components/ScorecardModal'
+import { usePermissions } from '../services/recruiterService'
+import { useSearchParams } from 'react-router-dom'
 import { useWorkspace } from '../store/workspace'
 import { IS_DEMO } from '../lib/config'
 import { agoDate } from '../lib/format'
@@ -24,16 +27,17 @@ function Page({ title, sub, action, children }) {
   )
 }
 
-export function Messages() {
+// Drafts and sends logged on this device from candidate profiles (kept for the older Contact flow).
+export function LocalMessages() {
   const { messages } = useWorkspace()
   return (
-    <Page title="Messages" sub="Emails and texts you sent from candidate profiles, and drafts you saved.">
+    <>
       {messages.length === 0 ? (
-        <EmptyState icon={MessageSquare} title="No messages yet" body="Use Contact on a candidate to email or text them — once you have viewed their email or phone number." />
+        <EmptyState icon={MessageSquare} title="No messages saved on this device" body="Use Contact on a candidate to email or text them — once you have viewed their email or phone number." />
       ) : (
         <ul className="space-y-2">
           {messages.map((m) => (
-            <li key={m.id} className="rounded-2xl border border-line bg-white p-4 shadow-card">
+            <li key={m.id} className="rounded-xl border border-line bg-white p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-[14px] font-semibold">{m.candidateName} <span className="ml-1 rounded bg-line-2 px-1.5 py-0.5 text-[11px] font-medium uppercase text-muted">{m.channel}</span></p>
                 <span className={m.state === 'sent' ? 'text-[12px] font-medium text-[#1a8f5a]' : 'text-[12px] text-muted'}>{m.state === 'sent' ? 'Sent' : 'Draft'} · {agoDate(m.at)}</span>
@@ -44,8 +48,8 @@ export function Messages() {
           ))}
         </ul>
       )}
-      <p className="mt-5 text-[12px] text-muted">This list is stored on this device. Drafts are not delivered until you send them from the candidate's Contact window.</p>
-    </Page>
+      <p className="mt-5 text-[12px] text-muted">This list is stored on this device. Drafts are not delivered until you send them from the candidate&apos;s Contact window.</p>
+    </>
   )
 }
 
@@ -100,14 +104,22 @@ export function Interviews() {
   }, [load])
   const { onAction, host } = useActions(makeCriteria(), { onInterviewScheduled: load })
   const rows = useMemo(() => (IS_DEMO ? local : live ?? []).map(normalizeInterview), [local, live])
-  const { upcoming, overdue, past } = useMemo(() => {
+  const { upcoming, pending, overdue, past } = useMemo(() => {
     const now = new Date()
+    // Interviews still owed feedback come first and are not repeated under "Needs update".
+    const pending = rows.filter((i) => i.feedbackState?.pending).sort((a, b) => a.startsAt - b.startsAt)
+    const owed = new Set(pending.map((i) => i.id))
     return {
-      upcoming: rows.filter((i) => isUpcoming(i, now)).sort((a, b) => a.startsAt - b.startsAt),
-      overdue: rows.filter((i) => isOverdue(i, now)).sort((a, b) => b.startsAt - a.startsAt),
-      past: rows.filter((i) => !isUpcoming(i, now) && !isOverdue(i, now)).sort((a, b) => b.startsAt - a.startsAt),
+      pending,
+      upcoming: rows.filter((i) => isUpcoming(i, now) && !owed.has(i.id)).sort((a, b) => a.startsAt - b.startsAt),
+      overdue: rows.filter((i) => isOverdue(i, now) && !owed.has(i.id)).sort((a, b) => b.startsAt - a.startsAt),
+      past: rows.filter((i) => !isUpcoming(i, now) && !isOverdue(i, now) && !owed.has(i.id)).sort((a, b) => b.startsAt - a.startsAt),
     }
   }, [rows])
+  const [sp] = useSearchParams()
+  const feedbackOnly = sp.get('filter') === 'feedback'
+  const { me, can } = usePermissions()
+  const [scoring, setScoring] = useState(null)
 
   // Reschedule / cancel / mark completed (live only). One dialog at a time: { kind, interview }.
   const { toast } = useWorkspace()
@@ -141,7 +153,7 @@ export function Interviews() {
       setBusy(false)
     }
   }
-  const actions = IS_DEMO ? {} : { onReschedule: openDialog('reschedule'), onCancel: openDialog('cancel'), onComplete: openDialog('complete') }
+  const actions = IS_DEMO ? {} : { ...(can('interviews.manage') && { onReschedule: openDialog('reschedule'), onCancel: openDialog('cancel'), onComplete: openDialog('complete') }), ...(can('interviews.feedback') && { onScorecard: setScoring }) }
   const dialogTitle = { reschedule: 'Reschedule interview', cancel: 'Cancel this interview?', complete: 'Mark interview completed' }[dialog?.kind]
   const dialogValid = dialog?.kind === 'reschedule' ? when.date && when.time : dialog?.kind === 'complete' ? note.trim().length > 0 : true
 
@@ -149,31 +161,40 @@ export function Interviews() {
     <Page
       title="Interviews"
       sub="Interviews you've scheduled with candidates."
-      action={<Button variant="primary" icon={CalendarPlus} onClick={() => setPicking(true)}>Schedule interview</Button>}
+      action={can('interviews.manage') && <Button variant="primary" icon={CalendarPlus} onClick={() => setPicking(true)}>Schedule interview</Button>}
     >
       {rows.length === 0 ? (
         <EmptyState icon={CalendarDays} title="No interviews scheduled" body="Choose Schedule interview to pick a candidate from your pipeline, or open a candidate and schedule from their profile." />
       ) : (
         <div className="space-y-8">
-          <section aria-label="Upcoming interviews">
+          {pending.length > 0 && (
+            <section aria-label="Interviews waiting for feedback">
+              <h2 className="mb-1 text-[13px] font-bold uppercase tracking-wider text-muted">Feedback pending <span className="ml-1 rounded-full bg-warn-soft px-2 py-0.5 text-[11.5px] text-warn">{pending.length}</span></h2>
+              <p className="mb-3 text-[12.5px] text-muted">Each interviewer submits a scorecard; the interview is marked completed once everyone on the panel has.</p>
+              <ul className="space-y-3">{pending.map((i) => <InterviewCard key={i.id} interview={i} past {...actions} />)}</ul>
+            </section>
+          )}
+          {feedbackOnly && pending.length === 0 && <p className="rounded-2xl border border-dashed border-line px-4 py-6 text-center text-[13.5px] text-muted">No interviews are waiting for feedback.</p>}
+          {!feedbackOnly && <section aria-label="Upcoming interviews">
             <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wider text-muted">Upcoming <span className="ml-1 rounded-full bg-accent-soft px-2 py-0.5 text-[11.5px] text-[#0a6f64]">{upcoming.length}</span></h2>
             {upcoming.length === 0 ? <p className="rounded-2xl border border-dashed border-line px-4 py-6 text-center text-[13.5px] text-muted">Nothing coming up. Schedule one with the button above.</p> : <ul className="space-y-3">{upcoming.map((i) => <InterviewCard key={i.id} interview={i} {...actions} />)}</ul>}
-          </section>
-          {overdue.length > 0 && (
+          </section>}
+          {!feedbackOnly && overdue.length > 0 && (
             <section aria-label="Interviews that need an update">
               <h2 className="mb-1 text-[13px] font-bold uppercase tracking-wider text-muted">Needs update <span className="ml-1 rounded-full bg-warn-soft px-2 py-0.5 text-[11.5px] text-warn">{overdue.length}</span></h2>
               <p className="mb-3 text-[12.5px] text-muted">The time has passed and these aren&rsquo;t marked completed or cancelled yet.</p>
               <ul className="space-y-3">{overdue.map((i) => <InterviewCard key={i.id} interview={i} past {...actions} />)}</ul>
             </section>
           )}
-          {past.length > 0 && (
+          {!feedbackOnly && past.length > 0 && (
             <section aria-label="Past and cancelled interviews">
               <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wider text-muted">Past &amp; cancelled <span className="ml-1 rounded-full bg-line-2 px-2 py-0.5 text-[11.5px]">{past.length}</span></h2>
-              <ul className="space-y-3">{past.map((i) => <InterviewCard key={i.id} interview={i} past />)}</ul>
+              <ul className="space-y-3">{past.map((i) => <InterviewCard key={i.id} interview={i} past onScorecard={actions.onScorecard} />)}</ul>
             </section>
           )}
         </div>
       )}
+      <ScorecardModal interview={scoring} myId={me?.id} onClose={() => setScoring(null)} onSaved={load} toast={toast} />
       <SchedulePicker open={picking} onClose={() => setPicking(false)} onPick={(c) => { setPicking(false); onAction('interview', c) }} />
       {host}
       <Modal
@@ -221,14 +242,6 @@ export function AITalent({ onAskAI }) {
           </div>
         ))}
       </div>
-    </Page>
-  )
-}
-
-export function Reports() {
-  return (
-    <Page title="Reports" sub="Hiring funnel, sources, search and outreach performance.">
-      <EmptyState icon={BarChart3} title="Reports aren't connected yet" body="Analytics live here, deliberately away from the search screen. They'll populate from real hiring activity once the reporting endpoints are wired — no placeholder numbers are shown." />
     </Page>
   )
 }

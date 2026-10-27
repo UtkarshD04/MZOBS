@@ -9,6 +9,7 @@ import { useWorkspace } from '../store/workspace'
 import { listMyJobs, listPublicJobIds, publicJobUrl, setJobStatus, duplicateJob, deleteJob, STATUS_META, rupeesToLpa, jobError } from '../services/jobsService'
 import { agoDate } from '../lib/format'
 import { IS_DEMO } from '../lib/config'
+import { usePermissions } from '../services/recruiterService'
 
 // Statuses the backend lists on the candidate-facing job feed.
 const PUBLIC = ['sourcing', 'delivered']
@@ -38,6 +39,8 @@ function Visibility({ job, publicIds }) {
 function JobRow({ job, onChanged, onAsk, publicIds, radius }) {
   const nav = useNavigate()
   const { toast } = useWorkspace()
+  const { can: allowed, loaded } = usePermissions()
+  const can = (p) => IS_DEMO || !loaded || allowed(p)
   const [busy, setBusy] = useState(false)
   const run = async (fn, ok) => {
     setBusy(true)
@@ -84,13 +87,15 @@ function JobRow({ job, onChanged, onAsk, publicIds, radius }) {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line-2 pt-3">
         <span className="text-[12px] text-muted">{job.postedOn ? `Posted ${agoDate(job.postedOn)}` : `Updated ${agoDate(job.updatedOn ?? job.updatedAt ?? new Date().toISOString())}`}{job.feeTotal ? ` · Fee ₹${job.feeTotal.toLocaleString('en-IN')} (${job.feeStatus})` : ''}</span>
         <div className="flex flex-wrap gap-1.5">
+          {!IS_DEMO && job.status !== 'draft' && <Button size="sm" icon={Users} onClick={() => nav(`/jobs/${job.id}/applicants`)}>Applicants</Button>}
+          {!IS_DEMO && PUBLIC.includes(job.status) && can('support.request') && <Link to={`/jobs/${job.id}/applicants`} className="inline-flex h-8 items-center px-1 text-[12.5px] font-semibold text-accent hover:underline" title="Ask the MZOBS team for a curated shortlist">Need help shortlisting?</Link>}
           {canFind && <Button size="sm" variant="ai" icon={Search} onClick={() => nav('/talent-pool', { state: { jobId: job.id } })}>Find talent</Button>}
-          {job.status === 'draft' && <Button size="sm" variant="primary" icon={Rocket} disabled={busy} onClick={() => run(() => setJobStatus(job.id, 'pending_review'), `“${job.title}” is live`)}>Publish</Button>}
-          {job.status === 'sourcing' && <Button size="sm" icon={Power} disabled={busy} onClick={() => run(() => setJobStatus(job.id, 'closed'), 'Job closed')}>Close</Button>}
-          {job.status === 'closed' && <Button size="sm" icon={Rocket} disabled={busy} onClick={() => run(() => setJobStatus(job.id, 'pending_review'), 'Job reopened')}>Reopen</Button>}
-          <Button size="sm" icon={Pencil} onClick={() => nav(`/jobs/${job.id}/edit`)}>Edit</Button>
-          <Button size="sm" variant="ghost" icon={Copy} disabled={busy} onClick={() => run(() => duplicateJob(job.id), 'Job duplicated as a draft')} aria-label="Duplicate" title="Duplicate" />
-          <Button size="sm" variant="ghost" icon={Trash2} disabled={busy} onClick={() => onAsk(job)} aria-label="Delete" title="Delete" />
+          {job.status === 'draft' && can('jobs.publish') && <Button size="sm" variant="primary" icon={Rocket} disabled={busy} onClick={() => run(() => setJobStatus(job.id, 'pending_review'), `“${job.title}” is live`)}>Publish</Button>}
+          {job.status === 'sourcing' && can('jobs.publish') && <Button size="sm" icon={Power} disabled={busy} onClick={() => run(() => setJobStatus(job.id, 'closed'), 'Job closed')}>Close</Button>}
+          {job.status === 'closed' && can('jobs.publish') && <Button size="sm" icon={Rocket} disabled={busy} onClick={() => run(() => setJobStatus(job.id, 'pending_review'), 'Job reopened')}>Reopen</Button>}
+          {can('jobs.manage') && <Button size="sm" icon={Pencil} onClick={() => nav(`/jobs/${job.id}/edit`)}>Edit</Button>}
+          {can('jobs.manage') && <Button size="sm" variant="ghost" icon={Copy} disabled={busy} onClick={() => run(() => duplicateJob(job.id), 'Job duplicated as a draft')} aria-label="Duplicate" title="Duplicate" />}
+          {can('jobs.manage') && <Button size="sm" variant="ghost" icon={Trash2} disabled={busy} onClick={() => onAsk(job)} aria-label="Delete" title="Delete" />}
         </div>
       </div>
     </li>
