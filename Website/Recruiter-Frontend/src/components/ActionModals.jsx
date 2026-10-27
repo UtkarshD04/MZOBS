@@ -11,9 +11,27 @@ import { listJobs, getTalentMany } from '../services/talentService'
 import { listTeam } from '../services/recruiterService'
 import { agoDate } from '../lib/format'
 import { PARTS, PART_LABEL, isRevealed, creditSpent } from '../lib/reveal'
-import { dial } from '../lib/dial'
+import { dial, telHref } from '../lib/dial'
+import QRCode from 'qrcode'
 
 const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1)
+
+// Scanning this with a phone camera opens its dialer with the number filled in.
+function PhoneQr({ phone }) {
+  const [src, setSrc] = useState('')
+  useEffect(() => {
+    let live = true
+    QRCode.toDataURL(telHref(phone), { width: 176, margin: 1 }).then((u) => live && setSrc(u)).catch(() => live && setSrc(''))
+    return () => { live = false }
+  }, [phone])
+  if (!src) return null
+  return (
+    <div className="flex flex-col items-center gap-1.5 rounded-lg border border-line bg-white p-3">
+      <img src={src} alt={`QR code to call ${phone}`} width={176} height={176} />
+      <p className="text-[12px] text-muted">Scan with your phone to call</p>
+    </div>
+  )
+}
 
 // What the outreach step needs from an unlock result: the opened contact, the pipeline row's id, and which parts are open.
 const contactOf = (c, candidate) => ({ email: c.email, phone: c.phone, candidateId: c.candidateId ?? candidate._live?.candidateId, revealed: c.revealed })
