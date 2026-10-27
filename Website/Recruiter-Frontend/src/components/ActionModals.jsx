@@ -501,6 +501,7 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
         <div className="space-y-3 text-[14px]">
           {part === 'email' && <div><p className="text-[12px] text-muted">Email</p><p className="font-medium">{c.email || '—'}</p></div>}
           {part === 'phone' && <div><p className="text-[12px] text-muted">Phone</p><p className="font-medium">{c.phone || '—'}</p></div>}
+          {part === 'phone' && c.phone && <PhoneQr phone={c.phone} />}
           {part === 'resume' && (c.resumeUrl ? (
             <Button icon={FileText} onClick={() => onViewResume?.(candidate, { url: c.resumeUrl, fileName: c.resumeFileName })}>Open CV</Button>
           ) : (
