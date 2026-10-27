@@ -3,7 +3,7 @@
 // Razorpay module (a dev/production build; not available in Expo Go).
 import { apiClient } from '../lib/api'
 import { openRazorpayCheckout } from '../lib/razorpay'
-import { buyProduct, getPurchasedTransactions, iapEnabled } from '../lib/iap'
+import { buyProduct, iapEnabled } from '../lib/iap'
 import { getCredits, getSubscription, purchaseCredits as buyCredits, purchasePlan as buyPlan, verifyApplePurchase } from './billingService'
 
 export { getSubscription, getCredits as getWallet, getCreditPlans as getPlans, listPurchases, submitPlanEnquiry, previewCreditCoupon as previewCoupon, previewPlanCoupon as previewSubscriptionCoupon } from './billingService'
@@ -58,18 +58,5 @@ export const purchaseCredits = async (pack, couponCode) => {
   return refreshPlan()
 }
 
-/** Re-sends plan purchases this Apple ID made that never reached the backend (the backend ignores ones it already has). */
-export async function restorePlanPurchases(plans) {
-  const txs = await getPurchasedTransactions(plans.map((p) => p.appleProductId).filter(Boolean))
-  for (const { signedTransaction, finish } of txs) {
-    try {
-      await verifyApplePurchase(signedTransaction)
-      await finish()
-    } catch {
-      // Already linked to another account, expired, or not ours — nothing to restore.
-    }
-  }
-  return refreshPlan()
-}
 export const paymentError = (e) => e?.description ?? e?.response?.data?.message ?? e?.message ?? 'Payment failed'
 export const isCancel = (e) => e?.code === 0 || e?.code === 2 || e?.message === 'Payment cancelled'

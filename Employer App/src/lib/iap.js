@@ -71,13 +71,3 @@ export async function buyProduct(productId, { consumable = false } = {}) {
     iap.requestPurchase({ request: { apple: { sku: productId } }, type: 'in-app' }).catch(finish((e) => reject({ code: 'STORE', description: e?.message ?? 'The App Store purchase failed.' })))
   })
 }
-
-/** Earlier purchases of these products on this Apple ID (reinstall / new phone) as signed transactions, each with `finish()`. */
-export async function getPurchasedTransactions(productIds) {
-  const iap = await ready()
-  await iap.restorePurchases()
-  const purchases = await iap.getAvailablePurchases()
-  return (purchases ?? [])
-    .filter((p) => productIds.includes(p.productId) && p.purchaseToken)
-    .map((purchase) => ({ signedTransaction: purchase.purchaseToken, finish: () => iap.finishTransaction({ purchase, isConsumable: false }) }))
-}

@@ -7,7 +7,7 @@ import { useWorkspace } from '../../store/workspace'
 import { useAuth } from '../../context/AuthContext'
 import { getStorePrices, iapEnabled } from '../../lib/iap'
 import { agoDate } from '../../lib/tfmt'
-import { getSubscription, getWallet, isCancel, listPlanPayments, listPurchases, listUnlockHistory, paymentError, previewSubscriptionCoupon, purchaseSubscription, refreshPlan, restorePlanPurchases, submitPlanEnquiry } from '../../services/plan'
+import { getSubscription, getWallet, isCancel, listPlanPayments, listPurchases, listUnlockHistory, paymentError, previewSubscriptionCoupon, purchaseSubscription, refreshPlan, submitPlanEnquiry } from '../../services/plan'
 
 const rupees = (paise) => `₹${(paise / 100).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 const dateOf = (iso) => (iso ? new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—')
@@ -275,7 +275,6 @@ export default function PlanCreditsScreen() {
             <CreditsCard wallet={data.wallet} rate={data.rate} />
             {iapEnabled ? (
               <View style={{ gap: 8, alignItems: 'center' }}>
-                <Btn size="sm" loading={busy === 'restore'} onPress={() => run('restore', async () => { await restorePlanPurchases(data.sub.plans ?? []) }, 'Purchases restored')}>Restore purchases</Btn>
                 <T s={12} c={C.muted} style={{ textAlign: 'center' }}>
                   Payment is charged to your Apple ID account. By purchasing you agree to our{' '}
                   <T s={12} c={C.accent} onPress={() => Linking.openURL('https://mzobs.com/terms-of-service')}>Terms</T> and{' '}
