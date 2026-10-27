@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Building2, Phone, Mail, MessageSquare, CalendarPlus, Bookmark, FolderPlus, Pin, FileText, GitCompareArrows, Share2, ExternalLink, Sparkles, GraduationCap, Award, Languages, Briefcase, Clock, IndianRupee, Activity, StickyNote, Lightbulb, Lock, Database, Eye } from 'lucide-react'
 import { useActions } from '../components/useActions'
-import { NotesList } from '../components/ActionModals'
+import { NotesList, PhoneQr } from '../components/ActionModals'
 import { ResumeFrame, ResumeLinks } from '../components/ResumeViewer'
 import { Avatar, Button, Chip, MatchBadge, SectionCard, Skeleton, StatusPill, TrustScore, VerifiedBadge, EmptyState } from '../components/ui'
 import { getTalent, findSimilar } from '../services/talentService'
@@ -25,7 +25,7 @@ function ContactFact({ candidate: c, onView }) {
   const paid = creditSpent(c)
   const line = (part, value, masked) =>
     isRevealed(c, part) ? (
-      <span className="block">{value || '—'}</span>
+      <span className="block">{value || '—'}{part === 'phone' && value && <span className="mt-1.5 block"><PhoneQr phone={value} /></span>}</span>
     ) : (
       <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <span className="text-ink-2">{masked ?? '—'}</span>
