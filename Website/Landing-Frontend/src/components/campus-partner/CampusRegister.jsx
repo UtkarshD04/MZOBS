@@ -59,12 +59,12 @@ export default function CampusRegister() {
         <Container className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.25fr_1fr] lg:gap-14">
           <Reveal y={12}>
             <p className="text-[13px] font-bold uppercase tracking-[0.16em] text-[#00796B]">For Campus Partners</p>
-            <h1 className="mt-5 max-w-[640px] text-balance text-[38px] font-extrabold leading-[1.08] tracking-[-0.03em] text-[#173653] sm:text-[46px] lg:text-[42px] xl:text-[52px]">
+            <h1 className="mt-5 max-w-[640px] text-balance text-[#173653] text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
               <span className="sm:block">Bring Better</span>{' '}
               <span className="text-[#009688] sm:block sm:whitespace-nowrap">Career Opportunities</span>{' '}
               <span className="sm:block">to Your Campus.</span>
             </h1>
-            <p className="mt-6 max-w-[520px] text-[17px] leading-relaxed text-[#475467]">
+            <p className="mt-6 max-w-[520px] text-[#475467] text-[16px] sm:text-[17px] font-normal leading-relaxed">
               Connect your students with verified job opportunities, career readiness resources, and employers looking for emerging talent — all through Mzobs.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -201,10 +201,10 @@ export default function CampusRegister() {
       {/* Final CTA */}
       <section className="bg-[#173653] py-16 text-white lg:py-24">
         <Container className="flex flex-col items-center text-center">
-          <h2 className="max-w-3xl text-balance text-[30px] font-extrabold leading-[1.15] tracking-[-0.02em] sm:text-[42px]">
+          <h2 className="max-w-3xl text-balance text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             Let’s Create More <span className="text-[#4DB6AC]">Career Opportunities</span> for Your Students.
           </h2>
-          <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-white/75">
+          <p className="mt-5 max-w-xl text-white/75 text-[16px] sm:text-[17px] font-normal leading-relaxed">
             Connect your institution with Mzobs and explore how we can support your students’ career journey.
           </p>
           <Link to={CLIENT_ONLY_ROUTES.campusPartnerApply} className={`${cta} mt-9 bg-white !text-[#173653] shadow-none hover:!bg-[#EAF6F3] focus-visible:!outline-white`}>
