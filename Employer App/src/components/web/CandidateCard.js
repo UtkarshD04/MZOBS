@@ -120,11 +120,11 @@ function CandidateCard({ row, terms, onAction }) {
         {c.contact?.phone ? (
           <Meta icon={Phone}>{c.contact.phone}</Meta>
         ) : c._live?.contactPreview?.phone ? (
-          <Pressable onPress={() => onAction('unlock', c, 'phone')} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, minHeight: 24 }}>
+          <Pressable onPress={() => onAction('unlock', c, 'contact')} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, minHeight: 24 }}>
             <Phone size={13} color={C.icon} />
             <T s={13} c={C.ink2}>{c._live.contactPreview.phone}</T>
             <Eye size={12} color={C.accent} />
-            <T s={13} w="s" c={C.accent}>View</T>
+            <T s={13} w="s" c={C.accent}>Unlock email & number</T>
           </Pressable>
         ) : null}
         {c.education[0] ? <Meta icon={GraduationCap}>{c.education[0].degree}{c.education[0].institute ? `, ${c.education[0].institute}` : ''}</Meta> : null}
