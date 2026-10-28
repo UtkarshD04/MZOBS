@@ -87,7 +87,7 @@ export default function HelpSearchHero({ faqs, onSelectFaq, onGoToContact }) {
         </Reveal>
 
         <Reveal direction="up" duration={0.55} delay={0.06}>
-          <h1 className="mt-4 text-[32px] sm:text-[42px] md:text-[48px] font-extrabold leading-[1.14] tracking-tight text-(--explorer-navy)">
+          <h1 className="mt-4 text-(--explorer-navy) text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
             How can we help you?
           </h1>
         </Reveal>

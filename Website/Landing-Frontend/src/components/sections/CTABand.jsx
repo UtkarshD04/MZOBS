@@ -37,11 +37,11 @@ export default function CTABand({
           {/* Glass Card Overlay Box */}
           <Reveal direction="up" delay={0.15} duration={0.9} scale={0.92} blur className="relative z-10 h-full flex flex-col justify-end p-8 sm:p-14 max-w-3xl space-y-6">
             {title ? (
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight leading-tight">
+              <h2 className="font-sans text-white text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
                 {title}
               </h2>
             ) : (
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight leading-tight">
+              <h2 className="font-sans text-white text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
                 {CTA_BAND_DATA.titlePrefix}
                 <span className="font-serif italic font-normal text-slate-100">
                   {CTA_BAND_DATA.titleItalic}

@@ -58,7 +58,7 @@ export default function AboutCTABand() {
             className="relative z-10 h-full flex flex-col justify-end items-center text-center p-8 sm:p-14 gap-8"
           >
             <div className="flex flex-col items-center gap-5 max-w-2xl">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#111827] tracking-tight leading-tight">
+              <h2 className="text-[#111827] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
                 {EMOTIONAL_LINES.map((line) => (
                   <span key={line.em} className="block">
                     {line.text} <em className="italic font-normal text-[var(--careers-accent)]">{line.em}</em>

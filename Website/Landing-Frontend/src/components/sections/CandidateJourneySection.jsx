@@ -75,14 +75,14 @@ export default function CandidateJourneySection() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="text-center max-w-3xl mx-auto space-y-2"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-bold text-[#0A1128] tracking-tight uppercase leading-tight">
+          <h2 className="font-sans text-[#0A1128] uppercase text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             FROM PROFILE TO{' '}
             <span className="font-serif italic font-normal text-teal-900 capitalize px-1">
               Opportunity
             </span>
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-xl mx-auto pt-1">
+          <p className="text-slate-600 max-w-xl mx-auto pt-1 text-[16px] sm:text-[17px] font-normal leading-relaxed">
             {CANDIDATE_JOURNEY_DATA.subtitle}
           </p>
         </motion.div>

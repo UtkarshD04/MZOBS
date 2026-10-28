@@ -12,14 +12,14 @@ export default function OurGoalSection({ data }) {
         {/* Left White Content Card */}
         <Reveal direction="left" blur className="lg:col-span-6 bg-white rounded-3xl p-8 sm:p-12 border border-slate-200/60 shadow-sm hover:shadow-lg transition-all duration-300 ease-out-premium flex flex-col justify-between space-y-8">
           <div className="space-y-6">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight leading-tight">
+            <h2 className="font-sans text-[#0B1220] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
               {goalData.titlePrefix}
               <span className="font-serif italic font-normal text-teal-950">
                 {goalData.titleItalic}
               </span>
               {goalData.titleSuffix}
             </h2>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+            <p className="text-slate-600 text-[16px] sm:text-[17px] font-normal leading-relaxed">
               {goalData.desc}
             </p>
           </div>
