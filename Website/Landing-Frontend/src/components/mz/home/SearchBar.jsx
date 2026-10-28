@@ -1,10 +1,100 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Briefcase, ChevronDown, MapPin, Search } from 'lucide-react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { Briefcase, Check, ChevronDown, MapPin, Search } from 'lucide-react'
 import { JOB_SEARCH_DATA } from '../../../lib/content'
 import { fetchJobSuggestions } from '../../../lib/publicJobs'
 import Autocomplete from '../../ui/Autocomplete'
 
 const toTags = (values) => (values ?? []).map((value) => ({ value, kind: undefined }))
+
+// A custom listbox instead of a native <select>, so the open list matches the
+// title and city dropdowns (a native popup is drawn by the browser and cannot
+// be styled).
+function ExperienceSelect({ value, onChange, options, className }) {
+  const [open, setOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const rootRef = useRef(null)
+  const listboxId = useId()
+  const selectedIndex = Math.max(0, options.findIndex((o) => o.value === value))
+
+  useEffect(() => {
+    if (!open) return undefined
+    const close = (e) => { if (!rootRef.current?.contains(e.target)) setOpen(false) }
+    document.addEventListener("mousedown", close)
+    return () => document.removeEventListener("mousedown", close)
+  }, [open])
+
+  function toggle() {
+    setActiveIndex(selectedIndex)
+    setOpen((o) => !o)
+  }
+
+  function pick(index) {
+    onChange(options[index].value)
+    setOpen(false)
+  }
+
+  function onKeyDown(e) {
+    if (e.key === "Escape") {
+      if (open) { e.preventDefault(); setOpen(false) }
+    } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault()
+      if (!open) { setActiveIndex(selectedIndex); setOpen(true); return }
+      setActiveIndex((i) => (e.key === "ArrowDown" ? Math.min(i + 1, options.length - 1) : Math.max(i - 1, 0)))
+    } else if ((e.key === "Enter" || e.key === " ") && open) {
+      e.preventDefault()
+      pick(activeIndex)
+    } else if (e.key === "Tab") {
+      setOpen(false)
+    }
+  }
+
+  return (
+    <div ref={rootRef} className={`relative ${className}`}>
+      <button
+        type="button"
+        role="combobox"
+        aria-label="Experience"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listboxId}
+        onClick={toggle}
+        onKeyDown={onKeyDown}
+        className="flex w-full cursor-pointer items-center gap-2 bg-transparent px-3.5 py-3 text-left text-[14.5px] text-mz-ink outline-none"
+      >
+        <Briefcase size={17} className="shrink-0 text-[#078B7D]" aria-hidden="true" />
+        <span className="min-w-0 flex-1 truncate">{options[selectedIndex].label}</span>
+        <ChevronDown size={14} className={`shrink-0 text-mz-muted transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+
+      {open && (
+        <ul
+          id={listboxId}
+          role="listbox"
+          aria-label="Experience"
+          className="absolute left-0 right-0 top-full z-30 mt-2 min-w-44 rounded-lg border border-(--explorer-border) bg-white py-1.5 shadow-lg shadow-(--explorer-navy)/10"
+        >
+          {options.map((opt, index) => (
+            <li key={opt.value} role="presentation">
+              <div
+                role="option"
+                aria-selected={opt.value === value}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => pick(index)}
+                onMouseEnter={() => setActiveIndex(index)}
+                className={`mx-1.5 flex cursor-pointer items-center justify-between gap-3 rounded-md px-2.5 py-2 text-[13.5px] font-semibold ${
+                  index === activeIndex ? "bg-(--explorer-blue-surface) text-(--explorer-blue-hover)" : "text-(--explorer-navy)"
+                }`}
+              >
+                <span className="truncate">{opt.label}</span>
+                {opt.value === value && <Check size={14} className="shrink-0 text-[#078B7D]" aria-hidden="true" />}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
 
 // The homepage search: stage several titles/skills/companies and cities as
 // removable tags, pick experience, and go. Anything typed but not yet turned
@@ -77,20 +167,12 @@ export default function SearchBar({ filters, onSearch }) {
 
           <span className="hidden w-px self-stretch bg-mz-line lg:my-2 lg:block" aria-hidden="true" />
 
-          <label className={`${field} relative flex items-center gap-2 px-3.5 py-3 sm:w-44 sm:shrink-0`}>
-            <Briefcase size={17} className="shrink-0 text-[#078B7D]" aria-hidden="true" />
-            <span className="sr-only">Experience</span>
-            <select
-              value={experience}
-              onChange={(e) => setExperience(e.target.value)}
-              className="w-full cursor-pointer appearance-none bg-transparent pr-5 text-[14.5px] text-mz-ink outline-none"
-            >
-              {JOB_SEARCH_DATA.experienceOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-            <ChevronDown size={14} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-mz-muted" aria-hidden="true" />
-          </label>
+          <ExperienceSelect
+            value={experience}
+            onChange={setExperience}
+            options={JOB_SEARCH_DATA.experienceOptions}
+            className={`${field} sm:w-44 sm:shrink-0`}
+          />
 
           <button
             type="submit"
