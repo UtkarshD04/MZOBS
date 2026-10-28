@@ -224,10 +224,10 @@ export default function RecommendedJobs() {
               <p className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[12px] font-bold uppercase tracking-[0.14em] text-mz-primary-strong ring-1 ring-mz-primary/15">
                 <Sparkles size={13} aria-hidden="true" /> Recommended for you
               </p>
-              <h1 className="mt-4 text-[34px] font-extrabold leading-[1.08] tracking-[-0.025em] sm:text-[46px]">
+              <h1 className="mt-4 text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
                 {firstName ? <>{firstName}, these jobs <span className="text-mz-primary">fit you.</span></> : <>Jobs matched to <span className="text-mz-primary">your profile.</span></>}
               </h1>
-              <p className="mt-3 text-[15.5px] leading-relaxed text-mz-muted">
+              <p className="mt-3 text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed">
                 Matched against your skills, preferred role and location, with a clear reason for every recommendation.
               </p>
               <div className="mt-5 flex flex-wrap gap-2" aria-label="What we match on">
