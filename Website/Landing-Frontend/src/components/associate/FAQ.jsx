@@ -12,7 +12,7 @@ export default function FAQ() {
   return (
     <section className="border-y border-[#E6E8F0] bg-[#F8FAFC] py-14 lg:py-20">
       <Container>
-        <h2 className="text-[26px] font-extrabold text-[#101828] sm:text-[32px]">Frequently asked questions</h2>
+        <h2 className="text-[#101828] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Frequently asked questions</h2>
         <div className="mt-6 max-w-3xl divide-y divide-[#EAECF0] rounded-lg border border-[#E6E8F0] bg-white">
           {FAQS.map(({ q, a }) => (
             <details key={q} className="group px-5 py-4">

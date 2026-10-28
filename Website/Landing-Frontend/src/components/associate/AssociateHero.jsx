@@ -14,10 +14,10 @@ export default function AssociateHero() {
       <Container className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
         <div>
           <p className="text-[13px] font-bold uppercase tracking-wide text-[#0b7a6d]">Associate Program</p>
-          <h1 className="mt-3 text-[34px] font-extrabold leading-[1.15] text-[#101828] sm:text-[44px]">
+          <h1 className="mt-3 text-[#101828] text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
             Become a Mzobs Associate
           </h1>
-          <p className="mt-4 max-w-xl text-[16.5px] leading-relaxed text-[#475467]">
+          <p className="mt-4 max-w-xl text-[#475467] text-[16px] sm:text-[17px] font-normal leading-relaxed">
             Join the Mzobs hiring network and connect candidates with verified opportunities from employers across industries and cities.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">

@@ -8,8 +8,8 @@ export default function FinalCTA() {
     <section className="relative bg-white py-16 lg:py-20">
       <Container>
         <Reveal className="mx-auto max-w-lg text-center">
-          <h2 className="text-[24px] font-extrabold tracking-[-0.02em] text-[#101828] sm:text-[30px]">Let&rsquo;s connect opportunities, together.</h2>
-          <p className="mt-3 text-[14.5px] leading-relaxed text-[#475467]">
+          <h2 className="text-[#101828] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Let&rsquo;s connect opportunities, together.</h2>
+          <p className="mt-3 text-[#475467] text-[16px] sm:text-[17px] font-normal leading-relaxed">
             Your network, our opportunities. One application starts the conversation.
           </p>
           <Link

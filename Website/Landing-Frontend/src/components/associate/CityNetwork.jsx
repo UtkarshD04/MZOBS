@@ -9,8 +9,8 @@ export default function CityNetwork() {
   return (
     <section className="bg-white py-14 lg:py-20">
       <Container>
-        <h2 className="text-[26px] font-extrabold text-[#101828] sm:text-[32px]">Opportunities across cities</h2>
-        <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[#475467]">
+        <h2 className="text-[#101828] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Opportunities across cities</h2>
+        <p className="mt-2 max-w-2xl text-[#475467] text-[16px] sm:text-[17px] font-normal leading-relaxed">
           Mzobs brings placement partners and employers together, city by city.
         </p>
         <ul className="mt-6 flex flex-wrap gap-2.5">

@@ -11,7 +11,7 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="scroll-mt-20 border-y border-[#E6E8F0] bg-[#F8FAFC] py-14 lg:py-20">
       <Container>
-        <h2 className="text-[26px] font-extrabold text-[#101828] sm:text-[32px]">How it works</h2>
+        <h2 className="text-[#101828] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">How it works</h2>
         <ol className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map(({ title, desc }, i) => (
             <li key={title} className="rounded-lg border border-[#E6E8F0] bg-white p-5">
