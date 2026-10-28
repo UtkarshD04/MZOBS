@@ -68,13 +68,11 @@ export function CityVisual({ city, landmark, imageUrl, zoomOnHover = true, eager
   )
 }
 
-// Only cities with live openings show, hottest first — a wall of "0 open
-// roles" reads as an empty site. HOT_CITIES_DATA.cities supplies the display
-// metadata (photo/state/landmark). Below MARQUEE_MIN cities the cards sit in
-// a plain grid; the scrolling columns only make sense with enough to fill them.
+// Every city shows, hottest first, with its real live opening count (0 when
+// it has none), in the scrolling columns below.
+// HOT_CITIES_DATA.cities supplies the display metadata (photo/state/landmark).
 const MAX_FEATURED_CITIES = 12
 const COLUMNS = 3
-const MARQUEE_MIN = 6
 
 function CityCardSkeleton() {
   return (
@@ -174,7 +172,7 @@ export default function HotJobsByCity() {
       .map((c) => {
         const meta = HOT_CITIES_DATA.cities.find((m) => m.slug === c.slug)
         const stats = c.byFilter?.all
-        if (!meta || !stats?.openings) return null
+        if (!meta || !stats) return null
         return { meta, stats }
       })
       .filter(Boolean)
@@ -225,15 +223,6 @@ export default function HotJobsByCity() {
               <p className="text-[13.5px] text-(--explorer-muted) max-w-sm">Check back soon as new roles come in.</p>
             </div>
           ) : (
-            destinations.length < MARQUEE_MIN ? (
-            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-              {destinations.map(({ meta, stats }) => (
-                <li key={meta.slug}>
-                  <CityCard meta={meta} stats={stats} onOpen={() => openCity(meta.slug)} />
-                </li>
-              ))}
-            </ul>
-            ) : (
             <Reveal direction="up" duration={0.6} delay={0.1}>
               <div className="grid h-[340px] sm:h-[380px] gap-3 sm:gap-4" style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}>
                 {columns.map((items, i) => (
@@ -248,7 +237,6 @@ export default function HotJobsByCity() {
                 ))}
               </div>
             </Reveal>
-            )
           )}
         </div>
       </div>
