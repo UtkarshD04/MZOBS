@@ -62,7 +62,7 @@ export default function LegalPage({ seoPath, label, titleLead, titleAccent, last
         <div className="relative z-10 max-w-3xl mx-auto px-6 md:px-10 text-center">
           <Reveal direction="up" duration={0.7} scale={0.96} blur>
             <SectionLabel>{label}</SectionLabel>
-            <h1 className="text-[34px] sm:text-[44px] lg:text-[50px] font-extrabold leading-[1.08] tracking-tight text-balance text-(--explorer-navy)">
+            <h1 className="text-balance text-(--explorer-navy) text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
               {titleLead}{' '}
               <span
                 style={{ backgroundImage: 'var(--hero-cta-gradient)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}
@@ -71,7 +71,7 @@ export default function LegalPage({ seoPath, label, titleLead, titleAccent, last
               </span>
               .
             </h1>
-            <p className="text-[15px] text-(--explorer-muted) font-medium mt-4">
+            <p className="text-(--explorer-muted) mt-4 text-[16px] sm:text-[17px] font-normal leading-relaxed">
               {effectiveDate && <>Effective: {effectiveDate} · </>}Last updated: {lastUpdated}
             </p>
             <div className="mt-5 space-y-3">{intro}</div>

@@ -39,12 +39,12 @@ export default function Careers() {
         <Container className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12">
           <Reveal direction="up" duration={0.7} className="min-w-0">
             <span className={eyebrow}>Careers at Mzobs</span>
-            <h1 className="mt-5 text-[46px] font-extrabold leading-[1.02] tracking-[-0.03em] sm:text-[58px] xl:text-[62px]">
+            <h1 className="mt-5 text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
               <span className="block">Build something</span>
               <span className="block text-(--explorer-teal)">meaningful.</span>
               <span className="block">Shape what comes next.</span>
             </h1>
-            <p className="mt-6 max-w-xl text-[17px] font-medium leading-relaxed text-(--explorer-navy)/75 sm:text-[19px]">
+            <p className="mt-6 max-w-xl text-(--explorer-navy)/75 text-[16px] sm:text-[17px] font-normal leading-relaxed">
               Help us make connections between talent and opportunity more thoughtful, transparent, and human.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
@@ -198,11 +198,11 @@ export default function Careers() {
             <div className="grid items-center gap-10 overflow-hidden rounded-3xl bg-(--explorer-teal-surface) p-8 sm:p-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-12 lg:p-14">
               <div className="min-w-0">
                 <span className={eyebrow}>Join our journey</span>
-                <h2 className="mt-3 text-[34px] font-extrabold leading-[1.08] tracking-[-0.025em] sm:text-[44px] lg:text-[48px]">
+                <h2 className="mt-3 text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
                   <span className="block">Your next chapter</span>
                   <span className="block text-(--explorer-teal)">starts with a conversation.</span>
                 </h2>
-                <p className="mt-5 max-w-lg text-[17px] font-medium leading-relaxed text-(--explorer-navy)/75">
+                <p className="mt-5 max-w-lg text-(--explorer-navy)/75 text-[16px] sm:text-[17px] font-normal leading-relaxed">
                   Interested in contributing to what we&rsquo;re building? Explore available opportunities and be part of a more meaningful future.
                 </p>
                 <ExplorerButton to="/#latest-jobs" size="xl" className="mt-8">
