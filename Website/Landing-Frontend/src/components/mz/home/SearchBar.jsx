@@ -125,14 +125,14 @@ export default function SearchBar({ filters, onSearch }) {
     onSearch?.({ q: withPending(titleTags, pending.current.title), location: withPending(locationTags, pending.current.location), experience })
   }
 
-  const field = 'rounded-[10px] transition-colors focus-within:bg-[#E8F7F4]/70'
+  const field = 'rounded-[8px] transition-colors focus-within:bg-mz-bg'
 
   return (
     <form
       onSubmit={submit}
       role="search"
       aria-label="Search jobs"
-      className="rounded-[12px] bg-white p-1.5 shadow-[0_6px_20px_-10px_rgba(18,59,93,0.12)] ring-1 ring-[#DCE5EC] transition-shadow focus-within:ring-2 focus-within:ring-[#12A89D]/50"
+      className="rounded-[10px] bg-white p-1.5 ring-1 ring-mz-line-strong transition-shadow focus-within:ring-2 focus-within:ring-mz-primary/50"
     >
       <div className="flex flex-col gap-1 lg:flex-row lg:items-stretch lg:gap-0">
         <div className={`${field} min-w-0 lg:flex-[1.6]`}>
@@ -176,7 +176,7 @@ export default function SearchBar({ filters, onSearch }) {
 
           <button
             type="submit"
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] px-6 text-[15px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(7,139,125,0.55)] transition-[transform,box-shadow] duration-200 hover:-translate-y-px hover:shadow-[0_12px_26px_-8px_rgba(7,139,125,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D] lg:ml-1 lg:h-auto lg:min-h-12"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[10px] bg-mz-primary px-6 text-[15px] font-semibold text-white transition-colors duration-150 hover:bg-mz-primary-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary lg:ml-1 lg:h-auto lg:min-h-12"
           >
             <Search size={16} aria-hidden="true" />
             Find jobs

@@ -2,15 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Quote, User } from 'lucide-react'
 import { Container } from '../primitives'
 import { fetchPublicTestimonials } from '../../../lib/testimonials'
-import { DRAFT_CANDIDATE_STORIES } from '../../../lib/candidateStories'
 
 const NAVY = '#183451'
 const TEAL = '#078F80'
 const AUTOPLAY_MS = 4500
 
-// Candidate photo, or a neutral circular placeholder until an approved photo
-// exists. Set `photo` in lib/candidateStories.js (e.g. '/images/candidates/name.jpg')
-// and this swaps to the real image automatically.
+// Candidate photo, or a neutral circular placeholder when the testimonial has none.
 function Portrait({ name, photo, className = '' }) {
   const [failed, setFailed] = useState(false)
   if (photo && !failed) {
@@ -361,25 +358,21 @@ export default function SuccessStoriesSection() {
     }
   }, [])
 
-  // Approved testimonials from the API win; the editable drafts fill in until then.
-  const list = stories === null ? null : stories.length > 0 ? stories : DRAFT_CANDIDATE_STORIES
+  // Only approved testimonials from the API show — until there is at least
+  // one (or while they load, or if the request fails) the section is left out.
+  if (!stories?.length) return null
   // A story staff flagged as featured opens first.
-  const ordered = list ? [...list].sort((a, b) => Number(!!b.featured) - Number(!!a.featured)) : null
+  const ordered = [...stories].sort((a, b) => Number(!!b.featured) - Number(!!a.featured))
 
   return (
     <section ref={sectionRef} data-reveal={reveal} id="success-stories" aria-labelledby="stories-title" className="relative scroll-mt-20 overflow-hidden border-t border-[#183451]/10 bg-white py-10 lg:py-14">
       <Container>
         <div className="story-head mx-auto max-w-2xl text-center">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em]" style={{ color: NAVY }}>
-            Real stories. Real career journeys.
-          </p>
-          <h2 id="stories-title" className="mt-2 text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight" style={{ color: NAVY }}>
-            What Our <span style={{ color: TEAL }}>Candidates Say</span>
+          <h2 id="stories-title" className="text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight" style={{ color: NAVY }}>
+            What candidates say
           </h2>
           <p className="mx-auto mt-2.5 max-w-[30rem] text-balance text-[#475467] sm:max-w-none text-[16px] sm:text-[17px] font-normal leading-relaxed">
-            Behind every career move is a story of ambition, growth, and new possibilities.
-            <br className="hidden sm:block" />{' '}
-            Discover the journeys shaped with <span className="font-semibold" style={{ color: NAVY }}>Mzobs</span>.
+            In their own words, from people who found work through Mzobs.
           </p>
           {isFixture && (
             <p className="mt-4 inline-block rounded bg-amber-100 px-2.5 py-1 text-[12px] font-medium text-amber-900">
@@ -389,11 +382,7 @@ export default function SuccessStoriesSection() {
         </div>
 
         <div className="mt-6">
-          {ordered === null ? (
-            <div className="h-56 rounded-2xl border border-[#183451]/10 bg-white/70 motion-safe:animate-pulse" aria-hidden="true" />
-          ) : (
-            <Carousel stories={ordered} />
-          )}
+          <Carousel stories={ordered} />
         </div>
       </Container>
     </section>
