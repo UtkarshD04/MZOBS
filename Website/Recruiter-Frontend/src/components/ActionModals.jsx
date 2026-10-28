@@ -28,7 +28,6 @@ export function PhoneQr({ phone }) {
   return (
     <span className="flex w-fit flex-col items-center gap-1.5 rounded-lg border border-line bg-white p-3">
       <img src={src} alt={`QR code to call ${phone}`} width={176} height={176} />
-      <span className="text-[12.5px] font-semibold tabular-nums text-ink">{qrNumber(phone)}</span>
       <span className="text-[12px] font-normal text-muted">Scan with your phone to call</span>
     </span>
   )
