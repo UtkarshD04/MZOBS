@@ -16,6 +16,7 @@ import {
   Download,
   Loader2,
   Pencil,
+  Camera,
   Plus,
   Trash2,
   Check,
@@ -33,6 +34,7 @@ import { Field, Input, Select } from '../components/ui/JobsAuthField'
 import { getEmployeeSession, saveEmployeeSession } from '../lib/employeeSession'
 import { getEmployeeProfile, updateEmployeeProfile } from '../lib/employeeProfile'
 import { resumeDownloadUrl, uploadEmployeeResume, validateResumeFileClientSide } from '../lib/employeeResume'
+import { deleteEmployeePhoto, photoSrc, uploadEmployeePhoto, validatePhotoClientSide } from '../lib/employeePhoto'
 import { profileCompletion } from '../lib/profileCompletion'
 import { safeHref } from '../lib/safeUrl'
 
@@ -152,6 +154,9 @@ export default function EmployeeProfile() {
   const [uploading, setUploading] = useState(false)
 
   const fileInputRef = useRef(null)
+  const photoInputRef = useRef(null)
+  const [photoBusy, setPhotoBusy] = useState(false)
+  const [photoError, setPhotoError] = useState('')
 
   function reload(tok) {
     return getEmployeeProfile(tok).then((p) => {
@@ -199,6 +204,58 @@ export default function EmployeeProfile() {
     } finally {
       setSaving(false)
     }
+  }
+
+  async function handlePhotoChange(e) {
+    const file = e.target.files?.[0] ?? null
+    e.target.value = ''
+    if (!file || !token) return
+    const err = validatePhotoClientSide(file)
+    if (err) {
+      setPhotoError(err)
+      return
+    }
+    setPhotoBusy(true)
+    setPhotoError('')
+    try {
+      await uploadEmployeePhoto(file)
+      await reload(token)
+    } catch (err) {
+      setPhotoError(err.message)
+    } finally {
+      setPhotoBusy(false)
+    }
+  }
+
+  async function handleRemovePhoto() {
+    if (!token) return
+    setPhotoBusy(true)
+    setPhotoError('')
+    try {
+      await deleteEmployeePhoto()
+      await reload(token)
+    } catch (err) {
+      setPhotoError(err.message)
+    } finally {
+      setPhotoBusy(false)
+    }
+  }
+
+  // Opens "Personal details" for editing (that is where the full name lives) and scrolls to it.
+  function editPersonal() {
+    startEdit('personal', {
+      name: profile.name ?? '',
+      dob: profile.dob ?? '',
+      gender: profile.gender ?? '',
+      maritalStatus: profile.maritalStatus ?? '',
+      currentCity: profile.currentCity ?? '',
+      state: profile.state ?? '',
+      pincode: profile.pincode ?? '',
+      college: profile.college ?? '',
+      currentCtc: profile.currentCtc ?? '',
+      relocationOk: !!profile.relocationOk,
+    })
+    document.getElementById('personal')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   function handleResumeChange(e) {
@@ -283,12 +340,40 @@ export default function EmployeeProfile() {
               style={{ background: `conic-gradient(var(--jobs-teal) ${percent * 3.6}deg, rgba(255,255,255,0.18) 0deg)` }}
               title={`Profile ${percent}% complete`}
             >
-              <div className="w-full h-full rounded-full bg-(--jobs-navy) flex items-center justify-center text-lg font-black">
-                {initialsOf(profile.name)}
-              </div>
+              {profile.photoUrl ? (
+                <img src={photoSrc(profile.photoUrl)} alt={profile.name} className="w-full h-full rounded-full object-cover bg-(--jobs-navy)" />
+              ) : (
+                <div className="w-full h-full rounded-full bg-(--jobs-navy) flex items-center justify-center text-lg font-black">
+                  {initialsOf(profile.name)}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => photoInputRef.current?.click()}
+                disabled={photoBusy}
+                aria-label={profile.photoUrl ? 'Change profile photo' : 'Add profile photo'}
+                className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white text-(--jobs-navy) shadow-md flex items-center justify-center hover:bg-(--jobs-teal-tint) disabled:opacity-60 cursor-pointer"
+              >
+                {photoBusy ? <Loader2 size={13} className="animate-spin" /> : <Camera size={13} />}
+              </button>
+              <input ref={photoInputRef} type="file" accept="image/jpeg,image/png" className="hidden" onChange={handlePhotoChange} />
             </div>
             <div className="relative z-10 flex-1 min-w-0">
-              <h1 className="text-2xl font-black tracking-tight">{profile.name}</h1>
+              <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+                {profile.name}
+                <button type="button" onClick={editPersonal} aria-label="Edit name" className="text-white/60 hover:text-white cursor-pointer">
+                  <Pencil size={15} />
+                </button>
+              </h1>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 text-[12px]">
+                <button type="button" onClick={() => photoInputRef.current?.click()} disabled={photoBusy} className="font-semibold text-white/75 hover:text-white cursor-pointer disabled:opacity-60">
+                  {profile.photoUrl ? 'Change photo' : 'Add profile photo'}
+                </button>
+                {profile.photoUrl && (
+                  <button type="button" onClick={handleRemovePhoto} disabled={photoBusy} className="text-white/55 hover:text-white cursor-pointer disabled:opacity-60">Remove</button>
+                )}
+                {photoError && <span role="alert" className="text-red-300">{photoError}</span>}
+              </div>
               <p className="text-[13.5px] text-white/75 mt-1">
                 {profile.resumeHeadline || 'Add a resume headline so employers know what you do'}
               </p>
@@ -992,20 +1077,7 @@ export default function EmployeeProfile() {
                 tone={0}
                 editable
                 editing={editing === 'personal'}
-                onEdit={() =>
-                  startEdit('personal', {
-                    name: profile.name ?? '',
-                    dob: profile.dob ?? '',
-                    gender: profile.gender ?? '',
-                    maritalStatus: profile.maritalStatus ?? '',
-                    currentCity: profile.currentCity ?? '',
-                    state: profile.state ?? '',
-                    pincode: profile.pincode ?? '',
-                    college: profile.college ?? '',
-                    currentCtc: profile.currentCtc ?? '',
-                    relocationOk: !!profile.relocationOk,
-                  })
-                }
+                onEdit={editPersonal}
                 onCancel={cancelEdit}
               >
                 {editing === 'personal' ? (
