@@ -5,7 +5,7 @@ import { COMPANIES_HIRING_DATA } from '../../../lib/content'
 
 const COMPANY_NAMES = COMPANIES_HIRING_DATA.map((c) => c.name)
 
-const BADGE = { width: 168, height: 84 }
+const BADGE_SIZE = 160
 
 // Fallback tone (initials color only, bubble stays plain white) for a
 // company with no logo — picked deterministically per company name so the
@@ -26,18 +26,18 @@ function CompanyBadge({ company, onSelect }) {
     <button
       type="button"
       onClick={() => onSelect?.({ q: [company.name], location: [], experience: '' })}
-      className="group relative shrink-0 rounded-[8px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-mz-primary"
+      className="group relative shrink-0 rounded-full transition-transform duration-300 motion-safe:hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-mz-primary"
       aria-label={`${company.name}: ${jobsLabel}. Show their jobs`}
       title={company.name}
     >
       <span
-        style={BADGE}
-        className="flex items-center justify-center overflow-hidden rounded-[8px] bg-white px-5 py-3 ring-1 ring-mz-line transition-shadow duration-150 group-hover:ring-mz-line-strong"
+        style={{ width: BADGE_SIZE, height: BADGE_SIZE }}
+        className="flex items-center justify-center overflow-hidden rounded-full bg-white p-6 shadow-mz-card ring-1 ring-mz-line transition-shadow duration-300 group-hover:shadow-mz-lift"
       >
         {company.logo ? (
           <img src={company.logo} alt="" loading="lazy" decoding="async" className="max-h-full max-w-full object-contain" />
         ) : (
-          <span aria-hidden="true" style={{ color: textTone }} className="text-[24px] font-bold">
+          <span aria-hidden="true" style={{ color: textTone }} className="text-[32px] font-bold">
             {initials(company.name)}
           </span>
         )}
@@ -66,7 +66,7 @@ export default function CompaniesSection({ onSelect }) {
       <div className="mt-6">
         {loop ? (
           <div className="mz-marquee py-3">
-            <ul className="mz-marquee-track gap-4 pl-4" style={{ animationDuration: `${Math.max(10, list.length * 2.5)}s` }}>
+            <ul className="mz-marquee-track gap-8 pl-4" style={{ animationDuration: `${Math.max(10, list.length * 2.5)}s` }}>
               {[...list, ...list].map((c, i) => (
                 <li key={`${c.id}-${i}`} aria-hidden={i >= list.length ? 'true' : undefined} inert={i >= list.length ? true : undefined}>
                   <CompanyBadge company={c} onSelect={onSelect} />
@@ -76,15 +76,15 @@ export default function CompaniesSection({ onSelect }) {
           </div>
         ) : (
           <Container>
-            <ul className="mz-scroll-x -mx-4 flex snap-x scroll-px-4 gap-4 overflow-x-auto px-4 py-3">
+            <ul className="mz-scroll-x -mx-4 flex snap-x scroll-px-4 gap-8 overflow-x-auto px-4 py-3">
               {list.map((c) => (
                 <li key={c.id} className="snap-start"><CompanyBadge company={c} onSelect={onSelect} /></li>
               ))}
               <li className="snap-start">
                 <a
                   href="/employers/signup"
-                  style={BADGE}
-                  className="group flex flex-col items-center justify-center gap-1 rounded-[8px] border-2 border-dashed border-mz-line-strong text-center transition-colors hover:border-mz-primary hover:bg-mz-primary-tint/40 focus-visible:outline-2 focus-visible:outline-mz-primary"
+                  style={{ width: BADGE_SIZE, height: BADGE_SIZE }}
+                  className="group flex flex-col items-center justify-center gap-1 rounded-full border-2 border-dashed border-mz-line-strong text-center transition-colors hover:border-mz-primary hover:bg-mz-primary-tint/40 focus-visible:outline-2 focus-visible:outline-mz-primary"
                 >
                   <Building2 size={20} className="text-mz-primary" aria-hidden="true" />
                   <span className="px-3 text-[11px] font-semibold leading-tight text-mz-primary-strong">Your company here</span>
