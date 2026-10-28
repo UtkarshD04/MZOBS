@@ -36,10 +36,10 @@ export default function EmployerMatchIntelligenceSection() {
       <div className="max-w-7xl mx-auto">
         <FadeInView className="max-w-2xl">
           <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#075f55]">Match Intelligence</span>
-          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#111827] tracking-tight leading-tight">
+          <h2 className="mt-3 font-sans text-[#111827] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             Don't just find a candidate. Understand the match.
           </h2>
-          <p className="mt-3 text-[15px] text-[#111827]/70 leading-relaxed">
+          <p className="mt-3 text-[#111827]/70 text-[16px] sm:text-[17px] font-normal leading-relaxed">
             Mzobs brings context behind every recommendation, so recruiters can see where a candidate fits, and where they don't.
           </p>
         </FadeInView>

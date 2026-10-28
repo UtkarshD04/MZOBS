@@ -36,7 +36,7 @@ export default function EmployerTalentPoolsSection() {
       <div className="max-w-5xl mx-auto">
         <FadeInView className="text-center">
           <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#075f55]">Talent Pools</span>
-          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[40px] font-bold text-[#111827] tracking-tight leading-tight">
+          <h2 className="mt-3 font-sans text-[#111827] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             Keep promising people close, even when the timing isn't right.
           </h2>
         </FadeInView>

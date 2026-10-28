@@ -19,7 +19,7 @@ export default function EmployerCTABand() {
         <div className="relative grid gap-10 p-7 sm:p-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-center lg:gap-16 lg:p-14">
           <div>
             <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-white/90">Start hiring today</p>
-            <h2 id="cta-heading" className="mt-4 max-w-xl text-balance text-[34px] font-extrabold leading-[1.05] tracking-[-0.035em] sm:text-[46px] lg:text-[54px]">
+            <h2 id="cta-heading" className="mt-4 max-w-xl text-balance text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
               Your next hire starts with one job post.
             </h2>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">

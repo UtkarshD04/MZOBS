@@ -30,7 +30,7 @@ export default function EmployerQualitySection() {
       <div aria-hidden="true" className="absolute -left-28 bottom-10 h-72 w-72 rounded-full bg-(--explorer-blue-surface) blur-[90px]" />
       <div className="relative max-w-7xl mx-auto">
         <FadeInView className="max-w-2xl">
-          <h2 className="font-sans text-3xl sm:text-4xl md:text-[44px] font-bold text-(--explorer-navy) tracking-tight leading-[1.04]">
+          <h2 className="font-sans text-(--explorer-navy) text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             Made for the Way Teams Hire Today.
           </h2>
         </FadeInView>

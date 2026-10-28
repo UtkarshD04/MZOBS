@@ -15,10 +15,10 @@ export default function EmployerLogosSection() {
               {badge}
             </span>
           )}
-          <h2 className="mt-4 text-2xl sm:text-3xl md:text-[34px] font-bold text-(--explorer-navy) tracking-tight leading-tight">
+          <h2 className="mt-4 text-(--explorer-navy) text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             {title}
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-[14.5px] text-(--explorer-muted) leading-relaxed">
+          <p className="mx-auto mt-3 max-w-xl text-(--explorer-muted) text-[16px] sm:text-[17px] font-normal leading-relaxed">
             From renewable energy to steel and FMCG, real companies are already growing their teams on Mzobs.
           </p>
         </FadeInView>

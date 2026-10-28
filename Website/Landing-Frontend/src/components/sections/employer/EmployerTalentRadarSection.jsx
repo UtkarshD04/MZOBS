@@ -28,10 +28,10 @@ export default function EmployerTalentRadarSection() {
       <div className="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
         <FadeInView>
           <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#075f55]">Talent Radar</span>
-          <h2 className="mt-3 font-sans text-3xl sm:text-4xl md:text-[46px] font-bold text-[#111827] tracking-tight leading-tight">
+          <h2 className="mt-3 font-sans text-[#111827] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             Discover talent before you need to hire.
           </h2>
-          <p className="mt-3 max-w-md text-[15px] text-[#111827]/70 leading-relaxed">
+          <p className="mt-3 max-w-md text-[#111827]/70 text-[16px] sm:text-[17px] font-normal leading-relaxed">
             Save the kind of talent you may need next and let Mzobs surface relevant profiles as they become available.
           </p>
         </FadeInView>
