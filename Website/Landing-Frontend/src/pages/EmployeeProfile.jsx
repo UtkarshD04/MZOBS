@@ -291,7 +291,8 @@ export default function EmployeeProfile() {
       <div className="min-h-screen bg-(--jobs-bg-subtle) text-(--jobs-navy) font-sans antialiased">
         <Seo path="/employees/profile" title="My Profile | Mzobs" noindex />
         <Navbar />
-        <div className="pt-32 pb-16 px-6 text-center">
+        {/* Full-height while loading so the footer starts below the fold and doesn't jump when the profile arrives. */}
+        <div className="min-h-screen pt-32 pb-16 px-6 text-center">
           {loading && (
             <div className="flex items-center justify-center py-24 text-(--jobs-ink-soft)">
               <Loader2 size={22} className="animate-spin mr-2" /> Loading your profile...

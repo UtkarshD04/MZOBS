@@ -33,6 +33,24 @@ const initialHomeData = typeof window !== 'undefined' ? (window.__INITIAL_HOME_D
 installClickShine()
 initAnalytics()
 
+// Each deploy replaces the hashed chunks, so a tab opened before it fails to
+// lazy-load a page ("Failed to fetch dynamically imported module"). Reload
+// once to pick up the new build; the 10s guard stops a reload loop if the
+// chunk is genuinely broken.
+window.addEventListener('vite:preloadError', (event) => {
+  const KEY = 'mz-chunk-reload-at'
+  let last = 0
+  try {
+    last = Number(sessionStorage.getItem(KEY)) || 0
+    if (Date.now() - last < 10000) return
+    sessionStorage.setItem(KEY, String(Date.now()))
+  } catch {
+    // Storage blocked: still reload, the browser's own retry limits apply.
+  }
+  event.preventDefault()
+  window.location.reload()
+})
+
 const app = (
   <StrictMode>
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>

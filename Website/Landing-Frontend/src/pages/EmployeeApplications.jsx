@@ -492,7 +492,8 @@ export default function EmployeeApplications() {
     <div className="mz-home min-h-screen bg-mz-bg font-sans text-mz-ink antialiased">
       <Seo path="/employees/applications" title="My applications | Mzobs" noindex />
       <Navbar />
-      <main className="pb-14 pt-[88px] sm:pt-[96px]">
+      {/* min-h-screen keeps the footer below the fold while the skeletons are up, so it doesn't jump when the data lands. */}
+      <main className="min-h-screen pb-14 pt-[88px] sm:pt-[96px]">
         <Container className="max-w-[1040px]">
           {paid === null ? (
             <div className="space-y-3" aria-busy="true" aria-label="Loading">
