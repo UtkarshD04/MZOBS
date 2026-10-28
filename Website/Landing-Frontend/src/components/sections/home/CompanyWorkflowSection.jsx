@@ -87,10 +87,10 @@ export default function CompanyWorkflowSection() {
     <section className="bg-[#F5F5F5] py-16 md:py-24 px-6 md:px-12 overflow-hidden">
       <div className="max-w-5xl mx-auto">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl mx-auto text-center space-y-5">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight leading-tight">
+          <h2 className="text-black text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             <SplitText text={`${COMPANY_WORKFLOW_DATA.titlePrefix}${COMPANY_WORKFLOW_DATA.titleItalic}${COMPANY_WORKFLOW_DATA.titleSuffix}`} />
           </h2>
-          <p className="text-[15px] sm:text-base text-[#595959] leading-relaxed font-medium">{COMPANY_WORKFLOW_DATA.subtitle}</p>
+          <p className="text-[#595959] text-[16px] sm:text-[17px] font-normal leading-relaxed">{COMPANY_WORKFLOW_DATA.subtitle}</p>
         </Reveal>
 
         <StaggerGroup staggerDelay={0.14} className="mt-14 grid sm:grid-cols-2 gap-6">

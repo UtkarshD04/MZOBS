@@ -36,7 +36,7 @@ export default function StatsTimeline() {
     <section className="bg-[#F5F5F5] py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-7xl mx-auto space-y-10">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-[42px] font-black text-black tracking-tight leading-tight">
+          <h2 className="text-black text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             <SplitText text="Mzobs, By The Numbers" className="justify-center" />
           </h2>
         </Reveal>

@@ -188,11 +188,11 @@ export default function CareerSidebar() {
           <p className="mz-rise truncate text-[11px] font-bold tracking-[0.14em] text-mz-primary-strong">
             {firstName ? `${firstName.toUpperCase()} / YOUR CAREER` : 'MZOBS / YOUR CAREER'}
           </p>
-          <h2 id="career-tools-title" className="mt-3 text-[36px] font-extrabold leading-[0.98] tracking-[-0.035em] text-mz-ink">
+          <h2 id="career-tools-title" className="mt-3 text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             <span className="mz-rise block" style={{ '--d': '0.04s' }}>Make your</span>
             <span className="mz-rise block text-mz-primary" style={{ '--d': '0.09s' }}>next move.</span>
           </h2>
-          <p className="mz-rise mt-3 max-w-[210px] text-[14px] leading-snug text-mz-ink-2" style={{ '--d': '0.14s' }}>
+          <p className="mz-rise mt-3 max-w-[210px] text-mz-ink-2 text-[16px] sm:text-[17px] font-normal leading-relaxed" style={{ '--d': '0.14s' }}>
             Get ready for the right opportunity.
           </p>
           {!signedIn && <SignupActions />}

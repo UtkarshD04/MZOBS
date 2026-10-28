@@ -194,8 +194,8 @@ export default function HotJobsByCity() {
     <section id="hot-jobs-by-city" className="bg-(--explorer-bg) py-8 md:py-10 overflow-hidden">
       <div className="max-w-[1200px] w-full mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] items-center gap-6 lg:gap-12">
         <Reveal direction="up" duration={0.7} className="max-w-md">
-          <h2 className="text-3xl sm:text-[32px] leading-[1.1] font-black text-(--explorer-navy) tracking-tight text-balance">{HOT_CITIES_DATA.title}</h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-(--explorer-muted)">{HOT_CITIES_DATA.subtitle}</p>
+          <h2 className="text-(--explorer-navy) text-balance text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">{HOT_CITIES_DATA.title}</h2>
+          <p className="mt-3 text-(--explorer-muted) text-[16px] sm:text-[17px] font-normal leading-relaxed">{HOT_CITIES_DATA.subtitle}</p>
           <Link
             to="/jobs/cities"
             className="group mt-5 inline-flex items-center gap-1.5 text-[14.5px] font-black text-(--explorer-blue) hover:text-(--explorer-blue-hover) transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--explorer-blue) rounded-lg"

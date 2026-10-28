@@ -248,8 +248,8 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
     <div id="latest-jobs" className="scroll-mt-20" aria-labelledby="jobs-title" role="region">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 id="jobs-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Latest opportunities</h2>
-          <p className="mt-0.5 text-[13.5px] text-mz-muted" aria-live="polite">
+          <h2 id="jobs-title" className="text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Latest opportunities</h2>
+          <p className="mt-0.5 text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed" aria-live="polite">
             {showInitialLoading
               ? 'Loading live openings…'
               : showError

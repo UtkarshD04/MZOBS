@@ -38,8 +38,8 @@ export default function CategorySection({ onSelect }) {
   return (
     <section id="categories" aria-labelledby="categories-title" className="scroll-mt-20 bg-mz-bg py-10 lg:py-12">
       <Container>
-        <h2 id="categories-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Browse by category</h2>
-        <p className="mt-1 text-[14px] text-mz-muted">Live opening counts. Pick one to filter the job feed.</p>
+        <h2 id="categories-title" className="text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Browse by category</h2>
+        <p className="mt-1 text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed">Live opening counts. Pick one to filter the job feed.</p>
 
         <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
           {rows.map(({ key, title, icon: Icon, tone, params, value }) => {

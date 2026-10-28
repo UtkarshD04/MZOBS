@@ -373,10 +373,10 @@ export default function SuccessStoriesSection() {
           <p className="text-[12px] font-semibold uppercase tracking-[0.18em]" style={{ color: NAVY }}>
             Real stories. Real career journeys.
           </p>
-          <h2 id="stories-title" className="mt-2 text-[28px] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[34px] lg:text-[40px]" style={{ color: NAVY }}>
+          <h2 id="stories-title" className="mt-2 text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight" style={{ color: NAVY }}>
             What Our <span style={{ color: TEAL }}>Candidates Say</span>
           </h2>
-          <p className="mx-auto mt-2.5 max-w-[30rem] text-balance text-[14.5px] font-normal leading-[1.6] text-[#475467] sm:max-w-none sm:text-[15px]">
+          <p className="mx-auto mt-2.5 max-w-[30rem] text-balance text-[#475467] sm:max-w-none text-[16px] sm:text-[17px] font-normal leading-relaxed">
             Behind every career move is a story of ambition, growth, and new possibilities.
             <br className="hidden sm:block" />{' '}
             Discover the journeys shaped with <span className="font-semibold" style={{ color: NAVY }}>Mzobs</span>.

@@ -55,7 +55,7 @@ export default function RecommendedCard() {
         <div className="relative overflow-hidden rounded-[28px] border border-mz-primary/15 bg-gradient-to-br from-[#E7F5F1] via-white to-[#FBEBB0]/45 p-6 shadow-[0_30px_60px_-36px_rgba(11,122,109,0.4)] sm:p-9 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-12 lg:p-12">
           <span className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-mz-primary/10 blur-3xl" aria-hidden="true" />
           <div className="relative">
-            <h2 id="recommended-title" className="text-[28px] font-extrabold leading-[1.1] tracking-[-0.025em] text-mz-ink sm:text-[36px]">
+            <h2 id="recommended-title" className="text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
               Jobs that fit your profile
             </h2>
             <ul className="mt-5 space-y-2.5">

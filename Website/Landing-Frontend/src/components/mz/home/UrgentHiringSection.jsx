@@ -34,8 +34,8 @@ export default function UrgentHiringSection() {
             <Zap size={17} strokeWidth={2.4} />
           </span>
           <div>
-            <h2 id="urgent-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Urgent hiring</h2>
-            <p className="mt-0.5 text-[13.5px] text-mz-muted">Companies that need to fill these roles fast</p>
+            <h2 id="urgent-title" className="text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Urgent hiring</h2>
+            <p className="mt-0.5 text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed">Companies that need to fill these roles fast</p>
           </div>
         </div>
 

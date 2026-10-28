@@ -26,10 +26,10 @@ export default function CampusSection() {
   return (
     <section id="campuses" aria-labelledby="campus-title" className="relative scroll-mt-20 overflow-hidden border-t border-mz-line bg-mz-bg py-10 lg:py-12">
       <Container>
-        <h2 id="campus-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">
+        <h2 id="campus-title" className="text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
           From Campus to <span className="text-mz-primary">Career.</span>
         </h2>
-        <p className="mt-1 text-[14px] text-mz-muted">Mzobs works with colleges to give students a direct route from the classroom to their first job.</p>
+        <p className="mt-1 text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed">Mzobs works with colleges to give students a direct route from the classroom to their first job.</p>
 
         <ul className="mt-6 grid gap-4 md:grid-cols-4">
           <Reveal

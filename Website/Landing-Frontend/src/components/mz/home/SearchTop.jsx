@@ -23,10 +23,10 @@ export default function SearchTop({ filters, onSearch }) {
       </div>
 
       <Container className="relative">
-        <h1 id="search-title" className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-[#12304A] sm:text-[44px]">
+        <h1 id="search-title" className="text-[#12304A] text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
           Your ambition deserves the <span className="bg-gradient-to-r from-[#078B7D] to-[#12A89D] bg-clip-text text-transparent">right job.</span>
         </h1>
-        <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-mz-muted">
+        <p className="mt-2 max-w-2xl text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed">
           Live openings from employers hiring on Mzobs. Verified companies are marked on every listing.
         </p>
 
