@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, ChevronRight, ClipboardList, FileText, ListChecks, Sparkles, UserRound } from 'lucide-react'
+import { ChevronRight, ClipboardList, FileText, ListChecks, Sparkles, UserRound } from 'lucide-react'
 import { useEmployeeSession } from '../../../lib/useEmployeeSession'
 import { fetchApplicationCount, fetchEmployeeProfile } from '../../../lib/employeeApi'
 import { COMPLETION_CHECKS, profileCompletion } from '../../../lib/profileCompletion'
@@ -38,81 +38,27 @@ function useCandidateState(token) {
 }
 
 const RING = 'focus-visible:outline-2 focus-visible:outline-mz-primary'
-// Remounted panels (a new leading step) ease in; reduced motion skips it.
-const EASE_IN = 'transition-[opacity,translate] duration-300 ease-out starting:translate-y-1 starting:opacity-0 motion-reduce:transition-none'
 
-// The signature: two forward chevrons, cropped by the card edge — "in motion".
-// Pure shape, no data; sits behind the headline's right side.
-function MotionMark() {
-  return (
-    <svg viewBox="0 0 120 150" className="pointer-events-none absolute -right-7 top-3 h-[120px] w-[96px]" fill="none" strokeLinejoin="miter" aria-hidden="true">
-      <path d="M8 8 L68 75 L8 142" stroke="var(--color-mz-primary)" strokeWidth="22" />
-      <path d="M62 8 L122 75 L62 142" stroke="var(--color-mz-primary)" strokeOpacity="0.22" strokeWidth="22" />
-    </svg>
-  )
-}
-
-// One stop on the rail. The whole row is the link (single tab stop); `lead`
+// One row of the list. The whole row is the link (single tab stop); `lead`
 // marks the step this person's real data calls for.
-function RailItem({ icon: Icon, title, status, to, lead, action, delay }) {
+function StepRow({ icon: Icon, title, status, to, lead, action }) {
   return (
-    <li className={lead ? EASE_IN : 'mz-rise'} style={lead ? undefined : { '--d': `${delay}s` }}>
+    <li>
       <Link
         to={to}
-        className={`group relative -mx-2 grid min-h-[52px] grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-x-3 rounded-[6px] px-2 transition-[background-color,scale] duration-150 motion-safe:active:scale-[0.99] ${
-          lead ? 'bg-mz-primary-tint py-3 hover:bg-mz-primary-tint' : 'py-2 hover:bg-mz-bg active:bg-mz-primary-tint'
+        className={`group flex min-h-[48px] items-center gap-3 px-4 py-2.5 transition-colors duration-150 ${
+          lead ? 'bg-mz-primary-tint' : 'hover:bg-mz-bg'
         } ${RING} focus-visible:-outline-offset-2`}
       >
-        <span
-          className={`relative flex size-7 items-center justify-center rounded-full border transition-colors duration-150 ${
-            lead
-              ? 'border-mz-primary bg-mz-primary text-white'
-              : 'border-mz-line-strong bg-white text-mz-ink-2 group-hover:border-mz-primary group-hover:bg-mz-primary group-hover:text-white group-focus-visible:border-mz-primary group-focus-visible:bg-mz-primary group-focus-visible:text-white'
-          }`}
-        >
-          <Icon size={14} strokeWidth={2} aria-hidden="true" />
-        </span>
-        <span className="min-w-0">
-          <span className={`block leading-snug text-mz-ink ${lead ? 'text-[16px] font-bold' : 'text-[14.5px] font-semibold'}`}>{title}</span>
+        <Icon size={17} strokeWidth={1.8} className={`shrink-0 ${lead ? 'text-mz-primary-strong' : 'text-mz-muted group-hover:text-mz-ink'}`} aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className={`block text-[14px] leading-snug text-mz-ink ${lead ? 'font-semibold' : 'font-medium'}`}>{title}</span>
           {status && <span className="line-clamp-2 text-[12.5px] leading-snug text-mz-muted">{status}</span>}
-          {lead && (
-            <span className="mt-1 inline-flex items-center gap-1 text-[13.5px] font-bold text-mz-primary-strong">
-              {action}
-              <ArrowRight size={15} className="transition-transform duration-150 motion-safe:group-hover:translate-x-1" aria-hidden="true" />
-            </span>
-          )}
+          {lead && <span className="mt-0.5 block text-[13px] font-semibold text-mz-primary-strong group-hover:underline">{action}</span>}
         </span>
-        {!lead && (
-          <ChevronRight
-            size={16}
-            className="text-mz-line-strong transition-[translate,color] duration-150 group-hover:text-mz-primary group-focus-visible:text-mz-primary motion-safe:group-hover:translate-x-1"
-            aria-hidden="true"
-          />
-        )}
+        <ChevronRight size={15} className="shrink-0 text-mz-line-strong group-hover:text-mz-muted" aria-hidden="true" />
       </Link>
     </li>
-  )
-}
-
-// Signed-out call to action: a squared button with an offset outline that
-// closes up on hover and press.
-function SignupActions() {
-  return (
-    <div className="mz-rise mt-5 flex flex-wrap items-center gap-x-5 gap-y-3" style={{ '--d': '0.1s' }}>
-      <Link to="/employees/signup" className={`group relative inline-block ${RING} focus-visible:outline-offset-4`}>
-        <span className="absolute inset-0 translate-x-1 translate-y-1 rounded-[3px] border-2 border-mz-primary" aria-hidden="true" />
-        <span className="relative flex h-11 items-center gap-2 rounded-[3px] bg-mz-primary px-5 text-[14.5px] font-bold text-white transition-[translate,background-color] duration-150 group-hover:bg-mz-primary-strong motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:translate-y-0.5 motion-safe:group-active:translate-x-1 motion-safe:group-active:translate-y-1">
-          Create free account
-          <ArrowRight size={16} strokeWidth={2.4} className="transition-transform duration-150 motion-safe:group-hover:translate-x-0.5" aria-hidden="true" />
-        </span>
-      </Link>
-      <Link
-        to="/employees/signin"
-        className={`inline-flex min-h-[44px] items-center rounded-sm text-[14px] font-semibold text-mz-ink underline decoration-mz-line-strong decoration-2 underline-offset-4 transition-colors duration-150 hover:decoration-mz-primary ${RING} focus-visible:outline-offset-2`}
-      >
-        Sign in
-      </Link>
-    </div>
   )
 }
 
@@ -182,29 +128,39 @@ export default function CareerSidebar() {
 
   return (
     <aside aria-labelledby="career-tools-title" className="lg:sticky lg:top-20">
-      <div className="relative overflow-hidden rounded-[8px] border border-mz-line-strong bg-white px-5 pb-4 pt-5">
-        <MotionMark />
-        <div className="relative">
-          <p className="mz-rise truncate text-[11px] font-bold tracking-[0.14em] text-mz-primary-strong">
-            {firstName ? `${firstName.toUpperCase()} / YOUR CAREER` : 'MZOBS / YOUR CAREER'}
-          </p>
-          <h2 id="career-tools-title" className="mt-3 text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
-            <span className="mz-rise block" style={{ '--d': '0.04s' }}>Make your</span>
-            <span className="mz-rise block text-mz-primary" style={{ '--d': '0.09s' }}>next move.</span>
+      <div className="overflow-hidden rounded-[8px] border border-mz-line bg-white">
+        <div className="px-4 pb-4 pt-4">
+          <h2 id="career-tools-title" className="text-[16px] font-semibold text-mz-ink">
+            {firstName ? `Hi ${firstName}` : 'Looking for a job?'}
           </h2>
-          <p className="mz-rise mt-3 max-w-[210px] text-mz-ink-2 text-[16px] sm:text-[17px] font-normal leading-relaxed" style={{ '--d': '0.14s' }}>
-            Get ready for the right opportunity.
+          <p className="mt-1 text-[13.5px] leading-relaxed text-mz-ink-2">
+            {signedIn
+              ? 'Pick up where you left off.'
+              : 'Create a free account to upload your resume, apply to jobs and keep track of your applications.'}
           </p>
-          {!signedIn && <SignupActions />}
+          {!signedIn && (
+            <>
+              <Link
+                to="/employees/signup"
+                className={`mt-4 flex h-10 items-center justify-center rounded-[6px] bg-mz-primary text-[14px] font-semibold text-white transition-colors duration-150 hover:bg-mz-primary-strong ${RING} focus-visible:outline-offset-2`}
+              >
+                Create free account
+              </Link>
+              <p className="mt-3 text-center text-[13px] text-mz-muted">
+                Already registered?{' '}
+                <Link to="/employees/signin" className={`font-semibold text-mz-primary-strong hover:underline ${RING}`}>
+                  Sign in
+                </Link>
+              </p>
+            </>
+          )}
         </div>
 
-        <nav aria-label="Your Mzobs profile" className="relative mt-6">
-          <ul className="relative before:absolute before:bottom-6 before:left-[13.5px] before:top-6 before:w-px before:bg-mz-line">
+        <nav aria-label="Your Mzobs profile" className="border-t border-mz-line">
+          <ul className="divide-y divide-mz-line">
             {signedIn && !upNext
-              ? [0, 1, 2, 3, 4].map((i) => <li key={i} aria-hidden="true" className="flex h-[52px] items-center gap-3"><span className="size-7 rounded-full bg-mz-bg" /><span className="h-3 w-40 rounded bg-mz-bg" /></li>)
-              : ordered.map((r, i) =>
-                  <RailItem key={r === upNext ? `${r.id}-lead` : r.id} {...r} lead={r === upNext} action={upNextAction} delay={0.18 + i * 0.04} />,
-                )}
+              ? [0, 1, 2, 3, 4].map((i) => <li key={i} aria-hidden="true" className="flex h-[48px] items-center gap-3 px-4"><span className="mz-skeleton size-4 rounded" /><span className="mz-skeleton h-3 w-40 rounded" /></li>)
+              : ordered.map((r) => <StepRow key={r.id} {...r} lead={r === upNext} action={upNextAction} />)}
           </ul>
         </nav>
       </div>

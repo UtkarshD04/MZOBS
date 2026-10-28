@@ -7,7 +7,7 @@ import { fetchLatestJobs } from '../../../lib/publicJobs'
 const LIMIT = 6
 
 // Roles Mzobs staff flagged as urgent-to-fill (Job.instantHiring), kept out of
-// the "Latest opportunities" feed (which asks for urgent=exclude) and listed
+// the "Latest jobs" feed (which asks for urgent=exclude) and listed
 // here instead. Renders nothing while there are none, and if the request
 // fails, rather than showing an empty or broken block.
 export default function UrgentHiringSection() {

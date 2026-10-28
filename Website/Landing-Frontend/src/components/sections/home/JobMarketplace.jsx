@@ -238,7 +238,7 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
   const showEmpty = !loading && !refreshing && !loadError && jobs.length === 0
 
   const control = 'h-9 rounded-[10px] border border-[#DCE5EC] bg-white text-[13.5px] font-medium text-mz-ink outline-none transition-colors hover:border-[#12A89D]/50 focus-visible:border-[#078B7D] focus-visible:ring-2 focus-visible:ring-[#078B7D]/25'
-  const tealBtn = 'inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] px-4 text-[13.5px] font-semibold text-white shadow-[0_6px_16px_-8px_rgba(7,139,125,0.55)] transition-[transform,box-shadow] duration-200 hover:-translate-y-px hover:shadow-[0_10px_22px_-8px_rgba(7,139,125,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D]'
+  const tealBtn = 'inline-flex h-10 items-center gap-1.5 rounded-[6px] bg-mz-primary px-4 text-[13.5px] font-semibold text-white transition-colors duration-150 hover:bg-mz-primary-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary'
 
   const sheetMotion = desktopPanel
     ? { initial: { x: '100%', y: 0 }, animate: { x: 0, y: 0 }, exit: { x: '100%', y: 0 } }
@@ -248,7 +248,7 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
     <div id="latest-jobs" className="scroll-mt-20" aria-labelledby="jobs-title" role="region">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 id="jobs-title" className="text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Latest opportunities</h2>
+          <h2 id="jobs-title" className="text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Latest jobs</h2>
           <p className="mt-0.5 text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed" aria-live="polite">
             {showInitialLoading
               ? 'Loading live openings…'
@@ -288,8 +288,8 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
                 type="button"
                 onClick={() => setFilterState((prev) => ({ ...prev, tracks: c.key && !(prev.tracks.length === 1 && prev.tracks[0] === c.key) ? [c.key] : [] }))}
                 aria-pressed={active}
-                className={`-mb-px shrink-0 rounded-t-[8px] border-b-[3px] px-3 pb-2.5 pt-1 text-[13.5px] font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[#078B7D] ${
-                  active ? 'border-[#078B7D] bg-[#E8F7F4]/70 text-[#078B7D]' : 'border-transparent text-mz-muted hover:text-[#12304A]'
+                className={`-mb-px shrink-0 border-b-2 px-3 pb-2.5 pt-1 text-[14px] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-mz-primary ${
+                  active ? 'border-mz-ink font-semibold text-mz-ink' : 'border-transparent font-medium text-mz-muted hover:text-mz-ink'
                 }`}
               >
                 {c.label}
@@ -351,10 +351,10 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
             <button type="button" onClick={clearFilters} className={`${tealBtn} mt-2`}>Clear all filters</button>
           </div>
         ) : (
-          <ul className={`flex flex-col gap-3 transition-opacity duration-150 ${refreshing ? 'opacity-60' : ''}`} aria-busy={refreshing || undefined}>
-            {jobs.map((job, index) => (
+          <ul className={`flex flex-col gap-2.5 transition-opacity duration-150 ${refreshing ? 'opacity-60' : ''}`} aria-busy={refreshing || undefined}>
+            {jobs.map((job) => (
               <li key={job.id ?? `${job.title}-${job.company}`}>
-                <JobListItem job={job} index={index} onOpen={onOpenJob} selected={selectedId != null && job.id === selectedId} />
+                <JobListItem job={job} onOpen={onOpenJob} selected={selectedId != null && job.id === selectedId} />
               </li>
             ))}
           </ul>
@@ -366,7 +366,7 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
               type="button"
               onClick={loadMore}
               disabled={loadingMore}
-              className="group inline-flex h-11 items-center gap-2 rounded-[10px] border border-mz-line-strong bg-white px-5 text-[14px] font-semibold text-mz-ink transition-colors hover:border-mz-primary hover:text-mz-primary-strong disabled:opacity-60"
+              className="group inline-flex h-11 items-center gap-2 rounded-[6px] border border-mz-line-strong bg-white px-5 text-[14px] font-semibold text-mz-ink transition-colors hover:border-mz-primary hover:text-mz-primary-strong disabled:opacity-60"
             >
               {loadingMore ? <Loader2 size={15} className="animate-spin" aria-hidden="true" /> : null}
               {loadingMore ? 'Loading…' : <>Show more jobs <span className="font-normal text-mz-muted">({(total - jobs.length).toLocaleString('en-IN')} more)</span></>}
@@ -427,7 +427,7 @@ export default function JobMarketplace({ external, selectedId, onOpenJob, onJobs
                 <button
                   type="button"
                   onClick={() => setFiltersOpen(false)}
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] text-[14.5px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(7,139,125,0.5)] transition-shadow hover:shadow-[0_10px_24px_-8px_rgba(7,139,125,0.6)]"
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[6px] bg-mz-primary text-[14.5px] font-semibold text-white transition-colors hover:bg-mz-primary-strong"
                 >
                   {refreshing ? (
                     <>
