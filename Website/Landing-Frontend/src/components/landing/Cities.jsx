@@ -36,12 +36,12 @@ export default function Cities() {
   }, [live])
 
   return (
-    <section id="cities" style={{ background: '#fff', overflow: 'hidden', scrollMarginTop: 52 }}>
-      <div className="sec" style={{ paddingBottom: 48, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <section id="cities" style={{ background: '#fff', padding: '130px 0', overflow: 'hidden', scrollMarginTop: 52 }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto 48px', padding: '0 24px', display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div data-r=""><p className="eyebrow">Explore jobs by city</p><h2 className="h2">Where opportunity<br />meets ambition.</h2></div>
         <Link data-r="" to="/jobs/cities" style={{ display: 'inline-flex', alignItems: 'center', minHeight: 48, padding: '0 22px', borderRadius: 999, border: '1px solid #d0d5dd', color: '#111827', fontWeight: 600, textDecoration: 'none' }}>Explore all locations →</Link>
       </div>
-      <div className="cities-wrap" data-r="" style={{ paddingBottom: 130 }}>
+      <div className="cities-wrap" data-r="">
         <div className="cities-track">
           {[0, 1].map((copy) => list.map((c) => <CityCard key={`${copy}-${c.meta.slug}`} meta={c.meta} openings={c.openings} hidden={copy === 1} />))}
         </div>
