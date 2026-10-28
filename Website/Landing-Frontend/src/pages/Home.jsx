@@ -53,7 +53,7 @@ export default function Home() {
         </section>
         <Employers />
       </main>
-      <Footer signature />
+      <Footer />
     </div>
   )
 }

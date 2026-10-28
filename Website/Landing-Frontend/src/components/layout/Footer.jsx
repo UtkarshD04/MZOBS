@@ -68,7 +68,7 @@ const linkClass = 'inline-block rounded text-[14px] text-mz-muted transition-col
 // rendering icons that go nowhere.
 const liveSocials = FOOTER_DATA.socialsItems.filter((item) => item.href && item.href !== '#')
 
-export default function Footer({ signature = false }) {
+export default function Footer() {
   return (
     <footer className="border-t border-mz-line bg-white">
       <Container className="pb-8 pt-14">
@@ -145,26 +145,7 @@ export default function Footer({ signature = false }) {
             </ul>
           )}
         </div>
-
       </Container>
-
-      {/* Brand signature (landing page only): a full-width dark band so the teal wordmark pops.
-          Decorative, so hidden from assistive tech. */}
-      {signature && (
-        <div aria-hidden="true" className="relative select-none overflow-hidden bg-[#0c1224] text-center">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-[#35bfa3]/50 to-transparent" />
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-3/4 w-2/3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#0b7a6d]/25 blur-3xl" />
-          <span
-            className="relative block bg-clip-text px-4 pb-[0.1em] pr-[0.1em] pt-[0.05em] font-serif text-[clamp(4.5rem,22vw,16rem)] font-bold italic leading-[1] tracking-tight text-transparent"
-            style={{
-              backgroundImage: 'linear-gradient(100deg, #0b7a6d 0%, #2dd4bf 50%, #7ee8d3 100%)',
-              WebkitBackgroundClip: 'text',
-            }}
-          >
-            mzobs
-          </span>
-        </div>
-      )}
     </footer>
   )
 }
