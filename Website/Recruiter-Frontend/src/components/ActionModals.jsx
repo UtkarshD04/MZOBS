@@ -11,7 +11,7 @@ import { listJobs, getTalentMany } from '../services/talentService'
 import { listTeam } from '../services/recruiterService'
 import { agoDate } from '../lib/format'
 import { PARTS, PART_LABEL, isRevealed, creditSpent } from '../lib/reveal'
-import { dial, dialNumber, telHref } from '../lib/dial'
+import { dial, qrNumber } from '../lib/dial'
 import QRCode from 'qrcode'
 
 const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1)
@@ -21,14 +21,14 @@ export function PhoneQr({ phone }) {
   const [src, setSrc] = useState('')
   useEffect(() => {
     let live = true
-    QRCode.toDataURL(telHref(phone), { width: 220, margin: 4, errorCorrectionLevel: 'Q' }).then((u) => live && setSrc(u)).catch(() => live && setSrc(''))
+    QRCode.toDataURL(`tel:${qrNumber(phone)}`, { width: 220, margin: 4, errorCorrectionLevel: 'Q' }).then((u) => live && setSrc(u)).catch(() => live && setSrc(''))
     return () => { live = false }
   }, [phone])
   if (!src) return null
   return (
     <span className="flex w-fit flex-col items-center gap-1.5 rounded-lg border border-line bg-white p-3">
       <img src={src} alt={`QR code to call ${phone}`} width={176} height={176} />
-      <span className="text-[12.5px] font-semibold tabular-nums text-ink">{dialNumber(phone)}</span>
+      <span className="text-[12.5px] font-semibold tabular-nums text-ink">{qrNumber(phone)}</span>
       <span className="text-[12px] font-normal text-muted">Scan with your phone to call</span>
     </span>
   )
