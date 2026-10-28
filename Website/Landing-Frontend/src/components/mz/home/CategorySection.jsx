@@ -8,55 +8,55 @@ const trackCount = (c, key) => (c ? (c.tracks?.[key] ?? 0) : undefined)
 // Each row's `params` is exactly the search a click runs, and its count is
 // the real number of live jobs for that same search.
 const CATEGORIES = [
-  { key: 'tech', title: 'Technology', icon: FaLaptop, params: { track: 'tech' }, count: (c) => trackCount(c, 'tech') },
-  { key: 'analytics', title: 'Data & Analytics', icon: FaAtom, params: { track: 'analytics' }, count: (c) => trackCount(c, 'analytics') },
-  { key: 'ai', title: 'AI & ML', icon: FaRobot, params: { q: KEYWORD_CATEGORIES.ai }, count: (c, k) => k.ai },
-  { key: 'cyber', title: 'Cybersecurity', icon: FaShieldHalved, params: { q: KEYWORD_CATEGORIES.cyber }, count: (c, k) => k.cyber },
-  { key: 'design', title: 'Design', icon: FaPenRuler, params: { track: 'design' }, count: (c) => trackCount(c, 'design') },
-  { key: 'marketing', title: 'Marketing', icon: FaChartPie, params: { track: 'marketing' }, count: (c) => trackCount(c, 'marketing') },
-  { key: 'sales', title: 'Sales', icon: FaTags, params: { track: 'sales' }, count: (c) => trackCount(c, 'sales') },
-  { key: 'finance', title: 'Finance', icon: FaBuildingColumns, params: { q: ['Finance', 'Accounting'] }, count: (c) => (c ? (c.finance ?? 0) : undefined) },
-  { key: 'hr', title: 'HR', icon: FaUser, params: { track: 'hr' }, count: (c) => trackCount(c, 'hr') },
-  { key: 'ops', title: 'Operations', icon: FaGlobe, params: { track: 'ops' }, count: (c) => trackCount(c, 'ops') },
+  { key: 'tech', title: 'Technology', icon: FaLaptop, tone: '#0b7a6d', params: { track: 'tech' }, count: (c) => trackCount(c, 'tech') },
+  { key: 'analytics', title: 'Data & Analytics', icon: FaAtom, tone: '#4d7c0f', params: { track: 'analytics' }, count: (c) => trackCount(c, 'analytics') },
+  { key: 'ai', title: 'AI & ML', icon: FaRobot, tone: '#a21caf', params: { q: KEYWORD_CATEGORIES.ai }, count: (c, k) => k.ai },
+  { key: 'cyber', title: 'Cybersecurity', icon: FaShieldHalved, tone: '#102a43', params: { q: KEYWORD_CATEGORIES.cyber }, count: (c, k) => k.cyber },
+  { key: 'design', title: 'Design', icon: FaPenRuler, tone: '#e11d74', params: { track: 'design' }, count: (c) => trackCount(c, 'design') },
+  { key: 'marketing', title: 'Marketing', icon: FaChartPie, tone: '#ea580c', params: { track: 'marketing' }, count: (c) => trackCount(c, 'marketing') },
+  { key: 'sales', title: 'Sales', icon: FaTags, tone: '#0891b2', params: { track: 'sales' }, count: (c) => trackCount(c, 'sales') },
+  { key: 'finance', title: 'Finance', icon: FaBuildingColumns, tone: '#15803d', params: { q: ['Finance', 'Accounting'] }, count: (c) => (c ? (c.finance ?? 0) : undefined) },
+  { key: 'hr', title: 'HR', icon: FaUser, tone: '#7c3aed', params: { track: 'hr' }, count: (c) => trackCount(c, 'hr') },
+  { key: 'ops', title: 'Operations', icon: FaGlobe, tone: '#b45309', params: { track: 'ops' }, count: (c) => trackCount(c, 'ops') },
 ]
 
 function CountText({ value, loading }) {
   if (value == null) return loading ? <span className="mz-skeleton inline-block h-3 w-14 rounded" aria-hidden="true" /> : null
-  return <span>{`${value.toLocaleString('en-IN')} ${value === 1 ? 'opening' : 'openings'}`}</span>
+  return <span>{value === 0 ? 'No openings yet' : `${value.toLocaleString('en-IN')} ${value === 1 ? 'opening' : 'openings'}`}</span>
 }
 
 // Compact category list; a click filters the job feed above on this page.
 export default function CategorySection({ onSelect }) {
   const { data: counts, status } = useCategoryCounts()
   const keywordCounts = useKeywordCategoryCounts()
-  // Only categories with live openings show (a count still loading keeps its
-  // tile until it settles); busiest first.
-  const rows = CATEGORIES.map((c) => ({ ...c, value: c.count(counts, keywordCounts) }))
-    .filter((c) => c.value !== 0)
-    .sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
-  if (rows.length === 0) return null
+  // Categories with live openings lead; empty ones follow. Sort is
+  // stable, so the original order holds within each group.
+  const rows = CATEGORIES.map((c) => ({ ...c, value: c.count(counts, keywordCounts) })).sort(
+    (a, b) => Number(a.value === 0) - Number(b.value === 0),
+  )
 
   return (
     <section id="categories" aria-labelledby="categories-title" className="scroll-mt-20 bg-mz-bg py-10 lg:py-12">
       <Container>
         <h2 id="categories-title" className="text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Browse by category</h2>
-        <p className="mt-1 text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed">Fields with open roles right now. Pick one to filter the jobs above.</p>
+        <p className="mt-1 text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed">Live opening counts. Pick one to filter the job feed.</p>
 
-        <ul className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-          {rows.map(({ key, title, icon: Icon, params, value }) => {
+        <ul className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+          {rows.map(({ key, title, icon: Icon, tone, params, value }) => {
             return (
-              <li key={key}>
+              <li key={key} style={{ '--tone': tone }}>
                 <button
                   type="button"
                   onClick={() => onSelect?.({ q: [], location: [], experience: '', ...params })}
-                  className="group flex h-full w-full items-center gap-3 rounded-[8px] border border-mz-line bg-white px-4 py-3.5 text-left transition-colors duration-150 hover:border-mz-line-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
+                  className="group relative flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-[18px] border border-mz-line bg-white px-3 py-7 text-center transition-all duration-200 ease-out motion-safe:hover:-translate-y-1 hover:border-(--tone) hover:shadow-[0_16px_32px_-16px_var(--tone)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[6px] bg-mz-primary-tint text-mz-primary-strong">
-                    <Icon size={17} aria-hidden="true" />
+                  <span className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-[0.06]" style={{ background: tone }} aria-hidden="true" />
+                  <span className="relative flex h-12 w-12 items-center justify-center rounded-[14px] text-white shadow-[0_8px_18px_-8px_var(--tone)] transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-3" style={{ background: tone }}>
+                    <Icon size={22} aria-hidden="true" />
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[15px] font-semibold text-mz-ink group-hover:underline">{title}</span>
-                    <span className="mt-0.5 block text-[13px] text-mz-muted">
+                  <span className="relative block">
+                    <span className="block text-[15px] font-semibold text-mz-ink">{title}</span>
+                    <span className="mt-0.5 block text-[12.5px] text-mz-muted">
                       <CountText value={value} loading={KEYWORD_CATEGORIES[key] ? !(key in keywordCounts) : status === 'loading'} />
                     </span>
                   </span>
