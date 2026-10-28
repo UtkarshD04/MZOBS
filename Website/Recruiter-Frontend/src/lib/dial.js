@@ -15,6 +15,14 @@ export function dialNumber(phone) {
   return digits
 }
 
+// What the call QR carries: an Indian mobile as its plain 10 digits (no +91), which
+// phone scanners such as Google Lens open in the dialer without a country-code
+// prefix; any other number keeps its international form.
+export const qrNumber = (phone) => {
+  const n = dialNumber(phone)
+  return /^\+91[6-9]\d{9}$/.test(n) ? n.slice(3) : n
+}
+
 export const telHref = (phone) => `tel:${dialNumber(phone)}`
 
 export const dial = (phone) => {
