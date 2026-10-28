@@ -336,14 +336,14 @@ export default function EmployeeProfile() {
             <FloatingElement duration={11} distance={14} className="absolute -bottom-14 left-1/3 w-48 h-48 bg-(--jobs-gold)/10 rounded-full blur-3xl pointer-events-none" />
 
             <div
-              className="relative z-10 w-[72px] h-[72px] rounded-full p-[3px] shrink-0"
+              className="relative z-10 w-40 h-40 sm:w-48 sm:h-48 rounded-full p-1.5 shrink-0 shadow-[0_12px_32px_-12px_rgba(0,0,0,0.55)]"
               style={{ background: `conic-gradient(var(--jobs-teal) ${percent * 3.6}deg, rgba(255,255,255,0.18) 0deg)` }}
               title={`Profile ${percent}% complete`}
             >
               {profile.photoUrl ? (
-                <img src={photoSrc(profile.photoUrl)} alt={profile.name} className="w-full h-full rounded-full object-cover bg-(--jobs-navy)" />
+                <img src={photoSrc(profile.photoUrl)} alt={profile.name} className="w-full h-full rounded-full object-cover bg-(--jobs-navy) border-4 border-(--jobs-navy)" />
               ) : (
-                <div className="w-full h-full rounded-full bg-(--jobs-navy) flex items-center justify-center text-lg font-black">
+                <div className="w-full h-full rounded-full bg-(--jobs-navy) border-4 border-(--jobs-navy) flex items-center justify-center text-5xl sm:text-6xl font-black">
                   {initialsOf(profile.name)}
                 </div>
               )}
@@ -352,9 +352,9 @@ export default function EmployeeProfile() {
                 onClick={() => photoInputRef.current?.click()}
                 disabled={photoBusy}
                 aria-label={profile.photoUrl ? 'Change profile photo' : 'Add profile photo'}
-                className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white text-(--jobs-navy) shadow-md flex items-center justify-center hover:bg-(--jobs-teal-tint) disabled:opacity-60 cursor-pointer"
+                className="absolute bottom-1 right-1 w-11 h-11 rounded-full bg-white text-(--jobs-navy) shadow-md flex items-center justify-center hover:bg-(--jobs-teal-tint) disabled:opacity-60 cursor-pointer"
               >
-                {photoBusy ? <Loader2 size={13} className="animate-spin" /> : <Camera size={13} />}
+                {photoBusy ? <Loader2 size={20} className="animate-spin" /> : <Camera size={20} />}
               </button>
               <input ref={photoInputRef} type="file" accept="image/jpeg,image/png" className="hidden" onChange={handlePhotoChange} />
             </div>
