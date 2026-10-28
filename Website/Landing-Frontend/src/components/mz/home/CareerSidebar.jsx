@@ -38,6 +38,8 @@ function useCandidateState(token) {
 }
 
 const RING = 'focus-visible:outline-2 focus-visible:outline-mz-primary'
+// Same mint wash and diagonal-line texture as the homepage search (SearchTop).
+const LINE_TEXTURE = { backgroundImage: 'repeating-linear-gradient(135deg, rgba(11,122,109,0.18) 0 1.5px, transparent 1.5px 12px)' }
 
 // One row of the list. The whole row is the link (single tab stop); `lead`
 // marks the step this person's real data calls for.
@@ -46,17 +48,23 @@ function StepRow({ icon: Icon, title, status, to, lead, action }) {
     <li>
       <Link
         to={to}
-        className={`group flex min-h-[48px] items-center gap-3 px-4 py-2.5 transition-colors duration-150 ${
-          lead ? 'bg-mz-primary-tint' : 'hover:bg-mz-bg'
+        className={`group flex min-h-[52px] items-center gap-3 px-4 py-2.5 transition-colors duration-150 ${
+          lead ? 'bg-mz-primary-tint' : 'hover:bg-[#F0F8F5]'
         } ${RING} focus-visible:-outline-offset-2`}
       >
-        <Icon size={17} strokeWidth={1.8} className={`shrink-0 ${lead ? 'text-mz-primary-strong' : 'text-mz-muted group-hover:text-mz-ink'}`} aria-hidden="true" />
+        <span
+          className={`flex size-8 shrink-0 items-center justify-center rounded-[8px] transition-colors duration-150 ${
+            lead ? 'bg-mz-primary text-white' : 'bg-mz-primary-tint text-mz-primary-strong group-hover:bg-mz-primary group-hover:text-white'
+          }`}
+        >
+          <Icon size={16} strokeWidth={1.9} aria-hidden="true" />
+        </span>
         <span className="min-w-0 flex-1">
           <span className={`block text-[14px] leading-snug text-mz-ink ${lead ? 'font-semibold' : 'font-medium'}`}>{title}</span>
           {status && <span className="line-clamp-2 text-[12.5px] leading-snug text-mz-muted">{status}</span>}
           {lead && <span className="mt-0.5 block text-[13px] font-semibold text-mz-primary-strong group-hover:underline">{action}</span>}
         </span>
-        <ChevronRight size={15} className="shrink-0 text-mz-line-strong group-hover:text-mz-muted" aria-hidden="true" />
+        <ChevronRight size={15} className="shrink-0 text-mz-line-strong transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-mz-primary" aria-hidden="true" />
       </Link>
     </li>
   )
@@ -128,12 +136,13 @@ export default function CareerSidebar() {
 
   return (
     <aside aria-labelledby="career-tools-title" className="lg:sticky lg:top-20">
-      <div className="overflow-hidden rounded-[8px] border border-mz-line bg-white">
-        <div className="px-4 pb-4 pt-4">
-          <h2 id="career-tools-title" className="text-[16px] font-semibold text-mz-ink">
+      <div className="overflow-hidden rounded-[10px] border border-[#D3E9E2] bg-white shadow-[0_12px_32px_-22px_rgba(11,95,85,0.35)]">
+        <div className="relative bg-[linear-gradient(180deg,#DBF0E9_0%,#F1F9F6_100%)] px-4 pb-4 pt-5">
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-2/3 mask-[radial-gradient(ellipse_at_top_right,black_15%,transparent_70%)]" style={LINE_TEXTURE} aria-hidden="true" />
+          <h2 id="career-tools-title" className="relative text-[18px] font-bold text-mz-ink">
             {firstName ? `Hi ${firstName}` : 'Looking for a job?'}
           </h2>
-          <p className="mt-1 text-[13.5px] leading-relaxed text-mz-ink-2">
+          <p className="relative mt-1 text-[13.5px] leading-relaxed text-mz-ink-2">
             {signedIn
               ? 'Pick up where you left off.'
               : 'Create a free account to upload your resume, apply to jobs and keep track of your applications.'}
@@ -142,11 +151,11 @@ export default function CareerSidebar() {
             <>
               <Link
                 to="/employees/signup"
-                className={`mt-4 flex h-10 items-center justify-center rounded-[6px] bg-mz-primary text-[14px] font-semibold text-white transition-colors duration-150 hover:bg-mz-primary-strong ${RING} focus-visible:outline-offset-2`}
+                className={`relative mt-4 flex h-10 items-center justify-center rounded-[6px] bg-mz-primary text-[14px] font-semibold text-white transition-colors duration-150 hover:bg-mz-primary-strong ${RING} focus-visible:outline-offset-2`}
               >
                 Create free account
               </Link>
-              <p className="mt-3 text-center text-[13px] text-mz-muted">
+              <p className="relative mt-3 text-center text-[13px] text-mz-muted">
                 Already registered?{' '}
                 <Link to="/employees/signin" className={`font-semibold text-mz-primary-strong hover:underline ${RING}`}>
                   Sign in
@@ -159,7 +168,7 @@ export default function CareerSidebar() {
         <nav aria-label="Your Mzobs profile" className="border-t border-mz-line">
           <ul className="divide-y divide-mz-line">
             {signedIn && !upNext
-              ? [0, 1, 2, 3, 4].map((i) => <li key={i} aria-hidden="true" className="flex h-[48px] items-center gap-3 px-4"><span className="mz-skeleton size-4 rounded" /><span className="mz-skeleton h-3 w-40 rounded" /></li>)
+              ? [0, 1, 2, 3, 4].map((i) => <li key={i} aria-hidden="true" className="flex h-[52px] items-center gap-3 px-4"><span className="mz-skeleton size-8 rounded-[8px]" /><span className="mz-skeleton h-3 w-40 rounded" /></li>)
               : ordered.map((r) => <StepRow key={r.id} {...r} lead={r === upNext} action={upNextAction} />)}
           </ul>
         </nav>
