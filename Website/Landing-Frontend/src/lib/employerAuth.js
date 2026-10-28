@@ -29,10 +29,6 @@ export async function checkEmployerGst({ gstin, gstLegalName, companyName }) {
   return { verified: false, ...data, ok: res.ok && data.ok !== false }
 }
 
-export function loginEmployer({ email, password }) {
-  return postJSON('/auth/login', { email, password })
-}
-
 export function signupEmployer({ companyName, name, email, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName }) {
   return trackOnSuccess(postJSON('/auth/signup', { companyName, name, email, phone, industry, size, website, hq, phoneToken, gstin, gstLegalName }), 'employer_signup_completed', { method: 'email' })
 }
@@ -40,6 +36,20 @@ export function signupEmployer({ companyName, name, email, phone, industry, size
 // Passwordless sign-in for accounts registered with a verified mobile.
 export function phoneLoginEmployer({ phone, phoneToken }) {
   return postJSON('/auth/phone-login', { phone, phoneToken })
+}
+
+// Passwordless sign-in by a 6-digit code emailed to the account's address:
+// send → verify (returns a short-lived emailToken) → email-login.
+export function sendEmployerEmailOtp({ email }) {
+  return postJSON('/auth/send-email-otp', { email: email.trim() })
+}
+
+export function verifyEmployerEmailOtp({ email, otp }) {
+  return postJSON('/auth/verify-email-otp', { email: email.trim(), otp })
+}
+
+export function emailLoginEmployer({ email, emailToken }) {
+  return postJSON('/auth/email-login', { email: email.trim(), emailToken })
 }
 
 export function loginEmployerWithGoogle({ credential }) {
