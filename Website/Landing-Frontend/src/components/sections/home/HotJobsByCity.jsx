@@ -191,8 +191,8 @@ export default function HotJobsByCity() {
   const showInitialLoading = liveCities === null && !loadError
 
   return (
-    <section id="hot-jobs-by-city" className="bg-(--explorer-bg) py-8 md:py-10 px-6 md:px-10 overflow-hidden">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] items-center gap-6 lg:gap-12">
+    <section id="hot-jobs-by-city" className="bg-(--explorer-bg) py-8 md:py-10 overflow-hidden">
+      <div className="max-w-[1200px] w-full mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] items-center gap-6 lg:gap-12">
         <Reveal direction="up" duration={0.7} className="max-w-md">
           <h2 className="text-3xl sm:text-[32px] leading-[1.1] font-black text-(--explorer-navy) tracking-tight text-balance">{HOT_CITIES_DATA.title}</h2>
           <p className="mt-3 text-[15px] leading-relaxed text-(--explorer-muted)">{HOT_CITIES_DATA.subtitle}</p>
