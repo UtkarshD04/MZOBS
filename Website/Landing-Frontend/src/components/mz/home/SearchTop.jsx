@@ -21,14 +21,14 @@ export default function SearchTop({ filters, onSearch }) {
 
       <Container className="relative">
         <h1 id="search-title" className="text-mz-ink text-[30px] sm:text-[38px] lg:text-[44px] font-extrabold leading-[1.1] tracking-tight">
-          Find your{' '}
+          Your ambition deserves the{' '}
           <span className="relative inline-block whitespace-nowrap text-mz-primary">
-            next job
+            right job
             <svg className="absolute -bottom-2 left-0 h-[10px] w-full" viewBox="0 0 200 10" preserveAspectRatio="none" fill="none" aria-hidden="true">
               <path d="M2 7 C 50 2, 120 2, 198 6" stroke="#F2B544" strokeWidth="4" strokeLinecap="round" />
             </svg>
           </span>{' '}
-          on Mzobs
+          . Let&apos;s find it.
         </h1>
         <p className="mt-3 max-w-2xl text-mz-ink-2 text-[16px] sm:text-[17px] font-normal leading-relaxed">
           Live openings from employers hiring on Mzobs. Verified companies are marked on every listing.
