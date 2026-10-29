@@ -13,7 +13,9 @@ import { downloadFile, resumeViewerSrc } from '../../components/ResumeViewerModa
 import { FILE_BASE_URL } from '../../lib/config'
 import ErrorState from '../../components/ui/ErrorState'
 import { ModalHead, ModalBody, ModalFoot } from '../../components/ui/Modal'
-import { Field, Input, Select } from '../../components/ui/Field'
+import { Field, Input, Select, inputClass } from '../../components/ui/Field'
+import PhoneInput from '../../components/ui/PhoneInput'
+import { isValidPhone } from '../../lib/phone'
 import { useApp } from '../../lib/appContext'
 import { exportEmployeesCsv } from '../../services/exportService'
 import { useEmployeesQuery, useEmployeeQuery, useCreateEmployeeMutation, useSetEmployeeStatusMutation, useDeleteEmployeeMutation } from '../../hooks/useEmployees'
@@ -133,6 +135,7 @@ function CreateEmployeeModal({ app, onDone }) {
   const create = useCreateEmployeeMutation()
 
   function submit() {
+    if (phone && !isValidPhone(phone)) return app.addToast('error', 'Enter a valid mobile number')
     create.mutate(
       { name, email, phone, graduation, experience },
       {
@@ -186,7 +189,7 @@ function CreateEmployeeModal({ app, onDone }) {
           <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </Field>
         <Field label="Phone" optional>
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <PhoneInput value={phone} onChange={setPhone} inputClassName={inputClass} placeholder="Mobile number" />
         </Field>
         <Field label="Graduation">
           <Input value={graduation} onChange={(e) => setGraduation(e.target.value)} placeholder="e.g. B.Tech Computer Science, 2023" />
