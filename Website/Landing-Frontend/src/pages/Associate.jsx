@@ -10,6 +10,7 @@ import TrustSection from '../components/associate/TrustSection'
 import FAQ from '../components/associate/FAQ'
 import OfficialApplication from '../components/associate/OfficialApplication'
 import AssociateCTA from '../components/associate/AssociateCTA'
+import '../components/associate/associate.css'
 
 export default function Associate() {
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function Associate() {
   }, [])
 
   return (
-    <div className="mz-home min-h-screen bg-white font-sans text-mz-ink antialiased">
+    <div className="associate-page mz-home min-h-screen bg-white font-sans text-mz-ink antialiased">
       <Navbar />
       <main>
         <AssociateHero />
