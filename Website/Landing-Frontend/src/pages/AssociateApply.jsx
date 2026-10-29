@@ -6,6 +6,8 @@ import Footer from '../components/layout/Footer'
 import { Container } from '../components/mz/primitives'
 import { submitAssociateRequest } from '../lib/associates'
 import { CONTACT_EMAIL } from '../lib/config'
+import { isValidPhone, MOBILE_ERROR } from '../lib/phone'
+import PhoneInput from '../components/ui/PhoneInput'
 
 // Instructions first, then the form in sections — the same flow as a dealer
 // application: read the notes, press Next, fill Section A, B and C. Copy sticks to
@@ -24,7 +26,7 @@ function validate(section, f) {
   if (section === 0) {
     if (!f.companyName.trim()) e.companyName = 'Add your company name'
     if (!f.contactName.trim()) e.contactName = 'Tell us who we should speak to'
-    if (f.phone.replace(/\D/g, '').length < 10) e.phone = 'Enter a 10-digit number'
+    if (!isValidPhone(f.phone)) e.phone = MOBILE_ERROR
     if (!/^\S+@\S+\.\S+$/.test(f.email.trim())) e.email = 'Enter a valid email'
   }
   if (section === 1) {
@@ -165,7 +167,7 @@ function ApplicationSections({ onSent }) {
                 <input value={f.contactName} onChange={set('contactName')} placeholder="Full name" autoComplete="name" aria-invalid={!!errors.contactName} className={inputCls(errors.contactName)} />
               </Field>
               <Field label="Phone" error={errors.phone}>
-                <input value={f.phone} onChange={set('phone')} placeholder="10-digit number" inputMode="tel" autoComplete="tel" aria-invalid={!!errors.phone} className={inputCls(errors.phone)} />
+                <PhoneInput value={f.phone} onChange={(v) => set('phone')({ target: { value: v } })} aria-invalid={!!errors.phone} inputClassName={inputCls(errors.phone)} />
               </Field>
               <div className="sm:col-span-2">
                 <Field label="Email" error={errors.email}>
