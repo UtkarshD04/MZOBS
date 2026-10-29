@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, CheckCircle2, Loader2 } from 'lucide-react'
 import { submitPlanEnquiry } from '../../../lib/employerAuth'
+import PhoneInput from '../../ui/PhoneInput'
+import { isValidPhone } from '../../../lib/phone'
 
 const inputClass =
   'w-full h-11 px-3.5 rounded-xl border border-(--explorer-border) bg-white text-[13.5px] text-(--explorer-navy) outline-none transition-colors placeholder:text-(--explorer-navy)/35 focus:border-(--explorer-blue) focus:ring-[3px] focus:ring-(--explorer-blue)/15'
@@ -16,8 +18,8 @@ export default function EmployerPlanEnquiry({ open, onClose }) {
   const [status, setStatus] = useState('form') // form | sending | done
   const [error, setError] = useState('')
 
-  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: key === 'phone' ? e.target.value.replace(/\D/g, '').slice(0, 10) : key === 'employeesNeeded' ? e.target.value.replace(/\D/g, '').slice(0, 6) : e.target.value }))
-  const valid = form.name.trim() && form.companyName.trim() && form.phone.length === 10 && Number(form.employeesNeeded) >= 1 && EMAIL_RE.test(form.email.trim())
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: key === 'employeesNeeded' ? e.target.value.replace(/\D/g, '').slice(0, 6) : e.target.value }))
+  const valid = form.name.trim() && form.companyName.trim() && isValidPhone(form.phone) && Number(form.employeesNeeded) >= 1 && EMAIL_RE.test(form.email.trim())
 
   function handleClose() {
     if (status === 'sending') return
@@ -104,7 +106,7 @@ export default function EmployerPlanEnquiry({ open, onClose }) {
                   </div>
                   <div>
                     <label className="block text-[12.5px] font-bold text-(--explorer-navy) mb-1.5" htmlFor="pe-phone">Phone number</label>
-                    <input id="pe-phone" type="tel" inputMode="numeric" className={inputClass} value={form.phone} onChange={set('phone')} placeholder="98765 43210" autoComplete="tel-national" />
+                    <PhoneInput id="pe-phone" value={form.phone} onChange={(phone) => setForm((f) => ({ ...f, phone }))} inputClassName={inputClass} placeholder="98765 43210" />
                   </div>
                   <div>
                     <label className="block text-[12.5px] font-bold text-(--explorer-navy) mb-1.5" htmlFor="pe-count">Number of employees you need</label>
