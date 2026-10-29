@@ -142,9 +142,9 @@ function CandidateCard({ row, terms, compact, onAction }) {
               <Meta icon={Phone} title="Unlocked contact">{c.contact.phone}</Meta>
             ) : (
               !IS_DEMO && c._live?.contactPreview?.phone && (
-                <button onClick={() => onAction('unlock', c, 'phone')} title={creditSpent(c) ? 'View the phone number — free, the credit is already used' : 'View the phone number — uses 1 credit, once per candidate'} className="inline-flex items-center gap-1.5 text-[13px] text-ink-2 hover:text-accent">
+                <button onClick={() => onAction('unlock', c, 'contact')} title={creditSpent(c) ? 'Unlock email and number — free, the credit is already used' : 'Unlock email and number — uses 1 credit, once per candidate'} className="inline-flex items-center gap-1.5 text-[13px] text-ink-2 hover:text-accent">
                   <Phone size={13} className="text-[#7d93a6]" /> {c._live.contactPreview.phone}
-                  <span className="inline-flex items-center gap-0.5 font-semibold text-accent"><Eye size={12} /> View</span>
+                  <span className="inline-flex items-center gap-0.5 font-semibold text-accent"><Eye size={12} /> Unlock email & number</span>
                 </button>
               )
             )}
