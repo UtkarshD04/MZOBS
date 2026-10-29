@@ -14,7 +14,7 @@ import { splitSkills, tidyText } from '../lib/talent/summary'
 import { revealedFromApi } from '../lib/reveal'
 import { DEMO_POOL } from '../lib/talent/demoPool'
 import { rankPool, similarTo, computeMatch, computeTrust } from '../lib/talent/engine'
-import { setVocabularyFrom } from '../lib/talent/vocab'
+import { setVocabularyFrom, canonState } from '../lib/talent/vocab'
 import { readLocalJobs } from '../lib/localJobs'
 
 const DEMO_LATENCY = 320
@@ -129,7 +129,7 @@ export function mapResdexCandidate(e) {
     currentSalaryLPA: toLpa(e.currentCtc),
     expectedSalaryLPA: toLpa(e.expectedSalary),
     location: e.location ?? '',
-    state: e.state ?? '',
+    state: canonState(e.state),
     pincode: e.pincode ?? '',
     preferredLocations: e.preferredLocations?.length ? e.preferredLocations : e.location ? [e.location] : [],
     relocationOk: e.relocationOk,
