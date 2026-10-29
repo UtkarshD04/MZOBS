@@ -10,6 +10,8 @@ import { CLIENT_ONLY_ROUTES } from '../lib/routes'
 import { COLLEGE_TYPES, loadStateColleges } from '../lib/colleges'
 import CollegePicker from '../components/CollegePicker'
 import DISTRICTS from '../data/districts.json'
+import { isValidPhone, MOBILE_ERROR } from '../lib/phone'
+import PhoneInput from '../components/ui/PhoneInput'
 
 // Same flow as the associate application: instructions first, then the form in
 // sections A, B and C, then a confirmation.
@@ -47,7 +49,7 @@ function validate(section, f) {
   if (section === 2) {
     if (!f.contactPerson.trim()) e.contactPerson = 'Add a contact name'
     if (!/^\S+@\S+\.\S+$/.test(f.officialEmail.trim())) e.officialEmail = 'Enter a valid email'
-    if (!/^[\d\s+()-]+$/.test(f.phone.trim()) || f.phone.replace(/\D/g, '').length < 10) e.phone = 'Enter a valid 10-digit number'
+    if (!isValidPhone(f.phone)) e.phone = MOBILE_ERROR
   }
   return e
 }
@@ -270,7 +272,7 @@ function ApplicationSections({ onSent }) {
                 <input value={f.contactPerson} onChange={set('contactPerson')} placeholder="Full name" autoComplete="name" maxLength={120} autoFocus aria-invalid={!!errors.contactPerson} className={inputCls(errors.contactPerson)} />
               </Field>
               <Field label="Phone" error={errors.phone}>
-                <input value={f.phone} onChange={set('phone')} placeholder="10-digit number" inputMode="tel" autoComplete="tel" maxLength={20} aria-invalid={!!errors.phone} className={inputCls(errors.phone)} />
+                <PhoneInput value={f.phone} onChange={(v) => set('phone')({ target: { value: v } })} aria-invalid={!!errors.phone} inputClassName={inputCls(errors.phone)} />
               </Field>
               <div className="sm:col-span-2">
                 <Field label="Official email" error={errors.officialEmail}>
