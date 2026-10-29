@@ -10,7 +10,7 @@ import { getCredits, unlockCandidate, scheduleInterview, setCandidateStage, send
 import { listJobs, getTalentMany } from '../services/talentService'
 import { listTeam } from '../services/recruiterService'
 import { agoDate } from '../lib/format'
-import { PARTS, PART_LABEL, isRevealed, creditSpent } from '../lib/reveal'
+import { PARTS, PART_LABEL, contactOpen, isRevealed, creditSpent } from '../lib/reveal'
 import { dial, qrNumber } from '../lib/dial'
 import QRCode from 'qrcode'
 
@@ -227,7 +227,7 @@ export function OutreachModal({ candidates, channel: initial = 'email', onClose,
             </span>
             {!many && onReveal && (
               <button onClick={() => onReveal(first, part)} className="rounded-md border border-current/25 bg-white px-2.5 py-1 text-[12.5px] font-semibold hover:bg-white/70">
-                View {PART_LABEL[part]} · {creditSpent(first) ? 'free' : '1 credit'}
+                Unlock email & number
               </button>
             )}
           </div>
@@ -462,7 +462,7 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
     if (!candidate) return
     getCredits().then((r) => setWallet(r.wallet)).catch(() => setWallet(null))
     // This part is already open → the backend returns it again without charging.
-    if (isRevealed(candidate, part)) unlockCandidate(candidate, { field: part }).then(setResult).catch(() => {})
+    if (part === 'contact' ? contactOpen(candidate) : isRevealed(candidate, part)) unlockCandidate(candidate, { field: part }).then(setResult).catch(() => {})
     else if (candidate._live?.kind === 'resdex' && !candidate._live.candidateId) {
       listJobs()
         .then((list) => {
@@ -474,7 +474,7 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
   }, [candidate, part])
 
   const preview = candidate?._live?.contactPreview
-  const previewLine = part === 'email' ? `Email ${preview?.email ?? '—'}` : part === 'phone' ? `Phone ${preview?.phone ?? '—'}` : 'The CV stays hidden until you view it'
+  const previewLine = part === 'contact' ? `Email ${preview?.email ?? '—'} · Phone ${preview?.phone ?? '—'}` : part === 'email' ? `Email ${preview?.email ?? '—'}` : part === 'phone' ? `Phone ${preview?.phone ?? '—'}` : 'The CV stays hidden until you view it'
   const unlock = async () => {
     setBusy(true)
     setErr('')
@@ -496,12 +496,12 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
   const stillHidden = c ? PARTS.filter((p) => c.revealed && !c.revealed.includes(p)).map((p) => PART_LABEL[p]) : []
   return (
     <Modal open={!!candidate} onClose={onClose} title={c ? cap(label) : `View ${label}`} subtitle={candidate?.name} width={460}
-      footer={c ? <><Button onClick={onClose}>Done</Button>{part === 'phone' && c.phone && <Button icon={Phone} onClick={() => dial(c.phone)}>Call now</Button>}{part === 'phone' && c.phone && onCompose && <Button variant="primary" icon={Smartphone} onClick={() => onCompose(candidate, contactOf(c, candidate), 'sms')}>Send SMS</Button>}{part === 'email' && c.email && onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, contactOf(c, candidate), 'email')}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || (!paid && credits === 0) || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Opening…' : paid ? `View ${label} · free` : `View ${label} · uses 1 credit`}</Button></>}>
+      footer={c ? <><Button onClick={onClose}>Done</Button>{(part === 'phone' || part === 'contact') && c.phone && <Button icon={Phone} onClick={() => dial(c.phone)}>Call now</Button>}{(part === 'phone' || part === 'contact') && c.phone && onCompose && <Button variant="primary" icon={Smartphone} onClick={() => onCompose(candidate, contactOf(c, candidate), 'sms')}>Send SMS</Button>}{(part === 'email' || part === 'contact') && c.email && onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, contactOf(c, candidate), 'email')}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || (!paid && credits === 0) || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Opening…' : part === 'contact' ? 'Unlock email & number' : paid ? `View ${label} · free` : `View ${label} · uses 1 credit`}</Button></>}>
       {c ? (
         <div className="space-y-3 text-[14px]">
-          {part === 'email' && <div><p className="text-[12px] text-muted">Email</p><p className="font-medium">{c.email || '—'}</p></div>}
-          {part === 'phone' && <div><p className="text-[12px] text-muted">Phone</p><p className="font-medium">{c.phone || '—'}</p></div>}
-          {part === 'phone' && c.phone && <PhoneQr phone={c.phone} />}
+          {(part === 'email' || part === 'contact') && <div><p className="text-[12px] text-muted">Email</p><p className="font-medium">{c.email || '—'}</p></div>}
+          {(part === 'phone' || part === 'contact') && <div><p className="text-[12px] text-muted">Phone</p><p className="font-medium">{c.phone || '—'}</p></div>}
+          {(part === 'phone' || part === 'contact') && c.phone && <PhoneQr phone={c.phone} />}
           {part === 'resume' && (c.resumeUrl ? (
             <Button icon={FileText} onClick={() => onViewResume?.(candidate, { url: c.resumeUrl, fileName: c.resumeFileName })}>Open CV</Button>
           ) : (
@@ -512,7 +512,7 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
       ) : (
         <div className="space-y-3 text-[13.5px]">
           {paid ? (
-            <p>You have already used the credit for {first}. Viewing the {label} is <b>free</b>.</p>
+            <p>{part === 'contact' ? `Opens ${first}'s email and phone number together. Your credit for ${first} is already used, so nothing more is charged.` : <>You have already used the credit for {first}. Viewing the {label} is <b>free</b>.</>}</p>
           ) : (
             <p>Viewing the {label} uses <b>1 CV credit</b> — once for this candidate. Email, phone number and CV then each open with their own click, and you are never charged again for {first}.</p>
           )}
