@@ -72,7 +72,9 @@ const shellTemplate = fs.readFileSync(path.join(CLIENT_DIR, '.shell.html'), 'utf
 const { render } = await import(pathToFileURL(SERVER_ENTRY).href)
 
 function renderShell({ headHtml, appHtml = '', tailHtml = '' }) {
-  return shellTemplate.replace('<!--app-head-->', headHtml).replace('<!--app-html-->', appHtml).replace('<!--app-tail-->', tailHtml)
+  // Function replacers: a string replacement would treat "$&" / "$'" inside job text as
+  // special patterns and splice pieces of the template into the page.
+  return shellTemplate.replace('<!--app-head-->', () => headHtml).replace('<!--app-html-->', () => appHtml).replace('<!--app-tail-->', () => tailHtml)
 }
 
 const app = express()
