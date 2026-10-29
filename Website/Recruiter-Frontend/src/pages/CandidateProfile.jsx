@@ -15,29 +15,29 @@ import { loadLastResults } from '../lib/lastResults'
 import { useWorkspace } from '../store/workspace'
 import { lpa, years, notice, ago } from '../lib/format'
 import { IS_DEMO } from '../lib/config'
-import { isRevealed, creditSpent } from '../lib/reveal'
+import { contactOpen, creditSpent } from '../lib/reveal'
 import { safeHref } from '../lib/safeUrl'
 
-// Email and phone are opened one at a time: each has its own View button. The
-// first one opens costs 1 credit for the candidate; the other is then free.
+// One button opens email and phone number together: the first unlock costs 1 credit
+// for the candidate, and once the credit is spent it is free.
 function ContactFact({ candidate: c, onView }) {
   const preview = c._live?.contactPreview
   const paid = creditSpent(c)
-  const line = (part, value, masked) =>
-    isRevealed(c, part) ? (
-      <span className="block">{value || '—'}{part === 'phone' && value && <span className="mt-1.5 block"><PhoneQr phone={value} /></span>}</span>
-    ) : (
-      <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="text-ink-2">{masked ?? '—'}</span>
-        <button onClick={() => onView(part)} className="flex items-center gap-1 rounded-md border border-line px-2 py-0.5 text-[12px] font-semibold text-accent transition-colors hover:bg-accent-soft">
-          <Eye size={12} /> {paid ? 'View · free' : 'View · 1 credit'}
-        </button>
+  if (contactOpen(c)) {
+    return (
+      <span className="block space-y-1.5">
+        <span className="block">{c.contact?.email || '—'}</span>
+        <span className="block">{c.contact?.phone || '—'}{c.contact?.phone && <span className="mt-1.5 block"><PhoneQr phone={c.contact.phone} /></span>}</span>
       </span>
     )
+  }
   return (
     <span className="block space-y-1.5">
-      {line('email', c.contact?.email, preview?.email)}
-      {line('phone', c.contact?.phone, preview?.phone)}
+      <span className="block text-ink-2">{preview?.email ?? '—'}</span>
+      <span className="block text-ink-2">{preview?.phone ?? '—'}</span>
+      <button onClick={() => onView('contact')} title={paid ? 'Free — the credit is already used' : 'Uses 1 credit, once per candidate'} className="flex items-center gap-1.5 rounded-md border border-accent px-3 py-1.5 text-[12.5px] font-semibold text-accent transition-colors hover:bg-accent-soft">
+        <Eye size={13} /> Unlock email &amp; number
+      </button>
     </span>
   )
 }
