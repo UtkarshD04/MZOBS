@@ -88,15 +88,18 @@ function withinTwoEdits(a, b) {
   return prev[b.length] <= 2
 }
 
-/** Canonical state name for a typed one: "UP", "U.P" and "Uttar Pardesh" all become "Uttar Pradesh". Unknown text is returned trimmed. */
+/**
+ * Official state / UT name for a typed one: "UP", "U.P" and "Uttar Pardesh" all become "Uttar Pradesh".
+ * Text that is not a state (a district or city typed into the State box, e.g. "Bahraich") gives '' so it
+ * never shows up as a state.
+ */
 export function canonState(s) {
-  const raw = (s ?? '').toString().trim()
-  const key = stateKey(raw)
-  if (!key) return raw
+  const key = stateKey((s ?? '').toString())
+  if (!key) return ''
   const exact = STATE_BY_KEY.get(key) ?? STATE_ALIASES[key]
   if (exact) return exact
   if (key.length > 5) for (const [k, name] of STATE_BY_KEY) if (withinTwoEdits(key, k)) return name
-  return raw
+  return ''
 }
 
 /** Example queries for the composer, built from the data actually loaded. */
