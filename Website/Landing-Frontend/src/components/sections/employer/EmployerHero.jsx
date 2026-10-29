@@ -4,6 +4,8 @@ import { ArrowRight, CheckCircle2, Loader2 } from 'lucide-react'
 import { FadeInLoad } from './employerMotion'
 import EmployerSigninForm from '../../forms/EmployerSigninForm'
 import ExplorerButton from '../../ui/ExplorerButton'
+import PhoneInput from '../../ui/PhoneInput'
+import { isValidPhone } from '../../../lib/phone'
 import { TRUSTED_LOGOS_DATA } from '../../../lib/content'
 import { submitPlanEnquiry } from '../../../lib/employerAuth'
 import { GST_RATE_PERCENT, PLANS, fmtINR } from '../../../lib/employerPricingPlan'
@@ -40,8 +42,9 @@ function CallbackForm() {
   const [status, setStatus] = useState('form') // form | sending | done
   const [error, setError] = useState('')
   const set = (key) => (e) =>
-    setForm((f) => ({ ...f, [key]: key === 'phone' ? e.target.value.replace(/\D/g, '').slice(0, 10) : e.target.value }))
-  const valid = form.name.trim() && form.companyName.trim() && form.phone.length === 10 && EMAIL_RE.test(form.email.trim())
+    setForm((f) => ({ ...f, [key]: e.target.value }))
+  const setPhone = (phone) => setForm((f) => ({ ...f, phone }))
+  const valid = form.name.trim() && form.companyName.trim() && isValidPhone(form.phone) && EMAIL_RE.test(form.email.trim())
 
   async function submit(e) {
     e.preventDefault()
@@ -81,7 +84,10 @@ function CallbackForm() {
       <p className="text-[14px] leading-relaxed text-(--explorer-muted)">Not sure which plan fits? Leave your number and our team will call you.</p>
       <LabeledInput id="hero-name" label="Full name" autoComplete="name" value={form.name} onChange={set('name')} placeholder="Your name" />
       <LabeledInput id="hero-company" label="Company name" autoComplete="organization" value={form.companyName} onChange={set('companyName')} placeholder="Company you hire for" />
-      <LabeledInput id="hero-phone" label="Mobile number" type="tel" inputMode="numeric" autoComplete="tel-national" value={form.phone} onChange={set('phone')} placeholder="10-digit mobile number" />
+      <div>
+        <label htmlFor="hero-phone" className="mb-1.5 block text-[12.5px] font-semibold text-(--explorer-navy)">Mobile number</label>
+        <PhoneInput id="hero-phone" value={form.phone} onChange={setPhone} inputClassName={fieldClass} placeholder="Mobile number" />
+      </div>
       <LabeledInput id="hero-email" label="Work email" type="email" autoComplete="email" value={form.email} onChange={set('email')} placeholder="you@company.com" />
       {error && <p role="alert" className="text-[12.5px] font-semibold text-red-600">{error}</p>}
       <button
