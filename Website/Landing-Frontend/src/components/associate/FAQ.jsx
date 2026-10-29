@@ -17,7 +17,6 @@ export default function FAQ() {
   return (
     <section className="associate-section associate-section--soft border-y border-[#E1E9E8]">
       <Container>
-<<<<<<< HEAD
         <AssociateSectionHeading title="Frequently asked questions" />
         <div className="grid max-w-3xl gap-3">
           {FAQS.map(({ q, a }, index) => {
@@ -60,20 +59,6 @@ export default function FAQ() {
               </Reveal>
             )
           })}
-=======
-        <h2 className="text-[#101828] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Frequently asked questions</h2>
-        <div className="mt-6 max-w-3xl divide-y divide-[#EAECF0] rounded-lg border border-[#E6E8F0] bg-white">
-          {FAQS.map(({ q, a }) => (
-            <details key={q} className="group px-5 py-4">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-bold text-[#101828] [&::-webkit-details-marker]:hidden">
-                {q}
-                <span className="text-[20px] leading-none text-[#475467] group-open:hidden" aria-hidden="true">+</span>
-                <span className="hidden text-[20px] leading-none text-[#475467] group-open:inline" aria-hidden="true">−</span>
-              </summary>
-              <p className="mt-2.5 text-[14px] leading-relaxed text-[#475467]">{a}</p>
-            </details>
-          ))}
->>>>>>> 505a7472e6e3593ddda92924986acbdc69c4c533
         </div>
       </Container>
     </section>

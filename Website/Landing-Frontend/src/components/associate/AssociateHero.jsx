@@ -11,7 +11,6 @@ const POINTS = [
 
 export default function AssociateHero() {
   return (
-<<<<<<< HEAD
     <section className="associate-hero associate-section--soft border-b border-[#E1E9E8]">
       <Container className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
         <Reveal>
@@ -19,16 +18,6 @@ export default function AssociateHero() {
             Become a Mzobs Associate
           </h1>
           <p className="mt-5 max-w-xl text-[16px] leading-[1.8] text-[#5B6D79] sm:text-[17px]">
-=======
-    <section className="border-b border-[#E6E8F0] bg-[#F8FAFC] pb-14 pt-28 lg:pb-20 lg:pt-36">
-      <Container className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-        <div>
-          <p className="text-[13px] font-bold uppercase tracking-wide text-[#0b7a6d]">Associate Program</p>
-          <h1 className="mt-3 text-[#101828] text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
-            Become a Mzobs Associate
-          </h1>
-          <p className="mt-4 max-w-xl text-[#475467] text-[16px] sm:text-[17px] font-normal leading-relaxed">
->>>>>>> 505a7472e6e3593ddda92924986acbdc69c4c533
             Join the Mzobs hiring network and connect candidates with verified opportunities from employers across industries and cities.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
