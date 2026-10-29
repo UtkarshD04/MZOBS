@@ -5,11 +5,13 @@ crawlable routes and a client-only SPA for everything behind auth.
 
 ## SEO / SSR
 
-Public routes (`/`, `/about`, `/our-story`, `/employees`, `/employers`,
-`/contact`, `/privacy-policy`, `/terms-of-service`) are **prerendered at
-build time** — `npm run build` renders each one to real HTML via
-`scripts/prerender.js`, so their served files already contain full page
-markup, not an empty `#root`.
+Public routes (`/`, `/our-story`, `/employers`, `/employers/pricing`,
+`/careers`, `/contact`, `/privacy-policy`, `/terms-of-service`, `/jobs/cities`
+and every `/jobs/city/:slug` page — the full list is the keys of
+`STATIC_PAGE_SEO` in `src/lib/seoData.js`) are **prerendered at build time** —
+`npm run build` renders each one to real HTML via `scripts/prerender.js`, so
+their served files already contain full page markup, not an empty `#root`.
+`/about` just redirects to `/our-story`.
 
 **`/jobs/:id`** is **rendered per request** by `server.js` instead, since job
 data changes (a job can close, its deadline can pass) and shouldn't be baked
