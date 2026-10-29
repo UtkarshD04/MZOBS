@@ -37,6 +37,10 @@ const CONTACT_API_URL = process.env.CONTACT_API_URL || process.env.VITE_CONTACT_
 const ACCOUNT_DELETION_API_URL =
   process.env.ACCOUNT_DELETION_API_URL || process.env.VITE_ACCOUNT_DELETION_API_URL || 'http://localhost:4000/api/account-deletion'
 const PORT = process.env.PORT || 8080
+// Server-only (no VITE_ prefix, so never in the client bundle). Every visitor's SSR job page
+// reaches the API from this one process, i.e. one IP, which the backend's per-IP limit would
+// cap for everyone together — this key lets those calls skip it (Backend/src/middleware/rateLimit.js).
+const API_SERVER_HEADERS = process.env.RATE_LIMIT_BYPASS_KEY ? { 'x-rate-limit-bypass': process.env.RATE_LIMIT_BYPASS_KEY } : {}
 
 // Set to 'false' once the browser console is clean of CSP violations on the
 // real pages (home, job detail, city pages, employee/employer sign-in and
@@ -208,7 +212,7 @@ let sitemapCache = { xml: null, expiresAt: 0 }
 app.get('/sitemap.xml', async (req, res) => {
   if (!sitemapCache.xml || Date.now() > sitemapCache.expiresAt) {
     try {
-      const jobIds = await fetchAllPublicJobIds(PUBLIC_JOBS_API_URL)
+      const jobIds = await fetchAllPublicJobIds(PUBLIC_JOBS_API_URL, { headers: API_SERVER_HEADERS })
       sitemapCache = { xml: buildSitemapXml(jobIds), expiresAt: Date.now() + 10 * 60 * 1000 }
     } catch (err) {
       console.error('sitemap generation failed:', err)
@@ -264,7 +268,7 @@ app.get('/jobs/:id', async (req, res) => {
 
   if (!job) {
     try {
-      const apiRes = await fetch(`${PUBLIC_JOBS_API_URL}/${encodeURIComponent(id)}`, { signal: AbortSignal.timeout(5000) })
+      const apiRes = await fetch(`${PUBLIC_JOBS_API_URL}/${encodeURIComponent(id)}`, { headers: API_SERVER_HEADERS, signal: AbortSignal.timeout(5000) })
       if (apiRes.ok) {
         job = await apiRes.json()
         cacheJob(id, job)
