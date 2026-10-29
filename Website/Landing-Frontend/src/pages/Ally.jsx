@@ -435,7 +435,6 @@ export default function Ally() {
       <section className="cm-sec" id="why">
         <div className="cm-wrap cm-more">
           <div>
-            <Rv as="p" className="cm-eyebrow">What is a Mzobs Ally?</Rv>
             <IntroHeading />
             <Rv as="p" d={0.15} className="cm-statement">A Mzobs Ally is a student representative who helps connect their community with meaningful career opportunities, hiring initiatives, events and the Mzobs ecosystem.</Rv>
           </div>
@@ -454,7 +453,6 @@ export default function Ally() {
       {/* eligibility */}
       <section className="cm-sec" id="eligibility" style={{ paddingTop: 0 }}>
         <div className="cm-wrap">
-          <Rv as="p" className="cm-eyebrow">Eligibility</Rv>
           <Rv as="h2" d={0.06} className="cm-h2">Who can apply.</Rv>
           <Rv as="p" d={0.12} className="cm-lead" style={{ marginTop: 22, maxWidth: '38ch' }}>
             The Mzobs Ally program is currently open to senior students only, 3rd and 4th year, with at least 4 semesters completed.
@@ -485,7 +483,6 @@ export default function Ally() {
         <div className="cm-wrap">
           <div className="cm-ident-top">
             <div className="cm-ident-head">
-              <p className="cm-eyebrow cm-rv">Your role</p>
               <h2 className="cm-h2 cm-rv" style={{ '--d': '0.08s' }}>You are not just a representative.</h2>
               <p className="cm-lead cm-rv" style={{ '--d': '0.16s', marginTop: 22 }}>You are:</p>
             </div>
@@ -511,7 +508,6 @@ export default function Ally() {
       <section className="cm-sec" id="impact">
         <div className="cm-wrap cm-impact">
           <div className="cm-impact-head">
-            <Rv as="p" className="cm-eyebrow">The impact</Rv>
             <Rv as="h2" d={0.06} className="cm-h2">Your campus, your impact.</Rv>
           </div>
           <div className="cm-vt" ref={vt}>
@@ -529,7 +525,6 @@ export default function Ally() {
       {/* role in the network */}
       <section className="cm-sec" style={{ paddingTop: 0 }}>
         <div className="cm-wrap">
-          <Rv as="p" className="cm-eyebrow">Where you fit</Rv>
           <Rv as="h2" d={0.06} className="cm-h2">The bridge.</Rv>
           <div className="cm-flow" ref={flowRef} aria-label="Student to Mzobs Ally to Mzobs to opportunity to student community">
             {[['Student', 'Starts here'], ['Mzobs Ally', 'You', true], ['Mzobs', 'The platform'], ['Opportunity', 'Jobs & careers'], ['Student community', 'Everyone benefits']].map(([v, k, hero], i, arr) => (
@@ -545,7 +540,6 @@ export default function Ally() {
       {/* journey */}
       <section className="cm-sec" id="how" style={{ background: '#fff', borderBlock: '1px solid var(--cm-line)' }}>
         <div className="cm-wrap">
-          <Rv as="p" className="cm-eyebrow">How it works</Rv>
           <Rv as="h2" d={0.06} className="cm-h2">The Ally journey.</Rv>
           <div className="cm-path" ref={pathRef}>
             {JOURNEY.map((s, i) => (
@@ -561,7 +555,6 @@ export default function Ally() {
       {/* benefits */}
       <section className="cm-sec" id="benefits">
         <div className="cm-wrap">
-          <Rv as="p" className="cm-eyebrow">What you get</Rv>
           <Rv as="h2" d={0.06} className="cm-h2">As a Mzobs Ally,<br />you get access to:</Rv>
           <div className="cm-ben">
             {BENEFITS.map(([Icon, label], i) => (
@@ -574,7 +567,6 @@ export default function Ally() {
       {/* faq */}
       <section className="cm-sec" id="faq" style={{ paddingTop: 0 }}>
         <div className="cm-wrap">
-          <Rv as="p" className="cm-eyebrow">Questions</Rv>
           <Rv as="h2" d={0.06} className="cm-h2">Good to know.</Rv>
           <Rv className="cm-faq" d={0.1}>
             {FAQ.map(([q, a]) => <details key={q}><summary>{q}<i /></summary><p>{a}</p></details>)}
@@ -585,7 +577,6 @@ export default function Ally() {
       {/* apply */}
       <section className="cm-sec cm-dark cm-cta" id="apply" style={{ paddingBottom: 'clamp(70px, 9vw, 120px)' }}>
         <div className="cm-wrap">
-          <Rv as="p" className="cm-eyebrow">Apply</Rv>
           <Rv as="h2" d={0.06} className="cm-h2">Ready to become a Mzobs Ally?</Rv>
           <Rv as="p" d={0.14} className="cm-lead" style={{ marginTop: 26 }}>Your campus already has potential. Now give it a connection to opportunity.</Rv>
           <Rv d={0.22} style={{ marginTop: 34 }}>
