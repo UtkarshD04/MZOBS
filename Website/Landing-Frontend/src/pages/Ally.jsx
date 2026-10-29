@@ -4,6 +4,8 @@ import { ArrowRight, Users, Briefcase, Network, Compass, Award, ScrollText, Cale
 import Navbar from '../components/layout/Navbar'
 import { submitAllyApplication } from '../lib/ally'
 import './ally.css'
+import { isValidPhone, MOBILE_ERROR } from '../lib/phone'
+import PhoneInput from '../components/ui/PhoneInput'
 
 /* ------------------------------------------------------------------ content */
 
@@ -158,7 +160,7 @@ function validate(step, f) {
   if (step === 0) {
     if (!f.name.trim()) e.name = 'Tell us your name'
     if (!/^\S+@\S+\.\S+$/.test(f.email.trim())) e.email = 'Enter a valid email'
-    if (f.phone.trim() && f.phone.replace(/\D/g, '').length < 10) e.phone = 'Enter a 10-digit number'
+    if (f.phone.trim() && !isValidPhone(f.phone)) e.phone = MOBILE_ERROR
   }
   if (step === 1) {
     if (!f.college.trim()) e.college = 'Add your college'
@@ -177,7 +179,9 @@ function Field({ label, error, name, f, set, textarea, select, options, ...rest 
   return (
     <label className={`cm-field ${error ? 'err' : ''} ${textarea ? 'full' : ''}`}>
       <span>{label}</span>
-      {select ? (
+      {name === 'phone' ? (
+        <PhoneInput value={f.phone} onChange={(v) => set('phone', v)} placeholder={rest.placeholder} aria-invalid={!!error} />
+      ) : select ? (
         <select value={f[name]} onChange={(e) => set(name, e.target.value)} aria-invalid={!!error} {...rest}>
           <option value="" disabled>Select…</option>
           {options.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -277,7 +281,7 @@ function ApplicationForm({ f, set }) {
               <div className="cm-fgrid">
                 <div className="full"><Field label="Full name" name="name" f={f} set={set} error={errors.name} placeholder="Your name" autoComplete="name" /></div>
                 <Field label="Email" name="email" f={f} set={set} error={errors.email} placeholder="you@college.edu" type="email" autoComplete="email" />
-                <Field label="Phone (optional)" name="phone" f={f} set={set} error={errors.phone} placeholder="10-digit number" inputMode="tel" autoComplete="tel" />
+                <Field label="Phone (optional)" name="phone" f={f} set={set} error={errors.phone} placeholder="Mobile number" />
               </div>
             </>
           )}
