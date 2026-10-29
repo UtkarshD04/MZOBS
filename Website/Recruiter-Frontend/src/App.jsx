@@ -14,19 +14,25 @@ import FeedbackFollowUps from './pages/FeedbackFollowUps'
 import JobTalent from './pages/JobTalent'
 import Jobs from './pages/Jobs'
 import JobForm from './pages/JobForm'
-import { Messages, Interviews, AITalent, Reports } from './pages/Workspaces'
+import { Interviews, AITalent } from './pages/Workspaces'
+import Overview from './pages/Overview'
+import Applicants from './pages/Applicants'
+import Offers from './pages/Offers'
+import Team from './pages/Team'
+import Messages from './pages/Messages'
+import Reports from './pages/Reports'
 import { Notifications, Help, Settings } from './pages/Account'
 import PlanCredits from './pages/PlanCredits'
 import { refreshPlan } from './services/planService'
 import { useCompany } from './services/companyService'
 import GstGate from './components/GstGate'
-import { IS_DEMO, GST_REQUIRED, TOKEN_KEY, EMPLOYER_SIGNIN_URL } from './lib/config'
+import { IS_DEMO, GST_REQUIRED, SESSION_KEY, EMPLOYER_SIGNIN_URL } from './lib/config'
 
 // Live mode needs an employer session, issued by the marketing site's
 // employer sign-in and handed over as a one-time code (see main.jsx). With no
 // session we send the recruiter there; demo mode runs without one.
 function useSession() {
-  const [ok, setOk] = useState(IS_DEMO || !!localStorage.getItem(TOKEN_KEY))
+  const [ok, setOk] = useState(IS_DEMO || !!localStorage.getItem(SESSION_KEY))
   useEffect(() => {
     const out = () => setOk(false)
     window.addEventListener('mzt-signed-out', out)
@@ -88,7 +94,13 @@ function GstGatedApp({ ai, setAi, location }) {
       <main key={location.pathname} className="fade-up">
         <ErrorBoundary key={location.pathname}>
         <Routes>
-          <Route path="/" element={<SearchCandidates />} />
+          <Route path="/" element={<Navigate to="/search" replace />} />
+          <Route path="/overview" element={<Overview />} />
+          <Route path="/search" element={<SearchCandidates />} />
+          <Route path="/applicants" element={<Applicants />} />
+          <Route path="/jobs/:id/applicants" element={<Applicants />} />
+          <Route path="/offers" element={<Offers />} />
+          <Route path="/team" element={<Team />} />
           <Route path="/candidate/:id" element={<CandidateProfile />} />
           <Route path="/saved-searches" element={<SavedSearches />} />
           <Route path="/shortlists" element={<Shortlists />} />

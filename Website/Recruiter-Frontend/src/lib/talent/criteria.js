@@ -17,6 +17,9 @@ export const EMPTY_CRITERIA = {
   expMin: null,
   expMax: null,
   locations: [],
+  state: '', // candidate's state (exact match)
+  pincode: '', // candidate's 6-digit PIN code (exact match)
+  pinNearby: false, // with a PIN: match the whole 3-digit PIN area instead of the exact PIN
   salaryMin: null, // expected salary, LPA
   salaryMax: null,
   noticeMax: null, // days
@@ -53,6 +56,14 @@ export const EMPTY_CRITERIA = {
   cvAccess: '', // live: '' | 'unlocked' | 'locked' — whether this company has spent a CV credit on them
   verifiedOnly: false,
   contactVerified: false,
+  phoneVerified: false,
+  emailVerified: false,
+  experienceLevel: '', // '' | 'fresher' | 'experienced' — as the candidate declared it
+  hasLinkedin: false,
+  hasGithub: false,
+  hasPhoto: false,
+  premiumOnly: false,
+  appliedDays: null, // applied to one of your jobs within N days
   resumeFreshDays: null,
   activeDays: null,
   minMatch: null,
@@ -81,6 +92,7 @@ export const SCOPES = [
 
 export const SORTS = [
   { id: 'relevance', label: 'Relevance' },
+  { id: 'location', label: 'Location fit' },
   { id: 'match', label: 'AI match' },
   { id: 'experience', label: 'Experience' },
   { id: 'active', label: 'Recently active' },
@@ -114,6 +126,8 @@ export function criteriaToChips(c) {
     const lo = c.expMin ?? 0
     chips.push({ key: 'exp', label: c.expMax != null ? `${lo}–${c.expMax} yrs` : `${lo}+ yrs`, group: 'Experience' })
   }
+  if (c.state) chips.push({ key: 'state', label: `State: ${c.state}`, group: 'Location' })
+  if (c.pincode) chips.push({ key: 'pincode', label: c.pinNearby ? `PIN area ${c.pincode.slice(0, 3)}xxx` : `PIN ${c.pincode}`, group: 'Location' })
   c.locations.forEach((l) => chips.push({ key: `loc:${l}`, label: c.alsoPreferred ? l : `${l} (current)`, group: 'Location' }))
   c.prefLocations.forEach((l) => chips.push({ key: `pref:${l}`, label: `Prefers ${l}`, group: 'Location' }))
   if (c.relocate) chips.push({ key: 'relocate', label: 'Open to relocate', group: 'Location' })
@@ -151,6 +165,14 @@ export function criteriaToChips(c) {
   if (c.hasVideo) chips.push({ key: 'hasVideo', label: 'Video intro', group: 'Quality' })
   if (c.verifiedOnly) chips.push({ key: 'verifiedOnly', label: 'Verified profile', group: 'Quality' })
   if (c.contactVerified) chips.push({ key: 'contactVerified', label: 'Verified contact', group: 'Quality' })
+  if (c.phoneVerified) chips.push({ key: 'phoneVerified', label: 'Phone verified', group: 'Quality' })
+  if (c.emailVerified) chips.push({ key: 'emailVerified', label: 'Email verified', group: 'Quality' })
+  if (c.experienceLevel) chips.push({ key: 'experienceLevel', label: c.experienceLevel === 'fresher' ? 'Fresher' : 'Experienced', group: 'Experience' })
+  if (c.hasLinkedin) chips.push({ key: 'hasLinkedin', label: 'Has LinkedIn', group: 'Quality' })
+  if (c.hasGithub) chips.push({ key: 'hasGithub', label: 'Has GitHub', group: 'Quality' })
+  if (c.hasPhoto) chips.push({ key: 'hasPhoto', label: 'Has photo', group: 'Quality' })
+  if (c.premiumOnly) chips.push({ key: 'premiumOnly', label: 'Premium candidates', group: 'Quality' })
+  if (c.appliedDays != null) chips.push({ key: 'appliedDays', label: `Applied ≤ ${c.appliedDays}d ago`, group: 'Activity' })
   if (c.resumeFreshDays != null) chips.push({ key: 'resumeFresh', label: `Resume ≤ ${c.resumeFreshDays}d old`, group: 'Quality' })
   if (c.activeDays != null) chips.push({ key: 'active', label: `Active ≤ ${c.activeDays}d`, group: 'Activity' })
   if (c.minMatch != null) chips.push({ key: 'minMatch', label: `AI match > ${c.minMatch}`, group: 'AI' })
@@ -165,6 +187,8 @@ export function removeChip(c, key) {
   else if (key.startsWith('kwg:')) n.keywordGroups = c.keywordGroups.filter((_, i) => i !== Number(key.slice(4)))
   else if (key.startsWith('ex:')) n.exclude = c.exclude.filter((s) => s !== key.slice(3))
   else if (key === 'exp') { n.expMin = null; n.expMax = null }
+  else if (key === 'state') n.state = ''
+  else if (key === 'pincode') { n.pincode = ''; n.pinNearby = false }
   else if (key.startsWith('loc:')) n.locations = c.locations.filter((s) => s !== key.slice(4))
   else if (key === 'salary') { n.salaryMin = null; n.salaryMax = null }
   else if (key === 'notice') n.noticeMax = null

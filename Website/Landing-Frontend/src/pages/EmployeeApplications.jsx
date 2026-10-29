@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, CalendarClock, Check, ChevronDown, ExternalLink, Loader2, Lock, MapPin, Monitor, RotateCw, SearchX, Video, Building2 } from 'lucide-react'
+import { ArrowRight, Calendar, CalendarClock, Check, ChevronDown, ExternalLink, Loader2, Lock, MapPin, Monitor, RotateCw, SearchX, Video, Building2 } from 'lucide-react'
 import Seo from '../components/Seo'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import { Container, CompanyLogo } from '../components/mz/primitives'
 import { useToast } from '../components/mz/Toast'
 import ApplicationFeedback from '../components/mz/ApplicationFeedback'
+import { ConversionBand, JourneyWorkspace, NextMove, PageIntro, PremiumValue } from '../components/mz/ApplicationCommandCenter'
 import { getEmployeeSession } from '../lib/employeeSession'
 import { getEmployeeProfile } from '../lib/employeeProfile'
 import { fetchApplications, fetchInterviews, fetchMockInterview, withdrawApplication } from '../lib/employeeApi'
+import { safeHref } from '../lib/safeUrl'
 
 const PAGE_SIZE = 50
 const SIGN_IN_TO = `/employees/signin?next=${encodeURIComponent('/employees/applications')}`
@@ -56,7 +58,12 @@ const fmtDate = (d) => (d ? dateFmt.format(new Date(d)) : '')
 
 function StatusBadge({ status, viewed }) {
   const s = STATUS[status === 'shared' && viewed ? 'viewed' : status] ?? { label: status, tone: 'neutral' }
-  return <span className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[12px] font-semibold ${TONE[s.tone]}`}>{s.label}</span>
+  return (
+    <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold ${TONE[s.tone]}`}>
+      <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" aria-hidden="true" />
+      {s.label}
+    </span>
+  )
 }
 
 // Furthest step this application has actually reached, from its history.
@@ -71,22 +78,23 @@ function Progress({ app }) {
   return (
     <ol className="mt-4 flex items-center" aria-label="Application progress">
       {stepLabels(app).map((label, i, steps) => {
-        const done = i <= reached
         const current = !closed && i === reached
+        const done = i < reached || (closed && i === reached)
         return (
           <li key={label} className="flex min-w-0 flex-1 items-center last:flex-none">
             <span className="flex flex-col items-center gap-1">
               <span
                 className={`flex h-5 w-5 items-center justify-center rounded-full text-white ${
-                  done ? (closed ? 'bg-[#9AA3AF]' : 'bg-mz-primary') : 'bg-white ring-2 ring-mz-line'
-                } ${current ? 'ring-4 ring-mz-primary/20' : ''}`}
+                  done ? (closed ? 'bg-[#9AA3AF]' : 'bg-mz-primary') : current ? 'bg-white ring-2 ring-mz-primary' : 'bg-white ring-2 ring-mz-line'
+                }`}
                 aria-hidden="true"
               >
                 {done && <Check size={11} strokeWidth={3.5} />}
+                {current && <span className="h-2 w-2 rounded-full bg-mz-primary" />}
               </span>
-              <span className={`whitespace-nowrap text-[11px] ${current ? 'font-semibold text-mz-ink' : 'text-mz-muted'}`}>
+              <span className={`whitespace-nowrap text-[11px] ${current ? 'font-bold text-mz-primary-strong' : done ? 'font-medium text-mz-ink-2' : 'text-mz-muted'}`}>
                 {label}
-                <span className="sr-only">{done ? ' (reached)' : ''}</span>
+                <span className="sr-only">{current ? ' (current stage)' : done ? ' (reached)' : ' (not reached yet)'}</span>
               </span>
             </span>
             {i < steps.length - 1 && <span className={`mx-1 mb-4 h-0.5 flex-1 rounded ${i < reached ? (closed ? 'bg-[#C9CED6]' : 'bg-mz-primary') : 'bg-mz-line'}`} aria-hidden="true" />}
@@ -97,47 +105,20 @@ function Progress({ app }) {
   )
 }
 
-// Application tracking is a Premium perk, so Basic accounts see this instead of the page.
-function TrackingGate({ paid, onRetry }) {
-  if (paid === null) {
-    return (
-      <div className="space-y-3" aria-busy="true" aria-label="Loading">
-        <div className="mz-skeleton h-8 w-56 rounded" />
-        <div className="mz-skeleton h-40 w-full rounded-[12px]" />
-      </div>
-    )
-  }
-  if (paid === 'error') {
-    return (
-      <div className="flex flex-col items-center gap-2 rounded-[12px] border border-dashed border-mz-line-strong bg-white px-6 py-12 text-center">
-        <SearchX size={24} className="text-mz-muted" aria-hidden="true" />
-        <p className="text-[15px] font-semibold text-mz-ink">Couldn’t load this page</p>
-        <p className="max-w-sm text-[14px] text-mz-muted">Check your connection and try again.</p>
-        <button
-          type="button"
-          onClick={onRetry}
-          className="mz-btn-teal mt-2 inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-mz-primary px-4 text-[13.5px] font-semibold text-white hover:bg-mz-primary-strong"
-        >
-          <RotateCw size={14} aria-hidden="true" /> Retry
-        </button>
-      </div>
-    )
-  }
+// The plan check failed, so we can't tell which tracking features to show.
+function PlanCheckError({ onRetry }) {
   return (
-    <div className="mx-auto flex max-w-[520px] flex-col items-center gap-2 rounded-[14px] border border-mz-line bg-white px-6 py-12 text-center">
-      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-mz-primary-tint text-mz-primary-strong">
-        <Lock size={20} aria-hidden="true" />
-      </span>
-      <h1 className="mt-2 text-[22px] font-bold tracking-[-0.02em] text-mz-ink">Application tracking is a Premium feature</h1>
-      <p className="max-w-sm text-[14px] leading-relaxed text-mz-muted">
-        Upgrade to Mzobs Premium to follow every application stage by stage, see when employers view your profile, and keep your interviews in one place.
-      </p>
-      <Link
-        to="/employees/subscription"
-        className="mz-btn-teal mt-3 inline-flex h-11 items-center gap-1.5 rounded-[10px] bg-mz-primary px-5 text-[14px] font-semibold text-white hover:bg-mz-primary-strong"
+    <div className="flex flex-col items-center gap-2 rounded-[12px] border border-dashed border-mz-line-strong bg-white px-6 py-12 text-center">
+      <SearchX size={24} className="text-mz-muted" aria-hidden="true" />
+      <p className="text-[15px] font-semibold text-mz-ink">Couldn’t load this page</p>
+      <p className="max-w-sm text-[14px] text-mz-muted">Check your connection and try again.</p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="mz-btn-teal mt-2 inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-mz-primary px-4 text-[13.5px] font-semibold text-white hover:bg-mz-primary-strong"
       >
-        See Premium <ArrowRight size={14} aria-hidden="true" />
-      </Link>
+        <RotateCw size={14} aria-hidden="true" /> Retry
+      </button>
     </div>
   )
 }
@@ -166,7 +147,7 @@ function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
   ].filter((m) => m.text)
 
   return (
-    <li className="rounded-[12px] border border-mz-line bg-white p-4 sm:p-5">
+    <li className="rounded-[14px] border border-mz-line bg-white p-4 shadow-[0_1px_2px_rgba(22,50,79,0.05)] transition-[border-color,box-shadow] duration-200 focus-within:border-mz-primary/40 hover:border-mz-line-strong hover:shadow-[0_6px_18px_-10px_rgba(22,50,79,0.28)] motion-reduce:transition-none sm:p-5">
       <div className="flex items-start gap-3.5">
         <CompanyLogo name={company || job?.title || '?'} logo={job?.company?.logo} size={44} className="rounded-[10px]" />
         <div className="min-w-0 flex-1">
@@ -174,7 +155,7 @@ function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
             <div className="min-w-0">
               <h3 className="text-[16px] font-semibold leading-snug text-mz-ink">
                 {job ? (
-                  <Link to={`/jobs/${job.id}`} className="hover:text-mz-primary-strong hover:underline underline-offset-4">
+                  <Link to={`/jobs/${job.id}`} className="rounded-[4px] hover:text-mz-primary-strong hover:underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary">
                     {job.title}
                   </Link>
                 ) : (
@@ -192,7 +173,10 @@ function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
                 {text}
               </span>
             ))}
-            <span>Applied {fmtDate(app.appliedOn)}</span>
+            <span className="inline-flex items-center gap-1.5">
+              <Calendar size={13.5} aria-hidden="true" />
+              Applied {fmtDate(app.appliedOn)}
+            </span>
           </p>
         </div>
       </div>
@@ -244,7 +228,13 @@ function ApplicationCard({ app, token, onWithdraw, withdrawing }) {
             history.map((h, i) => (
               <li key={`${h.status}-${h.changedOn}-${i}`} className="flex items-center justify-between gap-3 text-[13px]">
                 <span className="font-medium text-mz-ink">{STATUS[h.status]?.label ?? h.status}</span>
-                <span className="text-mz-muted">{fmtDate(h.changedOn)}</span>
+                {app.historyLocked ? (
+                  <span className="inline-flex items-center gap-1 text-mz-muted">
+                    <Lock size={11} aria-hidden="true" /> Date with Premium
+                  </span>
+                ) : (
+                  <span className="text-mz-muted">{fmtDate(h.changedOn)}</span>
+                )}
               </li>
             ))
           )}
@@ -264,8 +254,13 @@ function InterviewsSection({ interviews, mock, status }) {
   const mockShown = mock && mock.status && mock.status !== 'not_scheduled'
 
   return (
-    <section id="interviews" aria-labelledby="interviews-title" className="scroll-mt-24 rounded-[12px] border border-mz-line bg-white p-4 sm:p-5">
-      <h2 id="interviews-title" className="text-[17px] font-bold text-mz-ink">Interviews</h2>
+    <section id="interviews" aria-labelledby="interviews-title" className="scroll-mt-24 rounded-[14px] border border-mz-line bg-white p-4 shadow-[0_1px_2px_rgba(22,50,79,0.05)] sm:p-5">
+      <h2 id="interviews-title" className="flex items-center gap-2.5 text-[17px] font-bold tracking-[-0.01em] text-mz-ink">
+        <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-mz-primary-tint text-mz-primary-strong">
+          <CalendarClock size={16} aria-hidden="true" />
+        </span>
+        Interviews
+      </h2>
       {status === 'loading' ? (
         <div className="mt-3 space-y-2" aria-hidden="true">
           <div className="mz-skeleton h-4 w-2/3 rounded" />
@@ -276,16 +271,16 @@ function InterviewsSection({ interviews, mock, status }) {
       ) : (
         <>
           {upcoming.length === 0 && past.length === 0 && !mockShown && (
-            <p className="mt-2 text-[13.5px] leading-relaxed text-mz-muted">
+            <p className="mt-3 rounded-[10px] bg-mz-bg px-4 py-3 text-[13.5px] leading-relaxed text-mz-muted ring-1 ring-mz-line">
               Nothing scheduled yet. When an employer or the Mzobs team schedules an interview with you, the time, mode and joining details show up here.
             </p>
           )}
           {(upcoming.length > 0 || past.length > 0) && (
-            <ul className="mt-3 divide-y divide-mz-line">
+            <ul className="mt-3 divide-y divide-mz-line rounded-[10px] border border-mz-line px-3.5">
               {[...upcoming, ...past].map((iv) => {
                 const isUpcoming = upcoming.includes(iv)
                 return (
-                  <li key={iv.id} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
+                  <li key={iv.id} className="flex items-start gap-3 py-3.5">
                     <CompanyLogo name={iv.company || iv.role} logo={iv.logo} size={36} className="rounded-[8px]" />
                     <div className="min-w-0 flex-1">
                       <p className="text-[14.5px] font-semibold text-mz-ink">
@@ -308,7 +303,7 @@ function InterviewsSection({ interviews, mock, status }) {
                     </div>
                     {isUpcoming && iv.mode === 'Video Call' && iv.link && (
                       <a
-                        href={iv.link}
+                        href={safeHref(iv.link)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="mz-btn-teal inline-flex shrink-0 items-center gap-1 rounded-[8px] bg-mz-primary px-3 py-1.5 text-[13px] font-semibold text-white hover:bg-mz-primary-strong"
@@ -347,7 +342,7 @@ function MockInterview({ mock }) {
           {mock.link && (
             <>
               {' · '}
-              <a href={mock.link} target="_blank" rel="noopener noreferrer" className="font-semibold text-mz-primary-strong hover:underline">
+              <a href={safeHref(mock.link)} target="_blank" rel="noopener noreferrer" className="font-semibold text-mz-primary-strong hover:underline">
                 Joining link
               </a>
             </>
@@ -395,8 +390,9 @@ export default function EmployeeApplications() {
   const [retry, setRetry] = useState(0)
   const [tab, setTab] = useState('all')
   const [withdrawingId, setWithdrawingId] = useState(null)
-  // null = still checking the plan, 'error' = couldn't check. Application tracking is Premium-only.
+  // null = still checking the plan, 'error' = couldn't check. Only the dated timeline is Premium; the server enforces that.
   const [paid, setPaid] = useState(null)
+  const [stage, setStage] = useState(2)
   const [interviews, setInterviews] = useState({ status: 'loading', list: null, mock: null })
 
   useEffect(() => {
@@ -432,7 +428,7 @@ export default function EmployeeApplications() {
   }, [token, retry, signInAgainIfExpired])
 
   useEffect(() => {
-    if (!token || paid !== true) return
+    if (!token) return
     const controller = new AbortController()
     setStatus('loading')
     fetchApplications(token, { page: 1, limit: PAGE_SIZE }, { signal: controller.signal })
@@ -448,10 +444,10 @@ export default function EmployeeApplications() {
         setStatus('error')
       })
     return () => controller.abort()
-  }, [token, paid, retry, signInAgainIfExpired])
+  }, [token, retry, signInAgainIfExpired])
 
   useEffect(() => {
-    if (!token || paid !== true) return
+    if (!token) return
     let cancelled = false
     Promise.allSettled([fetchInterviews(token), fetchMockInterview(token)]).then(([iv, mock]) => {
       if (cancelled) return
@@ -461,7 +457,7 @@ export default function EmployeeApplications() {
     return () => {
       cancelled = true
     }
-  }, [token, paid])
+  }, [token, retry])
 
   async function loadMore() {
     setLoadingMore(true)
@@ -496,32 +492,40 @@ export default function EmployeeApplications() {
     <div className="mz-home min-h-screen bg-mz-bg font-sans text-mz-ink antialiased">
       <Seo path="/employees/applications" title="My applications | Mzobs" noindex />
       <Navbar />
-      <main className="pb-14 pt-[88px] sm:pt-[96px]">
-        <Container className="max-w-[920px]">
-          {paid !== true ? (
-            <TrackingGate paid={paid} onRetry={() => setRetry((n) => n + 1)} />
-          ) : (
-            <>
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h1 className="text-[24px] font-bold tracking-[-0.02em] text-mz-ink sm:text-[28px]">My applications</h1>
-              <p className="mt-1 text-[14px] text-mz-muted">
-                {status === 'ready' ? `${total} ${total === 1 ? 'application' : 'applications'} · track where each one stands` : 'Track where each application stands'}
-              </p>
+      {/* min-h-screen keeps the footer below the fold while the skeletons are up, so it doesn't jump when the data lands. */}
+      <main className="min-h-screen pb-14 pt-[88px] sm:pt-[96px]">
+        <Container className="max-w-[1040px]">
+          {paid === null ? (
+            <div className="space-y-3" aria-busy="true" aria-label="Loading">
+              <div className="mz-skeleton h-8 w-72 rounded" />
+              <div className="mz-skeleton h-72 w-full rounded-[14px]" />
             </div>
-            <Link to="/#latest-jobs" className="group inline-flex items-center gap-1 text-[14px] font-semibold text-mz-primary-strong hover:underline underline-offset-4">
-              Browse jobs <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-            </Link>
-          </div>
+          ) : paid === 'error' ? (
+            <PlanCheckError onRetry={() => setRetry((n) => n + 1)} />
+          ) : (
+            <div className="space-y-6">
+              <PageIntro paid={paid} />
+              <div id="journey" className="scroll-mt-24 space-y-4">
+                <JourneyWorkspace apps={apps} paid={paid} selected={stage} onSelect={setStage} />
+                <NextMove selected={stage} onSelect={setStage} paid={paid} />
+              </div>
 
-          <div className="mt-6">
-            <InterviewsSection interviews={interviews.list} mock={interviews.mock} status={interviews.status} />
-          </div>
+              <InterviewsSection interviews={interviews.list} mock={interviews.mock} status={interviews.status} />
 
-          <section aria-labelledby="applications-title" className="mt-6">
-            <h2 id="applications-title" className="sr-only">Applications</h2>
+              <section id="applications" aria-labelledby="applications-title" className="scroll-mt-24">
+                <div className="flex flex-wrap items-end justify-between gap-3">
+                  <div>
+                    <h2 id="applications-title" className="text-[17px] font-bold tracking-[-0.01em] text-mz-ink">Your applications</h2>
+                    <p className="mt-0.5 text-[13.5px] text-mz-muted">
+                      {status === 'ready' ? `${total} ${total === 1 ? 'application' : 'applications'} · live from your account` : 'Live from your account'}
+                    </p>
+                  </div>
+                  <Link to="/#latest-jobs" className="group inline-flex items-center gap-1 text-[14px] font-semibold text-mz-primary-strong hover:underline underline-offset-4">
+                    Browse jobs <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  </Link>
+                </div>
             {status === 'ready' && apps.length > 0 && (
-              <div className="mz-scroll-x mz-fade-end -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+              <div className="mz-scroll-x mz-fade-end -mx-4 mt-3 overflow-x-auto px-4 sm:mx-0 sm:px-0">
                 <div className="flex min-w-max gap-1.5 border-b border-mz-line" role="group" aria-label="Filter applications by status">
                   {TABS.map((t) => (
                     <button
@@ -604,8 +608,15 @@ export default function EmployeeApplications() {
                 </div>
               )}
             </div>
-          </section>
-            </>
+              </section>
+
+              <PremiumValue paid={paid} hasApps={apps.length > 0} />
+              {!paid && (
+                <ConversionBand
+                  onContinue={() => document.getElementById('journey')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' })}
+                />
+              )}
+            </div>
           )}
         </Container>
       </main>

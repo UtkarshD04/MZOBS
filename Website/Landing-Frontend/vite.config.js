@@ -1,15 +1,40 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import faroUploader from '@grafana/faro-rollup-plugin'
 
 // https://vite.dev/config/
+// Source-map upload to Grafana Faro (readable error stack traces). Client
+// build only, and only when FARO_API_KEY is present at build time — without it
+// the build is exactly what it was before. The key is a secret: set it as a
+// non-VITE_ build arg so it never reaches the client bundle.
+const FARO_API_KEY = process.env.FARO_API_KEY
+
 export default defineConfig(({ isSsrBuild }) => ({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    ...(FARO_API_KEY && !isSsrBuild
+      ? [
+          faroUploader({
+            // Must equal the app name the SDK reports (src/lib/analytics.js).
+            appName: process.env.VITE_PUBLIC_GRAFANA_FARO_APP_NAME || 'mzobs-landing',
+            endpoint: 'https://faro-api-prod-ap-south-1.grafana.net/faro/api/v1',
+            appId: '2400',
+            stackId: '1888711',
+            apiKey: FARO_API_KEY,
+            gzipContents: true,
+          }),
+        ]
+      : []),
+  ],
   // The SSR bundle (entry-server.jsx, built via `vite build --ssr`) never
   // serves assets itself — server.js serves the client build's public/
   // output instead — so skip copying public/ into dist/server too.
   publicDir: isSsrBuild ? false : 'public',
   build: {
+    // 'hidden' = emit maps for the uploader without linking them from the JS.
+    sourcemap: FARO_API_KEY && !isSsrBuild ? 'hidden' : false,
     rollupOptions: {
       output: {
         // Split large, rarely-changing third-party code into its own

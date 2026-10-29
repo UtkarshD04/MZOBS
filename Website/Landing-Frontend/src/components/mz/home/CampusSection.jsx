@@ -24,40 +24,24 @@ const CARDS = [
 
 export default function CampusSection() {
   return (
-    <section id="campuses" aria-labelledby="campus-title" className="relative scroll-mt-20 overflow-hidden border-t border-mz-line bg-mz-bg py-10 lg:py-12">
+    <section id="campuses" aria-labelledby="campus-title" className="relative scroll-mt-20 border-t border-mz-line bg-mz-bg py-10 lg:py-12">
       <Container>
-        <h2 id="campus-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">
-          From Campus to <span className="text-mz-primary">Career.</span>
+        <h2 id="campus-title" className="text-mz-ink text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
+          For colleges and students
         </h2>
-        <p className="mt-1 text-[14px] text-mz-muted">Mzobs works with colleges to give students a direct route from the classroom to their first job.</p>
+        <p className="mt-1 text-mz-muted text-[16px] sm:text-[17px] font-normal leading-relaxed">Mzobs works with colleges to give students a direct route from the classroom to their first job.</p>
 
-        <ul className="mt-6 grid gap-4 md:grid-cols-4">
-          <Reveal
-            as="li"
-            className="flex flex-col items-center justify-center rounded-2xl p-5 text-center text-white"
-            style={{ backgroundImage: 'var(--mz-gradient)' }}
-          >
-            <span className="text-[32px] font-extrabold leading-none tracking-[-0.02em]">100+</span>
-            <span className="mt-1.5 text-[13px] font-semibold text-white/90">Campuses on Mzobs</span>
+        <ul className="mt-6 grid gap-3 md:grid-cols-4">
+          <Reveal as="li" className="flex flex-col justify-center rounded-[8px] bg-mz-primary p-5 text-white">
+            <span className="text-[40px] font-extrabold leading-none tracking-[-0.03em]">100+</span>
+            <span className="mt-2 text-[14px] font-medium text-white/90">Campuses on Mzobs</span>
           </Reveal>
 
           {CARDS.map(({ icon: Icon, title, body, cta }, i) => (
-            <Reveal
-              as="li"
-              key={title}
-              delay={(i + 1) * 0.08}
-              className="group relative flex flex-col overflow-hidden rounded-2xl bg-white p-5 ring-1 ring-mz-line shadow-mz-card transition-[transform,box-shadow] duration-300 motion-safe:hover:-translate-y-1 hover:shadow-mz-lift"
-            >
-              <span
-                className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-[0.07] transition-transform duration-500 group-hover:scale-125"
-                style={{ backgroundImage: 'var(--mz-gradient)' }}
-                aria-hidden="true"
-              />
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl text-white" style={{ backgroundImage: 'var(--mz-gradient)' }}>
-                <Icon size={19} aria-hidden="true" />
-              </span>
-              <h3 className="mt-4 text-[17px] font-semibold tracking-[-0.015em] text-mz-ink">{title}</h3>
-              <p className="mt-1.5 flex-1 text-[13.5px] leading-relaxed text-mz-muted">{body}</p>
+            <Reveal as="li" key={title} delay={(i + 1) * 0.08} className="flex flex-col rounded-[8px] border border-mz-line bg-white p-5">
+              <Icon size={20} className="text-mz-primary-strong" aria-hidden="true" />
+              <h3 className="mt-3 text-[16px] font-semibold text-mz-ink">{title}</h3>
+              <p className="mt-1.5 flex-1 text-[14px] leading-relaxed text-mz-muted">{body}</p>
               <Button to={cta.to} variant="secondary" size="sm" arrow className="mt-4 self-start">{cta.label}</Button>
             </Reveal>
           ))}

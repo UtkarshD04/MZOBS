@@ -16,6 +16,7 @@ import {
   Download,
   Loader2,
   Pencil,
+  Camera,
   Plus,
   Trash2,
   Check,
@@ -33,7 +34,9 @@ import { Field, Input, Select } from '../components/ui/JobsAuthField'
 import { getEmployeeSession, saveEmployeeSession } from '../lib/employeeSession'
 import { getEmployeeProfile, updateEmployeeProfile } from '../lib/employeeProfile'
 import { resumeDownloadUrl, uploadEmployeeResume, validateResumeFileClientSide } from '../lib/employeeResume'
+import { deleteEmployeePhoto, photoSrc, uploadEmployeePhoto, validatePhotoClientSide } from '../lib/employeePhoto'
 import { profileCompletion } from '../lib/profileCompletion'
+import { safeHref } from '../lib/safeUrl'
 
 const SECTIONS = [
   { id: 'subscription', label: 'Subscription', icon: CreditCard },
@@ -151,6 +154,9 @@ export default function EmployeeProfile() {
   const [uploading, setUploading] = useState(false)
 
   const fileInputRef = useRef(null)
+  const photoInputRef = useRef(null)
+  const [photoBusy, setPhotoBusy] = useState(false)
+  const [photoError, setPhotoError] = useState('')
 
   function reload(tok) {
     return getEmployeeProfile(tok).then((p) => {
@@ -190,7 +196,7 @@ export default function EmployeeProfile() {
       const updated = await updateEmployeeProfile(token, fields)
       setProfile(updated)
       // Keep this site's own nav/session name in sync if it changed.
-      if (fields.name) saveEmployeeSession({ token, employee: updated })
+      if (fields.name) saveEmployeeSession({ employee: updated })
       setEditing(null)
       setDraft({})
     } catch (err) {
@@ -198,6 +204,58 @@ export default function EmployeeProfile() {
     } finally {
       setSaving(false)
     }
+  }
+
+  async function handlePhotoChange(e) {
+    const file = e.target.files?.[0] ?? null
+    e.target.value = ''
+    if (!file || !token) return
+    const err = validatePhotoClientSide(file)
+    if (err) {
+      setPhotoError(err)
+      return
+    }
+    setPhotoBusy(true)
+    setPhotoError('')
+    try {
+      await uploadEmployeePhoto(file)
+      await reload(token)
+    } catch (err) {
+      setPhotoError(err.message)
+    } finally {
+      setPhotoBusy(false)
+    }
+  }
+
+  async function handleRemovePhoto() {
+    if (!token) return
+    setPhotoBusy(true)
+    setPhotoError('')
+    try {
+      await deleteEmployeePhoto()
+      await reload(token)
+    } catch (err) {
+      setPhotoError(err.message)
+    } finally {
+      setPhotoBusy(false)
+    }
+  }
+
+  // Opens "Personal details" for editing (that is where the full name lives) and scrolls to it.
+  function editPersonal() {
+    startEdit('personal', {
+      name: profile.name ?? '',
+      dob: profile.dob ?? '',
+      gender: profile.gender ?? '',
+      maritalStatus: profile.maritalStatus ?? '',
+      currentCity: profile.currentCity ?? '',
+      state: profile.state ?? '',
+      pincode: profile.pincode ?? '',
+      college: profile.college ?? '',
+      currentCtc: profile.currentCtc ?? '',
+      relocationOk: !!profile.relocationOk,
+    })
+    document.getElementById('personal')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   function handleResumeChange(e) {
@@ -233,7 +291,8 @@ export default function EmployeeProfile() {
       <div className="min-h-screen bg-(--jobs-bg-subtle) text-(--jobs-navy) font-sans antialiased">
         <Seo path="/employees/profile" title="My Profile | Mzobs" noindex />
         <Navbar />
-        <div className="pt-32 pb-16 px-6 text-center">
+        {/* Full-height while loading so the footer starts below the fold and doesn't jump when the profile arrives. */}
+        <div className="min-h-screen pt-32 pb-16 px-6 text-center">
           {loading && (
             <div className="flex items-center justify-center py-24 text-(--jobs-ink-soft)">
               <Loader2 size={22} className="animate-spin mr-2" /> Loading your profile...
@@ -264,7 +323,7 @@ export default function EmployeeProfile() {
       <section className="pt-28 pb-16 px-6 md:px-10">
         <div className="max-w-6xl mx-auto">
           {/* Header card */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-(--jobs-navy-deep) to-(--jobs-navy) text-white p-6 sm:p-8 mb-4 flex flex-col sm:flex-row sm:items-center gap-5">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-(--jobs-navy-deep) to-(--jobs-navy) text-white px-6 pb-8 pt-14 sm:p-10 mb-4 flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-6 sm:gap-9">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <ParallaxImage
                 src="/images/new_images/employee_goal.jpg"
@@ -278,20 +337,48 @@ export default function EmployeeProfile() {
             <FloatingElement duration={11} distance={14} className="absolute -bottom-14 left-1/3 w-48 h-48 bg-(--jobs-gold)/10 rounded-full blur-3xl pointer-events-none" />
 
             <div
-              className="relative z-10 w-[72px] h-[72px] rounded-full p-[3px] shrink-0"
+              className="relative z-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full p-1.5 shrink-0 shadow-[0_12px_32px_-12px_rgba(0,0,0,0.55)]"
               style={{ background: `conic-gradient(var(--jobs-teal) ${percent * 3.6}deg, rgba(255,255,255,0.18) 0deg)` }}
               title={`Profile ${percent}% complete`}
             >
-              <div className="w-full h-full rounded-full bg-(--jobs-navy) flex items-center justify-center text-lg font-black">
-                {initialsOf(profile.name)}
-              </div>
+              {profile.photoUrl ? (
+                <img src={photoSrc(profile.photoUrl)} alt={profile.name} className="w-full h-full rounded-full object-cover bg-(--jobs-navy) border-4 border-(--jobs-navy)" />
+              ) : (
+                <div className="w-full h-full rounded-full bg-(--jobs-navy) border-4 border-(--jobs-navy) flex items-center justify-center text-4xl sm:text-5xl font-black">
+                  {initialsOf(profile.name)}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => photoInputRef.current?.click()}
+                disabled={photoBusy}
+                aria-label={profile.photoUrl ? 'Change profile photo' : 'Add profile photo'}
+                className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-white text-(--jobs-navy) shadow-md flex items-center justify-center hover:bg-(--jobs-teal-tint) disabled:opacity-60 cursor-pointer"
+              >
+                {photoBusy ? <Loader2 size={18} className="animate-spin" /> : <Camera size={18} />}
+              </button>
+              <input ref={photoInputRef} type="file" accept="image/jpeg,image/png" className="hidden" onChange={handlePhotoChange} />
             </div>
             <div className="relative z-10 flex-1 min-w-0">
-              <h1 className="text-2xl font-black tracking-tight">{profile.name}</h1>
-              <p className="text-[13.5px] text-white/75 mt-1">
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center justify-center sm:justify-start gap-2.5">
+                {profile.name}
+                <button type="button" onClick={editPersonal} aria-label="Edit name" className="text-white/60 hover:text-white cursor-pointer">
+                  <Pencil size={16} />
+                </button>
+              </h1>
+              <div className="mt-2.5 flex flex-wrap items-center justify-center sm:justify-start gap-2 text-[12px]">
+                <button type="button" onClick={() => photoInputRef.current?.click()} disabled={photoBusy} className="px-3 py-1 rounded-full bg-white/12 font-semibold text-white hover:bg-white/20 transition-colors cursor-pointer disabled:opacity-60">
+                  {profile.photoUrl ? 'Change photo' : 'Add profile photo'}
+                </button>
+                {profile.photoUrl && (
+                  <button type="button" onClick={handleRemovePhoto} disabled={photoBusy} className="px-3 py-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-60">Remove</button>
+                )}
+                {photoError && <span role="alert" className="text-red-300">{photoError}</span>}
+              </div>
+              <p className="text-[15px] text-white/80 mt-3 max-w-xl">
                 {profile.resumeHeadline || 'Add a resume headline so employers know what you do'}
               </p>
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3 text-[12.5px] text-white/70">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-5 gap-y-2 mt-4 text-[13px] text-white/75">
                 {profile.phone && (
                   <span className="flex items-center gap-1.5">
                     <Phone size={13} /> +91 {profile.phone}
@@ -311,7 +398,7 @@ export default function EmployeeProfile() {
               </div>
             </div>
             <span
-              className={`relative z-10 shrink-0 self-start sm:self-center px-3 py-1.5 rounded-full text-[11.5px] font-bold ${
+              className={`absolute top-4 right-4 sm:top-5 sm:right-5 z-10 px-3 py-1.5 rounded-full text-[11.5px] font-bold ${
                 isPaid ? 'bg-(--jobs-teal)/20 text-(--jobs-teal)' : 'bg-white/15 text-white/80'
               }`}
             >
@@ -958,21 +1045,21 @@ export default function EmployeeProfile() {
                   <ul className="space-y-2 text-[13.5px]">
                     {profile.portfolioLink && (
                       <li>
-                        <a href={profile.portfolioLink} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
+                        <a href={safeHref(profile.portfolioLink)} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
                           Portfolio
                         </a>
                       </li>
                     )}
                     {profile.linkedin && (
                       <li>
-                        <a href={profile.linkedin} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
+                        <a href={safeHref(profile.linkedin)} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
                           LinkedIn
                         </a>
                       </li>
                     )}
                     {profile.github && (
                       <li>
-                        <a href={profile.github} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
+                        <a href={safeHref(profile.github)} target="_blank" rel="noreferrer" className="text-(--jobs-blue-dark) font-semibold hover:underline">
                           GitHub
                         </a>
                       </li>
@@ -991,20 +1078,7 @@ export default function EmployeeProfile() {
                 tone={0}
                 editable
                 editing={editing === 'personal'}
-                onEdit={() =>
-                  startEdit('personal', {
-                    name: profile.name ?? '',
-                    dob: profile.dob ?? '',
-                    gender: profile.gender ?? '',
-                    maritalStatus: profile.maritalStatus ?? '',
-                    currentCity: profile.currentCity ?? '',
-                    state: profile.state ?? '',
-                    pincode: profile.pincode ?? '',
-                    college: profile.college ?? '',
-                    currentCtc: profile.currentCtc ?? '',
-                    relocationOk: !!profile.relocationOk,
-                  })
-                }
+                onEdit={editPersonal}
                 onCancel={cancelEdit}
               >
                 {editing === 'personal' ? (

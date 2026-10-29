@@ -1,12 +1,14 @@
 import { EMPLOYEE_API_URL } from './config'
+import { trackOnSuccess } from './analytics'
 
-async function request(path, { method = 'GET', token, body, isFormData } = {}) {
+async function request(path, { method = 'GET', body, isFormData } = {}) {
   const headers = {}
-  if (token) headers.Authorization = `Bearer ${token}`
+  headers['X-Requested-With'] = 'mzobs-web'
   if (!isFormData && body !== undefined) headers['Content-Type'] = 'application/json'
 
   const res = await fetch(`${EMPLOYEE_API_URL}${path}`, {
     method,
+    credentials: 'include',
     headers,
     body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
   })
@@ -25,17 +27,17 @@ export function fetchEmployeeProfile(token) {
 export function uploadEmployeeResume(token, file) {
   const formData = new FormData()
   formData.append('resume', file)
-  return request('/resume', { method: 'POST', token, body: formData, isFormData: true })
+  return trackOnSuccess(request('/resume', { method: 'POST', token, body: formData, isFormData: true }), 'resume_uploaded')
 }
 
 export function applyToJob(token, jobId) {
-  return request('/applications', { method: 'POST', token, body: { jobId } })
+  return trackOnSuccess(request('/applications', { method: 'POST', token, body: { jobId } }), 'job_applied', { job_id: jobId })
 }
 
 // How many applications this employee has sent — read off the paginated
 // list's X-Total-Count header, so only one row is ever transferred.
 export async function fetchApplicationCount(token, { signal } = {}) {
-  const res = await fetch(`${EMPLOYEE_API_URL}/applications?limit=1`, { headers: { Authorization: `Bearer ${token}` }, signal })
+  const res = await fetch(`${EMPLOYEE_API_URL}/applications?limit=1`, { credentials: 'include', headers: { 'X-Requested-With': 'mzobs-web' }, signal })
   if (!res.ok) throw new Error('Failed to load applications')
   const total = Number(res.headers.get('X-Total-Count'))
   if (Number.isFinite(total)) return total
@@ -46,7 +48,7 @@ export async function fetchApplicationCount(token, { signal } = {}) {
 // One page of this employee's applications, newest first, each with its job
 // (title/location/workMode/company) populated. `total` is the full count.
 export async function fetchApplications(token, { page = 1, limit = 50 } = {}, { signal } = {}) {
-  const res = await fetch(`${EMPLOYEE_API_URL}/applications?page=${page}&limit=${limit}`, { headers: { Authorization: `Bearer ${token}` }, signal })
+  const res = await fetch(`${EMPLOYEE_API_URL}/applications?page=${page}&limit=${limit}`, { credentials: 'include', headers: { 'X-Requested-With': 'mzobs-web' }, signal })
   const data = await res.json().catch(() => [])
   if (!res.ok) throw Object.assign(new Error(data.message ?? 'Couldn’t load your applications.'), { status: res.status })
   const total = Number(res.headers.get('X-Total-Count'))

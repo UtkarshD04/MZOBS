@@ -863,7 +863,7 @@ export const QUICK_DISCOVERY_DATA = [
 export const HOT_CITIES_DATA = {
   eyebrow: "Live Hiring Activity",
   title: "Explore Jobs by City",
-  subtitle: "Where opportunity meets ambition.",
+  subtitle: "Live openings across India. Pick a city to see its jobs.",
   brandLine: "Explore opportunities. Find your city. Get matched with the right job.",
   filters: [
     { key: "all", label: "All Jobs" },

@@ -22,6 +22,7 @@ import FeedbackReview from './pages/ops/FeedbackReview'
 import Associates from './pages/ops/Associates'
 import CampusRequests from './pages/ops/CampusRequests'
 import PlanEnquiries from './pages/ops/PlanEnquiries'
+import ShortlistRequests from './pages/ops/ShortlistRequests'
 import Team from './pages/ops/Team'
 import DataExport from './pages/ops/DataExport'
 import SendNotification from './pages/ops/SendNotification'
@@ -43,6 +44,7 @@ export default function App() {
             <Route path="associates" element={<Associates />} />
             <Route path="campus-requests" element={<CampusRequests />} />
             <Route path="plan-enquiries" element={<PlanEnquiries />} />
+            <Route path="shortlist-requests" element={<ShortlistRequests />} />
             <Route element={<RequireAdmin />}>
               <Route path="hr-contacts" element={<HRContacts />} />
               <Route path="companies" element={<Companies />} />

@@ -104,3 +104,65 @@ as `VITE_PUBLIC_JOBS_API_URL` (no `VITE_` prefix — that one only gets inlined
 into the client bundle at build time; the server process reads this one
 directly at request time). The `Dockerfile` mirrors the same build/run split
 for anyone self-hosting outside Render.
+
+## Grafana Faro (Frontend Observability)
+
+Page views, JS errors, web vitals and a few product events go to Grafana Cloud
+via `@grafana/faro-web-sdk`. All of it lives in `src/lib/analytics.js` (SDK
+setup, allowlisted attributes, `track()` / `trackOnSuccess()`) and
+`src/lib/useRouteAnalytics.js` (route page views); it is initialised from
+`src/entry-client.jsx` only, never during SSR/prerender.
+
+**Environment variables** (build-time, public — the collector URL is meant to
+be client-visible; never put secrets in `VITE_` vars):
+
+| Variable | Required | Notes |
+| --- | --- | --- |
+| `VITE_PUBLIC_GRAFANA_FARO_URL` | yes | Collector URL from Grafana. Unset = analytics off. |
+| `VITE_PUBLIC_GRAFANA_FARO_APP_NAME` | no | Default `mzobs-landing`. |
+| `VITE_PUBLIC_GRAFANA_FARO_ENV` | no | Default `production` / `development`. |
+| `VITE_PUBLIC_GRAFANA_FARO_ENABLE_DEV` | no | `true` to send events from `npm run dev`; off otherwise. |
+
+**Setup**
+
+1. In Grafana Cloud: *Connections → Add new connection → Frontend Observability*,
+   create an app, and add this site's origin(s) to *Allowed origins* (CORS).
+2. Copy the collector URL (`https://faro-collector-<region>.grafana.net/collect/<app-key>`)
+   into `VITE_PUBLIC_GRAFANA_FARO_URL` in Dokploy (it's a Docker build arg, so
+   rebuild after changing it). `server.js` adds its origin to the CSP `connect-src`.
+3. Deploy, browse the site, and check *Frontend Observability → your app*.
+
+**Source maps (optional)**: set `FARO_API_KEY` (a Grafana access-policy token
+with the source-map upload scope — Frontend Observability → Settings → Source
+Maps) as a Dokploy build arg, *not* a `VITE_` var. When present, `vite.config.js`
+uploads the client build's source maps so stack traces are readable; when
+absent nothing changes. The app name must match `VITE_PUBLIC_GRAFANA_FARO_APP_NAME`.
+
+**Events**: `page_view`, `job_viewed`, `job_saved`, `signup_started`,
+`signup_completed`, `resume_uploaded`, `job_applied`, `employer_signup_completed`,
+`subscription_checkout_started`, `payment_success`. Success events fire only
+after the backend call resolves. Attributes are limited to an allowlist
+(`path`, `job_id`, `audience`, `method`, `plan`); query strings are stripped
+from recorded URLs and console capture is off, so no emails, phones, tokens,
+resume URLs or payment details are sent.
+npm install @grafana/faro-web-sdk
+npm install @grafana/faro-web-tracing
+
+
+import { getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
+import { TracingInstrumentation } from '@grafana/faro-web-tracing';
+
+initializeFaro({
+  url: 'https://faro-collector-prod-ap-south-1.grafana.net/collect/fee121da3b32b664dfeed2c8412846c6',
+  app: {
+    name: 'Mzobs',
+    version: '1.0.0',
+    environment: 'production'
+  },
+  instrumentations: [
+    // Mandatory, omits default instrumentation otherwise.
+    ...getWebInstrumentations(),
+    // Tracing package to get end-to-end visibility for HTTP requests.
+    new TracingInstrumentation(),
+  ],
+});

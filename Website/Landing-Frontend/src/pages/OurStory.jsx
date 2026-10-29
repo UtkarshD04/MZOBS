@@ -389,11 +389,11 @@ export default function OurStory() {
           transition={{ duration: 0.9, ease }}
           className="mx-auto max-w-3xl"
         >
-          <h2 className="text-[40px] font-extrabold leading-[1.05] tracking-[-0.035em] sm:text-[60px]">
+          <h2 className="text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             That’s why <br className="hidden sm:block" />
             <span style={{ color: VIOLET }}>Mzobs</span> <Serif>exists.</Serif>
           </h2>
-          <p className="mx-auto mt-6 max-w-md text-[19px] leading-snug text-[#3d5654]">
+          <p className="mx-auto mt-6 max-w-md text-[#3d5654] text-[16px] sm:text-[17px] font-normal leading-relaxed">
             To make the distance between talent and opportunity smaller.
           </p>
           <p className="mt-8 font-serif text-[20px] italic text-[#5C7370]">And we’re only getting started.</p>

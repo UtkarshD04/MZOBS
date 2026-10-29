@@ -129,7 +129,7 @@ export default function CityJobs() {
                 <div className="flex items-center gap-1.5 text-white/80 text-[13px] font-semibold mb-1.5">
                   <MapPin size={13} aria-hidden="true" /> {city.state}
                 </div>
-                <h1 className="text-[32px] sm:text-[42px] font-black text-white tracking-tight leading-none">{city.city}</h1>
+                <h1 className="text-white text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">{city.city}</h1>
                 {city.imageAttribution && (
                   <p className="mt-3 text-[10.5px] font-medium text-white/55">
                     {city.landmark}, Photo: {city.imageAttribution}

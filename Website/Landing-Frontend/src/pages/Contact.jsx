@@ -34,7 +34,7 @@ export default function Contact() {
             <span className="inline-block px-3.5 py-1.5 rounded-full bg-white/80 border border-(--explorer-border) text-[12px] font-bold uppercase tracking-wider text-(--explorer-blue)">
               Get in touch
             </span>
-            <h1 className="mt-5 text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight text-balance">
+            <h1 className="mt-5 text-balance text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
               <span className="block text-(--explorer-navy)">Let&rsquo;s talk about your next hire</span>
               <span
                 className="block"
@@ -43,7 +43,7 @@ export default function Contact() {
 , or your next role.
               </span>
             </h1>
-            <p className="mt-5 text-[16px] sm:text-[17.5px] text-(--explorer-navy)/75 font-medium leading-relaxed max-w-2xl mx-auto">
+            <p className="mt-5 text-(--explorer-navy)/75 max-w-2xl mx-auto text-[16px] sm:text-[17px] font-normal leading-relaxed">
               Whether you&rsquo;re a job seeker with a question or an employer ready to hire, our team replies within one business day.
             </p>
           </Reveal>

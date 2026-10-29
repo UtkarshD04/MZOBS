@@ -88,8 +88,8 @@ export default function AllCities() {
           <ExplorerTextLink to="/#hot-jobs-by-city" arrow={false} className="w-fit mb-4 text-white/85 hover:text-white">
             <ArrowLeft size={14} aria-hidden="true" /> Back to home
           </ExplorerTextLink>
-          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">All locations</h1>
-          <p className="mt-2 text-[15px] text-white/80">Pick a city to see the jobs hiring there right now.</p>
+          <h1 className="text-white text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">All locations</h1>
+          <p className="mt-2 text-white/80 text-[16px] sm:text-[17px] font-normal leading-relaxed">Pick a city to see the jobs hiring there right now.</p>
 
           <div
             className="relative mt-5 max-w-lg"

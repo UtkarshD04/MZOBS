@@ -53,10 +53,10 @@ export default function CategoryGrid({ onSelect }) {
               <span className="block h-px w-4 bg-(--explorer-blue)" aria-hidden="true" />
               Browse by category
             </span>
-            <h2 className="mt-2 text-[32px] sm:text-[40px] font-black leading-[1.08] tracking-tight text-balance text-(--explorer-navy)">
+            <h2 className="mt-2 text-balance text-(--explorer-navy) text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
               {CATEGORY_DATA.title}
             </h2>
-            <p className="mt-2 text-[15px] text-(--explorer-navy)/70 leading-relaxed">
+            <p className="mt-2 text-(--explorer-navy)/70 text-[16px] sm:text-[17px] font-normal leading-relaxed">
               {CATEGORY_DATA.subtitle}
             </p>
           </div>

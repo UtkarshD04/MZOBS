@@ -12,7 +12,7 @@ export default function CaseStudiesSection() {
         {/* Section Header */}
         <Reveal direction="up" className="text-center max-w-2xl mx-auto">
           <SectionBadge label={CASE_STUDIES_DATA.badge} />
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-[#0B1220] tracking-tight">
+          <h2 className="font-sans text-[#0B1220] text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             {CASE_STUDIES_DATA.titlePrefix}
             <span className="font-serif italic font-normal text-teal-950">
               {CASE_STUDIES_DATA.titleItalic}

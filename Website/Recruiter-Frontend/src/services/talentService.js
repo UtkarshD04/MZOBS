@@ -9,11 +9,12 @@
 //         the company's pipeline state for them.
 
 import { apiClient } from '../lib/api'
-import { IS_DEMO } from '../lib/config'
+import { IS_DEMO, FILE_BASE_URL } from '../lib/config'
+import { splitSkills, tidyText } from '../lib/talent/summary'
 import { revealedFromApi } from '../lib/reveal'
 import { DEMO_POOL } from '../lib/talent/demoPool'
 import { rankPool, similarTo, computeMatch, computeTrust } from '../lib/talent/engine'
-import { setVocabularyFrom } from '../lib/talent/vocab'
+import { setVocabularyFrom, canonState } from '../lib/talent/vocab'
 import { readLocalJobs } from '../lib/localJobs'
 
 const DEMO_LATENCY = 320
@@ -71,12 +72,12 @@ export function mapApiCandidate(c, jobTitles = {}) {
     location: c.location ?? '',
     preferredLocations: c.location ? [c.location] : [],
     noticePeriodDays: toNoticeDays(c.availability),
-    skills: c.skills ?? [],
+    skills: splitSkills(c.skills),
     industry: '',
     companyType: '',
     workMode: '',
     employmentType: '',
-    education: (c.education ?? []).map((e) => ({ degree: e.degree, institute: e.institute, year: Number(e.year) || null })),
+    education: (c.education ?? []).map((e) => ({ degree: tidyText(e.degree), institute: tidyText(e.institute), year: Number(e.year) || null })),
     workHistory: hist,
     projects: (c.projects ?? []).map((p) => ({ name: p.name, description: p.description })),
     certifications: c.certificates ? [`${c.certificates} certificate${c.certificates === 1 ? '' : 's'} on profile`] : [],
@@ -120,6 +121,7 @@ export function mapResdexCandidate(e) {
     id: e.id,
     name: e.name,
     initials: e.initials,
+    photoUrl: e.photoUrl ? `${FILE_BASE_URL}${e.photoUrl}` : '',
     designation: e.designation || e.preferredRole || e.headline || '',
     appliedFor: '',
     currentCompany: e.currentCompany || hist[0]?.company || '',
@@ -127,18 +129,21 @@ export function mapResdexCandidate(e) {
     currentSalaryLPA: toLpa(e.currentCtc),
     expectedSalaryLPA: toLpa(e.expectedSalary),
     location: e.location ?? '',
+    state: canonState(e.state),
+    pincode: e.pincode ?? '',
     preferredLocations: e.preferredLocations?.length ? e.preferredLocations : e.location ? [e.location] : [],
     relocationOk: e.relocationOk,
     noticePeriodDays: toNoticeDays(e.noticePeriod),
-    skills: e.skills ?? [],
+    skills: splitSkills(e.skills),
     industry: '',
     companyType: '',
     workMode: workModes.join(' / '),
     workModes,
     employmentType: employmentTypes.join(' / '),
     employmentTypes,
+    experienceLevel: e.experience === 'fresher' || e.experience === 'experienced' ? e.experience : null,
     college: e.college || '',
-    education: (e.education ?? []).map((x) => ({ degree: x.degree, institute: x.institute, year: Number(x.year) || null })),
+    education: (e.education ?? []).map((x) => ({ degree: tidyText(x.degree), institute: tidyText(x.institute), year: Number(x.year) || null })),
     workHistory: hist,
     projects: (e.projects ?? []).map((p) => ({ name: p.name, description: p.description, tech: p.tech ?? [] })),
     certifications: [],
@@ -221,6 +226,12 @@ export function poolMeta(pool, jobs = []) {
     activity: any((c) => c.lastActiveDaysAgo != null),
     resumeDate: any((c) => c.resumeUpdatedDaysAgo != null),
     contactVerified: any((c) => c.verification.phone !== 'none' || c.verification.email !== 'none'),
+    experienceLevel: any((c) => c.experienceLevel),
+    linkedin: any((c) => c.links?.some((l) => l.label === 'LinkedIn')),
+    github: any((c) => c.links?.some((l) => l.label === 'GitHub')),
+    photo: any((c) => c.photoUrl),
+    premium: any((c) => c.premium),
+    appliedDate: any((c) => c.sharedDaysAgo != null),
     education: any((c) => c.education.length),
     company: any((c) => c.currentCompany),
     prevCompany: any((c) => c.workHistory.length > 1),
@@ -297,6 +308,11 @@ export async function getPoolMeta(force = false) {
   const p = await loadPool(force)
   if (IS_DEMO) setVocabularyFrom(p.rows)
   return { ...poolMeta(p.rows, p.jobs), syncedAt: p.at }
+}
+
+/** Every loaded candidate, for the Location filter's per-place counts. */
+export async function getPoolRows() {
+  return (await loadPool()).rows
 }
 
 // ---- search ---------------------------------------------------------------

@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, ArrowRight, Users, Building2, Bookmark, Share2, Check, TrendingUp, BadgeCheck } from 'lucide-react'
+import { MapPin, Briefcase, IndianRupee, Clock, ArrowUpRight, ArrowRight, Users, Building2, Bookmark, Share2, Check, TrendingUp, BadgeCheck, Smile } from 'lucide-react'
+import { useAppliedJobIds } from '../../../lib/appliedJobs'
 import ApplyPanel from './ApplyPanel'
 import ExplorerButton from '../../ui/ExplorerButton'
 import { isJobSaved, toggleJobSaved } from '../../../lib/savedJobs'
 import { Avatar, NewBadge, BulletList, TagList, FactTile, SectionHeading, Divider, IconButton, TrustRow } from './jobCardPrimitives'
 import { initialsOf } from '../../../lib/jobCardHelpers'
 import { jobPath } from '../../mz/JobCard'
+import { safeHref } from '../../../lib/safeUrl'
 
 const DESCRIPTION_PREVIEW_CHARS = 320
 
@@ -28,6 +30,7 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
   const [applyOpen, setApplyOpen] = useState(initialApplyOpen && !job.applyUrl)
   const [saved, setSaved] = useState(() => isJobSaved(job))
   const [descExpanded, setDescExpanded] = useState(false)
+  const alreadyApplied = useAppliedJobIds().has(job.id)
 
   const isRecent = job.postedDaysAgo != null && job.postedDaysAgo <= 1
   const descriptionIsLong = (job.description?.length ?? 0) > DESCRIPTION_PREVIEW_CHARS
@@ -54,11 +57,15 @@ export default function JobDetailPanel({ job, nextJob, onNext, stickyActions = f
     setSaved(toggleJobSaved(job))
   }
 
-  if (applyOpen) return <ApplyPanel job={job} onClose={() => setApplyOpen(false)} />
+  if (applyOpen && !alreadyApplied) return <ApplyPanel job={job} onClose={() => setApplyOpen(false)} />
 
-  const applyButton = (
+  const applyButton = alreadyApplied ? (
+    <ExplorerButton variant="secondary" size="xl" className="flex-1" disabled>
+      <Smile size={17} aria-hidden="true" /> You have already applied for this role
+    </ExplorerButton>
+  ) : (
     <ExplorerButton
-      href={job.applyUrl}
+      href={safeHref(job.applyUrl)}
       onClick={job.applyUrl ? undefined : (e) => { e.preventDefault(); setApplyOpen(true) }}
       size="xl"
       className="flex-1"

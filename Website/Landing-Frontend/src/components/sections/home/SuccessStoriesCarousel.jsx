@@ -41,7 +41,7 @@ export default function SuccessStoriesCarousel() {
     <section className="bg-[#F5F5F5] py-16 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-end justify-between gap-6 mb-10">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-xl">
-          <h2 className="text-3xl sm:text-4xl md:text-[42px] font-black text-black tracking-tight leading-tight">
+          <h2 className="text-black text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             <SplitText text={`${CASE_STUDIES_DATA.titlePrefix}${CASE_STUDIES_DATA.titleItalic}${CASE_STUDIES_DATA.titleSuffix}`} />
           </h2>
         </Reveal>

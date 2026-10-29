@@ -67,10 +67,10 @@ export default function EmployerPricing() {
         <div aria-hidden="true" className="absolute -left-28 -top-16 h-72 w-72 rounded-full bg-(--explorer-blue-surface) blur-[90px]" />
         <FadeInLoad className="relative max-w-2xl mx-auto text-center">
           <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-(--explorer-blue)">Simple, transparent pricing</span>
-          <h1 className="mt-3 font-sans text-4xl sm:text-5xl md:text-[56px] font-bold text-(--explorer-navy) tracking-tight leading-[1.02]">
+          <h1 className="mt-3 font-sans text-(--explorer-navy) text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
             Pick the plan that fits your hiring.
           </h1>
-          <p className="mt-5 text-[15px] sm:text-base text-(--explorer-muted) leading-relaxed max-w-xl mx-auto">
+          <p className="mt-5 text-(--explorer-muted) max-w-xl mx-auto text-[16px] sm:text-[17px] font-normal leading-relaxed">
             Every annual plan unlocks unlimited job postings and full access to your applicants' resumes. Need something
             different? Customize a plan and our team will call you.
           </p>
@@ -101,7 +101,7 @@ export default function EmployerPricing() {
         <div className="max-w-2xl mx-auto">
           <FadeInView className="text-center mb-10">
             <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-(--explorer-blue)">Good questions</span>
-            <h2 className="mt-3 font-sans text-3xl sm:text-4xl font-bold text-(--explorer-navy) tracking-tight">Pricing, answered.</h2>
+            <h2 className="mt-3 font-sans text-(--explorer-navy) text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Pricing, answered.</h2>
           </FadeInView>
           <FadeInView delay={0.08} className="rounded-[26px] border border-(--explorer-border) bg-(--explorer-bg) px-6 sm:px-8">
             {FAQS.map((item, i) => (

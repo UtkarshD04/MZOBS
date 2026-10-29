@@ -1,10 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import { ChevronDown, BookmarkPlus, X } from 'lucide-react'
 import { criteriaToChips, removeChip, NOTICE_OPTIONS, STAGE_LABELS } from '../lib/talent/criteria'
 import { EMPLOYMENT_TYPE_LIST } from '../lib/talent/demoPool'
 import { vocab } from '../lib/talent/vocab'
 import { Chip } from './ui'
+import { IS_DEMO } from '../lib/config'
+import { getLocationFacets } from '../services/geoService'
+import LocationRadar from './LocationRadar'
+
+// This company's own job-opening cities (busiest first) — the cities it is hiring in.
+function useJobCities() {
+  const [cities, setCities] = useState([])
+  useEffect(() => {
+    if (IS_DEMO) return
+    let live = true
+    getLocationFacets()
+      .then((rows) => {
+        const by = new Map()
+        rows.forEach((f) => { if (f.city) by.set(f.city, (by.get(f.city) ?? 0) + (f.count ?? 1)) })
+        if (live) setCities([...by].map(([city, count]) => ({ city, count })).sort((a, b) => b.count - a.count || a.city.localeCompare(b.city)))
+      })
+      .catch(() => {})
+    return () => { live = false }
+  }, [])
+  return cities
+}
 
 export function TagInput({ values, onChange, placeholder, suggestions = [] }) {
   const [text, setText] = useState('')
@@ -131,6 +152,7 @@ function Presets({ items, active, onPick }) {
 }
 
 const EXP_PRESETS = [['Fresher', [0, 1]], ['1–3', [1, 3]], ['3–5', [3, 5]], ['5–8', [5, 8]], ['8–12', [8, 12]], ['12+', [12, null]]]
+const APPLIED_OPTIONS = [['Any time', null], ['Last 1 day', 1], ['Last 3 days', 3], ['Last 7 days', 7], ['Last 14 days', 14], ['Last 30 days', 30]]
 const ACTIVE_OPTIONS = [['Any time', null], ['Last 1 day', 1], ['Last 7 days', 7], ['Last 14 days', 14], ['Last 30 days', 30], ['Last 90 days', 90]]
 const FRESH_OPTIONS = [['Any time', null], ['Last 7 days', 7], ['Last 30 days', 30], ['Last 90 days', 90], ['Last 6 months', 180]]
 const PROFILE_OPTIONS = [['Any', null], ['≥ 50%', 50], ['≥ 70%', 70], ['≥ 90%', 90]]
@@ -150,6 +172,8 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
   const chips = criteriaToChips(c)
   const n = (...flags) => flags.filter(Boolean).length
   const show = (k) => m[k] !== false // unknown meta (still loading) shows everything
+  const jobCities = useJobCities()
+  const hiringPicks = jobCities.filter((j) => !c.locations.includes(j.city))
 
   return (
     <div className="rounded-2xl border border-line bg-white shadow-card">
@@ -211,17 +235,35 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
           <NumberPair a={c.expMin} b={c.expMax} onA={(expMin) => set({ expMin })} onB={(expMax) => set({ expMax })} unit="yrs" />
         </Section>
 
-        <Section title="Location" defaultOpen={c.locations.length > 0} count={c.locations.length + c.prefLocations.length + n(c.relocate)}>
-          <Label>Current location</Label>
-          <TagInput values={c.locations} onChange={(locations) => set({ locations })} placeholder="City…" suggestions={vocab.cities} />
-          {c.locations.length > 0 && <div className="mt-1.5"><Check checked={c.alsoPreferred} onChange={(alsoPreferred) => set({ alsoPreferred })}>Include people who prefer to relocate here</Check></div>}
-          {show('relocation') && (
-            <>
-              <Label>Preferred location</Label>
-              <TagInput values={c.prefLocations} onChange={(prefLocations) => set({ prefLocations })} placeholder="Where they want to work…" suggestions={vocab.cities} />
-              <div className="mt-1.5"><Check checked={c.relocate} onChange={(relocate) => set({ relocate })}>Open to relocation</Check></div>
-            </>
-          )}
+        <Section title="Location" defaultOpen count={c.locations.length + c.prefLocations.length + n(c.relocate, c.state, c.pincode)}>
+          <LocationRadar
+            criteria={c}
+            set={set}
+            meta={m}
+            relocationEnabled={show('relocation')}
+            customPanel={
+              <>
+                {hiringPicks.length > 0 && (
+                  <>
+                    <Label>Popular hiring locations</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {hiringPicks.map((j) => {
+                        const on = c.prefLocations.includes(j.city)
+                        return (
+                          <button key={j.city} type="button" aria-pressed={on} onClick={() => set({ prefLocations: on ? c.prefLocations.filter((x) => x !== j.city) : [...c.prefLocations, j.city] })} className={clsx('inline-flex h-7 items-center gap-1 rounded-full border px-2.5 text-[12px] font-semibold', on ? 'border-accent bg-accent-soft text-[#0a6f64]' : 'border-line bg-white text-ink-2 hover:bg-line-2')}>
+                            {j.city} <span className="text-muted">{j.count}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </>
+                )}
+                <Label>Preferred location</Label>
+                <TagInput values={c.prefLocations} onChange={(prefLocations) => set({ prefLocations })} placeholder="Cities where they want to work…" suggestions={vocab.cities} />
+                <div className="mt-1.5"><Check checked={c.relocate} onChange={(relocate) => set({ relocate })}>Open to relocation</Check></div>
+              </>
+            }
+          />
         </Section>
 
         {(show('salary') || show('currentSalary')) && (
@@ -255,7 +297,8 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
         </Section>
 
         {(show('workMode') || show('employmentType')) && (
-          <Section title="Work preferences" count={n(c.workMode, c.employmentType)}>
+          <Section title="Work preferences" count={n(c.workMode, c.employmentType, c.experienceLevel)}>
+            {m.experienceLevel && (<><Label>Career stage</Label>{[['', 'Any'], ['fresher', 'Fresher'], ['experienced', 'Experienced']].map(([v, l]) => <Radio key={l} name="level" checked={c.experienceLevel === v} onChange={() => set({ experienceLevel: v })}>{l}</Radio>)}</>)}
             {show('workMode') && (<><Label>Work mode</Label>{['', 'Remote', 'Hybrid', 'On-site'].map((w) => <Radio key={w || 'any'} name="mode" checked={c.workMode === w} onChange={() => set({ workMode: w })}>{w || 'Any'}</Radio>)}</>)}
             {show('employmentType') && (<><Label>Employment type</Label><Select value={c.employmentType} onChange={(employmentType) => set({ employmentType })} options={EMPLOYMENT_TYPE_LIST} placeholder="Any type" /></>)}
           </Section>
@@ -269,17 +312,24 @@ export default function FilterPanel({ criteria, onChange, onSave, onClear, meta 
         )}
 
         {(show('activity') || show('resumeDate')) && (
-          <Section title="Candidate activity" count={n(c.activeDays != null, c.resumeFreshDays != null)}>
+          <Section title="Candidate activity" count={n(c.activeDays != null, c.resumeFreshDays != null, c.appliedDays != null)}>
+            {m.appliedDate && (<><Label>Applied to your jobs</Label><Choice name="applied" value={c.appliedDays} options={APPLIED_OPTIONS} onChange={(appliedDays) => set({ appliedDays })} /></>)}
             {show('activity') && (<><Label>Active in</Label><Choice name="active" value={c.activeDays} options={ACTIVE_OPTIONS} onChange={(activeDays) => set({ activeDays })} /></>)}
             {show('resumeDate') && (<><Label>Resume updated</Label><Choice name="fresh" value={c.resumeFreshDays} options={FRESH_OPTIONS} onChange={(resumeFreshDays) => set({ resumeFreshDays })} /></>)}
           </Section>
         )}
 
-        <Section title="Verification & quality" defaultOpen count={n(c.verifiedOnly, c.contactVerified, c.verifiedEducation, c.verifiedEmployment, c.minMatch != null, c.profileMin != null, c.trustMin != null, c.hasPortfolio, c.hasVideo)}>
+        <Section title="Verification & quality" defaultOpen count={n(c.verifiedOnly, c.contactVerified, c.phoneVerified, c.emailVerified, c.hasLinkedin, c.hasGithub, c.hasPhoto, c.premiumOnly, c.verifiedEducation, c.verifiedEmployment, c.minMatch != null, c.profileMin != null, c.trustMin != null, c.hasPortfolio, c.hasVideo)}>
           <Check checked={c.verifiedOnly} onChange={(verifiedOnly) => set({ verifiedOnly })}>Identity verified</Check>
           {show('contactVerified') && <Check checked={c.contactVerified} onChange={(contactVerified) => set({ contactVerified })}>Phone &amp; email verified</Check>}
+          {show('contactVerified') && <Check checked={c.phoneVerified} onChange={(phoneVerified) => set({ phoneVerified })}>Phone verified</Check>}
+          {show('contactVerified') && <Check checked={c.emailVerified} onChange={(emailVerified) => set({ emailVerified })}>Email verified</Check>}
           <Check checked={c.verifiedEducation} onChange={(verifiedEducation) => set({ verifiedEducation })}>Education verified</Check>
           <Check checked={c.verifiedEmployment} onChange={(verifiedEmployment) => set({ verifiedEmployment })}>Employment verified</Check>
+          {m.linkedin && <Check checked={c.hasLinkedin} onChange={(hasLinkedin) => set({ hasLinkedin })}>Has LinkedIn</Check>}
+          {m.github && <Check checked={c.hasGithub} onChange={(hasGithub) => set({ hasGithub })}>Has GitHub</Check>}
+          {m.photo && <Check checked={c.hasPhoto} onChange={(hasPhoto) => set({ hasPhoto })}>Has profile photo</Check>}
+          {m.premium && <Check checked={c.premiumOnly} onChange={(premiumOnly) => set({ premiumOnly })}>Premium candidates only</Check>}
           {m.portfolio && <Check checked={c.hasPortfolio} onChange={(hasPortfolio) => set({ hasPortfolio })}>Has portfolio</Check>}
           {m.video && <Check checked={c.hasVideo} onChange={(hasVideo) => set({ hasVideo })}>Has video intro</Check>}
           <Check checked={c.minMatch != null} onChange={(v) => set({ minMatch: v ? 80 : null })}>AI match &gt; 80</Check>

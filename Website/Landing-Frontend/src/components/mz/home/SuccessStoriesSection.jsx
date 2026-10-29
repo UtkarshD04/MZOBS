@@ -2,14 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Quote, User } from 'lucide-react'
 import { Container } from '../primitives'
 import { fetchPublicTestimonials } from '../../../lib/testimonials'
-import { DRAFT_CANDIDATE_STORIES } from '../../../lib/candidateStories'
 
 const NAVY = '#183451'
 const TEAL = '#078F80'
+const AUTOPLAY_MS = 4500
 
-// Candidate photo, or a neutral circular placeholder until an approved photo
-// exists. Set `photo` in lib/candidateStories.js (e.g. '/images/candidates/name.jpg')
-// and this swaps to the real image automatically.
+// Candidate photo, or a neutral circular placeholder when the testimonial has none.
 function Portrait({ name, photo, className = '' }) {
   const [failed, setFailed] = useState(false)
   if (photo && !failed) {
@@ -63,6 +61,7 @@ function StoryCard({ story, index }) {
 
 function Carousel({ stories }) {
   const trackRef = useRef(null)
+  const rootRef = useRef(null)
   const [active, setActive] = useState(0)
   const [positions, setPositions] = useState(stories.length)
   const [atStart, setAtStart] = useState(true)
@@ -92,21 +91,157 @@ function Carousel({ stories }) {
     return () => ro.disconnect()
   }, [update])
 
-  const behavior = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth')
+  const busy = useRef(false)
+  const [epoch, setEpoch] = useState(0) // bumps after every move so the autoplay timer restarts
+  const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  const [inView, setInView] = useState(false)
+  const [tabVisible, setTabVisible] = useState(() => typeof document === 'undefined' || document.visibilityState !== 'hidden')
+  const [calm, setCalm] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+
+  // Card pitch (width + gap) and the scroll offset of every snap position.
+  const metrics = () => {
+    const el = trackRef.current
+    const cards = el ? [...el.querySelectorAll('[data-card]')] : []
+    if (!cards.length) return null
+    const base = cards[0].offsetLeft
+    return { el, cards, offsets: cards.map((c) => c.offsetLeft - base) }
+  }
+
+  // StoryFlow reveal. The card outlines never move: the visible cards' contents
+  // ease up and fade out (cards staggered ~120ms), the track jumps to the target
+  // while the contents are invisible, then each card re-reveals in order: avatar
+  // (scale + fade), quote, name, tagline. Scroll-snap is off while it runs so the
+  // browser can't re-snap the jump; clicks mid-transition are ignored.
+  const moveTo = async (target) => {
+    const m = metrics()
+    if (!m || busy.current) return
+    const { el, cards } = m
+    const max = el.scrollWidth - el.clientWidth
+    const left = Math.max(0, Math.min(max, target))
+    if (Math.abs(left - el.scrollLeft) < 2) return
+    const jump = () => el.scrollTo({ left, behavior: 'instant' })
+    if (typeof el.animate !== 'function') {
+      jump()
+      return
+    }
+    const visible = () => {
+      const box = el.getBoundingClientRect()
+      return cards.filter((c) => {
+        const r = c.getBoundingClientRect()
+        return r.right > box.left + 8 && r.left < box.right - 8
+      })
+    }
+    // Per card: the avatar, then quote mark + text, then name, then tagline.
+    const parts = (c) => {
+      const caption = c.querySelector('figcaption')
+      const [name, tagline] = caption ? caption.querySelectorAll('p') : []
+      return [
+        [c.querySelector('.story-avatar'), 0, true],
+        [c.querySelector('svg'), 20, false],
+        [c.querySelector('blockquote'), 20, false],
+        [name, 50, false],
+        [tagline, 70, false],
+      ].filter(([node]) => node)
+    }
+    const move = calm ? 'none' : 'translate3d(0,10px,0)'
+    busy.current = true
+    el.style.scrollSnapType = 'none'
+    el.style.overflowX = 'hidden'
+    let out = []
+    try {
+      out = visible().flatMap((c, i) =>
+        parts(c).map(([node, , isAvatar]) =>
+          node.animate(
+            [
+              { opacity: 1, transform: 'translate3d(0,0,0)', scale: 1 },
+              { opacity: 0, transform: calm ? 'none' : 'translate3d(0,-8px,0)', scale: isAvatar && !calm ? 0.94 : 1 },
+            ],
+            { duration: calm ? 250 : 90, delay: calm ? 0 : i * 25, easing: 'cubic-bezier(0.4,0,1,1)', fill: 'forwards' },
+          ),
+        ),
+      )
+      await Promise.all(out.map((a) => a.finished))
+      jump()
+      const incoming = visible().flatMap((c, i) =>
+        parts(c).map(([node, lag, isAvatar]) =>
+          node.animate(
+            [
+              { opacity: 0, transform: move, scale: isAvatar && !calm ? 0.88 : 1 },
+              { opacity: 1, transform: 'translate3d(0,0,0)', scale: 1 },
+            ],
+            { duration: calm ? 450 : 220, delay: calm ? 0 : i * 60 + lag, easing: 'cubic-bezier(0.22,1,0.36,1)', fill: 'backwards' },
+          ),
+        ),
+      )
+      out.forEach((a) => a.cancel())
+      await Promise.all(incoming.map((a) => a.finished))
+    } catch {
+      // An interrupted animation (e.g. unmount) just snaps to the target.
+      out.forEach((a) => a.cancel())
+      jump()
+    } finally {
+      el.style.overflowX = ''
+      el.style.scrollSnapType = ''
+      busy.current = false
+      setEpoch((n) => n + 1)
+    }
+  }
 
   const goTo = (i) => {
-    const el = trackRef.current
-    const card = el?.querySelectorAll('[data-card]')[i]
-    if (card) el.scrollTo({ left: card.offsetLeft - el.offsetLeft, behavior: behavior() })
+    const m = metrics()
+    if (m && m.offsets[i] != null) moveTo(m.offsets[i])
   }
 
-  const step = (dir) => {
-    const el = trackRef.current
-    const card = el?.querySelector('[data-card]')
-    if (!el || !card) return
-    const gap = parseFloat(getComputedStyle(el).columnGap) || 0
-    el.scrollBy({ left: dir * (card.offsetWidth + gap), behavior: behavior() })
+  // Index of the snap position nearest the current scroll.
+  const nearest = (m) => {
+    let cur = 0
+    m.offsets.forEach((o, i) => { if (Math.abs(o - m.el.scrollLeft) < Math.abs(m.offsets[cur] - m.el.scrollLeft)) cur = i })
+    return cur
   }
+
+  // Arrows move one card at a time.
+  const step = (dir) => {
+    const m = metrics()
+    if (!m) return
+    moveTo(m.offsets[Math.max(0, Math.min(m.offsets.length - 1, nearest(m) + dir))])
+  }
+
+  // Autoplay advances a whole set of visible cards and wraps to the start.
+  const advance = () => {
+    const m = metrics()
+    if (!m) return
+    const { el, offsets } = m
+    if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 2) return moveTo(0)
+    const next = offsets[nearest(m) + (stories.length - positions + 1)]
+    moveTo(next ?? el.scrollWidth)
+  }
+  const advanceRef = useRef(advance)
+  advanceRef.current = advance
+
+  // Pause while off-screen, in a background tab, hovered or keyboard-focused.
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const onMq = () => setCalm(mq.matches)
+    const onVis = () => setTabVisible(document.visibilityState !== 'hidden')
+    mq.addEventListener('change', onMq)
+    document.addEventListener('visibilitychange', onVis)
+    const io = typeof IntersectionObserver === 'undefined' ? null : new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.4 })
+    if (io && rootRef.current) io.observe(rootRef.current)
+    else setInView(true)
+    return () => {
+      mq.removeEventListener('change', onMq)
+      document.removeEventListener('visibilitychange', onVis)
+      io?.disconnect()
+    }
+  }, [])
+
+  const playing = inView && tabVisible && !hovered && !focused && positions > 1
+  useEffect(() => {
+    if (!playing) return
+    const id = setTimeout(() => advanceRef.current(), AUTOPLAY_MS)
+    return () => clearTimeout(id)
+  }, [playing, epoch])
 
   const onKeyDown = (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); step(1) }
@@ -121,15 +256,24 @@ function Carousel({ stories }) {
   const arrowPrimary = `${arrow} border-[#078F80] bg-[#078F80] text-white hover:bg-[#067a6d]`
 
   return (
-    <div role="region" aria-roledescription="carousel" aria-label="Candidate stories">
+    <div
+      ref={rootRef}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Candidate stories"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={(e) => e.target.matches(':focus-visible') && setFocused(true)}
+      onBlur={() => setFocused(false)}
+    >
       <ul
         ref={trackRef}
         tabIndex={0}
         onScroll={update}
         onKeyDown={onKeyDown}
         aria-label="Candidate stories — use left and right arrow keys to browse"
-        style={{ '--gap': '24px' }}
-        className="m-0 flex snap-x snap-mandatory gap-[var(--gap)] overflow-x-auto overscroll-x-contain scroll-smooth -mt-1 p-0 pb-3 pt-1 [--card-w:100%] [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078F80] sm:[--card-w:calc((100%-var(--gap))/2)] lg:[--card-w:calc((100%-2*var(--gap))/3)] [&::-webkit-scrollbar]:hidden"
+        style={{ '--gap': '24px', perspective: '1200px' }}
+        className="m-0 flex snap-x snap-mandatory gap-[var(--gap)] overflow-x-auto overscroll-x-contain -mt-1 p-0 pb-3 pt-1 [--card-w:100%] [scrollbar-width:none] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078F80] sm:[--card-w:calc((100%-var(--gap))/2)] lg:[--card-w:calc((100%-2*var(--gap))/3)] [&::-webkit-scrollbar]:hidden"
       >
         {stories.map((s, i) => (
           <StoryCard key={s.id} story={s} index={i} />
@@ -214,25 +358,21 @@ export default function SuccessStoriesSection() {
     }
   }, [])
 
-  // Approved testimonials from the API win; the editable drafts fill in until then.
-  const list = stories === null ? null : stories.length > 0 ? stories : DRAFT_CANDIDATE_STORIES
+  // Only approved testimonials from the API show — until there is at least
+  // one (or while they load, or if the request fails) the section is left out.
+  if (!stories?.length) return null
   // A story staff flagged as featured opens first.
-  const ordered = list ? [...list].sort((a, b) => Number(!!b.featured) - Number(!!a.featured)) : null
+  const ordered = [...stories].sort((a, b) => Number(!!b.featured) - Number(!!a.featured))
 
   return (
     <section ref={sectionRef} data-reveal={reveal} id="success-stories" aria-labelledby="stories-title" className="relative scroll-mt-20 overflow-hidden border-t border-[#183451]/10 bg-white py-10 lg:py-14">
       <Container>
         <div className="story-head mx-auto max-w-2xl text-center">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em]" style={{ color: NAVY }}>
-            Real stories. Real career journeys.
-          </p>
-          <h2 id="stories-title" className="mt-2 text-[28px] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[34px] lg:text-[40px]" style={{ color: NAVY }}>
-            What Our <span style={{ color: TEAL }}>Candidates Say</span>
+          <h2 id="stories-title" className="text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight" style={{ color: NAVY }}>
+            What candidates say
           </h2>
-          <p className="mx-auto mt-2.5 max-w-[30rem] text-balance text-[14.5px] font-normal leading-[1.6] text-[#475467] sm:max-w-none sm:text-[15px]">
-            Behind every career move is a story of ambition, growth, and new possibilities.
-            <br className="hidden sm:block" />{' '}
-            Discover the journeys shaped with <span className="font-semibold" style={{ color: NAVY }}>Mzobs</span>.
+          <p className="mx-auto mt-2.5 max-w-[30rem] text-balance text-[#475467] sm:max-w-none text-[16px] sm:text-[17px] font-normal leading-relaxed">
+            In their own words, from people who found work through Mzobs.
           </p>
           {isFixture && (
             <p className="mt-4 inline-block rounded bg-amber-100 px-2.5 py-1 text-[12px] font-medium text-amber-900">
@@ -242,11 +382,7 @@ export default function SuccessStoriesSection() {
         </div>
 
         <div className="mt-6">
-          {ordered === null ? (
-            <div className="h-56 rounded-2xl border border-[#183451]/10 bg-white/70 motion-safe:animate-pulse" aria-hidden="true" />
-          ) : (
-            <Carousel stories={ordered} />
-          )}
+          <Carousel stories={ordered} />
         </div>
       </Container>
     </section>

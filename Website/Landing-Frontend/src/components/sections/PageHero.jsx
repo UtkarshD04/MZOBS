@@ -43,7 +43,7 @@ export default function PageHero({
                   {kicker}
                 </div>
               )}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-sans font-bold text-white tracking-tight leading-[1.1]">
+              <h1 className="font-sans text-white text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
                 {title ? title : (
                   <>
                     {HERO_DATA.titleLine1} <br />
@@ -103,7 +103,7 @@ export default function PageHero({
                 {kicker}
               </div>
             )}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-sans font-bold text-white tracking-tight leading-[1.1]">
+            <h1 className="font-sans text-white text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
               {title ? title : (
                 <>
                   {HERO_DATA.titleLine1} <br />

@@ -57,10 +57,10 @@ export default function FAQSection() {
     <section className="bg-white py-16 md:py-24 px-6 md:px-12">
       <div className="max-w-3xl mx-auto">
         <Reveal direction="up" duration={0.9} scale={0.94} blur className="max-w-2xl mx-auto text-center space-y-5">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight leading-tight">
+          <h2 className="text-black text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">
             <SplitText text={`${FAQ_DATA.titlePrefix}${FAQ_DATA.titleItalic}${FAQ_DATA.titleSuffix}`} />
           </h2>
-          <p className="text-[15px] sm:text-base text-[#595959] leading-relaxed font-medium">{FAQ_DATA.subtitle}</p>
+          <p className="text-[#595959] text-[16px] sm:text-[17px] font-normal leading-relaxed">{FAQ_DATA.subtitle}</p>
         </Reveal>
 
         <StaggerGroup className="mt-12">

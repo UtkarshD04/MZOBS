@@ -114,7 +114,7 @@ function QuickFilter({ groupKey, state, setState, facets, open, onOpen, onClose 
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-[8px] bg-gradient-to-r from-[#078B7D] to-[#056F68] px-3.5 py-1.5 text-[13px] font-semibold text-white transition-shadow hover:shadow-[0_4px_12px_-4px_rgba(7,139,125,0.55)]"
+                className="rounded-[6px] bg-mz-primary px-3.5 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-mz-primary-strong"
               >
                 Done
               </button>

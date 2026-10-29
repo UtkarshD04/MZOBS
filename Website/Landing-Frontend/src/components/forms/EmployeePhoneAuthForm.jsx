@@ -112,7 +112,7 @@ export default function EmployeePhoneAuthForm({ onAuthComplete } = {}) {
       window.location.href = await buildAppRedirectUrl(redirect, token)
       return
     }
-    saveEmployeeSession({ token, employee })
+    saveEmployeeSession({ employee })
     // Inside the modal, stay right where the user clicked "Sign in" from —
     // Navbar picks up the new session itself (onEmployeeSessionChange). The
     // standalone pages have no such caller, so they still land on home.

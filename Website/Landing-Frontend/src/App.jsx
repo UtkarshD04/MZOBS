@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { useRouteAnalytics } from './lib/useRouteAnalytics'
 import { motion, useReducedMotion } from 'framer-motion'
 import ScrollToTop from './components/layout/ScrollToTop'
 import { ToastProvider } from './components/mz/Toast'
@@ -24,14 +25,22 @@ import Contact from './pages/Contact'
 import Careers from './pages/Careers'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
-import Employer from './pages/Employer'
-import EmployerPricing from './pages/EmployerPricing'
 import NotFound from './pages/NotFound'
 import { CLIENT_ONLY_ROUTES } from './lib/routes'
 
 // CLIENT_ONLY_ROUTES pages are never reached by server-side render() (see
 // server.js's catch-all — a known client-only route ships an empty shell
 // instead), so they're free to be real, separate chunks fetched on demand.
+// /employers and /employers/pricing are prerendered, so the server render needs
+// them eagerly — but they pull in gsap, lenis and all the employer sections
+// (~hundreds of KB), which every other page (signup, home, jobs) was
+// downloading too. The client build uses lazy chunks instead; React hydrates
+// the prerendered markup once the chunk arrives. import.meta.env.SSR is a
+// build-time constant, so the awaited (eager) branch is dropped from the
+// client bundle — a plain static import would not be (the pages have side
+// effects), which is why this uses top-level await rather than `import`.
+const Employer = import.meta.env.SSR ? (await import('./pages/Employer')).default : lazy(() => import('./pages/Employer'))
+const EmployerPricing = import.meta.env.SSR ? (await import('./pages/EmployerPricing')).default : lazy(() => import('./pages/EmployerPricing'))
 const EmployeeProfile = lazy(() => import('./pages/EmployeeProfile'))
 const EmployeeSubscription = lazy(() => import('./pages/EmployeeSubscription'))
 const EmployeeSignup = lazy(() => import('./pages/EmployeeSignup'))
@@ -65,6 +74,7 @@ function RouteFallback() {
 export default function App() {
   const location = useLocation()
   const prefersReducedMotion = useReducedMotion()
+  useRouteAnalytics()
   // The very first render has to match the server-rendered/prerendered
   // markup exactly (no inline opacity style framer-motion would add for an
   // `initial={{ opacity: 0 }}` enter transition), or React discards the

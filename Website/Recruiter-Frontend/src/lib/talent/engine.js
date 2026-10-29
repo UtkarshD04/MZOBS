@@ -43,6 +43,26 @@ function locationScore(c, want) {
   return 40
 }
 
+/**
+ * How a candidate relates to the cities the recruiter picked (current + preferred):
+ * lives there, wants to work there, or is open to relocating. Null when no city is picked or none fits.
+ * @returns {{kind:'here'|'wants'|'relocate', city:string}|null}
+ */
+export function locationFit(c, crit) {
+  const picked = [...(crit.locations ?? []), ...(crit.prefLocations ?? [])]
+  if (!picked.length) return null
+  const w = picked.map(canonCity)
+  const here = picked.find((p) => canonCity(p) === canonCity(c.location))
+  if (here) return { kind: 'here', city: here }
+  const wants = (c.preferredLocations ?? []).find((l) => w.includes(canonCity(l)))
+  if (wants) return { kind: 'wants', city: wants }
+  if (c.relocationOk) return { kind: 'relocate', city: picked[0] }
+  return null
+}
+
+const FIT_TIER = { here: 0, wants: 1, relocate: 2 }
+const fitTier = (r) => (r.fit ? FIT_TIER[r.fit.kind] : 3)
+
 /** @returns {{overall:number|null, parts:Record<string,number|null>, strong:string[], weak:string[], notes:string[]}} */
 export function computeMatch(c, crit) {
   const parts = { skills: null, experience: null, location: null, industry: null, salary: null, availability: null }
@@ -176,6 +196,11 @@ function passes(c, crit, trust, exclude) {
   }
   if (crit.expMin != null && c.experienceYears < crit.expMin) return false
   if (crit.expMax != null && c.experienceYears > crit.expMax) return false
+  if (crit.state && canonCity(c.state) !== canonCity(crit.state)) return false
+  if (crit.pincode?.length === 6) {
+    const pin = String(c.pincode ?? '').trim()
+    if (crit.pinNearby ? pin.slice(0, 3) !== crit.pincode.slice(0, 3) : pin !== crit.pincode) return false
+  }
   if (crit.locations.length) {
     const w = crit.locations.map(canonCity)
     const here = w.includes(canonCity(c.location))
@@ -222,6 +247,14 @@ function passes(c, crit, trust, exclude) {
   if (crit.hasVideo && !c.hasVideo) return false
   if (crit.verifiedOnly && c.verification.identity !== 'verified') return false
   if (crit.contactVerified && !(c.verification.phone === 'verified' && c.verification.email === 'verified')) return false
+  if (crit.phoneVerified && c.verification.phone !== 'verified') return false
+  if (crit.emailVerified && c.verification.email !== 'verified') return false
+  if (crit.experienceLevel && c.experienceLevel !== crit.experienceLevel) return false
+  if (crit.hasLinkedin && !c.links?.some((l) => l.label === 'LinkedIn')) return false
+  if (crit.hasGithub && !c.links?.some((l) => l.label === 'GitHub')) return false
+  if (crit.hasPhoto && !c.photoUrl) return false
+  if (crit.premiumOnly && !c.premium) return false
+  if (crit.appliedDays != null && (c.sharedDaysAgo == null || c.sharedDaysAgo > crit.appliedDays)) return false
   if (crit.resumeFreshDays != null && (c.resumeUpdatedDaysAgo == null || c.resumeUpdatedDaysAgo > crit.resumeFreshDays)) return false
   if (crit.activeDays != null && (c.lastActiveDaysAgo == null || c.lastActiveDaysAgo > crit.activeDays)) return false
   return true
@@ -232,6 +265,7 @@ const days = (v) => (v == null ? Number.MAX_SAFE_INTEGER : v)
 
 const SORTERS = {
   relevance: (a, b) => (b.match.overall ?? 0) - (a.match.overall ?? 0) || b.kw - a.kw || b.trust.score - a.trust.score || days(a.candidate.lastActiveDaysAgo ?? a.candidate.sharedDaysAgo) - days(b.candidate.lastActiveDaysAgo ?? b.candidate.sharedDaysAgo),
+  location: (a, b) => fitTier(a) - fitTier(b) || (b.match.overall ?? 0) - (a.match.overall ?? 0),
   match: (a, b) => (b.match.overall ?? -1) - (a.match.overall ?? -1),
   experience: (a, b) => b.candidate.experienceYears - a.candidate.experienceYears,
   active: (a, b) => days(a.candidate.lastActiveDaysAgo ?? a.candidate.sharedDaysAgo) - days(b.candidate.lastActiveDaysAgo ?? b.candidate.sharedDaysAgo),
@@ -248,6 +282,13 @@ function keywordScore(c, crit) {
   return terms.reduce((n, t) => n + hay.split(norm(t)).length - 1, 0)
 }
 
+const NO_PLACE = { state: '', pincode: '', pinNearby: false, locations: [], prefLocations: [], relocate: false }
+
+/** Whether a candidate passes every filter except the geographic ones — for per-place "matching" counts. */
+export function passesExceptLocation(c, crit) {
+  return passes(c, { ...crit, ...NO_PLACE }, computeTrust(c), null)
+}
+
 /** Filters, scores and sorts a pool. Returns every hit — callers paginate. */
 export function rankPool(pool, crit, sort = 'relevance', exclude = null) {
   const rows = []
@@ -256,7 +297,7 @@ export function rankPool(pool, crit, sort = 'relevance', exclude = null) {
     if (!passes(candidate, crit, trust, exclude)) continue
     const match = computeMatch(candidate, crit)
     if (crit.minMatch != null && (match.overall ?? 0) <= crit.minMatch) continue
-    rows.push({ candidate, match, trust, kw: keywordScore(candidate, crit) })
+    rows.push({ candidate, match, trust, fit: locationFit(candidate, crit), kw: keywordScore(candidate, crit) })
   }
   return rows.sort(SORTERS[sort] ?? SORTERS.relevance)
 }

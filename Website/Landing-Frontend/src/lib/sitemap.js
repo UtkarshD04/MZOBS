@@ -13,12 +13,12 @@ import { SITE_URL, STATIC_PAGE_SEO } from './seoData.js'
 const PAGE_LIMIT = 20
 const MAX_PAGES = 200 // safety cap: 4,000 jobs: far beyond current/expected scale
 
-export async function fetchAllPublicJobIds(publicJobsApiUrl) {
+export async function fetchAllPublicJobIds(publicJobsApiUrl, { headers = {} } = {}) {
   const ids = []
   for (let page = 1; page <= MAX_PAGES; page += 1) {
     // A hung backend shouldn't be able to hang sitemap generation (and, by
     // extension, every crawler request waiting on it) indefinitely.
-    const res = await fetch(`${publicJobsApiUrl}?limit=${PAGE_LIMIT}&page=${page}&sort=newest`, { signal: AbortSignal.timeout(5000) })
+    const res = await fetch(`${publicJobsApiUrl}?limit=${PAGE_LIMIT}&page=${page}&sort=newest`, { headers, signal: AbortSignal.timeout(5000) })
     if (!res.ok) throw new Error(`Failed to fetch public jobs page ${page}: ${res.status}`)
     const jobs = await res.json()
     ids.push(...jobs.map((j) => j.id))

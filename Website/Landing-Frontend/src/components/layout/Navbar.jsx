@@ -30,10 +30,12 @@ export default function Navbar() {
   // The employer link is for hiring teams — hide it on the student-facing Ally
   // page and whenever a candidate is signed in.
   const showEmployer = pathname !== CLIENT_ONLY_ROUTES.ally && !session?.token
-  // Menu items flagged hideWhenSignedIn (e.g. "Associate with Mzobs", for placement
-  // companies) don't belong in a signed-in candidate's menu.
+  // Items flagged hideWhenSignedIn (e.g. "Associate with Mzobs") are for visitors
+  // only — dropped from a signed-in candidate's Resources menu.
   const navLinks = NAV_LINKS.map((link) =>
-    link.children ? { ...link, children: link.children.filter((c) => !(c.hideWhenSignedIn && session?.token)) } : link
+    link.children && session?.token
+      ? { ...link, children: link.children.filter((child) => !child.hideWhenSignedIn) }
+      : link
   )
 
   useEffect(() => {
@@ -57,8 +59,9 @@ export default function Navbar() {
     if (session?.token) subscribeToWebPush(session.token)
   }, [session?.token])
 
-  function handleSignOut() {
-    unsubscribeFromWebPush(session?.token)
+  async function handleSignOut() {
+    // Unsubscribe while the session cookie still exists; clearing it comes after.
+    await unsubscribeFromWebPush(session?.token)
     clearEmployeeSession()
     setOpen(false)
     navigate('/')
@@ -152,14 +155,14 @@ export default function Navbar() {
             ) : (
               <>
                 {showEmployer && (
-                  <Link to="/employers" className="explorer-btn-primary flex h-9 items-center justify-center whitespace-nowrap rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] px-4 text-[14px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(7,139,125,0.55)] transition-shadow hover:shadow-[0_12px_26px_-8px_rgba(7,139,125,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D]">
+                  <Link to="/employers" className="flex h-9 items-center justify-center whitespace-nowrap rounded-[6px] border border-(--jobs-border) bg-white px-4 text-[14px] font-semibold text-(--jobs-navy) transition-colors hover:border-[#078B7D] hover:text-[#075f55] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D]">
                     For Employers
                   </Link>
                 )}
                 <button
                   type="button"
                   onClick={() => setAuthModalOpen(true)}
-                  className="explorer-btn-primary h-9 whitespace-nowrap rounded-[10px] bg-[#A3124A] px-4 text-[14px] font-semibold text-white shadow-[0_6px_16px_-8px_rgba(163,18,74,0.7)] transition-colors hover:bg-[#7F0E3A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A3124A]"
+                  className="h-9 whitespace-nowrap rounded-[6px] bg-[#0b7a6d] px-4 text-[14px] font-semibold text-white transition-colors hover:bg-[#075f55] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b7a6d]"
                 >
                   Sign in
                 </button>
@@ -241,7 +244,7 @@ export default function Navbar() {
                   ) : (
                     <>
                       {showEmployer && (
-                        <Link to="/employers" onClick={() => setOpen(false)} className="explorer-btn-primary flex h-10 items-center justify-center rounded-[10px] bg-gradient-to-r from-[#078B7D] to-[#056F68] text-[13.5px] font-bold text-white">
+                        <Link to="/employers" onClick={() => setOpen(false)} className="flex h-10 items-center justify-center rounded-[6px] border border-(--jobs-border) bg-white text-[13.5px] font-bold text-(--jobs-navy)">
                           For Employers
                         </Link>
                       )}
@@ -251,7 +254,7 @@ export default function Navbar() {
                           setOpen(false)
                           setAuthModalOpen(true)
                         }}
-                        className="explorer-btn-primary flex h-10 items-center justify-center rounded-[10px] bg-[#A3124A] text-[13.5px] font-bold text-white"
+                        className="flex h-10 items-center justify-center rounded-[6px] bg-[#0b7a6d] text-[13.5px] font-bold text-white"
                       >
                         Sign in
                       </button>

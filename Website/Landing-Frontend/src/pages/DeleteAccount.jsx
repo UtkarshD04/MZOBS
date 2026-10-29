@@ -99,8 +99,8 @@ export default function DeleteAccount() {
           <span className="inline-block px-3.5 py-1.5 rounded-full bg-white/80 border border-(--explorer-border) text-[12px] font-bold uppercase tracking-wider text-(--explorer-blue)">
             Mzobs · Account &amp; data
           </span>
-          <h1 className="mt-5 text-[32px] sm:text-[42px] font-extrabold leading-[1.1] tracking-tight text-balance">Delete your Mzobs account</h1>
-          <p className="mt-4 text-[16px] text-(--explorer-navy)/75 font-medium leading-relaxed max-w-2xl mx-auto">
+          <h1 className="mt-5 text-balance text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">Delete your Mzobs account</h1>
+          <p className="mt-4 text-(--explorer-navy)/75 max-w-2xl mx-auto text-[16px] sm:text-[17px] font-normal leading-relaxed">
             You can ask us to delete your Mzobs account (candidate or employer) and the personal data linked to it, from the app or from this page. Deletion is permanent and cannot
             be undone.
           </p>

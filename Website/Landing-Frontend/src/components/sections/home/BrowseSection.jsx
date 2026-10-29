@@ -100,8 +100,8 @@ export default function BrowseSection({ onSelectCategory, onSelectCity }) {
     <section id="categories" className="bg-(--explorer-bg) py-16 md:py-20 px-6 md:px-10">
       <div className="max-w-7xl mx-auto">
         <Reveal direction="up" duration={0.5} className="max-w-2xl mb-10">
-          <h2 className="text-[26px] sm:text-[32px] font-extrabold tracking-tight text-(--explorer-navy)">Browse open roles</h2>
-          <p className="mt-1.5 text-[14.5px] text-(--explorer-muted)">Jump straight to what's hiring, by category or by city.</p>
+          <h2 className="text-(--explorer-navy) text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight">Browse open roles</h2>
+          <p className="mt-1.5 text-(--explorer-muted) text-[16px] sm:text-[17px] font-normal leading-relaxed">Jump straight to what's hiring, by category or by city.</p>
         </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">

@@ -6,7 +6,8 @@ import { IS_DEMO } from '../lib/config'
 import { getSession, logout } from '../services/liveApi'
 import { getPlanSnapshot, subscribePlan } from '../services/planService'
 import { listNotifications } from '../services/accountService'
-import { ROUTES } from '../lib/routes'
+import { ROUTES, isRouteActive } from '../lib/routes'
+import { usePermissions } from '../services/recruiterService'
 import { StatusPill } from './ui'
 import { useCompany, GST_STATUS_LABEL, GST_STATUS_PILL } from '../services/companyService'
 
@@ -38,21 +39,25 @@ export function Logo({ height = 34 }) {
   )
 }
 
-const PRIMARY = ROUTES.filter((r) => r.nav === 'primary')
-const MORE = ROUTES.filter((r) => r.nav === 'more')
+// Items the signed-in role can use. Until the role has loaded (or in demo mode) everything shows, so the bar doesn't jump.
+function useNav() {
+  const { loaded, can } = usePermissions()
+  const visible = (r) => IS_DEMO || !loaded || !r.perm || r.perm.some(can)
+  return { primary: ROUTES.filter((r) => r.nav === 'primary' && visible(r)), more: ROUTES.filter((r) => r.nav === 'more' && visible(r)) }
+}
 
-function NavItem({ to, children, onClick }) {
+function NavItem({ route, onClick }) {
+  const { pathname } = useLocation()
+  const active = isRouteActive(route, pathname)
   return (
-    <NavLink
-      to={to}
-      end={to === '/'}
+    <Link
+      to={route.path}
       onClick={onClick}
-      className={({ isActive }) =>
-        clsx('relative rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors', isActive ? 'text-accent after:absolute after:inset-x-2.5 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')
-      }
+      aria-current={active ? 'page' : undefined}
+      className={clsx('relative whitespace-nowrap rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors', active ? 'text-accent after:absolute after:inset-x-2.5 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
     >
-      {children}
-    </NavLink>
+      {route.label}
+    </Link>
   )
 }
 
@@ -116,8 +121,8 @@ function ProfileMenu() {
             <p className="truncate text-[12px] text-muted">{IS_DEMO ? 'Sample workspace' : s?.user?.email ?? s?.company?.name}</p>
             {!IS_DEMO && <GstStatusLink />}
           </div>
-          <Link role="menuitem" to="/settings" className={item}><Settings size={14} className="text-muted" /> Recruiter settings</Link>
-          <Link role="menuitem" to="/credits" className={item}><CreditCard size={14} className="text-muted" /> Plan & credits</Link>
+          <Link role="menuitem" to="/settings" className={item}><Settings size={14} className="text-muted" /> Settings</Link>
+          <Link role="menuitem" to="/credits" className={item}><CreditCard size={14} className="text-muted" /> CV credits & billing</Link>
           <Link role="menuitem" to="/help" className={item}><HelpCircle size={14} className="text-muted" /> Help & support</Link>
           {!IS_DEMO && (
             <button role="menuitem" onClick={() => { if (window.confirm('Sign out of Mzobs Talent?')) { logout(); window.dispatchEvent(new Event('mzt-signed-out')) } }} className={`${item} text-bad`}><LogOut size={14} /> Sign out</button>
@@ -152,26 +157,27 @@ function signOut() {
 
 export default function TopNav({ onAskAI }) {
   const more = useMenu()
+  const { primary: PRIMARY, more: MORE } = useNav()
   const [mobile, setMobile] = useState(false)
   const { pathname } = useLocation()
   useEffect(() => setMobile(false), [pathname])
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-bg/90 shadow-[0_1px_0_rgba(14,34,55,0.03)] backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 lg:px-6">
-        <button className="grid h-9 w-9 place-items-center rounded-lg hover:bg-line-2 lg:hidden" onClick={() => setMobile((v) => !v)} aria-label="Menu">
+        <button className="grid h-9 w-9 place-items-center rounded-lg hover:bg-line-2 xl:hidden" onClick={() => setMobile((v) => !v)} aria-label="Menu">
           {mobile ? <X size={18} /> : <Menu size={18} />}
         </button>
         <Logo />
-        <nav className="ml-4 hidden items-center gap-0.5 lg:flex" aria-label="Primary">
-          {PRIMARY.map((r) => <NavItem key={r.path} to={r.path}>{r.label}</NavItem>)}
+        <nav className="ml-4 hidden items-center gap-0.5 xl:flex" aria-label="Primary">
+          {PRIMARY.map((r) => <NavItem key={r.path} route={r} />)}
           <div ref={more.ref} className="relative">
-            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors ${MORE.some((r) => pathname.startsWith(r.path)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
+            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors ${MORE.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
               More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
             </button>
             {more.open && (
-              <div role="menu" className="fade-up absolute left-0 top-10 z-50 w-52 rounded-2xl border border-line bg-white p-1 shadow-lift">
+              <div role="menu" className="fade-up absolute left-0 top-10 z-50 w-60 rounded-xl border border-line bg-white p-1 shadow-lift">
                 {MORE.map((r) => (
-                  <NavLink key={r.path} to={r.path} role="menuitem" className={({ isActive }) => `block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isActive ? 'text-accent' : ''}`}>{r.label}</NavLink>
+                  <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
                 ))}
               </div>
             )}
@@ -179,10 +185,10 @@ export default function TopNav({ onAskAI }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-1.5">
-          <button onClick={onAskAI} className="hidden items-center gap-2 rounded-full border border-[#bfe6df] bg-accent-soft px-3.5 py-1.5 text-[13px] font-bold text-accent transition-colors hover:bg-[#d5f2ec] md:flex">
-            <Sparkles size={14} /> Ask Mzobs AI <kbd className="rounded bg-white/70 px-1 text-[10px] text-muted">Ctrl K</kbd>
+          <button onClick={onAskAI} title="Ask Mzobs AI (Ctrl K)" aria-label="Ask Mzobs AI" className="hidden items-center gap-2 rounded-full border border-[#bfe6df] bg-accent-soft px-2.5 py-1.5 text-[13px] font-bold text-accent transition-colors hover:bg-[#d5f2ec] md:flex 2xl:px-3.5">
+            <Sparkles size={14} /> <span className="hidden 2xl:inline">Ask Mzobs AI</span> <kbd className="hidden rounded bg-white/70 px-1 text-[10px] text-muted 2xl:inline">Ctrl K</kbd>
           </button>
-          <Link to="/" className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2 md:hidden" aria-label="Search candidates"><Search size={17} /></Link>
+          <Link to="/search" className="grid h-9 w-9 place-items-center rounded-lg text-ink-2 hover:bg-line-2 md:hidden" aria-label="Search candidates"><Search size={17} /></Link>
           <BellLink />
           <NavLink to="/help" aria-label="Help & support" title="Help & support" className={({ isActive }) => `hidden h-9 w-9 place-items-center rounded-lg transition-colors hover:bg-line-2 2xl:grid ${isActive ? 'bg-accent-soft text-accent' : 'text-ink-2'}`}><HelpCircle size={17} /></NavLink>
           <PlanPill />
@@ -201,8 +207,8 @@ export default function TopNav({ onAskAI }) {
         </div>
       </div>
       {mobile && (
-        <nav className="fade-up grid grid-cols-2 gap-1 border-t border-line bg-white p-3 lg:hidden">
-          {[...PRIMARY, ...MORE].map((r) => <NavItem key={r.path} to={r.path} onClick={() => setMobile(false)}>{r.label}</NavItem>)}
+        <nav className="fade-up grid max-h-[75vh] grid-cols-2 gap-1 overflow-y-auto border-t border-line bg-white p-3 xl:hidden">
+          {[...PRIMARY, ...MORE].map((r) => <NavItem key={r.path} route={r} onClick={() => setMobile(false)} />)}
           {!IS_DEMO && (
             <button onClick={signOut} className="col-span-2 mt-1 flex items-center justify-center gap-2 rounded-lg border border-line px-2.5 py-2 text-[13.5px] font-bold text-[#c0392b] hover:bg-[#fdf1f1]">
               <LogOut size={15} /> Log out

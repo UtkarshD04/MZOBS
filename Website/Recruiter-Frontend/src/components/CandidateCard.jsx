@@ -1,10 +1,11 @@
-import { memo, useState } from 'react'
+import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
-import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin, Lock } from 'lucide-react'
+import { MapPin, Briefcase, IndianRupee, Clock, GraduationCap, Building2, MoreHorizontal, Eye, Unlock, Bookmark, Mail, MessageSquare, Phone, CalendarPlus, BellRing, StickyNote, FileText, Share2, GitCompareArrows, FolderPlus, Send, Check, Pin, Lock, ChevronDown } from 'lucide-react'
 import { Avatar, Button, Chip, Highlight, MatchBadge, TrustScore, VerifiedBadge, IconButton } from './ui'
 import { lpa, years, notice, ago, agoDate } from '../lib/format'
 import { STAGE_LABELS } from '../lib/talent/criteria'
+import { buildSummary } from '../lib/talent/summary'
 import { IS_DEMO } from '../lib/config'
 import { isRevealed, creditSpent } from '../lib/reveal'
 import { useWorkspace } from '../store/workspace'
@@ -40,8 +41,56 @@ function ShortlistButton({ candidate, onAction }) {
   )
 }
 
+// Free preview: reads only data already on the card, so expanding it never touches credits or the unlock flow.
+function ProfessionalSummary({ candidate: c, match }) {
+  const [open, setOpen] = useState(false)
+  const [overflow, setOverflow] = useState(false)
+  const bodyRef = useRef(null)
+  const summary = useMemo(() => buildSummary(c, match), [c, match])
+
+  // "Read more" only appears when the clamped text is really cut off (re-measured on resize).
+  useLayoutEffect(() => {
+    const el = bodyRef.current
+    if (!el || open) return undefined
+    const measure = () => setOverflow([...el.querySelectorAll('[data-clamp]')].some((n) => n.scrollHeight > n.clientHeight + 1))
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [summary, open])
+
+  const rows = summary?.points ?? []
+  const hiddenRows = summary?.kind === 'profile' && !open ? rows.slice(2) : []
+  const visibleRows = hiddenRows.length ? rows.slice(0, 2) : rows
+  const expandable = open || overflow || hiddenRows.length > 0
+  const clamp = !open && 'line-clamp-2'
+
+  return (
+    <div className="mt-3 rounded-xl border border-line-2 border-l-[3px] border-l-accent bg-[#f6fafb] px-3.5 py-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">Resume-based insights</p>
+        {expandable && (
+          <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="inline-flex items-center gap-0.5 rounded-md px-1 text-[12px] font-semibold text-accent hover:bg-accent-soft">
+            {open ? 'Show less' : 'Read more'} <ChevronDown size={13} className={clsx('transition-transform', open && 'rotate-180')} />
+          </button>
+        )}
+      </div>
+      <div ref={bodyRef} className="mt-1.5 space-y-1">
+        {!summary && <p className="text-[13px] text-muted">Professional summary unavailable.</p>}
+        {summary?.kind === 'cv' && <p data-clamp className={clsx('text-[13px] leading-5 text-ink-2', clamp)}>{summary.text}</p>}
+        {visibleRows.map((r) => (
+          <p key={r.label} className="grid grid-cols-[68px_1fr] gap-x-2 text-[13px] leading-5">
+            <span className="pt-px text-[11px] font-semibold uppercase tracking-wide text-muted">{r.label}</span>
+            <span {...(summary.kind === 'profile' ? { 'data-clamp': '' } : {})} className={clsx('text-ink-2', summary.kind === 'profile' && clamp)}>{r.text}</span>
+          </p>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function CandidateCard({ row, terms, compact, onAction }) {
-  const { candidate: c, match, trust } = row
+  const { candidate: c, match, trust, fit } = row
   const { selected, toggleSelect, compare, toggleCompare, savedIds, toggleSaved, viewed } = useWorkspace()
   const [menu, setMenu] = useState(false)
   const isSel = selected.includes(c.id)
@@ -83,14 +132,19 @@ function CandidateCard({ row, terms, compact, onAction }) {
             <Meta icon={Briefcase}>{years(c.experienceYears)}</Meta>
             {c.expectedSalaryLPA != null && <Meta icon={IndianRupee} title="Current → expected salary">{c.currentSalaryLPA != null ? `${lpa(c.currentSalaryLPA)} → ` : 'Expects '}{lpa(c.expectedSalaryLPA)}</Meta>}
             <Meta icon={MapPin}>{c.location || '—'}</Meta>
+            {fit && (
+              <span className={clsx('inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11.5px] font-semibold', fit.kind === 'here' ? 'bg-ok-soft text-[#1a8f5a]' : fit.kind === 'wants' ? 'bg-accent-soft text-[#0a6f64]' : 'bg-warn-soft text-warn')}>
+                {fit.kind === 'here' ? `Lives in ${fit.city}` : fit.kind === 'wants' ? `Wants to work in ${fit.city}` : 'Open to relocate'}
+              </span>
+            )}
             {c.noticePeriodDays != null && <Meta icon={Clock} title="Notice period">{notice(c.noticePeriodDays)} notice</Meta>}
             {c.contact?.phone ? (
               <Meta icon={Phone} title="Unlocked contact">{c.contact.phone}</Meta>
             ) : (
               !IS_DEMO && c._live?.contactPreview?.phone && (
-                <button onClick={() => onAction('unlock', c, 'phone')} title={creditSpent(c) ? 'View the phone number — free, the credit is already used' : 'View the phone number — uses 1 credit, once per candidate'} className="inline-flex items-center gap-1.5 text-[13px] text-ink-2 hover:text-accent">
+                <button onClick={() => onAction('unlock', c, 'contact')} title={creditSpent(c) ? 'Unlock email and number — free, the credit is already used' : 'Unlock email and number — uses 1 credit, once per candidate'} className="inline-flex items-center gap-1.5 text-[13px] text-ink-2 hover:text-accent">
                   <Phone size={13} className="text-[#7d93a6]" /> {c._live.contactPreview.phone}
-                  <span className="inline-flex items-center gap-0.5 font-semibold text-accent"><Eye size={12} /> View</span>
+                  <span className="inline-flex items-center gap-0.5 font-semibold text-accent"><Eye size={12} /> Unlock email & number</span>
                 </button>
               )
             )}
@@ -100,6 +154,8 @@ function CandidateCard({ row, terms, compact, onAction }) {
           {!compact && c.preferredLocations.length > 0 && (
             <p className="mt-2 flex items-center gap-1.5 text-[12.5px] text-muted"><Building2 size={12} /> Prefers: {c.preferredLocations.join(' · ')}</p>
           )}
+
+          <ProfessionalSummary candidate={c} match={match} />
 
           <div className="mt-3 flex flex-wrap gap-1.5">
             {shown.map((s) => <Chip key={s} tone={strong.has(s.toLowerCase()) ? 'hit' : 'neutral'}>{s}</Chip>)}

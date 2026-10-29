@@ -8,11 +8,30 @@ import { Link } from 'react-router-dom'
 import { refreshPlan } from '../services/planService'
 import { getCredits, unlockCandidate, scheduleInterview, setCandidateStage, sendOutreach, getSession } from '../services/liveApi'
 import { listJobs, getTalentMany } from '../services/talentService'
+import { listTeam } from '../services/recruiterService'
 import { agoDate } from '../lib/format'
-import { PARTS, PART_LABEL, isRevealed, creditSpent } from '../lib/reveal'
-import { dial } from '../lib/dial'
+import { PARTS, PART_LABEL, contactOpen, isRevealed, creditSpent } from '../lib/reveal'
+import { dial, qrNumber } from '../lib/dial'
+import QRCode from 'qrcode'
 
 const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1)
+
+// Scanning this with a phone camera opens its dialer with the number filled in.
+export function PhoneQr({ phone }) {
+  const [src, setSrc] = useState('')
+  useEffect(() => {
+    let live = true
+    QRCode.toDataURL(`tel:${qrNumber(phone)}`, { width: 220, margin: 4, errorCorrectionLevel: 'Q' }).then((u) => live && setSrc(u)).catch(() => live && setSrc(''))
+    return () => { live = false }
+  }, [phone])
+  if (!src) return null
+  return (
+    <span className="flex w-fit flex-col items-center gap-1.5 rounded-lg border border-line bg-white p-3">
+      <img src={src} alt={`QR code to call ${phone}`} width={176} height={176} />
+      <span className="text-[12px] font-normal text-muted">Scan with your phone to call</span>
+    </span>
+  )
+}
 
 // What the outreach step needs from an unlock result: the opened contact, the pipeline row's id, and which parts are open.
 const contactOf = (c, candidate) => ({ email: c.email, phone: c.phone, candidateId: c.candidateId ?? candidate._live?.candidateId, revealed: c.revealed })
@@ -208,7 +227,7 @@ export function OutreachModal({ candidates, channel: initial = 'email', onClose,
             </span>
             {!many && onReveal && (
               <button onClick={() => onReveal(first, part)} className="rounded-md border border-current/25 bg-white px-2.5 py-1 text-[12.5px] font-semibold hover:bg-white/70">
-                View {PART_LABEL[part]} · {creditSpent(first) ? 'free' : '1 credit'}
+                Unlock email & number
               </button>
             )}
           </div>
@@ -269,9 +288,16 @@ function emailOutcome(asked, email) {
   }
 }
 
+const REMINDER_MINS = { 'None': undefined, '15 minutes before': 15, '1 hour before': 60, '1 day before': 1440 }
+const CAN_INTERVIEW = ['Owner', 'Admin', 'Hiring Manager', 'Recruiter', 'Interviewer']
+
 export function InterviewModal({ candidate, onClose, onScheduled }) {
   const { addInterview, toast } = useWorkspace()
-  const [f, setF] = useState({ type: 'Video', date: '', time: '', interviewers: '', link: '', reminder: '1 hour before', email: true })
+  const [f, setF] = useState({ type: 'Video', date: '', time: '', interviewers: '', interviewerIds: [], feedbackDue: '', link: '', reminder: '1 hour before', email: true })
+  const [team, setTeam] = useState([])
+  useEffect(() => {
+    if (!IS_DEMO && candidate) listTeam().then((m) => setTeam(m.filter((x) => x.status !== 'disabled' && CAN_INTERVIEW.includes(x.role)))).catch(() => setTeam([]))
+  }, [candidate])
   const set = (p) => setF((x) => ({ ...x, ...p }))
   const valid = f.date && f.time
   const [busy, setBusy] = useState(false)
@@ -288,7 +314,9 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
           mode: f.type === 'On-site' ? 'On-site' : 'Video Call',
           meetingLink: f.link || undefined,
           location: f.type === 'On-site' ? 'Office' : undefined,
-          panel: f.interviewers.split(',').map((x) => x.trim()).filter(Boolean),
+          ...(team.length ? { interviewerIds: f.interviewerIds } : { panel: f.interviewers.split(',').map((x) => x.trim()).filter(Boolean) }),
+          feedbackDueOn: f.feedbackDue ? new Date(`${f.feedbackDue}T23:59`).toISOString() : undefined,
+          reminderMinsBefore: REMINDER_MINS[f.reminder],
           notifyByEmail: f.email,
         })
         const mail = emailOutcome(f.email, created?.email)
@@ -337,7 +365,25 @@ export function InterviewModal({ candidate, onClose, onScheduled }) {
           <label className="text-[12px] text-muted">Date<input type="date" value={f.date} onChange={(e) => set({ date: e.target.value })} className={clsx(field, 'mt-1')} /></label>
           <label className="text-[12px] text-muted">Time<input type="time" value={f.time} onChange={(e) => set({ time: e.target.value })} className={clsx(field, 'mt-1')} /></label>
         </div>
-        <label className="block text-[12px] text-muted">Interviewers<input value={f.interviewers} onChange={(e) => set({ interviewers: e.target.value })} placeholder="Names, comma separated" className={clsx(field, 'mt-1')} /></label>
+        {team.length > 0 ? (
+          <fieldset>
+            <legend className="text-[12px] text-muted">Interviewers (each gets a scorecard to fill in)</legend>
+            <div className="mt-1 grid max-h-32 grid-cols-2 gap-1.5 overflow-y-auto">
+              {team.map((m) => {
+                const on = f.interviewerIds.includes(m.id)
+                return (
+                  <label key={m.id} className={clsx('flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[13px]', on ? 'border-accent bg-accent-soft/40' : 'border-line hover:bg-line-2')}>
+                    <input type="checkbox" checked={on} onChange={() => set({ interviewerIds: on ? f.interviewerIds.filter((x) => x !== m.id) : [...f.interviewerIds, m.id] })} className="h-3.5 w-3.5 accent-[#08685e]" />
+                    <span className="truncate">{m.name}<span className="ml-1 text-[11px] text-muted">{m.role}</span></span>
+                  </label>
+                )
+              })}
+            </div>
+          </fieldset>
+        ) : (
+          <label className="block text-[12px] text-muted">Interviewers<input value={f.interviewers} onChange={(e) => set({ interviewers: e.target.value })} placeholder="Names, comma separated" className={clsx(field, 'mt-1')} /></label>
+        )}
+        {!IS_DEMO && <label className="block text-[12px] text-muted">Feedback due by (optional)<input type="date" value={f.feedbackDue} min={f.date || undefined} onChange={(e) => set({ feedbackDue: e.target.value })} className={clsx(field, 'mt-1')} /></label>}
         {(f.type === 'Video' || f.type === 'Technical') && <label className="block text-[12px] text-muted">Meeting link<input value={f.link} onChange={(e) => set({ link: e.target.value })} placeholder="https://meet…" className={clsx(field, 'mt-1')} /></label>}
         <label className="block text-[12px] text-muted">Reminder
           <select value={f.reminder} onChange={(e) => set({ reminder: e.target.value })} className={clsx(field, 'mt-1')}>{['None', '15 minutes before', '1 hour before', '1 day before'].map((r) => <option key={r}>{r}</option>)}</select>
@@ -416,7 +462,7 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
     if (!candidate) return
     getCredits().then((r) => setWallet(r.wallet)).catch(() => setWallet(null))
     // This part is already open → the backend returns it again without charging.
-    if (isRevealed(candidate, part)) unlockCandidate(candidate, { field: part }).then(setResult).catch(() => {})
+    if (part === 'contact' ? contactOpen(candidate) : isRevealed(candidate, part)) unlockCandidate(candidate, { field: part }).then(setResult).catch(() => {})
     else if (candidate._live?.kind === 'resdex' && !candidate._live.candidateId) {
       listJobs()
         .then((list) => {
@@ -428,7 +474,7 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
   }, [candidate, part])
 
   const preview = candidate?._live?.contactPreview
-  const previewLine = part === 'email' ? `Email ${preview?.email ?? '—'}` : part === 'phone' ? `Phone ${preview?.phone ?? '—'}` : 'The CV stays hidden until you view it'
+  const previewLine = part === 'contact' ? `Email ${preview?.email ?? '—'} · Phone ${preview?.phone ?? '—'}` : part === 'email' ? `Email ${preview?.email ?? '—'}` : part === 'phone' ? `Phone ${preview?.phone ?? '—'}` : 'The CV stays hidden until you view it'
   const unlock = async () => {
     setBusy(true)
     setErr('')
@@ -450,11 +496,12 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
   const stillHidden = c ? PARTS.filter((p) => c.revealed && !c.revealed.includes(p)).map((p) => PART_LABEL[p]) : []
   return (
     <Modal open={!!candidate} onClose={onClose} title={c ? cap(label) : `View ${label}`} subtitle={candidate?.name} width={460}
-      footer={c ? <><Button onClick={onClose}>Done</Button>{part === 'phone' && c.phone && <Button icon={Phone} onClick={() => dial(c.phone)}>Call now</Button>}{part === 'phone' && c.phone && onCompose && <Button variant="primary" icon={Smartphone} onClick={() => onCompose(candidate, contactOf(c, candidate), 'sms')}>Send SMS</Button>}{part === 'email' && c.email && onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, contactOf(c, candidate), 'email')}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || (!paid && credits === 0) || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Opening…' : paid ? `View ${label} · free` : `View ${label} · uses 1 credit`}</Button></>}>
+      footer={c ? <><Button onClick={onClose}>Done</Button>{(part === 'phone' || part === 'contact') && c.phone && <Button icon={Phone} onClick={() => dial(c.phone)}>Call now</Button>}{(part === 'phone' || part === 'contact') && c.phone && onCompose && <Button variant="primary" icon={Smartphone} onClick={() => onCompose(candidate, contactOf(c, candidate), 'sms')}>Send SMS</Button>}{(part === 'email' || part === 'contact') && c.email && onCompose && <Button variant="primary" icon={Mail} onClick={() => onCompose(candidate, contactOf(c, candidate), 'email')}>Write to candidate</Button>}</> : <><Button onClick={onClose}>Cancel</Button><Button variant="primary" disabled={busy || (!paid && credits === 0) || (needsJob && jobs === null)} onClick={unlock}>{busy ? 'Opening…' : part === 'contact' ? 'Unlock email & number' : paid ? `View ${label} · free` : `View ${label} · uses 1 credit`}</Button></>}>
       {c ? (
         <div className="space-y-3 text-[14px]">
-          {part === 'email' && <div><p className="text-[12px] text-muted">Email</p><p className="font-medium">{c.email || '—'}</p></div>}
-          {part === 'phone' && <div><p className="text-[12px] text-muted">Phone</p><p className="font-medium">{c.phone || '—'}</p></div>}
+          {(part === 'email' || part === 'contact') && <div><p className="text-[12px] text-muted">Email</p><p className="font-medium">{c.email || '—'}</p></div>}
+          {(part === 'phone' || part === 'contact') && <div><p className="text-[12px] text-muted">Phone</p><p className="font-medium">{c.phone || '—'}</p></div>}
+          {(part === 'phone' || part === 'contact') && c.phone && <PhoneQr phone={c.phone} />}
           {part === 'resume' && (c.resumeUrl ? (
             <Button icon={FileText} onClick={() => onViewResume?.(candidate, { url: c.resumeUrl, fileName: c.resumeFileName })}>Open CV</Button>
           ) : (
@@ -465,7 +512,7 @@ export function UnlockModal({ candidate, field: part = 'phone', onClose, onCompo
       ) : (
         <div className="space-y-3 text-[13.5px]">
           {paid ? (
-            <p>You have already used the credit for {first}. Viewing the {label} is <b>free</b>.</p>
+            <p>{part === 'contact' ? `Opens ${first}'s email and phone number together. Your credit for ${first} is already used, so nothing more is charged.` : <>You have already used the credit for {first}. Viewing the {label} is <b>free</b>.</>}</p>
           ) : (
             <p>Viewing the {label} uses <b>1 CV credit</b> — once for this candidate. Email, phone number and CV then each open with their own click, and you are never charged again for {first}.</p>
           )}

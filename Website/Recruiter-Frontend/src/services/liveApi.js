@@ -1,31 +1,36 @@
 // Thin wrappers over the existing employer API (Backend/src/routes). Live
 // mode only — demo mode never calls these.
 import { apiClient } from '../lib/api'
-import { TOKEN_KEY } from '../lib/config'
+import { API_URL, SESSION_KEY } from '../lib/config'
 import { invalidatePool, fetchAll } from './talentService'
 
 export const login = (email, password) =>
   apiClient.post('/auth/login', { email, password }).then((r) => {
-    localStorage.setItem(TOKEN_KEY, r.data.token)
-    localStorage.setItem('mzt-session', JSON.stringify({ user: r.data.user, company: r.data.company }))
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ user: r.data.user, company: r.data.company }))
     return r.data
   })
 
 export const exchangeHandoff = (code) =>
   apiClient.post('/auth/exchange', { code }).then((r) => {
-    localStorage.setItem(TOKEN_KEY, r.data.token)
-    localStorage.setItem('mzt-session', JSON.stringify({ user: r.data.user, company: r.data.company }))
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ user: r.data.user, company: r.data.company }))
     return r.data
   })
 
 export function logout() {
-  localStorage.removeItem(TOKEN_KEY)
-  localStorage.removeItem('mzt-session')
+  localStorage.removeItem(SESSION_KEY)
+  // Ends the httpOnly cookie session. keepalive lets the request finish even
+  // when the caller navigates away right after.
+  fetch(`${API_URL}/auth/logout`, {
+    method: 'POST',
+    credentials: 'include',
+    keepalive: true,
+    headers: { 'X-Requested-With': 'mzobs-web' },
+  }).catch(() => {})
 }
 
 export const getSession = () => {
   try {
-    return JSON.parse(localStorage.getItem('mzt-session') ?? 'null')
+    return JSON.parse(localStorage.getItem(SESSION_KEY) ?? 'null')
   } catch {
     return null
   }
@@ -37,7 +42,13 @@ export const getSession = () => {
  * resume-database profile not yet in this company's pipeline is added to it,
  * optionally under one of its jobs (`jobId`).
  */
-export const unlockCandidate = (c, { jobId, field } = {}) => {
+export const unlockCandidate = async (c, { jobId, field } = {}) => {
+  // 'contact' opens email and phone number together: the first call spends the credit, the second is free.
+  if (field === 'contact') {
+    const first = await unlockCandidate(c, { jobId, field: 'email' })
+    const second = await unlockCandidate(c, { field: 'phone' })
+    return { ...second, alreadyUnlocked: !!first.alreadyUnlocked }
+  }
   const { kind, candidateId, employeeId } = c._live ?? {}
   // `field` (email | phone | resume): the part being opened. The credit is spent
   // on a candidate's first reveal only; the other parts are then free.

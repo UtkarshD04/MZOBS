@@ -28,8 +28,7 @@ export default function Login() {
     setSubmitting(true)
     setError('')
     try {
-      const { token } = await loginStaff({ email, password })
-      localStorage.setItem('mzobs-staff-token', token)
+      await loginStaff({ email, password })
       navigate('/app/dashboard')
     } catch (err) {
       setError(err.response?.data?.message ?? 'Invalid email or password')

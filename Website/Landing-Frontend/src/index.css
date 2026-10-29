@@ -1188,3 +1188,12 @@
     animation-delay: calc(240ms + var(--i, 0) * 90ms);
   }
 }
+
+/* Short content swap used by the My Applications command center. */
+@keyframes mzFadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mz-fade-in { animation: mzFadeIn 160ms ease-out; }
+}

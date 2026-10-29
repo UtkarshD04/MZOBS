@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, ChevronDown, Minus, Loader2, RotateCw, ShieldCheck, CalendarClock, ExternalLink, Lock, Sparkles, UserRound, X } from 'lucide-react'
+import { Briefcase, Infinity as InfinityIcon, Users, Check, ChevronDown, Compass, CreditCard, Crown, FileText, GraduationCap, Maximize2, Mic, Minimize2, Minus, Loader2, RotateCw, Send, ShieldCheck, CalendarClock, ExternalLink, Lock, Sparkles, UserRound, X } from 'lucide-react'
 import Seo from '../components/Seo'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
@@ -13,6 +13,7 @@ import { fetchApplicationCount } from '../lib/employeeApi'
 import { fetchPlan, fetchServiceRequests, requestService, cancelServiceRequest } from '../lib/premium'
 import { createSubscriptionOrder, verifySubscriptionPayment, confirmMockSubscriptionPayment, previewSubscriptionCoupon } from '../lib/employeeSubscription'
 import { openRazorpayCheckout, loadRazorpay } from '../lib/razorpay'
+import { safeHref } from '../lib/safeUrl'
 
 // Premium is a single ₹499 one-time payment; shown even if the plan API still returns an older price.
 const PREMIUM_PRICE = 499
@@ -57,7 +58,7 @@ function useSession() {
 // --- small pieces ------------------------------------------------------------
 
 function Cell({ value, premium }) {
-  if (value === true) return <Check size={17} className={premium ? 'text-mz-primary' : 'text-mz-ink-2'} aria-label="Included" role="img" />
+  if (value === true) return <Check size={17} className="text-mz-primary" aria-label="Included" role="img" />
   if (value === false) return <Minus size={17} className="text-mz-line-strong" aria-label="Not included" role="img" />
   return <span className={premium ? 'font-medium text-mz-ink' : 'text-mz-ink-2'}>{value}</span>
 }
@@ -65,8 +66,8 @@ function Cell({ value, premium }) {
 function Price({ amount, original }) {
   return (
     <p className="flex items-baseline gap-2">
-      {original != null && original !== amount && <span className="text-[16px] text-mz-muted line-through">₹{original}</span>}
-      <span className="text-[34px] font-bold tracking-[-0.02em] text-mz-ink">₹{amount}</span>
+      {original != null && original !== amount && <span className="text-[18px] text-mz-muted line-through">₹{original}</span>}
+      <span className="text-[44px] font-bold leading-none tracking-[-0.03em] text-mz-ink">₹{amount}</span>
     </p>
   )
 }
@@ -78,95 +79,128 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
   const limit = plan.basic.applicationLimit
   const fee = PREMIUM_PRICE
   const finalFee = payment.coupon?.finalAmount ?? fee
+  const basicIncluded = ['Browse every job with no limits', `Apply to your first ${limit} jobs`, 'Create your profile and upload your resume', 'Basic job matching and application tracking']
+  const basicExcluded = ['Expert CV enhancement and ATS score', 'Live mock interviews', 'One-to-one career coaching']
+  // [text, bold] segments
+  const premiumItems = [
+    [['Unlimited', true], [' job applications']],
+    [['Your CV enhanced by an '], ['expert', true], [', plus an ATS score']],
+    [['Live', true], [' technical, behavioural and HR mock interviews']],
+    [['One-to-one', true], [' HR and career coaching with a personal roadmap']],
+    [['More job-fit picks from a '], ['wider pool', true]],
+  ]
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid items-stretch gap-5 md:grid-cols-2">
       {/* Basic */}
-      <section aria-labelledby="plan-basic" className="flex flex-col rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
+      <section aria-labelledby="plan-basic" className="flex flex-col rounded-[20px] border border-mz-line bg-white p-6 shadow-[0_1px_2px_rgba(22,50,79,0.05)] transition-shadow duration-200 hover:shadow-[0_14px_32px_-18px_rgba(22,50,79,0.3)] motion-reduce:transition-none sm:p-7">
         <div className="flex items-center justify-between gap-2">
-          <h2 id="plan-basic" className="text-[17px] font-bold text-mz-ink">{plan.basic.name}</h2>
+          <h2 id="plan-basic" className="text-[15px] font-bold text-mz-ink">{plan.basic.name}</h2>
           {signedIn && !isPaid && <span className="rounded-full bg-mz-bg px-2.5 py-1 text-[12px] font-semibold text-mz-ink-2 ring-1 ring-mz-line">Your plan</span>}
         </div>
-        <div className="mt-3">
-          <Price amount={0} />
-          <p className="text-[13px] text-mz-muted">Free, no card needed</p>
+        <div className="mt-4">
+          <p className="text-[56px] font-extrabold leading-none tracking-[-0.03em] text-mz-ink">₹0</p>
+          <p className="mt-3 text-[13px] text-mz-muted">Free forever, no card needed</p>
         </div>
-        <ul className="mt-4 flex-1 space-y-2 text-[14px] text-mz-ink-2">
-          {['Browse every job with no limits', `Apply to your first ${limit} jobs`, 'Create your profile and upload your resume', 'Get basic job matching and application tracking'].map((t) => (
-            <li key={t} className="flex gap-2">
-              <Check size={16} className="mt-0.5 shrink-0 text-mz-ink-2" aria-hidden="true" />
+        <ul className="mt-6 flex-1 space-y-3 text-[14px] text-mz-ink-2">
+          {basicIncluded.map((t) => (
+            <li key={t} className="flex items-start gap-2.5">
+              <span className="mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border border-mz-primary text-mz-primary" aria-hidden="true"><Check size={11} strokeWidth={3} /></span>
+              {t}
+            </li>
+          ))}
+          {basicExcluded.map((t) => (
+            <li key={t} className="flex items-start gap-2.5 text-mz-muted">
+              <span className="mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border border-mz-line-strong text-mz-muted" aria-hidden="true"><X size={10} strokeWidth={3} /></span>
+              <span className="sr-only">Not included: </span>
               {t}
             </li>
           ))}
         </ul>
         {signedIn && !isPaid && appCount != null && (
-          <div className="mt-5">
+          <div className="mt-6">
             <div className="flex justify-between text-[12.5px] text-mz-muted">
               <span>Applications used</span>
               <span className="font-semibold tabular-nums text-mz-ink">
                 {Math.min(appCount, limit)} of {limit}
               </span>
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-mz-bg ring-1 ring-mz-line" aria-hidden="true">
-              <div className={`h-full rounded-full ${appCount >= limit ? 'bg-[#B42318]' : 'bg-mz-primary'}`} style={{ width: `${Math.min(100, (appCount / limit) * 100)}%` }} />
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-mz-bg ring-1 ring-mz-line" aria-hidden="true">
+              <div className={`h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none ${appCount >= limit ? 'bg-[#B42318]' : 'bg-mz-primary'}`} style={{ width: `${Math.min(100, (appCount / limit) * 100)}%` }} />
             </div>
             {appCount >= limit && <p className="mt-1.5 text-[12.5px] text-[#B42318]">You’ve used every free application. Premium removes the limit.</p>}
           </div>
         )}
         {!signedIn && (
-          <Link to="/employees/signup" className={`${outlineBtn} mt-5`}>
+          <Link to="/employees/signup" className="mt-8 inline-flex h-12 items-center justify-center rounded-[12px] border-2 border-mz-ink bg-white px-5 text-[14.5px] font-bold text-mz-ink transition-colors hover:bg-mz-ink hover:text-white">
             Create free account
           </Link>
         )}
       </section>
 
       {/* Premium */}
-      <section aria-labelledby="plan-premium" className="flex flex-col rounded-[14px] border-2 border-mz-primary bg-white p-5 sm:p-6">
-        <div className="flex items-center justify-between gap-2">
-          <h2 id="plan-premium" className="flex items-center gap-1.5 text-[17px] font-bold text-mz-ink">
-            <Sparkles size={17} className="text-mz-primary" aria-hidden="true" />
-            {plan.premium.name}
-          </h2>
+      <section aria-labelledby="plan-premium" className="relative flex flex-col overflow-hidden rounded-[20px] bg-[#064E43] p-6 text-white shadow-[0_24px_48px_-24px_rgba(6,78,67,0.75)] transition-shadow duration-200 hover:shadow-[0_28px_56px_-24px_rgba(6,78,67,0.9)] motion-reduce:transition-none sm:p-7">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/[0.04]" aria-hidden="true" />
+        <div className="relative flex items-center justify-between gap-2">
+          <h2 id="plan-premium" className="text-[15px] font-bold text-white">{plan.premium.name}</h2>
           {isPaid ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-mz-primary-tint px-2.5 py-1 text-[12px] font-semibold text-mz-primary-strong">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#F5B83D] px-3 py-1 text-[12px] font-bold text-[#3B2A00]">
               <ShieldCheck size={13} aria-hidden="true" /> Active
             </span>
           ) : (
-            <span className="rounded-full bg-mz-primary-tint px-2.5 py-1 text-[12px] font-semibold text-mz-primary-strong">One-time payment</span>
+            <span className="rounded-full bg-[#F5B83D] px-3 py-1 text-[12px] font-bold text-[#3B2A00]">One-time payment</span>
           )}
         </div>
-        <div className="mt-3">
-          <Price amount={isPaid ? fee : finalFee} original={!isPaid && payment.coupon ? fee : null} />
-          <p className="text-[13px] text-mz-muted">{isPaid ? `Paid once${paidOn ? ` on ${dateFmt.format(new Date(paidOn))}` : ''} · valid for life` : 'Paid once, valid for life. No renewals.'}</p>
+        <div className="relative mt-4 flex items-end gap-3">
+          <div className="flex items-baseline gap-2">
+            {!isPaid && payment.coupon && fee !== finalFee && <span className="text-[20px] text-white/60 line-through">₹{fee}</span>}
+            <span className="text-[56px] font-extrabold leading-none tracking-[-0.03em]">₹{isPaid ? fee : finalFee}</span>
+          </div>
+          <p className="pb-1 text-[16px] font-bold leading-tight text-[#F5B83D]">
+            {isPaid ? (
+              <>Paid once{paidOn ? <><br />on {dateFmt.format(new Date(paidOn))}</> : null}.<br />Yours for life.</>
+            ) : (
+              <>once.<br />Yours for life.</>
+            )}
+          </p>
         </div>
-        <ul className="mt-4 flex-1 space-y-2 text-[14px] text-mz-ink">
-          {['Get unlimited job applications', 'Get your CV enhanced by an expert, plus an ATS score', 'Attend live technical, behavioral, and HR mock interviews', 'Experience one-to-one HR and career coaching with a personal roadmap', 'Get more job-fit picks from a wider pool'].map((t) => (
-            <li key={t} className="flex gap-2">
-              <Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />
-              {t}
+        <p className="relative mt-4 text-[13px] text-white/80">No subscription, no renewals. Everything in Basic, plus:</p>
+        <ul className="relative mt-4 flex-1 space-y-3 text-[14px] text-white/90">
+          {premiumItems.map((segs) => (
+            <li key={segs.map((s) => s[0]).join('')} className="flex items-start gap-2.5">
+              <span className="mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-[#F5B83D] text-[#3B2A00]" aria-hidden="true"><Check size={11} strokeWidth={3.5} /></span>
+              <span>
+                {segs.map(([text, bold]) => (bold ? <strong key={text} className="font-bold text-white">{text}</strong> : text))}
+              </span>
             </li>
           ))}
         </ul>
 
         {!isPaid &&
           (signedIn ? (
-            <div className="mt-5">
-              <button type="button" onClick={payment.pay} disabled={payment.paying} className={`${tealBtn} w-full`}>
+            <div className="relative mt-7">
+              <button type="button" onClick={payment.pay} disabled={payment.paying} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-white px-5 text-[15.5px] font-bold text-mz-ink transition-colors hover:bg-[#FFF7E0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-60">
                 {payment.paying && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
-                {payment.paying ? 'Processing…' : `Upgrade for ₹${finalFee}`}
+                {payment.paying ? 'Processing…' : `Get Premium for ₹${finalFee}`}
               </button>
-              <div className="mt-3">
+              <div className="mt-3 rounded-[12px] bg-white p-3 text-mz-ink">
                 <CouponBox onPreview={previewSubscriptionCoupon} applied={payment.coupon} onApply={payment.setCoupon} onRemove={() => payment.setCoupon(null)} />
               </div>
-              {payment.error && <p className="mt-2 text-[13px] text-[#B42318]">{payment.error}</p>}
+              {payment.error && <p className="mt-2 text-[13px] text-[#FFB4AB]">{payment.error}</p>}
             </div>
           ) : (
-            <Link to={SIGN_IN_TO} className={`${tealBtn} mt-5`}>
-              Sign in to upgrade
-            </Link>
+            <div className="relative mt-7">
+              <Link to={SIGN_IN_TO} className="inline-flex h-12 w-full items-center justify-center rounded-[12px] bg-white px-5 text-[15.5px] font-bold text-mz-ink transition-colors hover:bg-[#FFF7E0]">
+                Get Premium for ₹{fee}
+              </Link>
+              <p className="mt-3 text-center text-[12.5px] text-white/75">
+                Already have an account?{' '}
+                <Link to={SIGN_IN_TO} className="font-bold text-white underline underline-offset-2">Sign in</Link>
+              </p>
+            </div>
           ))}
         {isPaid && (
-          <a href="#premium-services" className={`${outlineBtn} mt-5`}>
+          <a href="#premium-services" className="relative mt-7 inline-flex h-12 items-center justify-center rounded-[12px] bg-white px-5 text-[15px] font-bold text-mz-ink transition-colors hover:bg-[#FFF7E0]">
             Request a Premium service
           </a>
         )}
@@ -179,18 +213,26 @@ function PlanCards({ plan, session, isPaid, paidOn, appCount, payment }) {
 
 function HowItWorks() {
   const steps = [
-    ['Request', 'Pick a service and tell us what you need.'],
-    ['We schedule', 'The Mzobs team confirms a time or starts the work.'],
-    ['Session / work', 'A live session, or our experts work on your CV or plan.'],
-    ['Delivered', 'Feedback, files and next steps land in your account.'],
+    ['Request', 'Pick a service and tell us what you need.', 'bg-[#EAF2FF] text-[#1D4ED8] ring-[#C9DBFB]'],
+    ['We schedule', 'The Mzobs team confirms a time or starts the work.', 'bg-[#FFF4E5] text-[#B45309] ring-[#F7DDB8]'],
+    ['Session / work', 'A live session, or our experts work on your CV or plan.', 'bg-[#EFEBFF] text-[#5B3FD1] ring-[#D9D1FA]'],
+    ['Delivered', 'Feedback, files and next steps land in your account.', 'bg-[#E6F6EC] text-[#1E7B45] ring-[#BFE5CD]'],
   ]
   return (
-    <ol className="grid gap-3 sm:grid-cols-4">
-      {steps.map(([title, body], i) => (
-        <li key={title} className="rounded-[12px] border border-mz-line bg-white p-4">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mz-primary-tint text-[13px] font-bold text-mz-primary-strong">{i + 1}</span>
-          <p className="mt-2.5 text-[14.5px] font-semibold text-mz-ink">{title}</p>
-          <p className="mt-0.5 text-[13px] leading-relaxed text-mz-muted">{body}</p>
+    <ol className="grid gap-4 sm:grid-cols-4 sm:gap-0">
+      {steps.map(([title, body, tone], i) => (
+        <li key={title} className="relative flex gap-3.5 sm:flex-col sm:gap-0 sm:pr-4">
+          {i < steps.length - 1 && (
+            <>
+              <span className="absolute left-[17px] top-10 h-[calc(100%-1rem)] w-px bg-mz-line-strong sm:hidden" aria-hidden="true" />
+              <span className="absolute left-[46px] right-[10px] top-[17px] hidden h-px bg-mz-line-strong sm:block" aria-hidden="true" />
+            </>
+          )}
+          <span className={`relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[14px] font-bold ring-1 ${tone}`}>{i + 1}</span>
+          <div className="sm:mt-3">
+            <p className="text-[14.5px] font-semibold text-mz-ink">{title}</p>
+            <p className="mt-0.5 text-[13px] leading-relaxed text-mz-muted">{body}</p>
+          </div>
         </li>
       ))}
     </ol>
@@ -252,7 +294,7 @@ function RequestCard({ request, service, onCancel, cancelling }) {
               <CalendarClock size={15} className="text-mz-primary" aria-hidden="true" />
               {dateTimeFmt.format(new Date(request.scheduledFor))}
               {request.meetingLink && (
-                <a href={request.meetingLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-mz-primary-strong hover:underline">
+                <a href={safeHref(request.meetingLink)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-mz-primary-strong hover:underline">
                   Join <ExternalLink size={13} aria-hidden="true" />
                 </a>
               )}
@@ -260,7 +302,7 @@ function RequestCard({ request, service, onCancel, cancelling }) {
           )}
           {request.candidateMessage && <p className="whitespace-pre-line leading-relaxed text-mz-ink-2">{request.candidateMessage}</p>}
           {request.deliverableLink && (
-            <a href={request.deliverableLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-mz-primary-strong hover:underline">
+            <a href={safeHref(request.deliverableLink)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-mz-primary-strong hover:underline">
               Open your deliverable <ExternalLink size={13} aria-hidden="true" />
             </a>
           )}
@@ -279,7 +321,10 @@ function RequestCard({ request, service, onCancel, cancelling }) {
   )
 }
 
-function ServiceOption({ service, openRequest, locked, onRequest }) {
+const CATEGORY_ICON = { resume: FileText, interview: Mic, skills: Compass, career: Compass, coaching: GraduationCap }
+
+function ServiceOption({ service, category, openRequest, locked, onRequest }) {
+  const CategoryIcon = CATEGORY_ICON[category] ?? Sparkles
   const [open, setOpen] = useState(false)
   const [note, setNote] = useState('')
   const [preferredTime, setPreferredTime] = useState('')
@@ -303,14 +348,19 @@ function ServiceOption({ service, openRequest, locked, onRequest }) {
   }
 
   return (
-    <li className="rounded-[12px] border border-mz-line bg-white p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+    <li className="rounded-[14px] border border-mz-line bg-white p-4 shadow-[0_1px_2px_rgba(22,50,79,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-mz-line-strong hover:shadow-[0_8px_20px_-14px_rgba(22,50,79,0.3)] motion-reduce:transition-none">
+      <div className="flex items-start gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-mz-primary-tint text-mz-primary-strong">
+          <CategoryIcon size={17} aria-hidden="true" />
+        </span>
+        <div className="min-w-0 flex-1">
           <h4 className="text-[14.5px] font-semibold text-mz-ink">{service.label}</h4>
           <p className="mt-0.5 text-[13px] leading-relaxed text-mz-muted">{service.description}</p>
         </div>
         {locked ? (
-          <Lock size={15} className="mt-1 shrink-0 text-mz-muted" aria-label="Premium only" role="img" />
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-mz-bg px-2 py-1 text-[11.5px] font-semibold text-mz-ink-2 ring-1 ring-mz-line">
+            <Lock size={11} aria-hidden="true" /> Premium
+          </span>
         ) : openRequest ? (
           <span className="shrink-0 rounded-full bg-mz-primary-tint px-2.5 py-1 text-[12px] font-semibold text-mz-primary-strong">Requested</span>
         ) : (
@@ -421,8 +471,8 @@ function ServicesSection({ plan, session, isPaid, requests, onRequest, onCancel,
                 type="button"
                 onClick={() => setCategory(c.key)}
                 aria-pressed={category === c.key}
-                className={`-mb-px shrink-0 border-b-2 px-2.5 pb-2.5 pt-1 text-[13.5px] font-medium transition-colors ${
-                  category === c.key ? 'border-mz-primary text-mz-primary-strong' : 'border-transparent text-mz-muted hover:text-mz-ink'
+                className={`-mb-px shrink-0 rounded-t-[8px] border-b-[3px] px-3.5 pb-2.5 pt-2 text-[13.5px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-mz-primary motion-reduce:transition-none ${
+                  category === c.key ? 'border-mz-primary bg-mz-primary-tint/60 font-semibold text-mz-primary-strong' : 'border-transparent font-medium text-mz-muted hover:bg-mz-bg hover:text-mz-ink'
                 }`}
               >
                 {c.label}
@@ -430,9 +480,9 @@ function ServicesSection({ plan, session, isPaid, requests, onRequest, onCancel,
             ))}
           </div>
         </div>
-        <ul className="mt-4 grid gap-3 md:grid-cols-2">
+        <ul key={category} className="mz-fade-in mt-4 grid gap-3 motion-reduce:animate-none md:grid-cols-2">
           {shown.map((s) => (
-            <ServiceOption key={s.key} service={s} locked={!isPaid} openRequest={openByService.has(s.key)} onRequest={onRequest} />
+            <ServiceOption key={s.key} service={s} category={category} locked={!isPaid} openRequest={openByService.has(s.key)} onRequest={onRequest} />
           ))}
         </ul>
       </div>
@@ -442,64 +492,118 @@ function ServicesSection({ plan, session, isPaid, requests, onRequest, onCancel,
 
 // --- comparison table --------------------------------------------------------
 
-function ComparisonGroup({ group, defaultOpen }) {
-  const [open, setOpen] = useState(defaultOpen)
+// Accent per feature group (keyed by the plan config's group key). Full class
+// strings so Tailwind can see them.
+const GROUP_STYLE = {
+  jobs: { icon: Briefcase, head: 'bg-[#EAF2FF] text-[#1D4ED8]', badge: 'bg-white/80 text-[#1D4ED8]' },
+  profile: { icon: FileText, head: 'bg-[#E4F6F1] text-[#0B6F63]', badge: 'bg-white/80 text-[#0B6F63]' },
+  skills: { icon: Compass, head: 'bg-[#EFEBFF] text-[#5B3FD1]', badge: 'bg-white/80 text-[#5B3FD1]' },
+  interview: { icon: Mic, head: 'bg-[#FFF1E3] text-[#C2570C]', badge: 'bg-white/80 text-[#C2570C]' },
+  coaching: { icon: GraduationCap, head: 'bg-[#FFE9F1] text-[#BE1F5C]', badge: 'bg-white/80 text-[#BE1F5C]' },
+}
+const FALLBACK_STYLE = { icon: Sparkles, head: 'bg-mz-bg text-mz-ink', badge: 'bg-white/80 text-mz-ink-2' }
+const ROW_COLS = 'sm:grid-cols-[1.1fr_1fr_1.4fr]'
+
+function ComparisonGroup({ group, open, onToggle }) {
+  const style = GROUP_STYLE[group.key] ?? FALLBACK_STYLE
+  const Icon = style.icon
+  const panelId = `compare-${group.key}`
   return (
-    <div className="border-b border-mz-line last:border-b-0">
+    <div className="px-2 pt-2 last:pb-2 sm:px-3">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={onToggle}
         aria-expanded={open}
-        className="flex w-full items-center gap-2 bg-mz-bg px-4 py-3 text-left focus-visible:outline-2 focus-visible:outline-mz-primary sm:px-5"
+        aria-controls={panelId}
+        className={`flex w-full items-center gap-2.5 rounded-[10px] px-3 py-2.5 text-left transition-[filter] hover:brightness-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary ${style.head}`}
       >
-        <span className="text-[14.5px] font-semibold text-mz-ink">{group.label}</span>
-        <span className="text-[12.5px] text-mz-muted">{group.features.length}</span>
-        <ChevronDown size={16} className={`ml-auto text-mz-muted transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
+        <Icon size={17} aria-hidden="true" />
+        <span className="text-[14.5px] font-semibold">{group.label}</span>
+        <span className={`rounded-full px-2 py-0.5 text-[11.5px] font-bold tabular-nums ${style.badge}`}>{group.features.length}</span>
+        <ChevronDown size={17} className={`ml-auto transition-transform duration-300 ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
       </button>
-      {open && (
-        <div role="rowgroup">
-          {group.features.map((f) => (
-            <div key={f.label} role="row" className="grid grid-cols-2 gap-x-4 gap-y-1 border-t border-mz-line px-4 py-3 text-[13.5px] sm:grid-cols-[1.1fr_1fr_1.4fr] sm:px-5">
-              <div role="rowheader" className="col-span-2 font-medium text-mz-ink sm:col-span-1">
-                {f.label}
+      <div
+        id={panelId}
+        className={`grid transition-[grid-template-rows,visibility] duration-300 ease-out ${open ? 'visible grid-rows-[1fr]' : 'invisible grid-rows-[0fr]'}`}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div role="rowgroup" className="pt-1">
+            {group.features.map((f) => (
+              <div key={f.label} role="row" className={`grid grid-cols-2 border-b border-mz-line/70 text-[13.5px] last:border-b-0 ${ROW_COLS}`}>
+                <div role="rowheader" className="col-span-2 px-3 pb-1 pt-3 font-medium text-mz-ink sm:col-span-1 sm:py-3">
+                  {f.label}
+                </div>
+                <div role="cell" className="flex items-start gap-1.5 px-3 pb-3 sm:py-3">
+                  <span className="mr-1 text-[11.5px] font-semibold uppercase tracking-wide text-mz-muted sm:hidden">Basic</span>
+                  <Cell value={f.basic} />
+                </div>
+                <div role="cell" className="flex items-start gap-1.5 bg-mz-primary-tint/50 px-3 pb-3 sm:border-x sm:border-mz-primary/10 sm:py-3">
+                  <span className="mr-1 text-[11.5px] font-semibold uppercase tracking-wide text-mz-primary-strong sm:hidden">Premium</span>
+                  <Cell value={f.premium} premium />
+                </div>
               </div>
-              <div role="cell">
-                <span className="mr-1 text-[11.5px] font-semibold uppercase tracking-wide text-mz-muted sm:hidden">Basic</span>
-                <Cell value={f.basic} />
-              </div>
-              <div role="cell">
-                <span className="mr-1 text-[11.5px] font-semibold uppercase tracking-wide text-mz-primary-strong sm:hidden">Premium</span>
-                <Cell value={f.premium} premium />
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
 
 function ComparisonTable({ plan }) {
-  const [expandAll, setExpandAll] = useState(0)
+  const groups = plan.groups
+  // The first two groups start open; the button flips to "Collapse all" once
+  // everything is open.
+  const [openKeys, setOpenKeys] = useState(() => new Set(groups.slice(0, 2).map((g) => g.key)))
+  const allOpen = groups.every((g) => openKeys.has(g.key))
+  const toggle = (key) =>
+    setOpenKeys((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+
   return (
     <section aria-labelledby="compare-title">
-      <div className="flex flex-wrap items-end justify-between gap-2">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 id="compare-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Compare plans</h2>
+          <h2 id="compare-title" className="text-[22px] font-bold tracking-[-0.02em] text-mz-ink sm:text-[26px]">Compare plans</h2>
           <p className="mt-1 text-[14px] text-mz-muted">Everything in {plan.basic.name} and {plan.premium.name}, side by side.</p>
         </div>
-        <button type="button" onClick={() => setExpandAll((n) => n + 1)} className="text-[13.5px] font-semibold text-mz-primary-strong hover:underline">
-          Expand all
+        <button
+          type="button"
+          onClick={() => setOpenKeys(allOpen ? new Set() : new Set(groups.map((g) => g.key)))}
+          className="inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-mz-primary/30 bg-mz-primary-tint px-3.5 text-[13.5px] font-semibold text-mz-primary-strong transition-colors hover:border-mz-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
+        >
+          {allOpen ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />}
+          {allOpen ? 'Collapse all' : 'Expand all'}
         </button>
       </div>
-      <div role="table" aria-label="Plan comparison" className="mt-4 overflow-hidden rounded-[14px] border border-mz-line bg-white">
-        <div role="row" className="hidden grid-cols-[1.1fr_1fr_1.4fr] gap-x-4 border-b border-mz-line px-5 py-3 text-[13px] font-semibold sm:grid">
-          <div role="columnheader" className="text-mz-muted">Feature</div>
-          <div role="columnheader" className="text-mz-ink">{plan.basic.name}</div>
-          <div role="columnheader" className="text-mz-primary-strong">{plan.premium.name}</div>
+      <div role="table" aria-label="Plan comparison" className="mt-5 overflow-hidden rounded-[16px] border border-mz-line bg-white shadow-[0_10px_30px_-18px_rgba(22,50,79,0.25)]">
+        <div role="row" className={`hidden border-b border-mz-line text-[13px] sm:grid ${ROW_COLS}`}>
+          <div role="columnheader" className="flex items-center px-5 py-4 text-[14px] font-bold text-mz-ink">Feature</div>
+          <div role="columnheader" className="flex items-center gap-2.5 px-3 py-4">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EAF2FF] text-[#1D4ED8]">
+              <Send size={16} aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[14px] font-bold text-mz-ink">{plan.basic.name}</span>
+              <span className="block text-[12px] font-normal text-mz-muted">Free, no card needed</span>
+            </span>
+          </div>
+          <div role="columnheader" className="flex items-center gap-2.5 border-x border-mz-primary/10 bg-mz-primary-tint/60 px-3 py-4">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-mz-primary/15 text-mz-primary-strong">
+              <Crown size={16} aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[14px] font-bold text-mz-primary-strong">{plan.premium.name}</span>
+              <span className="block text-[12px] font-normal text-mz-muted">₹{PREMIUM_PRICE} one-time payment</span>
+            </span>
+          </div>
         </div>
-        {plan.groups.map((g, i) => (
-          <ComparisonGroup key={`${g.key}-${expandAll}`} group={g} defaultOpen={expandAll > 0 || i < 2} />
+        {groups.map((g) => (
+          <ComparisonGroup key={g.key} group={g} open={openKeys.has(g.key)} onToggle={() => toggle(g.key)} />
         ))}
       </div>
     </section>
@@ -631,11 +735,25 @@ export default function EmployeeSubscription() {
       <Navbar />
       <main className="pb-14 pt-[88px] sm:pt-[96px]">
         <Container className="max-w-[1040px]">
-          <header className="max-w-2xl">
-            <h1 className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-mz-ink sm:text-[32px]">Choose how you want to grow</h1>
-            <p className="mt-2 text-[15px] leading-relaxed text-mz-muted">
+          <header className="max-w-3xl">
+            <h1 className="text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-mz-ink sm:text-[40px]">Choose how you want to grow</h1>
+            <p className="mt-3 text-[16px] leading-relaxed text-mz-ink-2">
               Start free with Mzobs Basic. Upgrade to Mzobs Premium to get unlimited applications and hands-on support from our team, from your CV to your final offer.
             </p>
+            <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2.5 text-[13.5px] font-medium text-mz-ink-2">
+              {[
+                [InfinityIcon, 'Unlimited job applications'],
+                [FileText, 'Expert CV support'],
+                [Users, 'One-to-one career guidance'],
+              ].map(([HeroIcon, text]) => (
+                <li key={text} className="inline-flex items-center gap-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-mz-primary-tint text-mz-primary-strong">
+                    <HeroIcon size={14} aria-hidden="true" />
+                  </span>
+                  {text}
+                </li>
+              ))}
+            </ul>
           </header>
 
           {plan.status === 'loading' || waitingForProfile || session === undefined ? (
@@ -675,16 +793,22 @@ export default function EmployeeSubscription() {
               <ComparisonTable plan={plan.data} />
 
               <section aria-labelledby="never-title" className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
-                  <h2 id="never-title" className="text-[16px] font-bold text-mz-ink">You’re never charged for</h2>
+                <div className="rounded-[16px] border border-mz-primary/15 bg-gradient-to-br from-mz-primary-tint/70 to-white p-5 sm:p-6">
+                  <h2 id="never-title" className="flex items-center gap-2 text-[16px] font-bold text-mz-ink">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-mz-primary/15 text-mz-primary-strong"><ShieldCheck size={16} aria-hidden="true" /></span>
+                    You’re never charged for
+                  </h2>
                   <ul className="mt-3 space-y-2.5 text-[14px] text-mz-ink-2">
                     <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Being shortlisted: it is always free for you.</li>
                     <li className="flex gap-2"><Check size={16} className="mt-0.5 shrink-0 text-mz-primary" aria-hidden="true" />Getting placed, no success fee and no cut of your salary.</li>
                     <li className="flex gap-2"><X size={16} className="mt-0.5 shrink-0 text-mz-muted" aria-hidden="true" />No renewals: Premium is a single payment.</li>
                   </ul>
                 </div>
-                <div className="rounded-[14px] border border-mz-line bg-white p-5 sm:p-6">
-                  <h2 className="text-[16px] font-bold text-mz-ink">Payment history</h2>
+                <div className="rounded-[16px] border border-mz-line bg-white p-5 sm:p-6">
+                  <h2 className="flex items-center gap-2 text-[16px] font-bold text-mz-ink">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EAF2FF] text-[#1D4ED8]"><CreditCard size={16} aria-hidden="true" /></span>
+                    Payment history
+                  </h2>
                   {isPaid ? (
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[14px]">
                       <div>

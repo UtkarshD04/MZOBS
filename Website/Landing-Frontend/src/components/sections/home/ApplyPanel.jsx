@@ -5,6 +5,7 @@ import { decodeGoogleCredential } from '../../../lib/googleCredential'
 import { loginEmployee, loginEmployeeWithGoogle, signupEmployee, signupEmployeeWithGoogle, verifyEmployeePhoneWidget } from '../../../lib/employeeAuth'
 import { sendWidgetOtp, verifyWidgetOtp, retryWidgetOtp } from '../../../lib/msg91Widget'
 import { fetchEmployeeProfile, uploadEmployeeResume, applyToJob } from '../../../lib/employeeApi'
+import { markJobApplied } from '../../../lib/appliedJobs'
 import { MSG91_WIDGET_ID, MSG91_TOKEN_AUTH } from '../../../lib/config'
 import { getEmployeeSession, saveEmployeeSession, onEmployeeSessionChange } from '../../../lib/employeeSession'
 
@@ -412,8 +413,8 @@ export default function ApplyPanel({ job, onClose }) {
   useEffect(() => onEmployeeSessionChange(() => setToken(getEmployeeSession()?.token ?? null)), [])
 
   function handleLoggedIn(newToken, employee) {
-    saveEmployeeSession({ token: newToken, employee })
-    setToken(newToken)
+    saveEmployeeSession({ employee })
+    setToken(getEmployeeSession()?.token ?? null)
   }
 
   async function handleUpload(e) {
@@ -440,6 +441,12 @@ export default function ApplyPanel({ job, onClose }) {
       await applyToJob(token, job.id)
       setApplyStatus('applied')
     } catch (err) {
+      // Already applied (e.g. from another tab): flip the job's button instead of showing an error.
+      if (err.status === 409) {
+        markJobApplied(job.id)
+        onClose()
+        return
+      }
       setApplyError(err.message)
       setLimitReached(err.code === 'FREE_APPLICATION_LIMIT_REACHED')
       setApplyStatus('idle')
@@ -560,7 +567,14 @@ export default function ApplyPanel({ job, onClose }) {
             </p>
           </div>
         </div>
-        <button type="button" onClick={onClose} className={`${primaryButtonClass} mt-4`}>
+        <button
+          type="button"
+          onClick={() => {
+            markJobApplied(job.id)
+            onClose()
+          }}
+          className={`${primaryButtonClass} mt-4`}
+        >
           Back to job details
         </button>
       </div>

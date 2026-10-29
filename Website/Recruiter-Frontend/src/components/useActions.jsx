@@ -43,10 +43,10 @@ export function useActions(criteria, { onUnlocked, onInterviewScheduled } = {}) 
         case 'shortlist': return setShortlistIds([c.id])
         case 'job': return setJobIds([c.id])
         // Writing to someone needs their email open — otherwise offer the reveal first.
-        case 'contact': case 'email': return !IS_DEMO && !isRevealed(c, 'email') ? setUnlock({ c, field: 'email' }) : setOutreach({ list: [c], channel: 'email' })
+        case 'contact': case 'email': return !IS_DEMO && !isRevealed(c, 'email') ? setUnlock({ c, field: 'contact' }) : setOutreach({ list: [c], channel: 'email' })
         case 'message': return setOutreach({ list: [c], channel: 'message' })
         // Texting needs the phone number opened first; then it goes out from the portal.
-        case 'sms': return !IS_DEMO && !isRevealed(c, 'phone') ? setUnlock({ c, field: 'phone' }) : setOutreach({ list: [c], channel: 'sms' })
+        case 'sms': return !IS_DEMO && !isRevealed(c, 'phone') ? setUnlock({ c, field: 'contact' }) : setOutreach({ list: [c], channel: 'sms' })
         // Call opens the device's dialer with the number (once it has been viewed).
         case 'call':
           if (IS_DEMO) return toast('Demo data has no phone numbers.', { tone: 'warn' })
@@ -54,8 +54,8 @@ export function useActions(criteria, { onUnlocked, onInterviewScheduled } = {}) 
             toast(`Opening your phone app to call ${c.name.split(' ')[0]}`)
             return dial(c.contact.phone)
           }
-          return setUnlock({ c, field: 'phone' })
-        case 'unlock': return IS_DEMO ? toast('Demo data has no phone numbers.', { tone: 'warn' }) : setUnlock({ c, field: field ?? 'phone' })
+          return setUnlock({ c, field: 'contact' })
+        case 'unlock': return IS_DEMO ? toast('Demo data has no phone numbers.', { tone: 'warn' }) : setUnlock({ c, field: field === 'resume' ? 'resume' : 'contact' })
         case 'resume': {
           if (IS_DEMO) return toast('Demo data has no resumes.', { tone: 'warn' })
           // Opens the CV when the plan or an earlier unlock allows it; otherwise offers the CV-credit unlock.
@@ -67,7 +67,7 @@ export function useActions(criteria, { onUnlocked, onInterviewScheduled } = {}) 
           // Interviews hang off a pipeline row, which a resume-database profile only gets when it's unlocked for a job.
           if (!IS_DEMO && !c._live?.candidateId) {
             toast('View this candidate first — that adds them to your pipeline.', { tone: 'warn' })
-            return setUnlock({ c, field: 'email' })
+            return setUnlock({ c, field: 'contact' })
           }
           return setInterview(c)
         }
@@ -115,7 +115,7 @@ export function useActions(criteria, { onUnlocked, onInterviewScheduled } = {}) 
       <TrustSheet row={trust} onClose={() => setTrust(null)} />
       <ShortlistModal ids={shortlistIds} onClose={(ok) => { setShortlistIds([]); if (ok) clearSelection() }} />
       <AddToJobModal ids={jobIds} onClose={() => setJobIds([])} />
-      <OutreachModal candidates={outreach.list} channel={outreach.channel} onClose={() => setOutreach({ list: [], channel: 'email' })} onReveal={(c, part) => { setOutreach({ list: [], channel: 'email' }); setUnlock({ c, field: part }) }} />
+      <OutreachModal candidates={outreach.list} channel={outreach.channel} onClose={() => setOutreach({ list: [], channel: 'email' })} onReveal={(c) => { setOutreach({ list: [], channel: 'email' }); setUnlock({ c, field: 'contact' }) }} />
       <UnlockModal
         candidate={unlock?.c ?? null}
         field={unlock?.field}

@@ -27,7 +27,7 @@ export default class ErrorBoundary extends Component {
         <p className="mt-1 text-[13.5px] text-muted">The rest of Mzobs Talent still works — use the menu above, or try again.</p>
         <div className="mt-5 flex justify-center gap-2">
           <button onClick={() => this.setState({ error: null })} className="h-9 rounded-full border border-line bg-white px-4 text-[13px] font-bold hover:bg-line-2">Try again</button>
-          <Link to="/" className="inline-flex h-9 items-center rounded-full bg-ink px-4 text-[13px] font-bold text-[#e8f8f5] hover:bg-accent">Back to search</Link>
+          <Link to="/search" className="inline-flex h-9 items-center rounded-full bg-ink px-4 text-[13px] font-bold text-[#e8f8f5] hover:bg-accent">Back to search</Link>
         </div>
       </div>
     )

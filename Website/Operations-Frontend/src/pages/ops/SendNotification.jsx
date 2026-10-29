@@ -9,6 +9,7 @@ import { Field, Input, Textarea } from '../../components/ui/Field'
 import { StaggerGroup, StaggerItem } from '../../components/ui/Stagger'
 import { useApp } from '../../lib/appContext'
 import { useRecipientsQuery, useSendNotificationMutation } from '../../hooks/useSendNotification'
+import { useMeQuery } from '../../hooks/useAuth'
 
 const AUDIENCES = [
   { key: 'employee', label: 'Employees', plural: 'employees', icon: Users },
@@ -18,6 +19,9 @@ const AUDIENCES = [
 
 export default function SendNotification() {
   const app = useApp()
+  const { data: me } = useMeQuery()
+  // The API only lets an admin send to everyone (staffNotificationController.sendNotification).
+  const canBroadcast = me?.accessLevel === 'admin'
   const [tab, setTab] = useState(0)
   const [search, setSearch] = useState('')
   const [selectedIds, setSelectedIds] = useState([])
@@ -88,9 +92,11 @@ export default function SendNotification() {
                   className="h-9 pl-8 pr-3 rounded-[9px] border border-border-strong bg-surface text-[12.5px] w-full outline-none focus:border-navy focus:shadow-[0_0_0_3.5px_var(--color-navy-ring)] transition-[border-color,box-shadow] disabled:opacity-50"
                 />
               </div>
-              <Chip selected={broadcast} onClick={() => setBroadcast((b) => !b)}>
-                Send to all
-              </Chip>
+              {canBroadcast && (
+                <Chip selected={broadcast} onClick={() => setBroadcast((b) => !b)}>
+                  Send to all
+                </Chip>
+              )}
             </div>
 
             {broadcast ? (

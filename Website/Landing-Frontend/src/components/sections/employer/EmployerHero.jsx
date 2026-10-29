@@ -183,11 +183,11 @@ export default function EmployerHero() {
         <div className="mx-auto max-w-7xl px-4 pt-28 pb-14 sm:px-6 md:px-10 md:pt-36 md:pb-20">
           <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:gap-20">
             <FadeInLoad delay={0.05} className="lg:pt-6">
-              <h1 id="employer-hero-heading" className="max-w-xl text-balance text-[38px] font-extrabold leading-[1.08] tracking-[-0.03em] sm:text-[50px] lg:text-[56px]">
+              <h1 id="employer-hero-heading" className="max-w-xl text-balance text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
                 Hire from resumes our team has already reviewed.
               </h1>
 
-              <p className="mt-6 max-w-lg text-[17px] leading-[1.6] text-white/80 sm:text-[18px]">
+              <p className="mt-6 max-w-lg text-white/80 text-[16px] sm:text-[17px] font-normal leading-relaxed">
                 Post as many jobs as you need, search the Mzobs candidate database, and move every applicant forward from one dashboard.
               </p>
 

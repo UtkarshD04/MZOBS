@@ -7,7 +7,7 @@ import { fetchLatestJobs } from '../../../lib/publicJobs'
 const LIMIT = 6
 
 // Roles Mzobs staff flagged as urgent-to-fill (Job.instantHiring), kept out of
-// the "Latest opportunities" feed (which asks for urgent=exclude) and listed
+// the "Latest jobs" feed (which asks for urgent=exclude) and listed
 // here instead. Renders nothing while there are none, and if the request
 // fails, rather than showing an empty or broken block.
 export default function UrgentHiringSection() {
@@ -28,18 +28,17 @@ export default function UrgentHiringSection() {
   return (
     <section aria-labelledby="urgent-title" className="pb-8 lg:pb-10">
       <Container>
-        <div className="rounded-[20px] border border-amber-200/70 bg-gradient-to-br from-amber-50/80 to-white p-4 sm:p-6">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-amber-100 text-amber-700" aria-hidden="true">
-            <Zap size={17} strokeWidth={2.4} />
-          </span>
+        <div className="rounded-[8px] border border-amber-200 bg-amber-50/50 p-4 sm:p-5">
+        <div className="flex items-start gap-2.5">
+          <Zap size={18} strokeWidth={2.2} className="mt-1.5 shrink-0 text-amber-600" aria-hidden="true" />
           <div>
-            <h2 id="urgent-title" className="text-[20px] font-bold tracking-[-0.015em] text-mz-ink sm:text-[22px]">Urgent hiring</h2>
-            <p className="mt-0.5 text-[13.5px] text-mz-muted">Companies that need to fill these roles fast</p>
+            <h2 id="urgent-title" className="text-mz-ink text-[22px] sm:text-[24px] font-bold leading-tight tracking-tight">Urgent hiring</h2>
+            <p className="mt-0.5 text-mz-muted text-[14px] leading-relaxed">Companies that need to fill these roles fast</p>
           </div>
         </div>
 
-        <ul className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2" aria-busy={!jobs || undefined}>
+        {/* Two columns only when there's a second card to fill them. */}
+        <ul className={`mt-4 grid grid-cols-1 gap-2.5 ${jobs?.length === 1 ? '' : 'lg:grid-cols-2'}`} aria-busy={!jobs || undefined}>
           {jobs
             ? jobs.map((job) => (
                 <li key={job.id}>

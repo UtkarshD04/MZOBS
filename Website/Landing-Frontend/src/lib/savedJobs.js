@@ -1,3 +1,5 @@
+import { track } from './analytics'
+
 const STORAGE_KEY = 'mzobs-saved-jobs'
 
 // Visitor-local "save for later" list for the Latest jobs detail panel — no
@@ -35,5 +37,7 @@ export function toggleJobSaved(job) {
   const ids = readIds()
   const next = ids.includes(key) ? ids.filter((id) => id !== key) : [...ids, key]
   writeIds(next)
-  return next.includes(key)
+  const saved = next.includes(key)
+  if (saved) track('job_saved', { job_id: job.id })
+  return saved
 }

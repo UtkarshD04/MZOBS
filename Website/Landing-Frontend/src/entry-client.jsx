@@ -17,6 +17,7 @@ import '@fontsource/playfair-display/700-italic.css'
 import './index.css'
 import App from './App.jsx'
 import { installClickShine } from './lib/clickShine'
+import { initAnalytics } from './lib/analytics'
 
 // server.js embeds the job it already fetched for /jobs/:id here (see
 // buildJobSeo's caller) so JobDetail.jsx can reuse it on hydration instead
@@ -30,6 +31,25 @@ const initialJob = typeof window !== 'undefined' ? (window.__INITIAL_JOB__ ?? nu
 const initialHomeData = typeof window !== 'undefined' ? (window.__INITIAL_HOME_DATA__ ?? null) : null
 
 installClickShine()
+initAnalytics()
+
+// Each deploy replaces the hashed chunks, so a tab opened before it fails to
+// lazy-load a page ("Failed to fetch dynamically imported module"). Reload
+// once to pick up the new build; the 10s guard stops a reload loop if the
+// chunk is genuinely broken.
+window.addEventListener('vite:preloadError', (event) => {
+  const KEY = 'mz-chunk-reload-at'
+  let last = 0
+  try {
+    last = Number(sessionStorage.getItem(KEY)) || 0
+    if (Date.now() - last < 10000) return
+    sessionStorage.setItem(KEY, String(Date.now()))
+  } catch {
+    // Storage blocked: still reload, the browser's own retry limits apply.
+  }
+  event.preventDefault()
+  window.location.reload()
+})
 
 const app = (
   <StrictMode>
@@ -57,17 +77,8 @@ const initialLoader = document.getElementById('initial-loader')
 // single page load, discarding and rebuilding the whole tree (a visible
 // flash — the navbar included — right after first paint). Checking for an
 // actual Element child instead of any child node fixes that.
-// Normally the loader goes the moment there's something to show. The one
-// exception is the festival splash (index.html sets window.__dussehraSplash on
-// the first open of a session during Dussehra): hold it briefly, then fade.
 function removeLoader() {
-  if (!initialLoader) return
-  if (!window.__dussehraSplash) return initialLoader.remove()
-  setTimeout(() => {
-    initialLoader.style.transition = 'opacity .5s ease'
-    initialLoader.style.opacity = '0'
-    setTimeout(() => initialLoader.remove(), 500)
-  }, 1800)
+  if (initialLoader) initialLoader.remove()
 }
 
 if (container.firstElementChild) {

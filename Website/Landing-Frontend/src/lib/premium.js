@@ -1,10 +1,10 @@
 import { EMPLOYEE_API_URL } from './config'
 
-async function call(path, { token, method = 'GET', body, signal } = {}) {
+async function call(path, { method = 'GET', body, signal } = {}) {
   const headers = {}
-  if (token) headers.Authorization = `Bearer ${token}`
+  headers['X-Requested-With'] = 'mzobs-web'
   if (body !== undefined) headers['Content-Type'] = 'application/json'
-  const res = await fetch(`${EMPLOYEE_API_URL}${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body), signal })
+  const res = await fetch(`${EMPLOYEE_API_URL}${path}`, { method, credentials: 'include', headers, body: body === undefined ? undefined : JSON.stringify(body), signal })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw Object.assign(new Error(data.message ?? 'Something went wrong. Please try again.'), { status: res.status, code: data.code })
   return data
