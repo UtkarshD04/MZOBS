@@ -8,6 +8,8 @@ import { submitAssociateRequest } from '../lib/associates'
 import { CONTACT_EMAIL } from '../lib/config'
 import { isValidPhone, MOBILE_ERROR } from '../lib/phone'
 import PhoneInput from '../components/ui/PhoneInput'
+import CollegePicker from '../components/CollegePicker'
+import DISTRICTS from '../data/districts.json'
 
 // Instructions first, then the form in sections — the same flow as a dealer
 // application: read the notes, press Next, fill Section A, B and C. Copy sticks to
@@ -18,8 +20,9 @@ const SECTIONS = [
   ['C', 'About your placement work'],
 ]
 
-const CITY_TYPES = ['Metro / large city', 'Small city / town']
-const EMPTY = { companyName: '', contactName: '', email: '', phone: '', city: '', cityType: '', website: '', about: '' }
+// The 36 states / UTs, which are also the keys of the official district list.
+const STATES = Object.keys(DISTRICTS)
+const EMPTY = { companyName: '', contactName: '', email: '', phone: '', state: '', city: '', website: '', about: '' }
 
 function validate(section, f) {
   const e = {}
@@ -30,8 +33,8 @@ function validate(section, f) {
     if (!/^\S+@\S+\.\S+$/.test(f.email.trim())) e.email = 'Enter a valid email'
   }
   if (section === 1) {
+    if (!f.state) e.state = 'Choose your state'
     if (!f.city.trim()) e.city = 'Add your city'
-    if (!f.cityType) e.cityType = 'Choose one'
   }
   if (section === 2 && f.about.trim().length < 20) e.about = 'Tell us a little more (a couple of sentences)'
   return e
@@ -113,6 +116,15 @@ function ApplicationSections({ onSent }) {
   }
   const last = step === SECTIONS.length - 1
 
+  // Changing the state clears a city picked for the old one.
+  const changeState = (e) => {
+    const { value } = e.target
+    setF((x) => ({ ...x, state: value, city: value === x.state ? x.city : '' }))
+    setErrors((er) => (er.state ? { ...er, state: undefined } : er))
+  }
+  // Districts of the chosen state (official list, src/data/districts.json).
+  const cityOptions = (DISTRICTS[f.state] ?? []).map((name) => ({ name }))
+
   const scrollTop = () => top.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   async function submit(e) {
@@ -179,27 +191,28 @@ function ApplicationSections({ onSent }) {
 
           {step === 1 && (
             <>
+              <Field label="State" error={errors.state}>
+                <select value={f.state} onChange={changeState} autoComplete="address-level1" autoFocus aria-invalid={!!errors.state} className={`${inputCls(errors.state)} cursor-pointer`}>
+                  <option value="">Select a state</option>
+                  {STATES.map((st) => <option key={st} value={st}>{st}</option>)}
+                </select>
+              </Field>
               <Field label="City" error={errors.city}>
-                <input value={f.city} onChange={set('city')} placeholder="City you operate from" autoComplete="address-level2" autoFocus aria-invalid={!!errors.city} className={inputCls(errors.city)} />
+                <CollegePicker
+                  value={f.city}
+                  onChange={(v) => set('city')({ target: { value: v } })}
+                  options={cityOptions}
+                  noun="cities"
+                  placeholder={f.state ? 'Click to choose, or type your city' : 'Choose your state first'}
+                  invalid={!!errors.city}
+                  className={inputCls(errors.city)}
+                />
               </Field>
-              <Field label="Website" optional>
-                <input value={f.website} onChange={set('website')} placeholder="www.example.com" inputMode="url" autoComplete="url" className={inputCls(false)} />
-              </Field>
-              <fieldset className="sm:col-span-2">
-                <legend className="mb-1.5 text-[12.5px] font-bold uppercase tracking-wide text-mz-ink">Type of city</legend>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {CITY_TYPES.map((t) => (
-                    <label key={t} className={`flex cursor-pointer items-center gap-3 rounded-[4px] border px-3.5 py-3 text-[14.5px] font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-mz-primary/40 ${f.cityType === t ? 'border-mz-primary bg-mz-primary-tint text-mz-primary-strong' : 'border-mz-line-strong text-mz-ink-2 hover:border-mz-primary/60'}`}>
-                      <input type="radio" name="cityType" value={t} checked={f.cityType === t} onChange={set('cityType')} className="sr-only" />
-                      <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${f.cityType === t ? 'border-mz-primary bg-mz-primary' : 'border-mz-line-strong bg-white'}`} aria-hidden="true">
-                        {f.cityType === t && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
-                      </span>
-                      {t}
-                    </label>
-                  ))}
-                </div>
-                {errors.cityType && <span role="alert" className="mt-1 block text-[13px] text-[#B42318]">{errors.cityType}</span>}
-              </fieldset>
+              <div className="sm:col-span-2">
+                <Field label="Website" optional>
+                  <input value={f.website} onChange={set('website')} placeholder="www.example.com" inputMode="url" autoComplete="url" className={inputCls(false)} />
+                </Field>
+              </div>
             </>
           )}
 
