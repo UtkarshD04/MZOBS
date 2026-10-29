@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Bookmark, BookmarkCheck, Briefcase, Clock, MapPin, Monitor } from 'lucide-react'
+import { Bookmark, BookmarkCheck, Briefcase, Clock, MapPin, Monitor, Smile } from 'lucide-react'
 import { CompanyLogo } from './primitives'
 import { isJobSaved, toggleJobSaved } from '../../lib/savedJobs'
+import { useAppliedJobIds } from '../../lib/appliedJobs'
 import { useToast } from './Toast'
 
 export function postedLabel(days) {
@@ -36,6 +37,7 @@ export default function JobCard({ job }) {
   // first client paint must match the server markup.
   const [saved, setSaved] = useState(false)
   useEffect(() => setSaved(isJobSaved(job)), [job])
+  const alreadyApplied = useAppliedJobIds().has(job.id)
 
   function toggleSave() {
     const next = toggleJobSaved(job)
@@ -101,14 +103,25 @@ export default function JobCard({ job }) {
             {postedLabel(job.postedDaysAgo)}
           </span>
         </div>
-        <Link
-          to={jobPath(job)}
-          state={{ job, apply: true }}
-          className="relative z-10 inline-flex h-9 items-center rounded-full bg-mz-ink px-4 text-[13px] font-semibold text-white transition-colors hover:bg-mz-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
-          aria-label={`Apply for ${job.title} at ${job.company}`}
-        >
-          Apply
-        </Link>
+        {alreadyApplied ? (
+          <span
+            title="You have already applied for this role"
+            aria-label={`You have already applied for ${job.title} at ${job.company}`}
+            className="relative z-10 inline-flex h-9 items-center gap-1.5 rounded-full bg-mz-primary-tint px-4 text-[13px] font-semibold text-mz-primary-strong"
+          >
+            <Smile size={15} aria-hidden="true" />
+            Applied
+          </span>
+        ) : (
+          <Link
+            to={jobPath(job)}
+            state={{ job, apply: true }}
+            className="relative z-10 inline-flex h-9 items-center rounded-full bg-mz-ink px-4 text-[13px] font-semibold text-white transition-colors hover:bg-mz-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mz-primary"
+            aria-label={`Apply for ${job.title} at ${job.company}`}
+          >
+            Apply
+          </Link>
+        )}
       </div>
     </article>
   )
