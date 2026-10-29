@@ -56,7 +56,7 @@ function DetailModal({ app, item }) {
           <div><span className="text-ink-tertiary">Phone · </span><span className="font-semibold">{item.phone}</span></div>
           <div><span className="text-ink-tertiary">Email · </span><span className="font-semibold break-all">{item.email}</span></div>
           <div><span className="text-ink-tertiary">Website · </span><span className="font-semibold break-all">{item.website || '—'}</span></div>
-          <div><span className="text-ink-tertiary">City · </span><span className="font-semibold">{item.city} ({item.cityType})</span></div>
+          <div><span className="text-ink-tertiary">City · </span><span className="font-semibold">{[item.city, item.state].filter(Boolean).join(', ')}{item.cityType ? ` (${item.cityType})` : ''}</span></div>
           <div><span className="text-ink-tertiary">Submitted · </span><span className="font-semibold">{new Date(item.createdAt).toLocaleString('en-IN')}</span></div>
         </div>
 
@@ -143,10 +143,10 @@ export default function Associates() {
                       <span className="text-[14.5px] font-semibold">{r.companyName}</span>
                       <Badge tone={STATUS_TONE[r.status] ?? 'gray'}>{r.status}</Badge>
                       {r.code && <Badge tone="green">{r.code}</Badge>}
-                      <Badge tone="gray">{r.cityType}</Badge>
+                      {r.cityType && <Badge tone="gray">{r.cityType}</Badge>}
                     </div>
                     <div className="flex items-center gap-x-4 gap-y-1 flex-wrap text-xs text-ink-tertiary mt-1.5">
-                      <span className="inline-flex items-center gap-1.5"><MapPin size={11} />{r.city}</span>
+                      <span className="inline-flex items-center gap-1.5"><MapPin size={11} />{[r.city, r.state].filter(Boolean).join(', ')}</span>
                       <span>{r.contactName}</span>
                       <span className="inline-flex items-center gap-1.5"><Mail size={11} />{r.email}</span>
                       <span className="inline-flex items-center gap-1.5"><Phone size={11} />{r.phone}</span>
