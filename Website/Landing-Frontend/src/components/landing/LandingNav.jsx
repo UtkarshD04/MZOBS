@@ -34,8 +34,8 @@ export default function LandingNav() {
 
   return (
     <>
-      <header style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,0.78)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', borderBottom: '1px solid rgba(230,232,240,0.8)' }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, fontSize: 13 }}>
+      <header style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,0.94)', borderBottom: '1px solid rgba(230,232,240,0.8)' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, fontSize: 14 }}>
           <Link to="/" aria-label="Mzobs home" style={{ display: "flex", alignItems: "center" }}>
             <img src="/images/logo-mark.png" alt="Mzobs" width={1770} height={564} style={{ height: 24, width: "auto" }} />
           </Link>
