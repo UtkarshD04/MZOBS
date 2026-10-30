@@ -10,7 +10,7 @@
 .lp-scrolly .pin-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
 .lp .hero-inner{padding:120px 24px 90px;display:flex;flex-direction:column;align-items:center}
 .lp .hero-layer{display:flex;flex-direction:column;align-items:center;text-align:center}
-.lp .hero-word{transform-origin:50% 85%;will-change:transform}
+.lp .hero-word{transform-origin:50% 85%;will-change:transform;backface-visibility:hidden}
 .lp .hero-device{margin-top:72px;width:min(1120px,100%);will-change:transform}
 .lp-scrolly .hero-inner{padding:0;display:block}
 .lp-scrolly .hero-layer{position:absolute;inset:0;justify-content:center;padding:0 24px}
