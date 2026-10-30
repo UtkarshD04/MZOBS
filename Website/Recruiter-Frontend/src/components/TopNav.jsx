@@ -258,7 +258,7 @@ export default function TopNav({ onAskAI }) {
             {rowTwo.map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} pill />)}
             {menuItems.length > 0 && (
               <div ref={more.ref} className="relative">
-                <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${menuItems.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
+                <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-full border px-3 py-1 text-[13px] font-bold transition-colors ${menuItems.some((r) => isRouteActive(r, pathname)) ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-white text-ink/75 hover:border-accent hover:text-accent'}`}>
                   More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
                 </button>
                 {more.open && (
