@@ -94,7 +94,7 @@ function NavItem({ route, onClick, className, label }) {
       to={route.path}
       onClick={onClick}
       aria-current={active ? 'page' : undefined}
-      className={clsx('relative transition-colors', LINK, className, active ? 'text-accent after:absolute after:inset-x-2 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
+      className={clsx('relative transition-colors', LINK, className, active ? 'text-accent after:absolute after:inset-x-2 after:-bottom-[5px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
     >
       {label ?? route.label}
     </Link>
@@ -181,7 +181,7 @@ function PlanPill() {
   return (
     <Link to="/credits" title={IS_DEMO ? 'Demo workspace' : plan ? (plan.active ? `Plan active${plan.expiresAt ? ` until ${new Date(plan.expiresAt).toLocaleDateString('en-IN')}` : ''}` : 'No active plan') : 'Plan & credits'} className={`hidden items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold transition-all duration-200 hover:-translate-y-px md:flex ${needsPlan ? 'border-transparent text-white shadow-[0_1px_1px_rgba(8,104,94,0.3)] [background-image:var(--grad-accent)]' : warn ? 'border border-[#f3dfb8] bg-warn-soft text-warn' : 'border border-ink/15 text-ink hover:bg-accent-soft'}`}>
       <CreditCard size={14} className={needsPlan || warn ? '' : 'text-accent'} />
-      {IS_DEMO ? 'Demo plan' : plan ? (plan.active ? <>{plan.credits}<span className="hidden min-[1700px]:inline">&nbsp;credits</span><span className="sr-only min-[1700px]:hidden"> credits</span></> : 'Subscribe') : 'Credits'}
+      {IS_DEMO ? 'Demo plan' : plan ? (plan.active ? `${plan.credits} credits` : 'Subscribe') : 'Credits'}
     </Link>
   )
 }
@@ -209,30 +209,11 @@ export default function TopNav({ onAskAI }) {
   const barLabel = (r) => BAR_LABEL[r.path] ?? r.label
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-bg/90 shadow-[0_1px_0_rgba(14,34,55,0.03)] backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-4 lg:px-6">
+      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 lg:px-6">
         <button className="grid h-9 w-9 place-items-center rounded-lg hover:bg-line-2 xl:hidden" onClick={() => setMobile((v) => !v)} aria-label="Menu">
           {mobile ? <X size={18} /> : <Menu size={18} />}
         </button>
-        <Logo compact />
-        <nav ref={navRef} className="relative ml-2 hidden min-w-0 flex-1 items-center gap-0.5 xl:flex" aria-label="Primary">
-          {barItems.slice(0, fit).map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} />)}
-          <div ref={more.ref} className="relative">
-            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${menuItems.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
-              More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
-            </button>
-            {more.open && (
-              <div role="menu" className="fade-up absolute left-0 top-10 z-50 w-60 rounded-xl border border-line bg-white p-1 shadow-lift">
-                {menuItems.map((r) => (
-                  <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
-                ))}
-              </div>
-            )}
-          </div>
-          <div ref={measureRef} aria-hidden className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex h-0 w-max gap-0.5 overflow-hidden">
-            {barItems.map((r) => <span key={r.path} className={clsx(LINK, 'shrink-0')}>{barLabel(r)}</span>)}
-            <span className={clsx(LINK, 'flex shrink-0 items-center gap-1')}>More <ChevronDown size={14} /></span>
-          </div>
-        </nav>
+        <Logo />
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5">
           <button onClick={onAskAI} title="Ask Mzobs AI (Ctrl K)" aria-label="Ask Mzobs AI" className="hidden items-center gap-2 rounded-full border border-[#bfe6df] bg-accent-soft px-2.5 py-1.5 text-[13px] font-bold text-accent transition-colors hover:bg-[#d5f2ec] md:flex 2xl:px-3.5">
@@ -255,6 +236,27 @@ export default function TopNav({ onAskAI }) {
             </button>
           )}
         </div>
+      </div>
+      <div className="mx-auto hidden max-w-[1600px] border-t border-ink/5 px-4 lg:px-6 xl:block">
+          <nav ref={navRef} className="relative flex h-11 min-w-0 items-center gap-0.5" aria-label="Primary">
+            {barItems.slice(0, fit).map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} />)}
+            <div ref={more.ref} className="relative">
+              <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${menuItems.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
+                More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
+              </button>
+              {more.open && (
+                <div role="menu" className="fade-up absolute left-0 top-10 z-50 w-60 rounded-xl border border-line bg-white p-1 shadow-lift">
+                  {menuItems.map((r) => (
+                    <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div ref={measureRef} aria-hidden className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex h-0 w-max gap-0.5 overflow-hidden">
+              {barItems.map((r) => <span key={r.path} className={clsx(LINK, 'shrink-0')}>{barLabel(r)}</span>)}
+              <span className={clsx(LINK, 'flex shrink-0 items-center gap-1')}>More <ChevronDown size={14} /></span>
+            </div>
+          </nav>
       </div>
       {mobile && (
         <nav className="fade-up grid max-h-[75vh] grid-cols-2 gap-1 overflow-y-auto border-t border-line bg-white p-3 xl:hidden">
