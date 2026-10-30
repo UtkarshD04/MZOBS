@@ -17,7 +17,7 @@ function NavItem({ item, ...props }) {
   return item.href ? <a href={item.href} {...props}>{item.label}</a> : <Link to={item.to} {...props}>{item.label}</Link>
 }
 
-const pill = { display: 'inline-flex', alignItems: 'center', minHeight: 32, padding: '0 14px', borderRadius: 999, textDecoration: 'none', border: 0, font: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer' }
+const pill = { display: 'inline-flex', alignItems: 'center', minHeight: 32, padding: '0 14px', borderRadius: 999, textDecoration: 'none', border: 0, font: 'inherit', fontSize: 14, fontWeight: 600, cursor: 'pointer' }
 
 export default function LandingNav() {
   const navigate = useNavigate()
