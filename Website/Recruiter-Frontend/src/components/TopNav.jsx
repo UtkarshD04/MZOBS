@@ -50,6 +50,7 @@ function useNav() {
 const BAR_LABEL = { '/shortlists': 'Shortlists', '/feedback': 'Feedback', '/credits': 'Credits', '/team': 'Team' }
 const BAR_ORDER = ['/search', '/talent-pool', '/overview', '/jobs', '/applicants', '/messages', '/shortlists', '/unlocked', '/interviews', '/offers', '/reports']
 const rank = (r) => { const i = BAR_ORDER.indexOf(r.path); return i < 0 ? BAR_ORDER.length : i }
+const PILL_EXTRA = 14 // a pill link is this much wider than its measured plain copy (padding, border, gap)
 const LINK = 'whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-bold'
 
 /**
@@ -74,10 +75,10 @@ function useBarFit(rowRef, boxRef, measureRef, sig) {
       const w = kids.map((k) => k.offsetWidth + 2)
       let a = 0
       for (let used = 0; a < w.length && used + w[a] <= avail1; a += 1) used += w[a]
-      const rest = w.slice(a)
+      const rest = w.slice(a).map((x) => x + PILL_EXTRA)
       let b = 0
       if (rest.reduce((t, x) => t + x, 0) <= avail2) b = rest.length
-      else for (let used = moreW; b < rest.length && used + rest[b] <= avail2; b += 1) used += rest[b]
+      else for (let used = moreW + 10; b < rest.length && used + rest[b] <= avail2; b += 1) used += rest[b]
       setFit((f) => (f.a === a && f.b === b ? f : { a, b }))
     }
     calc()
