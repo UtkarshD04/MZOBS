@@ -46,7 +46,7 @@ function useNav() {
   return { primary: ROUTES.filter((r) => r.nav === 'primary' && visible(r)), more: ROUTES.filter((r) => r.nav === 'more' && visible(r)) }
 }
 
-function NavItem({ route, onClick }) {
+function NavItem({ route, onClick, className }) {
   const { pathname } = useLocation()
   const active = isRouteActive(route, pathname)
   return (
@@ -54,7 +54,7 @@ function NavItem({ route, onClick }) {
       to={route.path}
       onClick={onClick}
       aria-current={active ? 'page' : undefined}
-      className={clsx('relative whitespace-nowrap rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors', active ? 'text-accent after:absolute after:inset-x-2.5 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
+      className={clsx('relative whitespace-nowrap rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors', className, active ? 'text-accent after:absolute after:inset-x-2.5 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
     >
       {route.label}
     </Link>
