@@ -90,7 +90,7 @@ function useBarFit(rowRef, boxRef, measureRef, sig) {
   return fit
 }
 
-function NavItem({ route, onClick, className, label, top }) {
+function NavItem({ route, onClick, className, label, top, pill }) {
   const { pathname } = useLocation()
   const active = isRouteActive(route, pathname)
   return (
@@ -98,7 +98,7 @@ function NavItem({ route, onClick, className, label, top }) {
       to={route.path}
       onClick={onClick}
       aria-current={active ? 'page' : undefined}
-      className={clsx('relative transition-colors', LINK, className, top ? 'after:-bottom-[19px]' : 'after:-bottom-[5px]', active ? 'text-accent after:absolute after:inset-x-2 after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
+      className={pill ? clsx('whitespace-nowrap rounded-full border px-3 py-1 text-[13px] font-bold transition-colors', active ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-white text-ink/75 hover:border-accent hover:text-accent') : clsx('relative transition-colors', LINK, className, top ? 'after:-bottom-[19px]' : 'after:-bottom-[5px]', active ? 'text-accent after:absolute after:inset-x-2 after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
     >
       {label ?? route.label}
     </Link>
