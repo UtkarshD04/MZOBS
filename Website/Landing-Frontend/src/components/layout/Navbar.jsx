@@ -248,7 +248,7 @@ export default function Navbar() {
                   ) : (
                     <>
                       {showEmployer && (
-                        <Link to="/employers" onClick={() => setOpen(false)} className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-white text-[#0b7a6d] shadow-[inset_0_0_0_1.5px_#0b7a6d] hover:bg-[#0b7a6d]/10 w-full h-10">
+                        <Link to="/employers" onClick={() => setOpen(false)} className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[14px] font-semibold transition-colors bg-white text-[#0b7a6d] shadow-[inset_0_0_0_1.5px_#0b7a6d] hover:bg-[#0b7a6d]/10 w-full h-10">
                           Employer
                         </Link>
                       )}
@@ -259,12 +259,12 @@ export default function Navbar() {
                             setOpen(false)
                             setAuthModalOpen(true)
                           }}
-                          className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55] w-full h-10"
+                          className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[14px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55] w-full h-10"
                         >
                           Sign in
                         </button>
                       ) : (
-                        <Link to={CLIENT_ONLY_ROUTES.candidates} onClick={() => setOpen(false)} className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55] w-full h-10">
+                        <Link to={CLIENT_ONLY_ROUTES.candidates} onClick={() => setOpen(false)} className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[14px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55] w-full h-10">
                           Candidate
                         </Link>
                       )}
