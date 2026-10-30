@@ -6,7 +6,7 @@ import { IS_DEMO } from '../lib/config'
 import { canonCity } from '../lib/talent/vocab'
 import { buildLocationStats } from '../lib/talent/geoStats'
 import { getPoolRows } from '../services/talentService'
-import { getHiringPincodes, getLocationFacets, getStates, getPinInfo, peekPinInfo, areaSummary, isPin, RADIUS_OPTIONS } from '../services/geoService'
+import { getHiringPincodes, getLocationFacets, getStates, getPinInfo, prefetchPinInfo, peekPinInfo, isPinSettled, areaSummary, isPin, RADIUS_OPTIONS } from '../services/geoService'
 
 // Mzobs Talent Radar — the Location filter. Four connected steps (state → city → PIN → reach)
 // that all write to the same search criteria (state, locations, pincode, pinNearby, prefLocations, relocate).
@@ -52,7 +52,7 @@ function Meter({ value, max, tone = 'accent' }) {
  * Multi-pick keeps `selected` keys highlighted; the caller decides what a pick does.
  */
 const PAGE = 8
-function Picker({ id, resetKey, label, icon: Icon, value, placeholder, options, selected = [], onPick, onClear, sorts, sort, onSort, searchPlaceholder, emptyText, status, disabled, headerNote }) {
+function Picker({ id, resetKey, label, icon: Icon, value, placeholder, options, selected = [], onPick, onClear, sorts, sort, onSort, searchPlaceholder, emptyText, status, disabled, headerNote, onOpen, onClose }) {
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
   const [active, setActive] = useState(0)
@@ -69,7 +69,7 @@ function Picker({ id, resetKey, label, icon: Icon, value, placeholder, options, 
   }, [open])
   // A parent selection changed underneath this list: close it rather than leave stale options open.
   useEffect(() => setOpen(false), [resetKey])
-  useEffect(() => { if (open) { setQ(''); setActive(0); setLimit(PAGE); setTimeout(() => input.current?.focus(), 0) } }, [open])
+  useEffect(() => { if (open) { setQ(''); setActive(0); setLimit(PAGE); setTimeout(() => input.current?.focus(), 0); onOpen?.() } else onClose?.() }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { setActive(0); setLimit(PAGE) }, [q])
 
   const shown = options.filter((o) => !q.trim() || o.label.toLowerCase().includes(q.trim().toLowerCase()) || (typeof o.alt === 'function' ? o.alt() : o.alt)?.toLowerCase().includes(q.trim().toLowerCase()))
@@ -230,6 +230,9 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
   const [pinSort, setPinSort] = useState('hiring')
   const [customOpen, setCustomOpen] = useState(c.prefLocations.length > 0 || c.relocate)
   const [distOpen, setDistOpen] = useState(false)
+  const [pinTick, setPinTick] = useState(0) // bumps as locality lookups land so PIN search re-reads the cache
+  const [prefetch, setPrefetch] = useState({ running: false, failed: 0 })
+  const prefetchCtl = useRef(null)
 
   // Reference data: the candidate pool, this company's job cities, and the state / UT list.
   useEffect(() => {
@@ -314,16 +317,37 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
       const cs = stats?.pins.get(p.pin)
       return {
         key: p.pin, label: p.pin, active: p.active, match: cs?.match ?? 0,
-        alt: () => (peekPinInfo(p.pin)?.areas ?? []).join(' '),
+        alt: () => { const i = peekPinInfo(p.pin); return i ? [...i.areas, i.district].join(' ') : '' },
         body: () => <PinBody pin={p.pin} cityNames={[...p.cityNames]} active={p.active} match={cs?.match ?? 0} maxActive={maxActive} />,
       }
     })
-  }, [hiringPins, stats])
+  }, [hiringPins, stats, pinTick])
   const sortedPins = useMemo(() => [...pinOptions].sort(PIN_SORTS[pinSort].by), [pinOptions, pinSort])
   const pinStat = c.pincode && stats?.pins.get(c.pincode)
   const pinOpen = hiringPins.find((p) => p.pin === c.pincode)?.active
 
   const chosen = usePinInfo(c.pincode, true)
+
+  // Opening the PIN picker looks up locality names for every listed PIN so locality search covers the whole list.
+  // Lookups are cached and deduped in geoService; closing the picker, or the list changing, stops the queue.
+  const stopPrefetch = () => { if (prefetchCtl.current) prefetchCtl.current.cancelled = true }
+  const startPrefetch = () => {
+    stopPrefetch()
+    if (IS_DEMO) return
+    const pins = hiringPins.map((p) => p.pin)
+    const ctl = { cancelled: false }
+    prefetchCtl.current = ctl
+    if (pins.every(isPinSettled)) { setPrefetch({ running: false, failed: 0 }); return }
+    setPrefetch({ running: true, failed: 0 })
+    prefetchPinInfo(pins, ctl, () => setPinTick((t) => t + 1)).then(({ failed }) => {
+      if (!ctl.cancelled) setPrefetch({ running: false, failed })
+    })
+  }
+  const closePrefetch = () => { stopPrefetch(); setPrefetch((x) => (x.running ? { ...x, running: false } : x)) }
+  useEffect(() => stopPrefetch, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const pinsKey = hiringPins.map((p) => p.pin).join(',')
+  useEffect(() => { stopPrefetch(); setPrefetch({ running: false, failed: 0 }) }, [pinsKey]) // the city / state changed under a running lookup
+  const located = hiringPins.filter((p) => isPinSettled(p.pin)).length
 
   // ---- Handlers: a parent change resets only the dependent picks that no longer fit ----
   const cityFits = (name, sKey) => {
@@ -434,10 +458,10 @@ export default function LocationRadar({ criteria: c, set, meta, relocationEnable
                   value={c.pincode} placeholder={`${hiringPins.length} PIN code${hiringPins.length === 1 ? '' : 's'} hiring`}
                   options={sortedPins}
                   selected={[c.pincode]} onPick={pickPin} onClear={c.pincode ? () => set({ pincode: '', pinNearby: false }) : undefined}
-                  sorts={PIN_SORTS} sort={pinSort} onSort={setPinSort}
+                  sorts={PIN_SORTS} sort={pinSort} onSort={setPinSort} onOpen={startPrefetch} onClose={closePrefetch}
                   searchPlaceholder="Search PIN code or locality" emptyText="No hiring PIN code matches"
                   status={loading ? 'loading' : undefined}
-                  headerNote={`Openings are your active jobs saved with that PIN${cityOpenings > pinnedOpenings ? ` · ${n(cityOpenings - pinnedOpenings)} more in these cities have no PIN` : ''}. Matching = candidates with that PIN who fit your other filters.`}
+                  headerNote={`Openings are your active jobs saved with that PIN${cityOpenings > pinnedOpenings ? ` · ${n(cityOpenings - pinnedOpenings)} more in these cities have no PIN` : ''}. Matching = candidates with that PIN who fit your other filters.${prefetch.running ? ` Loading locality names… ${n(located)}/${n(hiringPins.length)}` : prefetch.failed ? ` Locality names couldn’t be loaded for ${n(prefetch.failed)} PIN${prefetch.failed === 1 ? '' : 's'}; search those by PIN code, or reopen to retry.` : ''}`}
                 />
               )}
             </>

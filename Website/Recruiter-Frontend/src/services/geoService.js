@@ -81,6 +81,8 @@ const takeToken = async () => {
 
 /** Already-fetched info for a PIN (or null) — never triggers a request. */
 export const peekPinInfo = (pin) => pinCache.get(pin)?.info ?? null
+/** True once a PIN lookup has settled (found, or confirmed absent from the directory); failures stay unsettled. */
+export const isPinSettled = (pin) => pinCache.has(pin)
 
 /** @returns {Promise<{district:string,state:string,areas:string[]}|null>} null when the directory has no entry for the PIN. */
 export function getPinInfo(pin) {
@@ -98,6 +100,25 @@ export function getPinInfo(pin) {
     .finally(() => pinPending.delete(pin))
   pinPending.set(pin, p)
   return p
+}
+
+/**
+ * Warms the PIN cache for a list of PINs, a few at a time, through the same paced/deduped getPinInfo.
+ * `ctl.cancelled` stops the run early (e.g. the city changed). Resolves { failed } — PINs whose lookup errored
+ * (those are not cached, so the next call retries them). Already-cached PINs cost nothing.
+ */
+export async function prefetchPinInfo(pins, ctl = {}, onSettled, concurrency = 4) {
+  const todo = [...new Set(pins)].filter((p) => isPin(p) && !pinCache.has(p))
+  let failed = 0
+  const worker = async () => {
+    while (todo.length && !ctl.cancelled) {
+      const pin = todo.shift()
+      try { await getPinInfo(pin) } catch { failed += 1 }
+      if (!ctl.cancelled) onSettled?.()
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, todo.length) }, worker))
+  return { failed }
 }
 
 /** "Gomti Nagar, Vikas Nagar +2" — the postal areas a PIN covers, never one area standing in for all. */
