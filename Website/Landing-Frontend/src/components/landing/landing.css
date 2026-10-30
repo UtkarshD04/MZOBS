@@ -264,3 +264,11 @@
   .lp .co-dup{display:none}
   .lp .co-row+.co-row{display:none}
 }
+
+/* button polish: soft teal glow and a small lift on hover */
+.lp .btn,.lp .nm-cta,.lp .aud-btn{transition:background-color .2s,color .2s,box-shadow .25s,transform .25s}
+.lp .nm-cta:not(.ghost):hover,.lp .aud-btn.solid:hover,.lp .aud-btn.dark:hover{transform:translateY(-2px);box-shadow:0 14px 28px -12px rgba(11,122,109,.55)}
+.lp .btn:hover{box-shadow:0 14px 28px -12px rgba(11,122,109,.5)}
+@media (prefers-reduced-motion:reduce){
+  .lp .nm-cta:not(.ghost):hover,.lp .aud-btn.solid:hover,.lp .aud-btn.dark:hover{transform:none}
+}
