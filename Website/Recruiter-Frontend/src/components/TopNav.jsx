@@ -46,6 +46,9 @@ function useNav() {
   return { primary: ROUTES.filter((r) => r.nav === 'primary' && visible(r)), more: ROUTES.filter((r) => r.nav === 'more' && visible(r)) }
 }
 
+// Primary links beyond this many collapse into the More menu until the screen is wide enough for all of them.
+const BAR_FIT = 5
+
 function NavItem({ route, onClick, className }) {
   const { pathname } = useLocation()
   const active = isRouteActive(route, pathname)
@@ -169,13 +172,16 @@ export default function TopNav({ onAskAI }) {
         </button>
         <Logo />
         <nav className="ml-4 hidden items-center gap-0.5 xl:flex" aria-label="Primary">
-          {PRIMARY.map((r) => <NavItem key={r.path} route={r} />)}
+          {PRIMARY.map((r, i) => <NavItem key={r.path} route={r} className={i >= BAR_FIT ? 'hidden min-[1700px]:block' : undefined} />)}
           <div ref={more.ref} className="relative">
-            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors ${MORE.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
+            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors ${[...MORE, ...PRIMARY.slice(BAR_FIT)].some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
               More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
             </button>
             {more.open && (
               <div role="menu" className="fade-up absolute left-0 top-10 z-50 w-60 rounded-xl border border-line bg-white p-1 shadow-lift">
+                {PRIMARY.slice(BAR_FIT).map((r) => (
+                  <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 min-[1700px]:hidden ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
+                ))}
                 {MORE.map((r) => (
                   <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
                 ))}
