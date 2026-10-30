@@ -46,7 +46,7 @@ export default function Hero() {
           <div className="hero-layer">
             <p className="tw" data-hw="0" style={{ margin: '0 0 18px', fontSize: 15, fontWeight: 600, color: '#0b7a6d' }}>Talent × Opportunity × Smart Hiring</p>
             <h1 className="hero-word" style={{ margin: 0, lineHeight: 0 }}>
-              <img src="/images/logo-mark.png" alt="Mzobs" width={1770} height={564} fetchPriority="high" style={{ display: 'block', width: 'clamp(300px, 64vw, 1000px)', height: 'auto' }} />
+              <img src="/images/logo-mark.svg" alt="Mzobs" width={1770} height={564} fetchPriority="high" style={{ display: 'block', width: 'clamp(300px, 64vw, 1000px)', height: 'auto' }} />
             </h1>
             <p style={{ margin: '34px 0 0', fontWeight: 700, fontSize: 'clamp(30px, 4.4vw, 64px)', lineHeight: 1.05, letterSpacing: '-0.04em', color: '#111827' }}>
               <span className="tw" data-hw="1">Unstoppable,</span> <span className="tw" data-hw="2">yet</span>{' '}
