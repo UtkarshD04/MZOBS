@@ -8,6 +8,7 @@ import ScrollToTopButton from './components/ui/ScrollToTopButton'
 import CookieConsent from './components/ui/CookieConsent'
 import DussehraGreeting from './components/ui/DussehraGreeting'
 import Home from './pages/Home'
+import CandidateHome from './pages/CandidateHome'
 // Everything below stays a regular (eager) import because server.js/
 // scripts/prerender.js call entry-server.jsx's render() — a synchronous
 // renderToString — for these: JobDetail and the catch-all (NotFound, or
@@ -106,6 +107,7 @@ export default function App() {
         <Suspense fallback={<RouteFallback />}>
           <Routes location={location}>
             <Route path="/" element={<Home />} />
+            <Route path={CLIENT_ONLY_ROUTES.candidates} element={<CandidateHome />} />
             {/* /jobs on its own has no page of its own: the job board is the homepage. */}
             <Route path="/jobs" element={<Navigate to="/" replace />} />
             <Route path="/jobs/cities" element={<AllCities />} />
