@@ -59,7 +59,7 @@ const LINK = 'whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-bold'
  * follows the real window size, zoom and fonts. Only if both rows are full do the leftover links go in More.
  */
 function useBarFit(rowRef, boxRef, measureRef, sig) {
-  const [fit, setFit] = useState({ a: 6, b: 6 })
+  const [fit, setFit] = useState({ a: 6, b: 6, lead: 0 })
   useLayoutEffect(() => {
     const row = rowRef.current
     const box = boxRef.current
@@ -69,7 +69,8 @@ function useBarFit(rowRef, boxRef, measureRef, sig) {
       const avail1 = row.clientWidth
       if (!avail1) return // bar is hidden (mobile menu in use)
       const cs = getComputedStyle(box)
-      const avail2 = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+      const lead = Math.round(row.getBoundingClientRect().left - box.getBoundingClientRect().left - parseFloat(cs.paddingLeft)) + 8 // under the first link's text
+      const avail2 = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - lead
       const kids = [...m.children]
       const moreW = kids.pop()?.offsetWidth ?? 0
       const w = kids.map((k) => k.offsetWidth + 2)
@@ -79,7 +80,7 @@ function useBarFit(rowRef, boxRef, measureRef, sig) {
       let b = 0
       if (rest.reduce((t, x) => t + x, 0) <= avail2) b = rest.length
       else for (let used = moreW + 10; b < rest.length && used + rest[b] <= avail2; b += 1) used += rest[b]
-      setFit((f) => (f.a === a && f.b === b ? f : { a, b }))
+      setFit((f) => (f.a === a && f.b === b && f.lead === lead ? f : { a, b, lead }))
     }
     calc()
     const ro = new ResizeObserver(calc)
