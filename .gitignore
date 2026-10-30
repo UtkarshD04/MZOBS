@@ -11,3 +11,5 @@ Mobile-App/
 # Scratch/manual-QA artifacts (screen recordings, etc.) — not build output,
 # not meant to be committed
 tmp-proof/
+# Employer App lives in its own repo: github.com/UtkarshD04/Employer-App
+Employer App/
