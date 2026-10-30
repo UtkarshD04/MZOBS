@@ -13,7 +13,7 @@
 .lp .hero-word{transform-origin:50% 85%;will-change:transform;backface-visibility:hidden}
 .lp .hero-device{margin-top:72px;width:min(1120px,100%);will-change:transform}
 .lp-scrolly .hero-inner{padding:0;display:block}
-.lp-scrolly .hero-layer{position:absolute;inset:0;justify-content:center;padding:0 24px}
+.lp-scrolly .hero-layer{will-change:transform;position:absolute;inset:0;justify-content:center;padding:0 24px}
 .lp-scrolly .hero-device{position:absolute;left:0;right:0;bottom:0;margin:0 auto;width:min(1120px,92vw);height:66vh;overflow:hidden}
 .lp .tw{display:inline-block;will-change:transform,opacity}
 .lp .hero-split{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr}
