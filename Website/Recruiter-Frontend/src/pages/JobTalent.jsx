@@ -56,7 +56,7 @@ export default function JobTalent() {
       {jobs && jobs.length === 0 && <EmptyState icon={Briefcase} title="No jobs to match against" body="Post a job and its requirements will drive the search here." />}
       {jobs && jobs.length > 0 && (
         <div className="mt-5 grid gap-5 lg:grid-cols-[320px_minmax(0,1fr)]">
-          <aside className="lg:sticky lg:top-20 lg:self-start">
+          <aside className="lg:sticky lg:top-20 xl:top-[116px] lg:self-start">
             <button type="button" onClick={() => setFiltersOpen((v) => !v)} aria-expanded={filtersOpen} className="mb-3 flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-line bg-white text-[13.5px] font-semibold lg:hidden"><SlidersHorizontal size={15} /> Filters</button>
             <div className={filtersOpen ? 'block' : 'hidden lg:block'}>
               <div className="mb-3 flex items-center justify-between rounded-lg border border-line bg-white px-3 py-2 text-[12.5px]">
