@@ -56,7 +56,7 @@ export default function Hero() {
           <p data-hint="" style={{ position: 'absolute', left: 0, right: 0, bottom: 28, margin: 0, textAlign: 'center', fontSize: 13, fontWeight: 600, color: '#667085', opacity: 0 }}>Scroll ↓</p>
 
           <div className="hero-device">
-            <div style={{ height: '100%', borderRadius: '22px 22px 0 0', background: '#111827', padding: '12px 12px 0', boxShadow: '0 -30px 80px -40px rgba(17,24,39,0.45)' }}>
+            <div style={{ height: '100%', borderRadius: '22px 22px 0 0', background: '#111827', padding: '12px 12px 0', boxShadow: '0 -12px 32px -20px rgba(17,24,39,0.35)' }}>
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: '12px 12px 0 0', overflow: 'hidden', background: '#111827' }}>
               <div style={{ flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '14px 24px', background: '#fff', borderBottom: '1px solid #e6e8f0' }}>
                 <img src="/images/logo-mark.png" alt="" style={{ height: 22, width: 'auto' }} />
