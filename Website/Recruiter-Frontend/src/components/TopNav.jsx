@@ -254,8 +254,8 @@ export default function TopNav({ onAskAI }) {
       </div>
       {(rowTwo.length > 0 || menuItems.length > 0) && (
         <div className="mx-auto hidden max-w-[1600px] border-t border-ink/5 px-4 lg:px-6 xl:block">
-          <nav className="flex h-11 min-w-0 items-center gap-0.5" aria-label="More links">
-            {rowTwo.map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} />)}
+          <nav className="flex h-11 min-w-0 items-center gap-1.5" aria-label="More links">
+            {rowTwo.map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} pill />)}
             {menuItems.length > 0 && (
               <div ref={more.ref} className="relative">
                 <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${menuItems.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
