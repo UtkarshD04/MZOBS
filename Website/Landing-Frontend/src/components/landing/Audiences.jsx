@@ -127,19 +127,25 @@ function Ally() {
         <Intro
           label="Mzobs Ally"
           title="Represent Mzobs on your campus."
-          lead="A Mzobs Ally is a student who connects their campus with career opportunities, hiring initiatives and events."
-          note={<><b>Who can apply:</b> 3rd and 4th year students with at least 4 semesters completed.</>}
+          lead="A Mzobs Ally is a student who connects their campus with career opportunities, hiring initiatives and events. You help classmates get hired and build real-world experience of your own."
         >
-          <Link to={CLIENT_ONLY_ROUTES.ally} className="aud-btn light">Become an Ally</Link>
+          <Link to={CLIENT_ONLY_ROUTES.ally} className="aud-btn dark">Become an Ally</Link>
         </Intro>
-        <List
-          items={[
-            ['Represent', 'Bring the Mzobs experience to your community.'],
-            ['Connect', 'Connect students with relevant opportunities and initiatives.'],
-            ['Create impact', 'Help more people discover opportunities that matter.'],
-          ]}
-        />
+        <div data-r="" className="aud-who">
+          <p className="k">Who can apply</p>
+          <p className="big">3rd and 4th year students</p>
+          <p>with at least 4 semesters completed for 8-semester courses, or the equivalent for your course length.</p>
+        </div>
       </div>
+      <ol className="aud-roles">
+        {ALLY_ROLES.map(([n, t, p]) => (
+          <li key={t} data-r="">
+            <span className="n">{n}</span>
+            <h3>{t}</h3>
+            <p>{p}</p>
+          </li>
+        ))}
+      </ol>
     </section>
   )
 }
