@@ -46,40 +46,44 @@ function useNav() {
   return { primary: ROUTES.filter((r) => r.nav === 'primary' && visible(r)), more: ROUTES.filter((r) => r.nav === 'more' && visible(r)) }
 }
 
-// Two links from More that recruiters use constantly; they join the bar whenever there is room for them.
-const PROMOTED = ['/shortlists', '/unlocked']
+// Bar order: the everyday recruiter links first, then the rest of the routes in their own order.
 const BAR_LABEL = { '/shortlists': 'Shortlists', '/feedback': 'Feedback', '/credits': 'Credits', '/team': 'Team' }
 const BAR_ORDER = ['/search', '/talent-pool', '/overview', '/jobs', '/applicants', '/messages', '/shortlists', '/unlocked', '/interviews', '/offers', '/reports']
 const rank = (r) => { const i = BAR_ORDER.indexOf(r.path); return i < 0 ? BAR_ORDER.length : i }
 const LINK = 'whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-bold'
 
 /**
- * How many bar links fit. Measured from an invisible copy of every link (plus the More button, which always keeps
- * its slot), so it follows the real width — window size, zoom, fonts — instead of guessed breakpoints.
- * Links that do not fit are listed in the More menu, so nothing disappears.
+ * Splits the links over two rows: row one is the space beside the logo, row two runs the full width below it.
+ * Widths are measured from an invisible copy of every link (the last child is the More button), so the split
+ * follows the real window size, zoom and fonts. Only if both rows are full do the leftover links go in More.
  */
-function useBarFit(navRef, measureRef, sig) {
-  const [fit, setFit] = useState(5)
+function useBarFit(rowRef, boxRef, measureRef, sig) {
+  const [fit, setFit] = useState({ a: 6, b: 6 })
   useLayoutEffect(() => {
-    const nav = navRef.current
+    const row = rowRef.current
+    const box = boxRef.current
     const m = measureRef.current
-    if (!nav || !m) return
+    if (!row || !box || !m) return
     const calc = () => {
-      const avail = nav.clientWidth
-      if (!avail) return // bar is hidden (mobile menu in use)
+      const avail1 = row.clientWidth
+      if (!avail1) return // bar is hidden (mobile menu in use)
+      const cs = getComputedStyle(box)
+      const avail2 = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
       const kids = [...m.children]
-      let used = kids.pop()?.offsetWidth ?? 0 // More button
-      let n = 0
-      for (const k of kids) {
-        used += k.offsetWidth + 2
-        if (used > avail) break
-        n += 1
-      }
-      setFit(n)
+      const moreW = kids.pop()?.offsetWidth ?? 0
+      const w = kids.map((k) => k.offsetWidth + 2)
+      let a = 0
+      for (let used = 0; a < w.length && used + w[a] <= avail1; a += 1) used += w[a]
+      const rest = w.slice(a)
+      let b = 0
+      if (rest.reduce((t, x) => t + x, 0) <= avail2) b = rest.length
+      else for (let used = moreW; b < rest.length && used + rest[b] <= avail2; b += 1) used += rest[b]
+      setFit((f) => (f.a === a && f.b === b ? f : { a, b }))
     }
     calc()
     const ro = new ResizeObserver(calc)
-    ro.observe(nav)
+    ro.observe(row)
+    ro.observe(box)
     document.fonts?.ready.then(calc)
     return () => ro.disconnect()
   }, [sig]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -201,19 +205,29 @@ export default function TopNav({ onAskAI }) {
   const [mobile, setMobile] = useState(false)
   const { pathname } = useLocation()
   useEffect(() => setMobile(false), [pathname])
-  const navRef = useRef(null)
+  const rowRef = useRef(null)
+  const boxRef = useRef(null)
   const measureRef = useRef(null)
-  const barItems = [...PRIMARY, ...MORE.filter((r) => PROMOTED.includes(r.path))].sort((a, b) => rank(a) - rank(b))
-  const fit = useBarFit(navRef, measureRef, barItems.map((r) => r.path).join('|'))
-  const menuItems = [...barItems.slice(fit), ...MORE.filter((r) => !barItems.includes(r))]
+  const items = [...PRIMARY, ...MORE].sort((a, b) => rank(a) - rank(b))
+  const fit = useBarFit(rowRef, boxRef, measureRef, items.map((r) => r.path).join('|'))
+  const rowOne = items.slice(0, fit.a)
+  const rowTwo = items.slice(fit.a, fit.a + fit.b)
+  const menuItems = items.slice(fit.a + fit.b)
   const barLabel = (r) => BAR_LABEL[r.path] ?? r.label
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-bg/90 shadow-[0_1px_0_rgba(14,34,55,0.03)] backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 lg:px-6">
+      <div ref={boxRef} className="relative mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 lg:px-6">
         <button className="grid h-9 w-9 place-items-center rounded-lg hover:bg-line-2 xl:hidden" onClick={() => setMobile((v) => !v)} aria-label="Menu">
           {mobile ? <X size={18} /> : <Menu size={18} />}
         </button>
         <Logo />
+        <nav ref={rowRef} className="ml-2 hidden min-w-0 flex-1 items-center gap-0.5 xl:flex" aria-label="Primary">
+          {rowOne.map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} top />)}
+        </nav>
+        <div ref={measureRef} aria-hidden className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex h-0 w-max gap-0.5 overflow-hidden">
+          {items.map((r) => <span key={r.path} className={clsx(LINK, 'shrink-0')}>{barLabel(r)}</span>)}
+          <span className={clsx(LINK, 'flex shrink-0 items-center gap-1')}>More <ChevronDown size={14} /></span>
+        </div>
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5">
           <button onClick={onAskAI} title="Ask Mzobs AI (Ctrl K)" aria-label="Ask Mzobs AI" className="hidden items-center gap-2 rounded-full border border-[#bfe6df] bg-accent-soft px-2.5 py-1.5 text-[13px] font-bold text-accent transition-colors hover:bg-[#d5f2ec] md:flex 2xl:px-3.5">
@@ -237,27 +251,27 @@ export default function TopNav({ onAskAI }) {
           )}
         </div>
       </div>
-      <div className="mx-auto hidden max-w-[1600px] border-t border-ink/5 px-4 lg:px-6 xl:block">
-          <nav ref={navRef} className="relative flex h-11 min-w-0 items-center gap-0.5" aria-label="Primary">
-            {barItems.slice(0, fit).map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} />)}
-            <div ref={more.ref} className="relative">
-              <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${menuItems.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
-                More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
-              </button>
-              {more.open && (
-                <div role="menu" className="fade-up absolute left-0 top-10 z-50 w-60 rounded-xl border border-line bg-white p-1 shadow-lift">
-                  {menuItems.map((r) => (
-                    <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div ref={measureRef} aria-hidden className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex h-0 w-max gap-0.5 overflow-hidden">
-              {barItems.map((r) => <span key={r.path} className={clsx(LINK, 'shrink-0')}>{barLabel(r)}</span>)}
-              <span className={clsx(LINK, 'flex shrink-0 items-center gap-1')}>More <ChevronDown size={14} /></span>
-            </div>
+      {(rowTwo.length > 0 || menuItems.length > 0) && (
+        <div className="mx-auto hidden max-w-[1600px] border-t border-ink/5 px-4 lg:px-6 xl:block">
+          <nav className="flex h-11 min-w-0 items-center gap-0.5" aria-label="More links">
+            {rowTwo.map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} />)}
+            {menuItems.length > 0 && (
+              <div ref={more.ref} className="relative">
+                <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${menuItems.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
+                  More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
+                </button>
+                {more.open && (
+                  <div role="menu" className="fade-up absolute left-0 top-10 z-50 w-60 rounded-xl border border-line bg-white p-1 shadow-lift">
+                    {menuItems.map((r) => (
+                      <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </nav>
-      </div>
+        </div>
+      )}
       {mobile && (
         <nav className="fade-up grid max-h-[75vh] grid-cols-2 gap-1 overflow-y-auto border-t border-line bg-white p-3 xl:hidden">
           {[...PRIMARY, ...MORE].map((r) => <NavItem key={r.path} route={r} onClick={() => setMobile(false)} />)}
