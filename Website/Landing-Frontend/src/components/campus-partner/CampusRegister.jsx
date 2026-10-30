@@ -58,7 +58,7 @@ export default function CampusRegister() {
       <section className="overflow-hidden bg-gradient-to-b from-[#EAF6F3] via-[#F2F9F7] to-white pb-16 pt-28 lg:pb-24 lg:pt-36">
         <Container className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.25fr_1fr] lg:gap-14">
           <Reveal y={12}>
-            <p className="text-[13px] font-bold uppercase tracking-[0.16em] text-[#00796B]">For Campus Partners</p>
+            {/* <p className="text-[13px] font-bold uppercase tracking-[0.16em] text-[#00796B]">For Campus Partners</p> */}
             <h1 className="mt-5 max-w-[640px] text-balance text-[#173653] text-[34px] sm:text-[44px] lg:text-[52px] font-extrabold leading-[1.08] tracking-tight">
               <span className="sm:block">Bring Better</span>{' '}
               <span className="text-[#009688] sm:block sm:whitespace-nowrap">Career Opportunities</span>{' '}
@@ -97,7 +97,7 @@ export default function CampusRegister() {
       <section id="campus-benefits" className="scroll-mt-24 bg-white py-16 lg:py-24">
         <Container>
           <Reveal>
-            <SectionTitle eyebrow="Campus benefits" sub="Give your students better access to career opportunities and help your institution build stronger employer connections.">
+            <SectionTitle sub="Give your students better access to career opportunities and help your institution build stronger employer connections.">
               More Than Opportunities. A Stronger Campus-to-Career Journey.
             </SectionTitle>
           </Reveal>
@@ -121,7 +121,7 @@ export default function CampusRegister() {
       <section className="bg-[#EAF6F3] py-16 lg:py-24">
         <Container>
           <Reveal>
-            <SectionTitle eyebrow="How it works" sub="From registration to opportunities — a simple, clear path for your institution.">
+            <SectionTitle sub="From registration to opportunities — a simple, clear path for your institution.">
               Your Campus Partnership Journey
             </SectionTitle>
           </Reveal>
@@ -159,7 +159,7 @@ export default function CampusRegister() {
           </Reveal>
 
           <Reveal delay={0.08}>
-            <SectionTitle align="left" eyebrow="Institutional partnership">
+            <SectionTitle align="left" >
               Build a Stronger Bridge Between Campus and Career.
             </SectionTitle>
             <ul className="mt-8 divide-y divide-[#E6E8F0] border-y border-[#E6E8F0]">
@@ -182,7 +182,7 @@ export default function CampusRegister() {
       {/* FAQ */}
       <section className="border-t border-[#E6E8F0] bg-[#F7F9FC] py-16 lg:py-20">
         <Container>
-          <SectionTitle eyebrow="FAQ">Frequently asked questions</SectionTitle>
+          <SectionTitle >Frequently asked questions</SectionTitle>
           <div className="mx-auto mt-10 max-w-3xl divide-y divide-[#E6E8F0] rounded-2xl border border-[#E6E8F0] bg-white">
             {FAQ.map(({ q, a }) => (
               <details key={q} className="group px-6 py-5">
