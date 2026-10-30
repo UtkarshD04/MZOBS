@@ -6,7 +6,7 @@
 
 /* hero (pinned once JS adds .lp-scrolly) */
 .lp .pin-sticky{position:relative}
-.lp-scrolly .pin-hero{height:280vh}
+.lp-scrolly .pin-hero{height:250vh}
 .lp-scrolly .pin-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
 .lp .hero-inner{padding:120px 24px 90px;display:flex;flex-direction:column;align-items:center}
 .lp .hero-layer{display:flex;flex-direction:column;align-items:center;text-align:center}
