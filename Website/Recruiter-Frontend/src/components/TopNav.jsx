@@ -57,7 +57,7 @@ function NavItem({ route, onClick, className }) {
       to={route.path}
       onClick={onClick}
       aria-current={active ? 'page' : undefined}
-      className={clsx('relative whitespace-nowrap rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors', className, active ? 'text-accent after:absolute after:inset-x-2.5 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
+      className={clsx('relative whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors', className, active ? 'text-accent after:absolute after:inset-x-2 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
     >
       {route.label}
     </Link>
@@ -174,7 +174,7 @@ export default function TopNav({ onAskAI }) {
         <nav className="ml-4 hidden items-center gap-0.5 xl:flex" aria-label="Primary">
           {PRIMARY.map((r, i) => <NavItem key={r.path} route={r} className={i >= BAR_FIT ? 'hidden min-[1700px]:block' : undefined} />)}
           <div ref={more.ref} className="relative">
-            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[13.5px] font-bold transition-colors ${[...MORE, ...PRIMARY.slice(BAR_FIT)].some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
+            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${[...MORE, ...PRIMARY.slice(BAR_FIT)].some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
               More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
             </button>
             {more.open && (
