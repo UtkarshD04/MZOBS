@@ -59,8 +59,12 @@ export function useLandingMotion(rootRef) {
     const words = Array.from(root.querySelectorAll('[data-hw]'))
     let scrolly = false
     let raf = 0
+    let cur = null
+    let applied = null
 
     const clear = () => {
+      cur = null
+      applied = null
       ;[layer, word, device].forEach((e) => e && (e.style.transform = ''))
       words.forEach((e) => {
         e.style.opacity = ''
@@ -69,24 +73,38 @@ export function useLandingMotion(rootRef) {
       if (hint) hint.style.opacity = '0'
     }
 
-    const frame = () => {
-      raf = 0
-      if (!scrolly || !pin) return
+    // The hero follows the scroll position through a small ease (cur chases
+    // target) so wheel steps glide instead of jumping. Keeps running only
+    // until it has caught up.
+    const apply = (p) => {
       const vh = window.innerHeight
-      const r = pin.getBoundingClientRect()
-      const p = clamp(-r.top / Math.max(1, r.height - vh), 0, 1)
       const a = ease(seg(p, 0, 0.5))
       if (word) word.style.transform = `scale(${1 - 0.6 * a})`
-      if (layer) layer.style.transform = `translateY(${-0.31 * vh * a}px)`
+      if (layer) layer.style.transform = `translate3d(0, ${-0.31 * vh * a}px, 0)`
       words.forEach((e) => {
         const i = +e.getAttribute('data-hw')
         const k = ease(seg(p, 0.03 + i * 0.07, 0.2 + i * 0.07))
         e.style.opacity = i === 0 ? 1 - seg(p, 0.15, 0.3) : k
-        e.style.transform = i === 0 ? '' : `translateY(${30 * (1 - k)}px)`
+        e.style.transform = i === 0 ? '' : `translate3d(0, ${30 * (1 - k)}px, 0)`
       })
-      const d = ease(seg(p, 0.32, 0.88))
-      if (device) device.style.transform = `translateY(${100 - 100 * d}%) scale(${0.9 + 0.1 * d})`
+      const d = ease(seg(p, 0.3, 0.97))
+      if (device) device.style.transform = `translate3d(0, ${100 - 100 * d}%, 0) scale(${0.9 + 0.1 * d})`
       if (hint) hint.style.opacity = String(1 - seg(p, 0, 0.06))
+    }
+    const frame = () => {
+      raf = 0
+      if (!scrolly || !pin) return
+      const r = pin.getBoundingClientRect()
+      const target = clamp(-r.top / Math.max(1, r.height - window.innerHeight), 0, 1)
+      cur = cur === null ? target : cur + (target - cur) * 0.16
+      if (Math.abs(target - cur) < 0.0004) cur = target
+      // Once the animation has finished there is nothing left to paint, so
+      // scrolling through the rest of the pin costs no work at all.
+      if (applied !== cur) {
+        apply(cur)
+        applied = cur
+      }
+      if (cur !== target) req()
     }
     const req = () => {
       if (!raf) raf = requestAnimationFrame(frame)
