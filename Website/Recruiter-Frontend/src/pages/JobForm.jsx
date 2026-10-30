@@ -190,7 +190,7 @@ export default function JobForm() {
           </Section>
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-[72px] lg:self-start">
+        <aside className="space-y-4 lg:sticky lg:top-[72px] xl:top-[116px] lg:self-start">
           <div className="rounded-2xl border border-line bg-white p-5 shadow-card">
             <p className="text-[11.5px] font-medium uppercase tracking-wide text-muted">Preview</p>
             <h3 className="mt-1 text-[17px] font-semibold">{f.title || 'Job title'}</h3>
