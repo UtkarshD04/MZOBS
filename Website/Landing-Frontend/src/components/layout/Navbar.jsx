@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X, LogOut, User, ChevronDown } from 'lucide-react'
-import { NAV_LINKS } from '../../lib/content'
+import { NAV_LINKS, SIGNED_IN_NAV_LINKS } from '../../lib/content'
 import { CLIENT_ONLY_ROUTES } from '../../lib/routes'
 import { clearEmployeeSession } from '../../lib/employeeSession'
 import { useEmployeeSession } from '../../lib/useEmployeeSession'
@@ -29,14 +29,12 @@ export default function Navbar() {
   const { session } = useEmployeeSession()
   // The employer link is for hiring teams — hide it on the student-facing Ally
   // page and whenever a candidate is signed in.
+  // Sign-in lives on the candidate page itself; everywhere else this slot links there.
+  const onCandidatePage = pathname === CLIENT_ONLY_ROUTES.candidates
   const showEmployer = pathname !== CLIENT_ONLY_ROUTES.ally && !session?.token
   // Items flagged hideWhenSignedIn (e.g. "Associate with Mzobs") are for visitors
   // only — dropped from a signed-in candidate's Resources menu.
-  const navLinks = NAV_LINKS.map((link) =>
-    link.children && session?.token
-      ? { ...link, children: link.children.filter((child) => !child.hideWhenSignedIn) }
-      : link
-  )
+  const navLinks = session?.token ? SIGNED_IN_NAV_LINKS : NAV_LINKS
 
   useEffect(() => {
     const onScroll = () => {
@@ -130,7 +128,7 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                <Link key={link.label} to={link.to} className={linkCls}>
+                <Link key={link.label} to={link.to} aria-current={pathname === link.to ? 'page' : undefined} className={`${linkCls}${pathname === link.to ? ' bg-(--jobs-navy)/[0.05] text-(--jobs-navy)' : ''}`}>
                   {link.label}
                 </Link>
               )
@@ -155,17 +153,23 @@ export default function Navbar() {
             ) : (
               <>
                 {showEmployer && (
-                  <Link to="/employers" className="flex h-9 items-center justify-center whitespace-nowrap rounded-[6px] border border-(--jobs-border) bg-white px-4 text-[14px] font-semibold text-(--jobs-navy) transition-colors hover:border-[#078B7D] hover:text-[#075f55] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078B7D]">
-                    For Employers
+                  <Link to="/employers" className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-white text-[#0b7a6d] shadow-[inset_0_0_0_1.5px_#0b7a6d] hover:bg-[#0b7a6d]/10">
+                    Employer
                   </Link>
                 )}
-                <button
-                  type="button"
-                  onClick={() => setAuthModalOpen(true)}
-                  className="h-9 whitespace-nowrap rounded-[6px] bg-[#0b7a6d] px-4 text-[14px] font-semibold text-white transition-colors hover:bg-[#075f55] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b7a6d]"
-                >
-                  Sign in
-                </button>
+                {onCandidatePage ? (
+                  <button
+                    type="button"
+                    onClick={() => setAuthModalOpen(true)}
+                    className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55]"
+                  >
+                    Sign in
+                  </button>
+                ) : (
+                  <Link to={CLIENT_ONLY_ROUTES.candidates} className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55]">
+                    Candidate
+                  </Link>
+                )}
               </>
             )}
           </div>
@@ -213,7 +217,7 @@ export default function Navbar() {
                       </div>
                     </div>
                   ) : (
-                    <Link key={link.label} to={link.to} onClick={() => setOpen(false)} className={mobileLinkCls}>
+                    <Link key={link.label} to={link.to} onClick={() => setOpen(false)} aria-current={pathname === link.to ? 'page' : undefined} className={`${mobileLinkCls}${pathname === link.to ? ' text-[#0b7a6d]' : ''}`}>
                       {link.label}
                     </Link>
                   )
@@ -244,20 +248,26 @@ export default function Navbar() {
                   ) : (
                     <>
                       {showEmployer && (
-                        <Link to="/employers" onClick={() => setOpen(false)} className="flex h-10 items-center justify-center rounded-[6px] border border-(--jobs-border) bg-white text-[13.5px] font-bold text-(--jobs-navy)">
-                          For Employers
+                        <Link to="/employers" onClick={() => setOpen(false)} className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-white text-[#0b7a6d] shadow-[inset_0_0_0_1.5px_#0b7a6d] hover:bg-[#0b7a6d]/10 w-full h-10">
+                          Employer
                         </Link>
                       )}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setOpen(false)
-                          setAuthModalOpen(true)
-                        }}
-                        className="flex h-10 items-center justify-center rounded-[6px] bg-[#0b7a6d] text-[13.5px] font-bold text-white"
-                      >
-                        Sign in
-                      </button>
+                      {onCandidatePage ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpen(false)
+                            setAuthModalOpen(true)
+                          }}
+                          className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55] w-full h-10"
+                        >
+                          Sign in
+                        </button>
+                      ) : (
+                        <Link to={CLIENT_ONLY_ROUTES.candidates} onClick={() => setOpen(false)} className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55] w-full h-10">
+                          Candidate
+                        </Link>
+                      )}
                     </>
                   )}
                 </div>
