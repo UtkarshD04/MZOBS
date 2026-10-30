@@ -30,18 +30,18 @@ import { CONTACT_ADDRESS, CONTACT_EMAIL, CONTACT_PHONE } from './config'
 // React Router does a client-side transition to Home and ScrollToTop.jsx
 // then scrolls to the matching id once it mounts, instead of a full reload.
 export const NAV_LINKS = [
-  { label: 'Find Jobs', to: '/#latest-jobs' },
-  { label: 'Companies', to: '/#companies' },
+  { label: 'Home', to: '/' },
+  { label: 'Mzobs Ally', to: '/ally' },
+  { label: 'Associate with Mzobs', to: '/associate', hideWhenSignedIn: true },
+  { label: 'Add your campus', to: '/add-your-campus' },
+]
+
+// What a signed-in candidate sees instead: the job-board links. Find Jobs and Companies point
+// at the candidate job board (/candidates), where those sections live.
+export const SIGNED_IN_NAV_LINKS = [
+  { label: 'Find Jobs', to: '/candidates#latest-jobs' },
+  { label: 'Companies', to: '/candidates#companies' },
   { label: 'Premium', to: '/employees/subscription' },
-  {
-    label: 'Resources',
-    children: [
-      { label: 'Our Story', to: '/our-story' },
-      { label: 'Mzobs Ally', to: '/ally' },
-      { label: 'Associate with Mzobs', to: '/associate', hideWhenSignedIn: true },
-      { label: 'Add Your Campus', to: '/add-your-campus' },
-    ],
-  },
 ]
 
 export const HERO_DATA = {
