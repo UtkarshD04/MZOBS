@@ -44,16 +44,41 @@
 .lp .aud-emp .aud-list li:hover h3{color:#20c997}
 .lp .aud-emp .aud-list p{color:#a4abb9}
 
-/* ally: teal */
-.lp .aud-ally{background:#0b7a6d;color:#fff}
-.lp .aud-ally .aud-label{color:#9be8d6}
-.lp .aud-ally .h2{color:#fff}
-.lp .aud-ally .aud-lead,.lp .aud-ally .aud-note{color:#d4ede6}
-.lp .aud-ally .aud-note b{color:#fff}
-.lp .aud-ally .aud-list,.lp .aud-ally .aud-list li{border-color:rgba(255,255,255,.25)}
-.lp .aud-ally .aud-list h3{color:#fff}
-.lp .aud-ally .aud-list li:hover h3{color:#9be8d6}
-.lp .aud-ally .aud-list p{color:#d4ede6}
+.lp .aud-emp .aud-note{color:#a4abb9}
+.lp .aud-emp .aud-note a{color:#20c997;font-weight:600;text-underline-offset:3px}
+.lp .aud-emp .aud-note a:hover{color:#fff}
+.lp .aud-flow{flex:1 1 380px;max-width:480px;margin:0;padding:0;list-style:none;border-top:1px solid #2b3445}
+.lp .aud-flow li{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid #2b3445}
+.lp .aud-flow .mk{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;box-shadow:inset 0 0 0 1.5px #20c997;font-size:13px;font-weight:700;color:#20c997;transition:background-color .2s,color .2s}
+.lp .aud-flow li:hover .mk{background:#20c997;color:#111827}
+.lp .aud-flow h3{margin:0;font-size:18px;font-weight:800;letter-spacing:-.02em;color:#fff}
+.lp .aud-flow p{margin:2px 0 0;font-size:14.5px;line-height:1.45;color:#a4abb9}
+.lp .aud-emp .aud-inner{padding:clamp(28px,4.5vw,56px) clamp(28px,4.5vw,56px) clamp(24px,3vw,36px);align-items:center}
+.lp .aud-facts{list-style:none;margin:0 clamp(28px,4.5vw,56px);padding:clamp(22px,3vw,32px) 0 0;border-top:1px solid #2b3445;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:22px 28px}
+.lp .aud-facts h3{margin:0;font-size:16px;font-weight:800;letter-spacing:-.01em;color:#fff}
+.lp .aud-facts p{margin:5px 0 0;font-size:14px;line-height:1.55;color:#a4abb9}
+.lp .aud-built{margin:0;padding:clamp(20px,3vw,28px) clamp(28px,4.5vw,56px) clamp(28px,4vw,44px);font-size:14px;color:#7c8597}
+
+/* ally: theme mint + teal */
+.lp .aud-ally{background:#e7f5f1}
+.lp .aud-ally .aud-inner{align-items:center;gap:clamp(24px,4vw,56px);padding:clamp(32px,4vw,56px) 24px clamp(20px,2.5vw,28px)}
+.lp .aud-ally .h2{font-size:clamp(30px,3.6vw,48px);margin-top:10px}
+.lp .aud-ally .aud-lead{margin-top:14px;font-size:16px;line-height:1.6}
+.lp .aud-ally .aud-cta{margin-top:20px}
+.lp .aud-ally .aud-btn{min-height:46px;padding:0 22px;font-size:15px}
+.lp .aud-ally .aud-label{color:#0b7a6d}
+.lp .aud-btn.dark{background:#111827;color:#fff}
+.lp .aud-btn.dark:hover{background:#075f55}
+.lp .aud-who{flex:1 1 300px;max-width:400px;padding:clamp(18px,2.2vw,24px);border-radius:22px;background:#fff;box-shadow:inset 0 0 0 1.5px #c9e4dc}
+.lp .aud-who .k{margin:0;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#0b7a6d}
+.lp .aud-who .big{margin:6px 0 0;font-size:clamp(22px,2.4vw,26px);font-weight:800;line-height:1.1;letter-spacing:-.04em;color:#111827}
+.lp .aud-who p:last-child{margin:8px 0 0;font-size:14.5px;line-height:1.5;color:#667085}
+.lp .aud-roles{max-width:1200px;margin:0 auto;padding:0 24px clamp(32px,4vw,52px);list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.lp .aud-roles li{padding:18px 22px;border-radius:20px;background:#f3fbf8;box-shadow:inset 0 0 0 1.5px #c9e4dc;transition:background-color .25s,box-shadow .25s}
+.lp .aud-roles li:hover{background:#fff;box-shadow:inset 0 0 0 1.5px #0b7a6d}
+.lp .aud-roles .n{font-size:15px;font-weight:700;color:#0b7a6d}
+.lp .aud-roles h3{margin:4px 0 4px;font-size:20px;font-weight:800;letter-spacing:-.03em;color:#111827}
+.lp .aud-roles p{margin:0;font-size:14.5px;line-height:1.5;color:#667085}
 
 /* campus steps */
 .lp .aud-steps{max-width:1200px;margin:0 auto;padding:0 24px clamp(48px,6vw,88px);list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:14px}

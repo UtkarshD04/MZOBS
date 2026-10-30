@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CLIENT_ONLY_ROUTES } from '../../lib/routes'
+import { GST_RATE_PERCENT, PLANS, fmtINR } from '../../lib/employerPricingPlan'
 import './audiences.css'
 
 // One section per audience Mzobs serves. Copy mirrors what each
@@ -56,6 +57,23 @@ function Candidate() {
   )
 }
 
+const STARTING_PRICE = Math.min(...PLANS.map((plan) => plan.baseAmount))
+
+const HIRING_FLOW = [
+  ['Post', 'Add the title, skills, location and salary. Mzobs reviews it, then it goes live.'],
+  ['Find', 'Applications arrive with a reviewed resume, or search the talent pool yourself.'],
+  ['Shortlist', 'Keep the people who fit and reject the rest with a reason.'],
+  ['Interview', 'Schedule, reschedule and record feedback from the dashboard.'],
+  ['Offer', 'Create the offer, track the response and mark the hire.'],
+]
+
+const EMPLOYER_FACTS = [
+  ['Unlimited job posts', 'On every annual plan, so a new role costs nothing extra.'],
+  ['Reviewed candidates', 'Mzobs checks every resume before a candidate can apply or show up in search.'],
+  ['Private until you unlock', 'Contact details stay hidden. One credit unlocks one candidate.'],
+  ['Straight to you', 'Applications go to your dashboard, with no staff queue in between.'],
+]
+
 function Employer() {
   return (
     <section id="employers-offer" className="aud-emp">
@@ -64,24 +82,43 @@ function Employer() {
           <Intro
             label="For employers"
             title="Hire in one place."
-            lead="Post a requirement, find candidates, shortlist, interview and send offers, all from one dashboard."
+            lead={`Post a role, get reviewed candidates and take them from application to offer in one dashboard. Plans start at ${fmtINR(STARTING_PRICE)} a year + ${GST_RATE_PERCENT}% GST.`}
+            note={<>Hiring for a bigger team? <Link to="/employers/pricing">Ask about a custom plan</Link>.</>}
           >
             <Link to={CLIENT_ONLY_ROUTES.employerSignup} className="aud-btn solid">Post a job</Link>
             <Link to="/employers/pricing" className="aud-btn ghost-light">See pricing</Link>
           </Intro>
-          <List
-            items={[
-              ['Post and manage jobs', 'Publish openings and review every applicant.'],
-              ['Search candidates', 'Filter by skills, experience and location, and unlock their CVs.'],
-              ['Managed shortlists', 'Our team shortlists suitable candidates for your requirement.'],
-              ['Interviews and offers', 'Schedule interviews and send offers from the same place.'],
-            ]}
-          />
+          <ol data-r="" className="aud-flow" aria-label="How hiring works on Mzobs">
+            {HIRING_FLOW.map(([t, p], i) => (
+              <li key={t}>
+                <span className="mk">{i + 1}</span>
+                <div>
+                  <h3>{t}</h3>
+                  <p>{p}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
+        <ul data-r="" className="aud-facts">
+          {EMPLOYER_FACTS.map(([t, p]) => (
+            <li key={t}>
+              <h3>{t}</h3>
+              <p>{p}</p>
+            </li>
+          ))}
+        </ul>
+        <p className="aud-built">Built for startups, small and medium businesses, growing teams and placement agencies.</p>
       </div>
     </section>
   )
 }
+
+const ALLY_ROLES = [
+  ['01', 'Represent', 'Bring the Mzobs experience to your community.'],
+  ['02', 'Connect', 'Connect students with relevant opportunities and initiatives.'],
+  ['03', 'Create impact', 'Help more people discover opportunities that matter.'],
+]
 
 function Ally() {
   return (
