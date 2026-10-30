@@ -26,7 +26,7 @@ function GstStatusLink() {
 
 // The source PNG has wide transparent margins, so it is cropped to the mark
 // itself (overflow-hidden + offset) to render at a readable size in the nav.
-export function Logo({ height = 34 }) {
+export function Logo({ height = 34, compact = false }) {
   const w = height * 3.22
   const imgH = height * 2.5
   return (
@@ -34,7 +34,7 @@ export function Logo({ height = 34 }) {
       <span className="relative block shrink-0 overflow-hidden" style={{ width: w, height }}>
         <img src="/images/logo.png" alt="Mzobs" draggable="false" className="absolute max-w-none select-none" style={{ height: imgH, width: imgH * 1.83, left: -imgH * 1.83 * 0.17, top: -imgH * 0.303 }} />
       </span>
-      <span className="hidden border-l border-ink/20 pl-2.5 text-[11px] font-extrabold uppercase tracking-[0.12em] text-ink/65 sm:inline">Talent</span>
+      <span className={clsx('hidden border-l border-ink/20 pl-2.5 text-[11px] font-extrabold uppercase tracking-[0.12em] text-ink/65', compact ? 'min-[1700px]:inline' : 'sm:inline')}>Talent</span>
     </Link>
   )
 }
@@ -49,6 +49,8 @@ function useNav() {
 // Two links from More that recruiters use constantly; they join the bar whenever there is room for them.
 const PROMOTED = ['/shortlists', '/unlocked']
 const BAR_LABEL = { '/shortlists': 'Shortlists' }
+const BAR_ORDER = ['/search', '/talent-pool', '/overview', '/jobs', '/applicants', '/messages', '/shortlists', '/unlocked', '/interviews', '/offers', '/reports']
+const rank = (r) => { const i = BAR_ORDER.indexOf(r.path); return i < 0 ? BAR_ORDER.length : i }
 const LINK = 'whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-bold'
 
 /**
@@ -179,7 +181,7 @@ function PlanPill() {
   return (
     <Link to="/credits" title={IS_DEMO ? 'Demo workspace' : plan ? (plan.active ? `Plan active${plan.expiresAt ? ` until ${new Date(plan.expiresAt).toLocaleDateString('en-IN')}` : ''}` : 'No active plan') : 'Plan & credits'} className={`hidden items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold transition-all duration-200 hover:-translate-y-px md:flex ${needsPlan ? 'border-transparent text-white shadow-[0_1px_1px_rgba(8,104,94,0.3)] [background-image:var(--grad-accent)]' : warn ? 'border border-[#f3dfb8] bg-warn-soft text-warn' : 'border border-ink/15 text-ink hover:bg-accent-soft'}`}>
       <CreditCard size={14} className={needsPlan || warn ? '' : 'text-accent'} />
-      {IS_DEMO ? 'Demo plan' : plan ? (plan.active ? `${plan.credits} credits` : 'Subscribe') : 'Credits'}
+      {IS_DEMO ? 'Demo plan' : plan ? (plan.active ? <>{plan.credits}<span className="hidden min-[1700px]:inline">&nbsp;credits</span><span className="sr-only min-[1700px]:hidden"> credits</span></> : 'Subscribe') : 'Credits'}
     </Link>
   )
 }
@@ -201,18 +203,18 @@ export default function TopNav({ onAskAI }) {
   useEffect(() => setMobile(false), [pathname])
   const navRef = useRef(null)
   const measureRef = useRef(null)
-  const barItems = [...PRIMARY, ...MORE.filter((r) => PROMOTED.includes(r.path))]
+  const barItems = [...PRIMARY, ...MORE.filter((r) => PROMOTED.includes(r.path))].sort((a, b) => rank(a) - rank(b))
   const fit = useBarFit(navRef, measureRef, barItems.map((r) => r.path).join('|'))
   const menuItems = [...barItems.slice(fit), ...MORE.filter((r) => !barItems.includes(r))]
   const barLabel = (r) => BAR_LABEL[r.path] ?? r.label
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-bg/90 shadow-[0_1px_0_rgba(14,34,55,0.03)] backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 lg:px-6">
+      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-4 lg:px-6">
         <button className="grid h-9 w-9 place-items-center rounded-lg hover:bg-line-2 xl:hidden" onClick={() => setMobile((v) => !v)} aria-label="Menu">
           {mobile ? <X size={18} /> : <Menu size={18} />}
         </button>
-        <Logo />
-        <nav ref={navRef} className="relative ml-4 hidden min-w-0 flex-1 items-center gap-0.5 xl:flex" aria-label="Primary">
+        <Logo compact />
+        <nav ref={navRef} className="relative ml-2 hidden min-w-0 flex-1 items-center gap-0.5 xl:flex" aria-label="Primary">
           {barItems.slice(0, fit).map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} />)}
           <div ref={more.ref} className="relative">
             <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${menuItems.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
