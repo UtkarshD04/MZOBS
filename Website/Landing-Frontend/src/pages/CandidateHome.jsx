@@ -13,6 +13,7 @@ import JobSidePanel from '../components/mz/home/JobSidePanel'
 import CategorySection from '../components/mz/home/CategorySection'
 import CompaniesSection from '../components/mz/home/CompaniesSection'
 import CampusSection from '../components/mz/home/CampusSection'
+import { CampusAudiences } from '../components/landing/Audiences'
 import SuccessStoriesSection from '../components/mz/home/SuccessStoriesSection'
 import EmployerStrip from '../components/mz/home/EmployerStrip'
 
@@ -91,6 +92,7 @@ export default function CandidateHome() {
         <CategorySection onSelect={applyJobFilters} />
         <HotJobsByCity />
         <CampusSection />
+        <CampusAudiences />
         <CompaniesSection onSelect={applyJobFilters} />
         <SuccessStoriesSection />
         <EmployerStrip />

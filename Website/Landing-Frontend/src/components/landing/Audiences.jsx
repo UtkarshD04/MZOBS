@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { CLIENT_ONLY_ROUTES } from '../../lib/routes'
 import { GST_RATE_PERCENT, PLANS, fmtINR } from '../../lib/employerPricingPlan'
+import './landing.css'
 import './audiences.css'
 
 // One section per audience Mzobs serves. Copy mirrors what each
@@ -214,9 +215,18 @@ export default function Audiences() {
     <>
       <Candidate />
       <Employer />
-      <Ally />
       <Associate />
-      <AddCampus />
     </>
+  )
+}
+
+// Campus and student sections, shown on the candidate home page. `.lp`
+// scopes the landing styles to this block.
+export function CampusAudiences() {
+  return (
+    <div className="lp">
+      <Ally />
+      <AddCampus />
+    </div>
   )
 }
