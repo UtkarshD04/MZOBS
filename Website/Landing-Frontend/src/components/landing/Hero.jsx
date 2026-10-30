@@ -40,7 +40,7 @@ function Panel({ dark, eyebrow, title, points, cta, to, ghost }) {
 
 export default function Hero() {
   return (
-    <section id="top" className="pin-hero" style={{ background: '#fff' }}>
+    <section id="top" className="pin-hero" style={{ background: 'radial-gradient(60% 45% at 85% 0%, rgba(32,201,151,0.14), transparent 70%), radial-gradient(50% 40% at 8% 20%, rgba(11,122,109,0.08), transparent 70%), #fff' }}>
       <div className="pin-sticky">
         <div className="hero-inner">
           <div className="hero-layer">
@@ -50,7 +50,7 @@ export default function Hero() {
             </h1>
             <p style={{ margin: '34px 0 0', fontWeight: 700, fontSize: 'clamp(30px, 4.4vw, 64px)', lineHeight: 1.05, letterSpacing: '-0.04em', color: '#111827' }}>
               <span className="tw" data-hw="1">Unstoppable,</span> <span className="tw" data-hw="2">yet</span>{' '}
-              <span className="tw" data-hw="3" style={{ color: '#0b7a6d' }}>untroubled.</span>
+              <span className="tw" data-hw="3" style={{ background: 'linear-gradient(90deg, #0b7a6d, #20c997)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>untroubled.</span>
             </p>
           </div>
           <p data-hint="" style={{ position: 'absolute', left: 0, right: 0, bottom: 28, margin: 0, textAlign: 'center', fontSize: 13, fontWeight: 600, color: '#667085', opacity: 0 }}>Scroll ↓</p>
