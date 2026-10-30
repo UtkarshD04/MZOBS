@@ -4,7 +4,9 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, Menu, X } from 'lucide-react'
 import ExplorerButton from '../ui/ExplorerButton'
 
+// Home goes back to the common landing page.
 const EMPLOYER_NAV_LINKS = [
+  { label: 'Home', to: '/' },
   { label: 'How it works', to: '/employers#how-it-works' },
   { label: 'Find candidates', to: '/employers#discover-talent' },
   { label: 'Pricing', to: '/employers/pricing' },
