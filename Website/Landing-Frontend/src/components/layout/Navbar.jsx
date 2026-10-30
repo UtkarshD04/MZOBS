@@ -153,7 +153,7 @@ export default function Navbar() {
             ) : (
               <>
                 {showEmployer && (
-                  <Link to="/employers" className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-white text-[#0b7a6d] shadow-[inset_0_0_0_1.5px_#0b7a6d] hover:bg-[#0b7a6d]/10">
+                  <Link to="/employers" className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[14px] font-semibold transition-colors bg-white text-[#0b7a6d] shadow-[inset_0_0_0_1.5px_#0b7a6d] hover:bg-[#0b7a6d]/10">
                     Employer
                   </Link>
                 )}
@@ -161,12 +161,12 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={() => setAuthModalOpen(true)}
-                    className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55]"
+                    className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[14px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55]"
                   >
                     Sign in
                   </button>
                 ) : (
-                  <Link to={CLIENT_ONLY_ROUTES.candidates} className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[13px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55]">
+                  <Link to={CLIENT_ONLY_ROUTES.candidates} className="inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-full px-3.5 text-[14px] font-semibold transition-colors bg-[#0b7a6d] text-white hover:bg-[#075f55]">
                     Candidate
                   </Link>
                 )}
