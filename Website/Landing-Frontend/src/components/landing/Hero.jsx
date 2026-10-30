@@ -19,7 +19,7 @@ function Panel({ dark, eyebrow, title, points, cta, to, ghost }) {
   return (
     <div style={{ position: 'relative', overflow: 'hidden', padding: 'clamp(24px, 3.4vw, 38px)', background: dark ? '#111827' : '#e4f4ef', color: dark ? '#e6e8f0' : '#344054', display: 'flex', flexDirection: 'column', gap: 'clamp(14px, 2vw, 22px)', minHeight: 0 }}>
       <span aria-hidden="true" style={{ position: 'absolute', right: -10, bottom: '-0.1em', fontSize: 'clamp(120px, 17vw, 240px)', fontWeight: 800, letterSpacing: '-0.06em', lineHeight: 0.8, color: dark ? 'rgba(255,255,255,0.05)' : 'rgba(11,122,109,0.1)', pointerEvents: 'none', userSelect: 'none' }}>{ghost}</span>
-      <p style={{ margin: 0, fontSize: 14, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: dark ? '#20c997' : '#0b7a6d' }}>{eyebrow}</p>
+      <p style={{ margin: 0, fontSize: 17, fontWeight: 700, letterSpacing: '-0.01em', color: dark ? '#20c997' : '#0b7a6d' }}>{eyebrow}</p>
       <h2 style={{ margin: 0, fontWeight: 800, fontSize: 'clamp(30px, 4vw, 52px)', lineHeight: 1, letterSpacing: '-0.05em', color: ink }}>{title}</h2>
       <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 14, fontSize: 16 }}>
         {points.map((p) => (
