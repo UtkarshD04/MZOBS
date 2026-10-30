@@ -250,7 +250,7 @@
 }
 
 /* nav */
-.lp .nav-links{display:flex;gap:24px;color:#344054;font-size:13px;white-space:nowrap}
+.lp .nav-links{display:flex;gap:22px;color:#344054;font-size:14px;font-weight:600;white-space:nowrap}
 .lp .nav-burger{display:none}
 @media (max-width:860px){.lp .nav-links{display:none}.lp .nav-burger{display:inline-flex}}
 
