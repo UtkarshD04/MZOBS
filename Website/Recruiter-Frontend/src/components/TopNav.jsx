@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
 import { Bell, HelpCircle, Sparkles, ChevronDown, Search, Menu, X, CreditCard, Settings, LogOut } from 'lucide-react'
@@ -46,15 +46,43 @@ function useNav() {
   return { primary: ROUTES.filter((r) => r.nav === 'primary' && visible(r)), more: ROUTES.filter((r) => r.nav === 'more' && visible(r)) }
 }
 
-// Primary links beyond this many collapse into the More menu until the screen is wide enough for all of them.
-const BAR_FIT = 5
+// Two links from More that recruiters use constantly; they join the bar whenever there is room for them.
 const PROMOTED = ['/shortlists', '/unlocked']
 const BAR_LABEL = { '/shortlists': 'Shortlists' }
-const TIER = {
-  1: { bar: 'hidden min-[1440px]:block', menu: 'min-[1440px]:hidden' },
-  2: { bar: 'hidden min-[1760px]:block', menu: 'min-[1760px]:hidden' },
+const LINK = 'whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-bold'
+
+/**
+ * How many bar links fit. Measured from an invisible copy of every link (plus the More button, which always keeps
+ * its slot), so it follows the real width — window size, zoom, fonts — instead of guessed breakpoints.
+ * Links that do not fit are listed in the More menu, so nothing disappears.
+ */
+function useBarFit(navRef, measureRef, sig) {
+  const [fit, setFit] = useState(5)
+  useLayoutEffect(() => {
+    const nav = navRef.current
+    const m = measureRef.current
+    if (!nav || !m) return
+    const calc = () => {
+      const avail = nav.clientWidth
+      if (!avail) return // bar is hidden (mobile menu in use)
+      const kids = [...m.children]
+      let used = kids.pop()?.offsetWidth ?? 0 // More button
+      let n = 0
+      for (const k of kids) {
+        used += k.offsetWidth + 2
+        if (used > avail) break
+        n += 1
+      }
+      setFit(n)
+    }
+    calc()
+    const ro = new ResizeObserver(calc)
+    ro.observe(nav)
+    document.fonts?.ready.then(calc)
+    return () => ro.disconnect()
+  }, [sig]) // eslint-disable-line react-hooks/exhaustive-deps
+  return fit
 }
-const tierOf = (route, i) => (PROMOTED.includes(route.path) ? 2 : i >= BAR_FIT ? 1 : 0)
 
 function NavItem({ route, onClick, className, label }) {
   const { pathname } = useLocation()
@@ -64,7 +92,7 @@ function NavItem({ route, onClick, className, label }) {
       to={route.path}
       onClick={onClick}
       aria-current={active ? 'page' : undefined}
-      className={clsx('relative whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors', className, active ? 'text-accent after:absolute after:inset-x-2 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
+      className={clsx('relative transition-colors', LINK, className, active ? 'text-accent after:absolute after:inset-x-2 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
     >
       {label ?? route.label}
     </Link>
@@ -171,6 +199,12 @@ export default function TopNav({ onAskAI }) {
   const [mobile, setMobile] = useState(false)
   const { pathname } = useLocation()
   useEffect(() => setMobile(false), [pathname])
+  const navRef = useRef(null)
+  const measureRef = useRef(null)
+  const barItems = [...PRIMARY, ...MORE.filter((r) => PROMOTED.includes(r.path))]
+  const fit = useBarFit(navRef, measureRef, barItems.map((r) => r.path).join('|'))
+  const menuItems = [...barItems.slice(fit), ...MORE.filter((r) => !barItems.includes(r))]
+  const barLabel = (r) => BAR_LABEL[r.path] ?? r.label
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-bg/90 shadow-[0_1px_0_rgba(14,34,55,0.03)] backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 lg:px-6">
@@ -178,27 +212,27 @@ export default function TopNav({ onAskAI }) {
           {mobile ? <X size={18} /> : <Menu size={18} />}
         </button>
         <Logo />
-        <nav className="ml-4 hidden items-center gap-0.5 xl:flex" aria-label="Primary">
-          {PRIMARY.map((r, i) => <NavItem key={r.path} route={r} className={TIER[tierOf(r, i)]?.bar} />)}
-          {MORE.filter((r) => PROMOTED.includes(r.path)).map((r) => <NavItem key={r.path} route={r} label={BAR_LABEL[r.path]} className={TIER[2].bar} />)}
+        <nav ref={navRef} className="relative ml-4 hidden min-w-0 flex-1 items-center gap-0.5 xl:flex" aria-label="Primary">
+          {barItems.slice(0, fit).map((r) => <NavItem key={r.path} route={r} label={barLabel(r)} />)}
           <div ref={more.ref} className="relative">
-            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${[...MORE, ...PRIMARY.slice(BAR_FIT)].some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
+            <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${menuItems.some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
               More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
             </button>
             {more.open && (
               <div role="menu" className="fade-up absolute left-0 top-10 z-50 w-60 rounded-xl border border-line bg-white p-1 shadow-lift">
-                {PRIMARY.slice(BAR_FIT).map((r) => (
-                  <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${TIER[1].menu} ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
-                ))}
-                {MORE.map((r) => (
-                  <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${PROMOTED.includes(r.path) ? TIER[2].menu : ''} ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
+                {menuItems.map((r) => (
+                  <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
                 ))}
               </div>
             )}
           </div>
+          <div ref={measureRef} aria-hidden className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex h-0 w-max gap-0.5 overflow-hidden">
+            {barItems.map((r) => <span key={r.path} className={clsx(LINK, 'shrink-0')}>{barLabel(r)}</span>)}
+            <span className={clsx(LINK, 'flex shrink-0 items-center gap-1')}>More <ChevronDown size={14} /></span>
+          </div>
         </nav>
 
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5">
           <button onClick={onAskAI} title="Ask Mzobs AI (Ctrl K)" aria-label="Ask Mzobs AI" className="hidden items-center gap-2 rounded-full border border-[#bfe6df] bg-accent-soft px-2.5 py-1.5 text-[13px] font-bold text-accent transition-colors hover:bg-[#d5f2ec] md:flex 2xl:px-3.5">
             <Sparkles size={14} /> <span className="hidden 2xl:inline">Ask Mzobs AI</span> <kbd className="hidden rounded bg-white/70 px-1 text-[10px] text-muted 2xl:inline">Ctrl K</kbd>
           </button>
