@@ -386,7 +386,7 @@ export default function CandidateProfile() {
           </SectionCard>
         </div>
 
-        <aside className="space-y-5 lg:sticky lg:top-[72px] lg:self-start">
+        <aside className="space-y-5 lg:sticky lg:top-[72px] xl:top-[116px] lg:self-start">
           <SectionCard title="AI match analysis" action={<Sparkles size={15} className="text-ai" />}>
             {scoredParts.length === 0 ? (
               <p className="text-[13px] text-muted">Run a search with skills, role or location and this panel will explain how {c.name.split(' ')[0]} fits.</p>
