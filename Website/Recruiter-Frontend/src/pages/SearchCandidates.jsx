@@ -221,7 +221,7 @@ export default function SearchCandidates() {
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[300px_1fr]">
         <aside className="hidden lg:block">
-          <div className="scroll-thin sticky top-[72px] max-h-[calc(100vh-88px)] overflow-y-auto rounded-2xl">{filterPanel}</div>
+          <div className="scroll-thin sticky top-[72px] max-h-[calc(100vh-88px)] xl:top-[116px] xl:max-h-[calc(100vh-132px)] overflow-y-auto rounded-2xl">{filterPanel}</div>
         </aside>
 
         <section aria-live="polite">
