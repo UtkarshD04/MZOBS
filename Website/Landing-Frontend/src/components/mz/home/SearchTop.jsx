@@ -23,7 +23,7 @@ export default function SearchTop({ filters, onSearch }) {
         <h1 id="search-title" className="text-mz-ink text-[30px] sm:text-[38px] lg:text-[44px] font-extrabold leading-[1.1] tracking-tight">
           Your ambition deserves the{' '}
           <span className="relative inline-block whitespace-nowrap text-mz-primary">
-            right job
+            real job
             <svg className="absolute -bottom-2 left-0 h-[10px] w-full" viewBox="0 0 200 10" preserveAspectRatio="none" fill="none" aria-hidden="true">
               <path d="M2 7 C 50 2, 120 2, 198 6" stroke="#F2B544" strokeWidth="4" strokeLinecap="round" />
             </svg>
