@@ -48,7 +48,7 @@ function useNav() {
 
 // Two links from More that recruiters use constantly; they join the bar whenever there is room for them.
 const PROMOTED = ['/shortlists', '/unlocked']
-const BAR_LABEL = { '/shortlists': 'Shortlists' }
+const BAR_LABEL = { '/shortlists': 'Shortlists', '/feedback': 'Feedback', '/credits': 'Credits', '/team': 'Team' }
 const BAR_ORDER = ['/search', '/talent-pool', '/overview', '/jobs', '/applicants', '/messages', '/shortlists', '/unlocked', '/interviews', '/offers', '/reports']
 const rank = (r) => { const i = BAR_ORDER.indexOf(r.path); return i < 0 ? BAR_ORDER.length : i }
 const LINK = 'whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-bold'
@@ -86,7 +86,7 @@ function useBarFit(navRef, measureRef, sig) {
   return fit
 }
 
-function NavItem({ route, onClick, className, label }) {
+function NavItem({ route, onClick, className, label, top }) {
   const { pathname } = useLocation()
   const active = isRouteActive(route, pathname)
   return (
@@ -94,7 +94,7 @@ function NavItem({ route, onClick, className, label }) {
       to={route.path}
       onClick={onClick}
       aria-current={active ? 'page' : undefined}
-      className={clsx('relative transition-colors', LINK, className, active ? 'text-accent after:absolute after:inset-x-2 after:-bottom-[5px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
+      className={clsx('relative transition-colors', LINK, className, top ? 'after:-bottom-[19px]' : 'after:-bottom-[5px]', active ? 'text-accent after:absolute after:inset-x-2 after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
     >
       {label ?? route.label}
     </Link>
