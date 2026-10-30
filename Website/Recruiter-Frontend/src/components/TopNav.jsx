@@ -48,9 +48,15 @@ function useNav() {
 
 // Primary links beyond this many collapse into the More menu until the screen is wide enough for all of them.
 const BAR_FIT = 5
-const TIER = { 1: { bar: 'hidden min-[1440px]:block', menu: 'min-[1440px]:hidden' } }
+const PROMOTED = ['/shortlists', '/unlocked']
+const BAR_LABEL = { '/shortlists': 'Shortlists' }
+const TIER = {
+  1: { bar: 'hidden min-[1440px]:block', menu: 'min-[1440px]:hidden' },
+  2: { bar: 'hidden min-[1760px]:block', menu: 'min-[1760px]:hidden' },
+}
+const tierOf = (route, i) => (PROMOTED.includes(route.path) ? 2 : i >= BAR_FIT ? 1 : 0)
 
-function NavItem({ route, onClick, className }) {
+function NavItem({ route, onClick, className, label }) {
   const { pathname } = useLocation()
   const active = isRouteActive(route, pathname)
   return (
@@ -60,7 +66,7 @@ function NavItem({ route, onClick, className }) {
       aria-current={active ? 'page' : undefined}
       className={clsx('relative whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors', className, active ? 'text-accent after:absolute after:inset-x-2 after:-bottom-[19px] after:h-0.5 after:rounded after:bg-accent' : 'text-ink/75 hover:text-accent')}
     >
-      {route.label}
+      {label ?? route.label}
     </Link>
   )
 }
@@ -173,7 +179,8 @@ export default function TopNav({ onAskAI }) {
         </button>
         <Logo />
         <nav className="ml-4 hidden items-center gap-0.5 xl:flex" aria-label="Primary">
-          {PRIMARY.map((r, i) => <NavItem key={r.path} route={r} className={i >= BAR_FIT ? TIER[1].bar : undefined} />)}
+          {PRIMARY.map((r, i) => <NavItem key={r.path} route={r} className={TIER[tierOf(r, i)]?.bar} />)}
+          {MORE.filter((r) => PROMOTED.includes(r.path)).map((r) => <NavItem key={r.path} route={r} label={BAR_LABEL[r.path]} className={TIER[2].bar} />)}
           <div ref={more.ref} className="relative">
             <button onClick={() => more.setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={more.open} className={`flex items-center gap-1 rounded-md px-2 py-1.5 text-[13px] font-bold transition-colors ${[...MORE, ...PRIMARY.slice(BAR_FIT)].some((r) => isRouteActive(r, pathname)) ? 'text-accent' : 'text-ink/75 hover:text-accent'}`}>
               More <ChevronDown size={14} className={`transition-transform ${more.open ? 'rotate-180' : ''}`} />
@@ -184,7 +191,7 @@ export default function TopNav({ onAskAI }) {
                   <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${TIER[1].menu} ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
                 ))}
                 {MORE.map((r) => (
-                  <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
+                  <Link key={r.path} to={r.path} role="menuitem" className={`block rounded-lg px-3 py-2 text-[13px] font-medium hover:bg-line-2 ${PROMOTED.includes(r.path) ? TIER[2].menu : ''} ${isRouteActive(r, pathname) ? 'text-accent' : ''}`}>{r.label}</Link>
                 ))}
               </div>
             )}
