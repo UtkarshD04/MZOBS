@@ -203,7 +203,7 @@ export default function Applicants() {
         </div>
 
         {selected.size > 0 && manage && (
-          <div role="region" aria-label="Bulk actions" className="sticky top-[72px] z-20 flex flex-wrap items-center gap-2 rounded-xl border border-accent bg-white px-3 py-2 shadow-card">
+          <div role="region" aria-label="Bulk actions" className="sticky top-[72px] xl:top-[116px] z-20 flex flex-wrap items-center gap-2 rounded-xl border border-accent bg-white px-3 py-2 shadow-card">
             <span className="text-[13px] font-bold">{selected.size} selected</span>
             <select aria-label="Move selected to stage" disabled={busy} value="" onChange={(e) => e.target.value && bulk({ stage: e.target.value }, `Moved ${selected.size} to ${STAGE_LABEL[e.target.value]}`)} className={clsx(inputCls, 'w-40')}>
               <option value="">Move to…</option>{MOVE_TARGETS.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
