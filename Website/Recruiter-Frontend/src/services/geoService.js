@@ -121,6 +121,31 @@ export async function prefetchPinInfo(pins, ctl = {}, onSettled, concurrency = 4
   return { failed }
 }
 
+// City → its PIN codes from the India Post directory (GET /geo/city-pincodes). One request per
+// city lists every PIN with its areas, so it also fills the per-PIN cache and the PIN tiles
+// don't each need their own lookup against the 40-a-minute geo limit.
+const cityPinCache = new Map() // `${city}|${state}` → Promise<rows>
+export function getCityPincodes(city, state = '') {
+  const key = `${city.trim().toLowerCase()}|${state.trim().toLowerCase()}`
+  if (!cityPinCache.has(key)) {
+    const p = apiClient
+      .get('/geo/city-pincodes', { params: { city, state: state || undefined } })
+      .then((r) => {
+        const rows = Array.isArray(r.data) ? r.data : []
+        for (const row of rows) {
+          if (!pinCache.has(row.pincode)) pinCache.set(row.pincode, { info: { district: row.district ?? '', state: row.state ?? '', areas: row.areas ?? [] } })
+        }
+        return rows
+      })
+      .catch((e) => {
+        cityPinCache.delete(key) // not cached: a later look retries
+        throw e
+      })
+    cityPinCache.set(key, p)
+  }
+  return cityPinCache.get(key)
+}
+
 /** "Gomti Nagar, Vikas Nagar +2" — the postal areas a PIN covers, never one area standing in for all. */
 export function areaSummary(areas, max = 2) {
   if (!areas?.length) return ''
