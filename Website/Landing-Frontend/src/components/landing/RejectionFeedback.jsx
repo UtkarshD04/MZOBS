@@ -53,7 +53,7 @@ export default function RejectionFeedback() {
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return
       io.disconnect()
-      timer = setTimeout(tick, 1200)
+      timer = setTimeout(tick, START_MS)
     }, { threshold: 0.35 })
     io.observe(el)
     return () => {
