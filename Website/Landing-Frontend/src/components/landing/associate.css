@@ -30,3 +30,14 @@
 .lp .aud-assoc .as-rows li::before{content:'';position:absolute;left:0;top:19px;width:9px;height:9px;border-radius:50%;box-shadow:inset 0 0 0 2.5px #0b7a6d}
 .lp .aud-assoc .as-rows h3{margin:0;font-size:17px;font-weight:800;letter-spacing:-.025em;color:#111827}
 .lp .aud-assoc .as-rows p{margin:3px 0 0;font-size:14.5px;line-height:1.5;color:#667085}
+
+/* stub: who can apply, perforation notches and a barcode */
+.lp .aud-assoc .as-pass{position:relative}
+.lp .aud-assoc .as-pass::before,.lp .aud-assoc .as-pass::after{content:'';position:absolute;right:164px;width:22px;height:22px;border-radius:50%;background:#f7f8fc;box-shadow:inset 0 0 0 1.5px #d6ebe4;z-index:1}
+.lp .aud-assoc .as-pass::before{top:-11px;clip-path:inset(50% 0 0 0)}
+.lp .aud-assoc .as-pass::after{bottom:-11px;clip-path:inset(0 0 50% 0)}
+.lp .aud-assoc .as-stub{display:flex;flex-direction:column}
+.lp .aud-assoc .as-stub-k{margin:0 0 12px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#0b7a6d}
+.lp .aud-assoc .as-stub ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.lp .aud-assoc .as-stub li{padding:8px 12px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1px #d6ebe4;font-size:13px;font-weight:600;line-height:1.25;color:#075f55}
+.lp .aud-assoc .as-bars{margin-top:auto;height:34px;padding-top:14px;box-sizing:content-box;background:repeating-linear-gradient(90deg,#111827 0 2px,transparent 2px 4px,#111827 4px 5px,transparent 5px 9px,#111827 9px 12px,transparent 12px 14px) content-box;opacity:.85}
