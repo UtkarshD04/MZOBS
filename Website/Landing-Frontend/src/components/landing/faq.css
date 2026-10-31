@@ -41,6 +41,7 @@
 .lp .fq-link span{display:inline-block;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
 .lp .fq-link:hover span{transform:translateX(3px)}
 .lp .fq-link:hover{text-decoration:underline;text-underline-offset:3px}
+.lp .fq-link:active{opacity:.75}
 .lp .fq-link:focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:3px}
 
 .lp .fq ::selection{background:#c9e4dc;color:#075f55}
