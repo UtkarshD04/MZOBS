@@ -5,6 +5,7 @@ import './landing.css'
 import './audiences.css'
 import './candidate.css'
 import './employer.css'
+import './associate.css'
 
 // One section per audience Mzobs serves. Copy mirrors what each
 // destination page already says.
@@ -176,6 +177,15 @@ function Associate() {
   return (
     <section id="associate" className="aud aud-assoc">
       <div className="aud-inner">
+        <Intro
+          label="Associate with Mzobs"
+          title={<>Join the hiring <span className="aud-em">network.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 25 1, 50 11, 98 3" pathLength="1" /></svg></span></>}
+          lead="Connect your candidates with verified opportunities from employers across industries and cities."
+          note={<><b>Who can apply:</b> placement consultants, recruitment agencies, local hiring partners and career organisations.</>}
+        >
+          <Link to={CLIENT_ONLY_ROUTES.associateApply} className="aud-btn solid">Apply as Associate</Link>
+          <Link to={CLIENT_ONLY_ROUTES.associate} className="aud-btn ghost">How it works</Link>
+        </Intro>
         <List
           items={[
             ['Verified openings', 'Access openings from employers across industries and cities.'],
@@ -183,15 +193,6 @@ function Associate() {
             ['Work with our team', 'Every application is reviewed by the Mzobs team before onboarding.'],
           ]}
         />
-        <Intro
-          label="Associate with Mzobs"
-          title="Join the hiring network."
-          lead="Connect your candidates with verified opportunities from employers across industries and cities."
-          note={<><b>Who can apply:</b> placement consultants, recruitment agencies, local hiring partners and career organisations.</>}
-        >
-          <Link to={CLIENT_ONLY_ROUTES.associateApply} className="aud-btn solid">Apply as Associate</Link>
-          <Link to={CLIENT_ONLY_ROUTES.associate} className="aud-btn ghost">How it works</Link>
-        </Intro>
       </div>
     </section>
   )
