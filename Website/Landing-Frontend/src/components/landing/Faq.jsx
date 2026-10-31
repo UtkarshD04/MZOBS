@@ -5,7 +5,7 @@ import './faq.css'
 
 // Every answer restates something the site already says about the product.
 const QA = [
-  { q: 'Is Mzobs free for candidates?', a: 'Yes. Joining Mzobs is free, whether you are a fresher or changing jobs. Create a profile, get matched to roles and apply.', link: { to: R.employeeSignup, label: 'Create your free account' } },
+  { q: 'Is Mzobs free for candidates?', a: 'Creating your profile is free. Premium adds extra features for candidates who want more, and you can see exactly how Free and Premium compare.', link: { to: R.employeeSubscription, label: 'Compare Free and Premium' } },
   { q: 'Are the jobs on Mzobs checked?', a: 'Every role is reviewed by Mzobs before it goes live, and verified companies carry a Verified mark on each listing.' },
   { q: 'Who can see my contact details?', a: 'Candidate contact details stay hidden from employers until a profile is unlocked.' },
   { q: 'What if I am not selected?', a: 'Employers are encouraged to share feedback so you know where to improve. Mzobs reviews that feedback first, and you can ask a question or report a problem about it.' },
