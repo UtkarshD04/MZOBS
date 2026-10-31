@@ -1,0 +1,10 @@
+/* "For employers" panel: tighter and brighter. Styling only, scoped to .aud-emp
+   so the other audience sections are untouched. */
+.lp .aud-emp-panel{position:relative;overflow:hidden;isolation:isolate}
+.lp .aud-emp-panel::before{content:'';position:absolute;right:-120px;top:-150px;width:480px;height:480px;border-radius:50%;background:radial-gradient(closest-side,rgba(32,201,151,.2),transparent);pointer-events:none;z-index:-1}
+.lp .aud-emp .aud-inner{padding:clamp(26px,3.6vw,44px) clamp(24px,4vw,48px) clamp(18px,2.4vw,26px);gap:clamp(24px,4vw,56px)}
+.lp .aud-emp .h2{font-size:clamp(34px,4.2vw,56px);margin-top:10px;text-wrap:balance}
+.lp .aud-emp .aud-lead{margin-top:14px;max-width:46ch;font-size:16px;line-height:1.55}
+.lp .aud-emp .aud-note{margin-top:12px;font-size:14.5px}
+.lp .aud-emp .aud-cta{margin-top:20px}
+.lp .aud-emp .aud-btn{min-height:46px;padding:0 22px;font-size:15px}

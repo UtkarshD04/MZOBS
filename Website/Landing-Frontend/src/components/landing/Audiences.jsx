@@ -4,6 +4,7 @@ import { GST_RATE_PERCENT, PLANS, fmtINR } from '../../lib/employerPricingPlan'
 import './landing.css'
 import './audiences.css'
 import './candidate.css'
+import './employer.css'
 
 // One section per audience Mzobs serves. Copy mirrors what each
 // destination page already says.
