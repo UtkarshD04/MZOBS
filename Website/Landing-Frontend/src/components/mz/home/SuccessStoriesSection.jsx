@@ -308,7 +308,9 @@ function Carousel({ stories }) {
   )
 }
 
-export default function SuccessStoriesSection() {
+// `fallbackStories` is optional: editable drafts a page can show until there is
+// at least one approved testimonial. Approved testimonials always replace them.
+export default function SuccessStoriesSection({ fallbackStories = null }) {
   const [stories, setStories] = useState(null) // null = loading
   const [isFixture, setIsFixture] = useState(false)
   const sectionRef = useRef(null)
@@ -358,11 +360,14 @@ export default function SuccessStoriesSection() {
     }
   }, [])
 
-  // Only approved testimonials from the API show — until there is at least
-  // one (or while they load, or if the request fails) the section is left out.
-  if (!stories?.length) return null
+  // Approved testimonials from the API show first. With none (and a page that
+  // supplies fallbackStories) the drafts show instead; with neither, or while
+  // loading, the section is left out.
+  const usingFallback = stories !== null && !stories.length && !!fallbackStories?.length
+  const shown = stories?.length ? stories : usingFallback ? fallbackStories : null
+  if (!shown) return null
   // A story staff flagged as featured opens first.
-  const ordered = [...stories].sort((a, b) => Number(!!b.featured) - Number(!!a.featured))
+  const ordered = [...shown].sort((a, b) => Number(!!b.featured) - Number(!!a.featured))
 
   return (
     <section ref={sectionRef} data-reveal={reveal} id="success-stories" aria-labelledby="stories-title" className="relative scroll-mt-20 overflow-hidden border-t border-[#183451]/10 bg-white py-10 lg:py-14">
