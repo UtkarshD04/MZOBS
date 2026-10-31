@@ -57,6 +57,7 @@
   .lp .fq-wrap{padding:36px 20px}
   .lp .fq-q{font-size:16px;min-height:60px}
   .lp .fq-chat{border-radius:22px}
+  .lp .fq-list{margin-top:22px}
   .lp .fq-bubble{max-width:94%;font-size:15px}
 }
 @media (prefers-reduced-motion:reduce){
