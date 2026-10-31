@@ -142,6 +142,8 @@ export default function RejectionFeedback() {
             </div>
           </div>
         </div>
+
+        <p className="rf-statement" data-r="">Not every application leads to an offer. Every experience should <em>lead to growth.</em></p>
       </div>
     </section>
   )

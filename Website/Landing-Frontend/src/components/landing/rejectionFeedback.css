@@ -77,5 +77,9 @@
 .lp .rf-tip b{color:var(--brand-d)}
 .lp .rf-tip:not(.is-on){opacity:.35;transform:translateY(6px)}
 
+/* closing line */
+.lp .rf-statement{position:relative;margin:clamp(20px,2.5vw,26px) 0 0;padding-top:clamp(14px,1.8vw,18px);border-top:1px solid rgba(255,255,255,.22);font-weight:800;font-size:clamp(20px,2.1vw,27px);line-height:1.15;letter-spacing:-.04em;color:#fff}
+.lp .rf-statement em{font-style:normal;color:#a8f0d8}
+
 @keyframes rfPulse{50%{opacity:.35;transform:scale(.8)}}
 @keyframes rfIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
