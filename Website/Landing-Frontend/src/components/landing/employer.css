@@ -17,3 +17,10 @@
 .lp .aud-emp .aud-flow h3{font-size:17px}
 .lp .aud-emp .aud-flow p{margin-top:1px;font-size:14px;line-height:1.4}
 .lp .aud-emp .aud-flow li:hover h3{color:#20c997}
+
+/* facts as small tiles */
+.lp .aud-emp .aud-facts{margin:0 clamp(24px,4vw,48px);padding:0;border-top:0;gap:12px}
+.lp .aud-emp .aud-facts li{padding:16px 18px;border-radius:18px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px #2b3445;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,background-color .3s}
+.lp .aud-emp .aud-facts li:hover{transform:translateY(-4px);background:rgba(32,201,151,.07);box-shadow:inset 0 0 0 1px #20c997}
+.lp .aud-emp .aud-facts h3{font-size:15.5px}
+.lp .aud-emp .aud-facts p{margin-top:4px;font-size:13.5px;line-height:1.5}
