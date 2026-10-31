@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CLIENT_ONLY_ROUTES as R } from '../../lib/routes'
 import './faq.css'
@@ -15,7 +15,21 @@ const QA = [
 
 export default function Faq() {
   const [active, setActive] = useState(0)
+  const [typing, setTyping] = useState(false)
+  const timer = useRef(0)
   const current = QA[active]
+
+  useEffect(() => () => clearTimeout(timer.current), [])
+
+  // A short "typing" beat before each reply; skipped when reduced motion is on.
+  const choose = (i) => {
+    if (i === active) return
+    setActive(i)
+    clearTimeout(timer.current)
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    setTyping(true)
+    timer.current = setTimeout(() => setTyping(false), 700)
+  }
 
   return (
     <section className="fq" aria-labelledby="fq-title">
@@ -28,7 +42,7 @@ export default function Faq() {
           <ul className="fq-list">
             {QA.map((item, i) => (
               <li key={item.q} className={`fq-item${i === active ? ' on' : ''}`}>
-                <button type="button" className="fq-q" aria-pressed={i === active} onClick={() => setActive(i)}>
+                <button type="button" className="fq-q" aria-pressed={i === active} onClick={() => choose(i)}>
                   <span className="fq-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                   <span>{item.q}</span>
                   <svg className="fq-arr" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
@@ -47,12 +61,21 @@ export default function Faq() {
             </div>
           </div>
           <div key={current.q} className="fq-bubble you">{current.q}</div>
-          <div className="fq-reply">
-            <span className="fq-avatar" aria-hidden="true">M</span>
-            <div className="fq-bubble bot">
-              <p>{current.a}</p>
-              {current.link && <Link to={current.link.to} className="fq-link">{current.link.label} <span aria-hidden="true">→</span></Link>}
-            </div>
+          <div aria-live="polite">
+            {typing ? (
+              <div className="fq-reply" key="typing">
+                <span className="fq-avatar" aria-hidden="true">M</span>
+                <div className="fq-bubble bot fq-typing" aria-hidden="true"><i /><i /><i /></div>
+              </div>
+            ) : (
+              <div className="fq-reply" key={current.q}>
+                <span className="fq-avatar" aria-hidden="true">M</span>
+                <div className="fq-bubble bot">
+                  <p>{current.a}</p>
+                  {current.link && <Link to={current.link.to} className="fq-link">{current.link.label} <span aria-hidden="true">→</span></Link>}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
