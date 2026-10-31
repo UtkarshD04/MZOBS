@@ -186,15 +186,12 @@ const ASSOCIATE_PERKS = [
 
 function AssociatePerks() {
   return (
-    <ul data-r="" className="as-steps">
+    <ul data-r="" className="as-perks">
       {ASSOCIATE_PERKS.map((p, i) => (
-        <li key={p.title} className="as-card">
-          <span className="as-ico">{p.icon}</span>
-          <div>
-            <h3>{p.title}</h3>
-            <p>{p.text}</p>
-          </div>
-          <span className="as-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        <li key={p.title}>
+          <span className="as-pno" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{p.title}</h3>
+          <p>{p.text}</p>
         </li>
       ))}
     </ul>
@@ -215,8 +212,8 @@ function Associate() {
           <Link to={CLIENT_ONLY_ROUTES.associateApply} className="aud-btn solid">Apply as Associate</Link>
           <Link to={CLIENT_ONLY_ROUTES.associate} className="aud-btn ghost">How it works</Link>
         </Intro>
-        <AssociatePerks />
       </div>
+        <AssociatePerks />
       </div>
     </section>
   )
