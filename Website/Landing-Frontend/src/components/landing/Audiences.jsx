@@ -199,10 +199,10 @@ function AssociatePerks() {
 }
 
 const NETWORK_NODES = [
-  { label: 'Placement consultants', x: 28, y: 15 },
-  { label: 'Recruitment agencies', x: 72, y: 22 },
-  { label: 'Local hiring partners', x: 28, y: 80 },
-  { label: 'Career organisations', x: 72, y: 76 },
+  { label: 'Placement consultants', x: 28, y: 12 },
+  { label: 'Recruitment agencies', x: 72, y: 27 },
+  { label: 'Local hiring partners', x: 28, y: 84 },
+  { label: 'Career organisations', x: 72, y: 70 },
 ]
 
 function AssociateNetwork() {
