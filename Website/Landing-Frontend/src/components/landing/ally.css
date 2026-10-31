@@ -21,3 +21,12 @@
 .lp .aud-ally .aud-roles li:hover .al-ico{background:#0b7a6d;color:#fff}
 .lp .aud-ally .aud-roles .n{position:absolute;right:20px;top:20px;font-size:13px;font-weight:700;color:#b6d6cc}
 .lp .aud-ally .aud-roles h3{margin:16px 0 6px}
+
+@media (max-width:560px){
+  .lp .aud-ally .aud-who{transform:none}
+  .lp .aud-ally .aud-roles li{padding:20px 18px 18px}
+}
+@media (prefers-reduced-motion:reduce){
+  .lp .aud-ally .aud-who,.lp .aud-ally .aud-who:hover{transform:none}
+  .lp .aud-ally .aud-roles li::after{transition:none}
+}
