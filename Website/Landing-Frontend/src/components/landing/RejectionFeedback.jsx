@@ -78,7 +78,7 @@ export default function RejectionFeedback() {
   const guided = stage >= 3
 
   return (
-    <section ref={rootRef} className="rf" aria-labelledby="rf-title">
+    <section ref={rootRef} id="rejection-feedback" className="rf" aria-labelledby="rf-title">
       <div className="rf-panel">
         <div className="rf-wrap">
           <div className="rf-story" data-r="">
