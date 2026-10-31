@@ -25,7 +25,7 @@
 /* chat card */
 .lp .fq-chat{position:sticky;top:84px;min-height:380px;padding:clamp(18px,2vw,26px);border-radius:28px;background:var(--tint);display:flex;flex-direction:column;gap:14px}
 .lp .fq-chat-head{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid #c9e4dc}
-.lp .fq-avatar{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--brand);color:#fff;font-size:15px;font-weight:800;letter-spacing:-.04em}
+.lp .fq-avatar{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--brand);color:#fff;font-size:15px;font-weight:800;letter-spacing:-.04em;box-shadow:0 0 0 3px rgba(11,122,109,.15)}
 .lp .fq-chat-name{margin:0;font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
 .lp .fq-chat-note{margin:1px 0 0;font-size:12.5px;color:var(--ink2)}
 .lp .fq-chat-note::before{content:'';display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:#20c997;vertical-align:1px}
