@@ -42,7 +42,7 @@ export default function RejectionFeedback() {
   // hover, focus or click takes over and stops it.
   useEffect(() => {
     const el = rootRef.current
-    if (!el || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return undefined
+    if (!el || prefersReducedMotion() || !('IntersectionObserver' in window)) return undefined
     let timer = 0
     let i = 0
     setStage(0)
