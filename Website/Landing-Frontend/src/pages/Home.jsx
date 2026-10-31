@@ -34,11 +34,11 @@ export default function Home() {
         <NextMove />
         <Audiences />
         <Companies onPick={onPick} />
+        <RejectionFeedback />
         {/* Approved candidate testimonials; the editable drafts in lib/candidateStories.js show until there are some. */}
         <section className="lp-stories" style={{ background: '#f7f8fc' }}>
           <SuccessStoriesSection fallbackStories={DRAFT_CANDIDATE_STORIES} />
         </section>
-        <RejectionFeedback />
         <Faq />
       </main>
       <Footer signature />
