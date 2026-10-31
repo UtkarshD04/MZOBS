@@ -42,7 +42,7 @@ export default function Faq() {
     if (i === active) return
     setActive(i)
     clearTimeout(timer.current)
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    if (prefersReducedMotion()) return
     setTyping(true)
     timer.current = setTimeout(() => setTyping(false), TYPING_MS)
   }
