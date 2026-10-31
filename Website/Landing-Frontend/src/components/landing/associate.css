@@ -24,3 +24,7 @@
 .lp .aud-assoc .as-card h3{margin:2px 0 4px;font-size:19px;font-weight:800;letter-spacing:-.03em;color:#111827}
 .lp .aud-assoc .as-card p{margin:0;font-size:14.5px;line-height:1.55;color:#667085}
 .lp .aud-assoc .as-no{position:absolute;right:20px;top:20px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:#b6d6cc}
+
+/* faint dot grid in the corner, like a network of nodes */
+.lp .aud-assoc .aud-inner::before{content:'';position:absolute;right:24px;top:24px;width:200px;height:140px;background-image:radial-gradient(#b6d6cc 1.4px,transparent 1.6px);background-size:20px 20px;opacity:.7;pointer-events:none}
+.lp .aud-assoc .aud-intro,.lp .aud-assoc .as-steps{position:relative;z-index:1}
