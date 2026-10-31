@@ -93,7 +93,7 @@ export default function RejectionFeedback() {
           </div>
 
           <div className="rf-stage" data-r="">
-            <div className="rf-card">
+            <div className="rf-card" role="group" aria-label="Sample application feedback, for illustration">
               <ol className="rf-steps" aria-label="Application journey" onKeyDown={onStepKey}>
                 {STAGES.map((s, i) => (
                   <li key={s.key} className={i < stage ? 'past' : i === stage ? 'on' : ''}>
