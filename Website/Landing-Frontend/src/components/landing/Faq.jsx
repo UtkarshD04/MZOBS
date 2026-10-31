@@ -53,7 +53,7 @@ export default function Faq() {
           </ul>
         </div>
 
-        <div className="fq-chat" data-r="">
+        <div className="fq-chat" role="group" aria-label="Answer from Mzobs" data-r="">
           <div className="fq-chat-head">
             <span className="fq-avatar" aria-hidden="true">M</span>
             <div>
