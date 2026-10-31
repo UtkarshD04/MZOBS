@@ -1,7 +1,7 @@
 /* Rejection feedback section — a compact brand-teal panel with one interactive
    sample card. Uses the landing page's own palette and type. Scoped to .rf. */
 .lp .rf{--ink:#111827;--ink2:#667085;--brand:#0b7a6d;--brand-d:#075f55;--mint:#20c997;--tint:#e7f5f1;--line:#e4e7ec;background:#fff;scroll-margin-top:52px;padding:clamp(16px,2vw,24px) 24px clamp(24px,3vw,36px)}
-.lp .rf-panel{position:relative;overflow:hidden;max-width:1200px;margin:0 auto;padding:clamp(22px,3vw,36px);border-radius:32px;background:#0b7a6d;color:#fff}
+.lp .rf-panel{isolation:isolate;position:relative;overflow:hidden;max-width:1200px;margin:0 auto;padding:clamp(22px,3vw,36px);border-radius:32px;background:#0b7a6d;color:#fff}
 /* fine concentric rings behind the card */
 .lp .rf-panel::before,.lp .rf-panel::after{content:'';position:absolute;border-radius:50%;pointer-events:none;border:1px solid rgba(255,255,255,.14)}
 .lp .rf-panel::before{right:-90px;top:-110px;width:420px;height:420px}
