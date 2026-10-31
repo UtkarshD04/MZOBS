@@ -44,6 +44,7 @@ export default function Faq() {
 
   return (
     <section id="faq" className="fq" aria-labelledby="fq-title">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: FAQ_JSON_LD }} />
       <div className="fq-wrap">
         <div className="fq-left" data-r="">
           <p className="fq-eyebrow">Questions, answered</p>
