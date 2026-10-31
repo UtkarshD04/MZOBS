@@ -5,8 +5,8 @@
 .lp .aud-camp .aud-em path{fill:none;stroke:#20c997;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
 
 /* dedicated contact, as a pill */
-.lp .aud-camp .aud-note{display:inline-flex;align-items:center;gap:10px;margin-top:20px;padding:8px 16px 8px 12px;border-radius:999px;background:#e7f5f1;font-size:14.5px;color:#075f55}
-.lp .aud-camp .aud-note::before{content:'';flex:none;width:8px;height:8px;border-radius:50%;background:#0b7a6d;box-shadow:0 0 0 4px rgba(11,122,109,.18)}
+.lp .aud-camp .aud-note{display:block;width:fit-content;max-width:100%;margin-top:20px;padding:9px 18px 9px 14px;border-radius:999px;background:#e7f5f1;font-size:14.5px;color:#075f55}
+.lp .aud-camp .aud-note::before{content:'';display:inline-block;width:8px;height:8px;margin-right:10px;border-radius:50%;background:#0b7a6d;box-shadow:0 0 0 4px rgba(11,122,109,.18);vertical-align:1px}
 .lp .aud-camp .aud-note b{color:#075f55}
 
 /* the four steps as a journey: a rule across the top with a node on each step */
