@@ -32,12 +32,12 @@ export default function Home() {
         <NextMove />
         <Audiences />
         <Companies onPick={onPick} />
-        <RejectionFeedback />
-        <Faq />
-        {/* Last thing before the footer. */}
+        {/* Real, approved candidate testimonials; renders nothing until there are some. */}
         <section style={{ background: '#f7f8fc' }}>
           <SuccessStoriesSection />
         </section>
+        <RejectionFeedback />
+        <Faq />
       </main>
       <Footer signature />
     </div>
