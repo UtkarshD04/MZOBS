@@ -173,6 +173,33 @@ function Ally() {
   )
 }
 
+const AssociatePerk = ({ children }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
+)
+
+const ASSOCIATE_PERKS = [
+  { title: 'Verified openings', text: 'Access openings from employers across industries and cities.', icon: <AssociatePerk><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" /><path d="M9 12l2.2 2.2L15.5 10" /></AssociatePerk> },
+  { title: 'Beyond your local network', text: 'Connect your candidates with jobs outside your own city.', icon: <AssociatePerk><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" /></AssociatePerk> },
+  { title: 'Work with our team', text: 'Every application is reviewed by the Mzobs team before onboarding.', icon: <AssociatePerk><circle cx="9" cy="8" r="3.2" /><path d="M3 20c.6-3.4 3-5 6-5s5.4 1.6 6 5" /><circle cx="17" cy="9" r="2.4" /><path d="M16.5 14.2c2.6.2 4.2 1.7 4.6 4.3" /></AssociatePerk> },
+]
+
+function AssociatePerks() {
+  return (
+    <ul data-r="" className="as-steps">
+      {ASSOCIATE_PERKS.map((p, i) => (
+        <li key={p.title} className="as-card">
+          <span className="as-ico">{p.icon}</span>
+          <div>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </div>
+          <span className="as-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 function Associate() {
   return (
     <section id="associate" className="aud aud-assoc">
@@ -186,13 +213,7 @@ function Associate() {
           <Link to={CLIENT_ONLY_ROUTES.associateApply} className="aud-btn solid">Apply as Associate</Link>
           <Link to={CLIENT_ONLY_ROUTES.associate} className="aud-btn ghost">How it works</Link>
         </Intro>
-        <List
-          items={[
-            ['Verified openings', 'Access openings from employers across industries and cities.'],
-            ['Beyond your local network', 'Connect your candidates with jobs outside your own city.'],
-            ['Work with our team', 'Every application is reviewed by the Mzobs team before onboarding.'],
-          ]}
-        />
+        <AssociatePerks />
       </div>
     </section>
   )
