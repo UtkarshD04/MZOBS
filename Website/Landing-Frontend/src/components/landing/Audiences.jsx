@@ -233,7 +233,7 @@ function AddCampus() {
       <div className="aud-inner" style={{ paddingBottom: 'clamp(28px, 4vw, 48px)' }}>
         <Intro
           label="Add your campus"
-          title="Bring your campus onto Mzobs."
+          title={<>Bring your campus onto <span className="aud-em">Mzobs.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 25 1, 50 11, 98 3" pathLength="1" /></svg></span></>}
           lead="For colleges, universities and other institutions. Your students find relevant jobs in one place, and you get a clearer link to employers who are hiring."
           note={<><b>Dedicated contact:</b> every partner campus gets a Mzobs point of contact.</>}
         >
