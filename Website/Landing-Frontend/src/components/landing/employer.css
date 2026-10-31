@@ -24,3 +24,7 @@
 .lp .aud-emp .aud-facts li:hover{transform:translateY(-4px);background:rgba(32,201,151,.07);box-shadow:inset 0 0 0 1px #20c997}
 .lp .aud-emp .aud-facts h3{font-size:15.5px}
 .lp .aud-emp .aud-facts p{margin-top:4px;font-size:13.5px;line-height:1.5}
+
+/* closing line */
+.lp .aud-emp .aud-built{display:flex;align-items:center;gap:10px;padding:16px clamp(24px,4vw,48px) clamp(20px,2.6vw,28px);font-size:13.5px}
+.lp .aud-emp .aud-built::before{content:'';flex:none;width:6px;height:6px;border-radius:50%;background:#20c997}
