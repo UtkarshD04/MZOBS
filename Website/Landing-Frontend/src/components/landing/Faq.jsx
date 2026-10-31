@@ -32,6 +32,16 @@ export default function Faq() {
     timer.current = setTimeout(() => setTyping(false), 700)
   }
 
+  // Up / Down (and Home / End) move focus between the questions.
+  const onListKey = (e) => {
+    const btns = Array.from(e.currentTarget.querySelectorAll('button'))
+    const at = btns.indexOf(document.activeElement)
+    const next = { ArrowDown: at + 1, ArrowUp: at - 1, Home: 0, End: btns.length - 1 }[e.key]
+    if (at < 0 || next === undefined) return
+    e.preventDefault()
+    btns[(next + btns.length) % btns.length].focus()
+  }
+
   return (
     <section id="faq" className="fq" aria-labelledby="fq-title">
       <div className="fq-wrap">
