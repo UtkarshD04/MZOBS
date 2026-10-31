@@ -33,7 +33,7 @@ export default function Faq() {
   }
 
   return (
-    <section className="fq" aria-labelledby="fq-title">
+    <section id="faq" className="fq" aria-labelledby="fq-title">
       <div className="fq-wrap">
         <div className="fq-left" data-r="">
           <p className="fq-eyebrow">Questions, answered</p>
