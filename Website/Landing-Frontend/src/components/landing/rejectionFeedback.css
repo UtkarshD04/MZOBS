@@ -58,8 +58,9 @@
 .lp .rf-fb{margin-top:8px;transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
 .lp .rf-fb:not(.is-on){opacity:.35;transform:translateY(6px)}
 .lp .rf-chips{display:flex;flex-wrap:wrap;gap:6px}
-.lp .rf-chips button{min-height:40px;padding:0 15px;border-radius:999px;border:1px solid var(--line);background:#fff;font:inherit;font-size:13.5px;font-weight:600;color:#344054;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
-.lp .rf-chips button:hover{border-color:var(--brand);color:var(--brand)}
+.lp .rf-chips button{min-height:40px;padding:0 15px;border-radius:999px;border:1px solid var(--line);background:#fff;font:inherit;font-size:13.5px;font-weight:600;color:#344054;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s,transform .2s}
+.lp .rf-chips button:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px)}
+.lp .rf-chips button:active{transform:scale(.97)}
 .lp .rf-chips button.on{background:var(--brand);border-color:var(--brand);color:#fff}
 .lp .rf-chips button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .lp .rf-msg{margin-top:8px;padding:10px 14px;border-radius:16px;background:#f7f8fc;animation:rfIn .35s cubic-bezier(.2,.8,.2,1)}
