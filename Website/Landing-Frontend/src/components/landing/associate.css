@@ -41,3 +41,9 @@
 .lp .aud-assoc .as-stub ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
 .lp .aud-assoc .as-stub li{padding:8px 12px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1px #d6ebe4;font-size:13px;font-weight:600;line-height:1.25;color:#075f55}
 .lp .aud-assoc .as-bars{margin-top:auto;height:34px;padding-top:14px;box-sizing:content-box;background:repeating-linear-gradient(90deg,#111827 0 2px,transparent 2px 4px,#111827 4px 5px,transparent 5px 9px,#111827 9px 12px,transparent 12px 14px) content-box;opacity:.85}
+
+/* a slight tilt that settles on hover, and the underline drawing in */
+.lp .aud-assoc .as-pass{transform:rotate(1.2deg);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.lp .aud-assoc .as-pass:hover{transform:rotate(0deg) translateY(-4px);box-shadow:0 0 0 1.5px #9fd4bb,0 34px 56px -30px rgba(11,122,109,.55)}
+.lp-js .aud-assoc [data-r] .aud-em path{stroke-dashoffset:1;transition:stroke-dashoffset .9s .5s cubic-bezier(.2,.8,.2,1)}
+.lp-js .aud-assoc [data-r].lp-in .aud-em path{stroke-dashoffset:0}
