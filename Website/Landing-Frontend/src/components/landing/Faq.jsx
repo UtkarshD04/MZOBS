@@ -20,7 +20,7 @@ const FAQ_JSON_LD = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: QA.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
-}).replace(/</g, '\u003c')
+}).replace(/</g, '\\u003c')
 
 export default function Faq() {
   const [active, setActive] = useState(0)
