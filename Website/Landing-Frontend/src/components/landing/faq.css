@@ -30,7 +30,7 @@
 .lp .fq-chat-note{margin:1px 0 0;font-size:12.5px;color:var(--ink2)}
 .lp .fq-chat-note::before{content:'';display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:#20c997;vertical-align:1px}
 .lp .fq-bubble{max-width:88%;padding:13px 17px;border-radius:20px;font-size:15.5px;line-height:1.55}
-.lp .fq-bubble.you{align-self:flex-end;border-bottom-right-radius:5px;background:var(--brand);color:#fff;font-weight:600;animation:fqIn .4s cubic-bezier(.2,.8,.2,1)}
+.lp .fq-bubble.you{align-self:flex-end;border-bottom-right-radius:5px;background:var(--brand);color:#fff;font-weight:600;box-shadow:0 10px 22px -16px rgba(7,95,85,.7);animation:fqIn .4s cubic-bezier(.2,.8,.2,1)}
 .lp .fq-reply{display:flex;align-items:flex-end;gap:10px;animation:fqIn .4s cubic-bezier(.2,.8,.2,1)}
 .lp .fq-reply .fq-avatar{width:30px;height:30px;font-size:12px}
 .lp .fq-bubble.bot{border-bottom-left-radius:5px;background:#fff;color:#344054;box-shadow:0 10px 24px -18px rgba(11,122,109,.5)}
