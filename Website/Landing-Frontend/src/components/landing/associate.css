@@ -69,3 +69,13 @@
 @media (max-width:760px){
   .lp .aud-assoc .as-perks{grid-template-columns:1fr}
 }
+
+/* who can apply: a small network around a central Mzobs hub */
+.lp .aud-assoc .as-net{position:relative;flex:1 1 400px;max-width:500px;aspect-ratio:1.12/1;min-height:330px}
+.lp .aud-assoc .as-net-k{position:absolute;left:50%;top:50%;margin:46px 0 0;transform:translateX(-50%);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a8f0d8;white-space:nowrap}
+.lp .aud-assoc .as-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.lp .aud-assoc .as-lines line{stroke:rgba(255,255,255,.4);stroke-width:1.5;stroke-dasharray:5 6;vector-effect:non-scaling-stroke}
+.lp .aud-assoc .as-hub{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;background:#fff;color:#075f55;font-size:17px;font-weight:800;letter-spacing:-.04em;box-shadow:0 0 0 10px rgba(255,255,255,.14),0 18px 36px -14px rgba(0,0,0,.4)}
+.lp .aud-assoc .as-nodes{position:absolute;inset:0;margin:0;padding:0;list-style:none}
+.lp .aud-assoc .as-nodes li{position:absolute;transform:translate(-50%,-50%);padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4);font-size:14px;font-weight:600;white-space:nowrap;color:#fff;transition:background-color .25s,color .25s,transform .3s cubic-bezier(.2,.8,.2,1)}
+.lp .aud-assoc .as-nodes li:hover{background:#fff;color:#075f55;transform:translate(-50%,-50%) scale(1.06)}

@@ -198,6 +198,28 @@ function AssociatePerks() {
   )
 }
 
+const NETWORK_NODES = [
+  { label: 'Placement consultants', x: 24, y: 15 },
+  { label: 'Recruitment agencies', x: 76, y: 22 },
+  { label: 'Local hiring partners', x: 22, y: 84 },
+  { label: 'Career organisations', x: 76, y: 80 },
+]
+
+function AssociateNetwork() {
+  return (
+    <div data-r="" className="as-net">
+      <p className="as-net-k">Who can apply</p>
+      <svg className="as-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        {NETWORK_NODES.map((n) => <line key={n.label} x1="50" y1="50" x2={n.x} y2={n.y} />)}
+      </svg>
+      <span className="as-hub" aria-hidden="true">Mzobs</span>
+      <ul className="as-nodes" aria-label="Who can apply">
+        {NETWORK_NODES.map((n) => <li key={n.label} style={{ left: `${n.x}%`, top: `${n.y}%` }}>{n.label}</li>)}
+      </ul>
+    </div>
+  )
+}
+
 function Associate() {
   return (
     <section id="associate" className="aud aud-assoc">
@@ -207,11 +229,11 @@ function Associate() {
           label="Associate with Mzobs"
           title={<>Join the hiring <span className="aud-em">network.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 25 1, 50 11, 98 3" pathLength="1" /></svg></span></>}
           lead="Connect your candidates with verified opportunities from employers across industries and cities."
-          note={<><b>Who can apply</b><span className="as-chips"><span>Placement consultants</span><span>Recruitment agencies</span><span>Local hiring partners</span><span>Career organisations</span></span></>}
         >
           <Link to={CLIENT_ONLY_ROUTES.associateApply} className="aud-btn solid">Apply as Associate</Link>
           <Link to={CLIENT_ONLY_ROUTES.associate} className="aud-btn ghost">How it works</Link>
         </Intro>
+        <AssociateNetwork />
       </div>
         <AssociatePerks />
       </div>
