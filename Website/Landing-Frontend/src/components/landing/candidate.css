@@ -38,3 +38,16 @@
 /* the underline draws itself in once the section is revealed */
 .lp-js .aud-cand [data-r] .aud-em path{stroke-dashoffset:1;transition:stroke-dashoffset .9s .5s cubic-bezier(.2,.8,.2,1)}
 .lp-js .aud-cand [data-r].lp-in .aud-em path{stroke-dashoffset:0}
+
+@media (max-width:560px){
+  .lp .aud-cand .cd-grid{gap:12px}
+  .lp .aud-cand .cd-tile{padding:18px 16px 20px;border-radius:20px}
+  .lp .aud-cand .cd-tile:nth-child(even){margin-top:22px}
+  .lp .aud-cand .cd-tile h3{font-size:17px;margin-top:14px}
+  .lp .aud-cand .cd-tile p{font-size:14px}
+  .lp .aud-cand .aud-inner::before,.lp .aud-cand .aud-inner::after{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .lp .aud-cand .cd-tile:hover{transform:none}
+  .lp-js .aud-cand [data-r] .aud-em path{stroke-dashoffset:0;transition:none}
+}
