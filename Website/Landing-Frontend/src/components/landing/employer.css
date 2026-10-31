@@ -8,3 +8,12 @@
 .lp .aud-emp .aud-note{margin-top:12px;font-size:14.5px}
 .lp .aud-emp .aud-cta{margin-top:20px}
 .lp .aud-emp .aud-btn{min-height:46px;padding:0 22px;font-size:15px}
+
+/* hiring steps: compact rows joined by a line */
+.lp .aud-emp .aud-flow{position:relative;border-top:0}
+.lp .aud-emp .aud-flow::before{content:'';position:absolute;left:15px;top:22px;bottom:22px;width:1px;background:linear-gradient(#20c997,rgba(32,201,151,.12))}
+.lp .aud-emp .aud-flow li{position:relative;padding:8px 0;border-bottom:0}
+.lp .aud-emp .aud-flow .mk{background:#111827;z-index:1}
+.lp .aud-emp .aud-flow h3{font-size:17px}
+.lp .aud-emp .aud-flow p{margin-top:1px;font-size:14px;line-height:1.4}
+.lp .aud-emp .aud-flow li:hover h3{color:#20c997}
