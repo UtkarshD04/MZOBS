@@ -32,3 +32,7 @@ test('every story photo points to a file that exists in public/', () => {
     assert.ok(existsSync(new URL(`../public${s.photo}`, import.meta.url)), `${s.id}: missing ${s.photo}`)
   }
 })
+
+test('drafts make no placement claim', () => {
+  for (const s of stories) assert.ok(!s.placementVerified, `${s.id}: only set placementVerified once Mzobs has confirmed the placement`)
+})
