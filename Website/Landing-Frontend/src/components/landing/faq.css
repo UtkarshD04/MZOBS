@@ -4,7 +4,7 @@
 .lp .fq-wrap{max-width:1200px;margin:0 auto;padding:clamp(40px,5vw,72px) 24px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,5.6fr);gap:clamp(32px,5vw,72px);align-items:start}
 
 .lp .fq-eyebrow{margin:0;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
-.lp .fq-h2{margin:12px 0 0;font-weight:800;font-size:clamp(36px,4.2vw,58px);line-height:1;letter-spacing:-.05em;color:var(--ink)}
+.lp .fq-h2{text-wrap:balance;margin:12px 0 0;font-weight:800;font-size:clamp(36px,4.2vw,58px);line-height:1;letter-spacing:-.05em;color:var(--ink)}
 .lp .fq-h2 em{font-style:normal;color:var(--brand)}
 .lp .fq-sub{margin:16px 0 0;max-width:40ch;font-size:17px;line-height:1.6;color:var(--ink2)}
 
