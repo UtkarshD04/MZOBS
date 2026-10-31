@@ -6,6 +6,8 @@ import './audiences.css'
 import './candidate.css'
 import './employer.css'
 import './associate.css'
+import './ally.css'
+import './campus.css'
 
 // One section per audience Mzobs serves. Copy mirrors what each
 // destination page already says.
@@ -136,7 +138,7 @@ function Ally() {
       <div className="aud-inner">
         <Intro
           label="Mzobs Ally"
-          title="Represent Mzobs on your campus."
+          title={<>Represent Mzobs on <span className="aud-em">your campus.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 25 1, 50 11, 98 3" pathLength="1" /></svg></span></>}
           lead="A Mzobs Ally is a student who connects their campus with career opportunities, hiring initiatives and events. You help classmates get hired and build real-world experience of your own."
         >
           <Link to={CLIENT_ONLY_ROUTES.ally} className="aud-btn dark">Become an Ally</Link>
