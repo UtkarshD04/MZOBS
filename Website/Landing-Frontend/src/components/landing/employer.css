@@ -28,3 +28,13 @@
 /* closing line */
 .lp .aud-emp .aud-built{display:flex;align-items:center;gap:10px;padding:16px clamp(24px,4vw,48px) clamp(20px,2.6vw,28px);font-size:13.5px}
 .lp .aud-emp .aud-built::before{content:'';flex:none;width:6px;height:6px;border-radius:50%;background:#20c997}
+
+@media (max-width:560px){
+  .lp .aud-emp .aud-inner{padding:26px 20px 14px}
+  .lp .aud-emp .aud-facts{margin:0 20px}
+  .lp .aud-emp .aud-built{padding:14px 20px 22px}
+  .lp .aud-emp-panel::before{width:320px;height:320px;right:-110px;top:-120px}
+}
+@media (prefers-reduced-motion:reduce){
+  .lp .aud-emp .aud-facts li:hover{transform:none}
+}
