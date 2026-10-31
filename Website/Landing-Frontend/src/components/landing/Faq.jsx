@@ -40,7 +40,7 @@ export default function Faq() {
           <h2 id="fq-title" className="fq-h2">Ask away. <em>We&rsquo;ll keep it plain.</em></h2>
           <p className="fq-sub">Pick a question and get a straight answer, no fine print.</p>
 
-          <ul className="fq-list">
+          <ul className="fq-list" aria-label="Frequently asked questions">
             {QA.map((item, i) => (
               <li key={item.q} className={`fq-item${i === active ? ' on' : ''}`}>
                 <button type="button" className="fq-q" aria-pressed={i === active} onClick={() => choose(i)}>
