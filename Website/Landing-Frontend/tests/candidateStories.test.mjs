@@ -36,3 +36,7 @@ test('every story photo points to a file that exists in public/', () => {
 test('drafts make no placement claim', () => {
   for (const s of stories) assert.ok(!s.placementVerified, `${s.id}: only set placementVerified once Mzobs has confirmed the placement`)
 })
+
+test('feedback stays short enough for a card', () => {
+  for (const s of stories) assert.ok(s.feedback.length <= 220, `${s.id}: feedback is ${s.feedback.length} characters`)
+})
