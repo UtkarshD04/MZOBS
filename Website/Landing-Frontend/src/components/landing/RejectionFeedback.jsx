@@ -128,12 +128,12 @@ export default function RejectionFeedback() {
               <div className={`rf-fb${shared ? ' is-on' : ''}`}>
                 <div className="rf-chips" role="group" aria-label="Feedback categories">
                   {AREAS.map((a, i) => (
-                    <button key={a.key} type="button" className={i === area ? 'on' : ''} aria-pressed={i === area} title={a.name} onClick={() => setArea(i)} onMouseEnter={() => setArea(i)}>
+                    <button key={a.key} type="button" className={i === area ? 'on' : ''} aria-pressed={i === area} title={a.name} onClick={() => setArea(i)} onFocus={() => setArea(i)} onMouseEnter={() => setArea(i)}>
                       {a.short}
                     </button>
                   ))}
                 </div>
-                <div key={selected.key} className="rf-msg">
+                <div key={selected.key} className="rf-msg" aria-live="polite">
                   <div className="rf-msg-top">
                     <span className="rf-msg-name">{selected.name}</span>
                     <span className="rf-meter" role="img" aria-label={`${selected.level} out of 5`}>
