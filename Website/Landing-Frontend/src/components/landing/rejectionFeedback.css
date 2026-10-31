@@ -95,6 +95,7 @@
   .lp .rf-panel{padding:28px 16px;border-radius:26px}
   .lp .rf-card{border-radius:22px;padding:22px 16px 16px}
   .lp .rf-step-label{font-size:12px}
+  .lp .rf-chips button{min-height:44px}
   .lp .rf-caption{min-height:62px}
   .lp .rf-msg p{min-height:70px}
   .lp .rf-btn{width:100%;justify-content:center}
