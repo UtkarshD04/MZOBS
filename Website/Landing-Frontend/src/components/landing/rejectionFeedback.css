@@ -39,7 +39,7 @@
 .lp .rf-steps button:hover .rf-step-label{color:var(--ink)}
 .lp .rf-step-label{font-size:12.5px;font-weight:600;transition:color .3s}
 .lp .rf-steps li.on .rf-step-label{color:var(--ink)}
-.lp .rf-caption{min-height:40px;margin:6px 0 0;padding:10px 14px;border-radius:12px;background:var(--tint);font-size:13.5px;line-height:1.45;color:#344054;animation:rfIn .35s cubic-bezier(.2,.8,.2,1)}
+.lp .rf-caption{text-wrap:pretty;min-height:40px;margin:6px 0 0;padding:10px 14px;border-radius:12px;background:var(--tint);font-size:13.5px;line-height:1.45;color:#344054;animation:rfIn .35s cubic-bezier(.2,.8,.2,1)}
 .lp .rf-caption b{color:var(--brand-d)}
 
 .lp .rf-role{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-top:12px}
