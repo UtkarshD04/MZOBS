@@ -1,0 +1,23 @@
+/* FAQ — "Ask Mzobs": questions on the left, a chat-style reply on the right.
+   Uses the landing page's own palette and type. Scoped to .fq. */
+.lp .fq{--ink:#111827;--ink2:#667085;--brand:#0b7a6d;--brand-d:#075f55;--tint:#e7f5f1;--line:#e4e7ec;background:#fff;scroll-margin-top:52px}
+.lp .fq-wrap{max-width:1200px;margin:0 auto;padding:clamp(40px,5vw,72px) 24px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,5.6fr);gap:clamp(32px,5vw,72px);align-items:start}
+
+.lp .fq-eyebrow{margin:0;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
+.lp .fq-h2{margin:12px 0 0;font-weight:800;font-size:clamp(36px,4.2vw,58px);line-height:1;letter-spacing:-.05em;color:var(--ink)}
+.lp .fq-h2 em{font-style:normal;color:var(--brand)}
+.lp .fq-sub{margin:16px 0 0;max-width:40ch;font-size:17px;line-height:1.6;color:var(--ink2)}
+
+/* question list: hairline rows, like the audience lists */
+.lp .fq-list{margin:28px 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.lp .fq-item{position:relative;border-bottom:1px solid var(--line)}
+.lp .fq-item::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--brand);transform:scaleY(0);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.lp .fq-item.on::after{transform:scaleY(1)}
+.lp .fq-q{display:flex;align-items:center;gap:16px;width:100%;min-height:56px;padding:8px 6px 8px 14px;border:0;background:none;font:inherit;font-size:16.5px;font-weight:600;letter-spacing:-.015em;line-height:1.3;text-align:left;color:var(--ink2);cursor:pointer;transition:color .2s,background-color .2s}
+.lp .fq-q:hover{color:var(--ink);background:rgba(11,122,109,.04)}
+.lp .fq-q:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+.lp .fq-item.on .fq-q{color:var(--ink)}
+.lp .fq-num{flex:none;width:22px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:#98a2b3;transition:color .2s}
+.lp .fq-item.on .fq-num{color:var(--brand)}
+.lp .fq-arr{margin-left:auto;flex:none;opacity:0;transform:translateX(-4px);color:var(--brand);transition:opacity .25s,transform .3s cubic-bezier(.2,.8,.2,1)}
+.lp .fq-item.on .fq-arr,.lp .fq-q:hover .fq-arr{opacity:1;transform:none}
