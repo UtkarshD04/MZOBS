@@ -16,6 +16,8 @@ const QA = [
   { q: 'Can my college join Mzobs?', a: 'Yes. Placement cells can bring their whole batch onto Mzobs and give students one place to discover employers hiring freshers.', link: { to: '/add-your-campus', label: 'Partner with us' } },
 ]
 
+const prefersReducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
 // How long the typing dots show before a reply.
 const TYPING_MS = 700
 
