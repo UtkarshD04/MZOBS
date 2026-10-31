@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { CLIENT_ONLY_ROUTES as R } from '../../lib/routes'
 import './faq.css'
 
@@ -14,6 +15,7 @@ const QA = [
 
 export default function Faq() {
   const [active, setActive] = useState(0)
+  const current = QA[active]
 
   return (
     <section className="fq" aria-labelledby="fq-title">
@@ -34,6 +36,24 @@ export default function Faq() {
               </li>
             ))}
           </ul>
+        </div>
+
+        <div className="fq-chat" data-r="">
+          <div className="fq-chat-head">
+            <span className="fq-avatar" aria-hidden="true">M</span>
+            <div>
+              <p className="fq-chat-name">Mzobs</p>
+              <p className="fq-chat-note">Straight answers</p>
+            </div>
+          </div>
+          <div key={current.q} className="fq-bubble you">{current.q}</div>
+          <div className="fq-reply">
+            <span className="fq-avatar" aria-hidden="true">M</span>
+            <div className="fq-bubble bot">
+              <p>{current.a}</p>
+              {current.link && <Link to={current.link.to} className="fq-link">{current.link.label} <span aria-hidden="true">→</span></Link>}
+            </div>
+          </div>
         </div>
       </div>
     </section>
