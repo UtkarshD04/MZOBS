@@ -1,47 +1,20 @@
-/* "Associate" section: intro on the left, offset benefit cards on the right.
-   Scoped to .aud-assoc so the other audience sections are untouched. */
+/* "Associate" section: a bold teal panel with a "who can apply" network diagram
+   and a row of three benefits. Scoped to .aud-assoc so the other audience
+   sections are untouched. */
 .lp .aud-assoc{position:relative;overflow:hidden}
 .lp .aud-assoc .aud-inner{position:relative;align-items:center}
 .lp .aud-assoc .aud-em{position:relative;display:inline-block;font-style:normal;color:#0b7a6d}
 .lp .aud-assoc .aud-em svg{position:absolute;left:0;right:0;bottom:-.12em;width:100%;height:.28em;overflow:visible}
 .lp .aud-assoc .aud-em path{fill:none;stroke:#20c997;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
 
-/* who can apply, as chips */
-.lp .aud-assoc .aud-note{margin-top:22px}
-.lp .aud-assoc .aud-note b{display:block;margin-bottom:10px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#0b7a6d}
-.lp .aud-assoc .as-chips{display:flex;flex-wrap:wrap;gap:8px}
-.lp .aud-assoc .as-chips span{padding:7px 14px;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1.5px #d6ebe4;font-size:14px;font-weight:600;color:#075f55;transition:background-color .25s,box-shadow .25s,transform .25s}
-.lp .aud-assoc .as-chips span:hover{background:#e7f5f1;box-shadow:inset 0 0 0 1.5px #0b7a6d;transform:translateY(-2px)}
 
-/* benefit cards, stepped to the right */
-.lp .aud-assoc .as-steps{flex:1 1 400px;max-width:520px;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
-.lp .aud-assoc .as-card{position:relative;display:flex;align-items:flex-start;gap:16px;padding:20px 54px 20px 20px;border-radius:22px;background:#fff;box-shadow:0 14px 30px -24px rgba(11,122,109,.45),inset 0 0 0 1.5px #e4ecf0;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
-.lp .aud-assoc .as-card:nth-child(2){margin-left:clamp(0px,3vw,36px)}
-.lp .aud-assoc .as-card:nth-child(3){margin-left:clamp(0px,6vw,72px)}
-.lp .aud-assoc .as-card:hover{transform:translateY(-4px);box-shadow:0 22px 40px -24px rgba(11,122,109,.5),inset 0 0 0 1.5px #0b7a6d}
-.lp .aud-assoc .as-ico{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#e7f5f1;color:#0b7a6d;transition:background-color .3s,color .3s}
-.lp .aud-assoc .as-card:hover .as-ico{background:#0b7a6d;color:#fff}
-.lp .aud-assoc .as-card h3{margin:2px 0 4px;font-size:19px;font-weight:800;letter-spacing:-.03em;color:#111827}
-.lp .aud-assoc .as-card p{margin:0;font-size:14.5px;line-height:1.55;color:#667085}
-.lp .aud-assoc .as-no{position:absolute;right:20px;top:20px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:#b6d6cc}
 
-/* faint dot grid in the corner, like a network of nodes */
-.lp .aud-assoc .aud-inner::before{content:'';position:absolute;right:24px;top:24px;width:200px;height:140px;background-image:radial-gradient(#b6d6cc 1.4px,transparent 1.6px);background-size:20px 20px;opacity:.7;pointer-events:none}
-.lp .aud-assoc .aud-intro,.lp .aud-assoc .as-steps{position:relative;z-index:1}
 
 /* the underline draws itself in once the section is revealed */
 .lp-js .aud-assoc [data-r] .aud-em path{stroke-dashoffset:1;transition:stroke-dashoffset .9s .5s cubic-bezier(.2,.8,.2,1)}
 .lp-js .aud-assoc [data-r].lp-in .aud-em path{stroke-dashoffset:0}
 
-@media (max-width:560px){
-  .lp .aud-assoc .as-card{padding:18px 46px 18px 16px;border-radius:20px}
-  .lp .aud-assoc .as-card:nth-child(2){margin-left:12px}
-  .lp .aud-assoc .as-card:nth-child(3){margin-left:24px}
-  .lp .aud-assoc .as-card h3{font-size:17px}
-  .lp .aud-assoc .aud-inner::before{display:none}
-}
 @media (prefers-reduced-motion:reduce){
-  .lp .aud-assoc .as-card:hover,.lp .aud-assoc .as-chips span:hover{transform:none}
   .lp-js .aud-assoc [data-r] .aud-em path{stroke-dashoffset:0;transition:none}
 }
 
@@ -50,7 +23,6 @@
 .lp .aud-assoc .as-panel{position:relative;overflow:hidden;isolation:isolate;max-width:1200px;margin:0 auto;border-radius:36px;background:#0b7a6d;color:#fff}
 .lp .aud-assoc .as-panel::before{content:'';position:absolute;left:-140px;bottom:-190px;width:480px;height:480px;border-radius:50%;border:1px solid rgba(255,255,255,.16);outline:1px solid rgba(255,255,255,.1);outline-offset:60px;pointer-events:none;z-index:-1}
 .lp .aud-assoc .aud-inner{padding:clamp(28px,4.5vw,56px) clamp(24px,4.5vw,56px) clamp(20px,3vw,32px)}
-.lp .aud-assoc .aud-inner::before{display:none}
 .lp .aud-assoc .aud-label{color:#a8f0d8}
 .lp .aud-assoc .h2{color:#fff;font-size:clamp(34px,4.2vw,56px);text-wrap:balance}
 .lp .aud-assoc .aud-em{color:#a8f0d8}
