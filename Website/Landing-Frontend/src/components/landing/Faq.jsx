@@ -40,7 +40,7 @@ export default function Faq() {
     clearTimeout(timer.current)
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
     setTyping(true)
-    timer.current = setTimeout(() => setTyping(false), 700)
+    timer.current = setTimeout(() => setTyping(false), TYPING_MS)
   }
 
   // Up / Down (and Home / End) move focus between the questions.
