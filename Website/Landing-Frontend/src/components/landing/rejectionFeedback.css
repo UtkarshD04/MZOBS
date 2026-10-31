@@ -101,6 +101,9 @@
   .lp .rf-btn{width:100%;justify-content:center}
   .lp .rf-actions{width:100%}
 }
+@media (forced-colors:active){
+  .lp .rf-steps li.on .rf-dot,.lp .rf-chips button.on{background:Highlight;color:HighlightText;border-color:Highlight}
+}
 @media (prefers-reduced-motion:reduce){
   .lp .rf *,.lp .rf *::before{animation:none!important;transition:none!important}
   .lp .rf-card:hover{transform:none}
