@@ -60,6 +60,10 @@
   .lp .fq-list{margin-top:22px}
   .lp .fq-bubble{max-width:94%;font-size:15px}
 }
+@media (forced-colors:active){
+  .lp .fq-item.on::after{background:Highlight}
+  .lp .fq-bubble.you{border:1px solid CanvasText}
+}
 @media (prefers-reduced-motion:reduce){
   .lp .fq *,.lp .fq *::before{animation:none!important;transition:none!important}
 }
