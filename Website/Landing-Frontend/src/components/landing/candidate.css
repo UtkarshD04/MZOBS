@@ -5,3 +5,8 @@
 .lp .aud-cand .aud-em{position:relative;display:inline-block;font-style:normal;color:#0b7a6d}
 .lp .aud-cand .aud-em svg{position:absolute;left:0;right:0;bottom:-.12em;width:100%;height:.28em;overflow:visible}
 .lp .aud-cand .aud-em path{fill:none;stroke:#20c997;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
+
+/* free to join, as a pill */
+.lp .aud-cand .aud-note{display:inline-flex;align-items:center;gap:10px;margin-top:20px;padding:8px 16px 8px 12px;border-radius:999px;background:#e7f5f1;font-size:14.5px;color:#075f55}
+.lp .aud-cand .aud-note::before{content:'';flex:none;width:8px;height:8px;border-radius:50%;background:#0b7a6d;box-shadow:0 0 0 4px rgba(11,122,109,.18)}
+.lp .aud-cand .aud-note b{color:#075f55}
