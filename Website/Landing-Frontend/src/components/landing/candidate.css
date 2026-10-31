@@ -1,0 +1,7 @@
+/* "For candidates" section: headline accent, free-to-join pill and icon tiles.
+   Scoped to .aud-cand so the other audience sections are untouched. */
+.lp .aud-cand{position:relative;overflow:hidden}
+.lp .aud-cand .aud-inner{position:relative}
+.lp .aud-cand .aud-em{position:relative;display:inline-block;font-style:normal;color:#0b7a6d}
+.lp .aud-cand .aud-em svg{position:absolute;left:0;right:0;bottom:-.12em;width:100%;height:.28em;overflow:visible}
+.lp .aud-cand .aud-em path{fill:none;stroke:#20c997;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}

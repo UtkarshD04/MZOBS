@@ -3,6 +3,7 @@ import { CLIENT_ONLY_ROUTES } from '../../lib/routes'
 import { GST_RATE_PERCENT, PLANS, fmtINR } from '../../lib/employerPricingPlan'
 import './landing.css'
 import './audiences.css'
+import './candidate.css'
 
 // One section per audience Mzobs serves. Copy mirrors what each
 // destination page already says.
@@ -38,7 +39,7 @@ function Candidate() {
       <div className="aud-inner">
         <Intro
           label="For candidates"
-          title="Find a job that fits."
+          title={<>Find a job that <span className="aud-em">fits.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 25 1, 50 11, 98 3" pathLength="1" /></svg></span></>}
           lead="Mzobs lists openings from companies that are hiring right now. Make one profile, apply from it, and see what happened to each application."
           note={<><b>Free to join.</b> Whether you are a fresher or changing jobs.</>}
         >
