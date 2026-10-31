@@ -42,6 +42,8 @@
 .lp .fq-link:hover{text-decoration:underline;text-underline-offset:3px}
 .lp .fq-link:focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:3px}
 
+.lp .fq ::selection{background:#c9e4dc;color:#075f55}
+
 @keyframes fqIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .lp .fq-typing{display:inline-flex;align-items:center;gap:5px;min-height:46px}
 .lp .fq-typing i{width:7px;height:7px;border-radius:50%;background:#98a2b3;animation:fqDot 1s ease-in-out infinite}
