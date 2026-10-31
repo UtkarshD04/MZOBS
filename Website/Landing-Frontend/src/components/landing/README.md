@@ -35,3 +35,15 @@ The drafts need each candidate's approval of their own words before they ship,
 and they must not carry `placementVerified` until Mzobs has confirmed that
 person's placement. To add one, add an entry to `DRAFT_CANDIDATE_STORIES` and
 put an approved image in `public/images/candidates/`.
+
+## Tests
+
+From `Website/Landing-Frontend`:
+
+```
+node --test "tests/*.test.mjs"
+```
+
+These use Node's built-in test runner, so no extra packages are needed. They
+check the story drafts (unique ids and names, required fields, photos exist,
+no placement claim) and that the routes the sections link to exist.
