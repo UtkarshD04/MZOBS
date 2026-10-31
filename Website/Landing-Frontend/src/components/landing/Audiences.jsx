@@ -132,6 +132,12 @@ const ALLY_ROLES = [
   ['03', 'Create impact', 'Help more people discover opportunities that matter.'],
 ]
 
+const ALLY_ICONS = [
+  <path key="a" d="M12 3l2.6 5.4 5.9.9-4.3 4.1 1 5.9L12 16.5 6.8 19.3l1-5.9L3.5 9.3l5.9-.9z" />,
+  <g key="b"><circle cx="6" cy="12" r="2.6" /><circle cx="18" cy="6" r="2.6" /><circle cx="18" cy="18" r="2.6" /><path d="M8.3 10.8l7.4-3.6M8.3 13.2l7.4 3.6" /></g>,
+  <g key="c"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></g>,
+]
+
 function Ally() {
   return (
     <section id="ally" className="aud aud-ally">
@@ -155,6 +161,9 @@ function Ally() {
       <ol className="aud-roles">
         {ALLY_ROLES.map(([n, t, p]) => (
           <li key={t} data-r="">
+            <span className="al-ico">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ALLY_ICONS[ALLY_ROLES.findIndex((r) => r[1] === t)]}</svg>
+            </span>
             <span className="n">{n}</span>
             <h3>{t}</h3>
             <p>{p}</p>

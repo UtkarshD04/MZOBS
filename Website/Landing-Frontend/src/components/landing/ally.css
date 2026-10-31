@@ -12,3 +12,12 @@
 .lp .aud-ally .aud-who .big{margin-top:8px;color:#fff}
 .lp .aud-ally .aud-who p:last-child{color:#a4abb9}
 .lp .aud-ally .al-cap{position:absolute;right:20px;top:20px;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:rgba(32,201,151,.14);color:#20c997}
+
+/* role cards: icon chip, faint number and an accent bar that grows on hover */
+.lp .aud-ally .aud-roles li{position:relative;overflow:hidden;padding:24px 22px 22px;background:#fff;box-shadow:inset 0 0 0 1.5px #c9e4dc}
+.lp .aud-ally .aud-roles li::after{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:#0b7a6d;transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.lp .aud-ally .aud-roles li:hover::after{transform:scaleX(1)}
+.lp .aud-ally .al-ico{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#e7f5f1;color:#0b7a6d;transition:background-color .3s,color .3s}
+.lp .aud-ally .aud-roles li:hover .al-ico{background:#0b7a6d;color:#fff}
+.lp .aud-ally .aud-roles .n{position:absolute;right:20px;top:20px;font-size:13px;font-weight:700;color:#b6d6cc}
+.lp .aud-ally .aud-roles h3{margin:16px 0 6px}
