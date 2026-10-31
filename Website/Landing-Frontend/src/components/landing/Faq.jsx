@@ -13,6 +13,7 @@ const QA = [
   { q: 'I am a student or a fresher. Is Mzobs for me?', a: 'Yes. Build your profile before you graduate and discover fresher-friendly roles and internships.' },
   { q: 'Who do I contact for help?', a: 'Write to the Mzobs team from the contact page and we will get back to you.', link: { to: '/contact', label: 'Contact Mzobs' } },
   { q: 'Can employers hire through Mzobs?', a: 'Yes. Employers can post roles on Mzobs, and every role is reviewed by our team before it goes live.', link: { to: '/employers', label: 'For employers' } },
+  { q: 'Can my college join Mzobs?', a: 'Yes. Placement cells can bring their whole batch onto Mzobs and give students one place to discover employers hiring freshers.', link: { to: '/add-your-campus', label: 'Partner with us' } },
 ]
 
 // How long the typing dots show before a reply.
