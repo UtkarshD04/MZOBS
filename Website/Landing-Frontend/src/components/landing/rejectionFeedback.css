@@ -30,7 +30,7 @@
 .lp .rf-steps{position:relative;display:grid;grid-template-columns:repeat(4,1fr);margin:0;padding:0;list-style:none}
 .lp .rf-steps::before{content:'';position:absolute;left:16px;right:calc(25% - 16px);top:15px;height:2px;border-radius:1px;background:#e7f5f1}
 .lp .rf-steps li{position:relative}
-.lp .rf-steps button{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:48px;padding:0 6px 0 0;border:0;background:none;font:inherit;text-align:left;color:#98a2b3;cursor:pointer}
+.lp .rf-steps button{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:48px;padding:0 6px 0 0;border:0;background:none;font:inherit;text-align:left;color:#98a2b3;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .lp .rf-steps button:focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:6px}
 .lp .rf-dot{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;border:1.5px solid #cfe6df;background:#fff;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#98a2b3;transition:background-color .3s,color .3s,border-color .3s,transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
 .lp .rf-steps li.past .rf-dot{border-color:var(--brand);color:var(--brand)}
