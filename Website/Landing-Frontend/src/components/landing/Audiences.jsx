@@ -33,6 +33,32 @@ function List({ items }) {
   )
 }
 
+const Ico = ({ children }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
+)
+
+const CANDIDATE_PERKS = [
+  { title: 'Verified openings', text: 'Jobs from hiring companies, across cities and categories.', icon: <Ico><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" /><path d="M9 12l2.2 2.2L15.5 10" /></Ico> },
+  { title: 'One profile', text: 'Fill in your details and resume once, then apply in a few clicks.', icon: <Ico><circle cx="12" cy="8" r="4" /><path d="M4 21c1-4 4-6 8-6s7 2 8 6" /></Ico> },
+  { title: 'Recommended jobs', text: 'Roles matched to your profile and skills.', icon: <Ico><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4.5" /><circle cx="12" cy="12" r=".7" fill="currentColor" /></Ico> },
+  { title: 'Application tracking', text: 'See where each application stands.', icon: <Ico><path d="M4 19h5v-6h6V7h5" /><circle cx="20" cy="7" r="1.3" fill="currentColor" /></Ico> },
+]
+
+function CandidatePerks() {
+  return (
+    <ul data-r="" className="cd-grid">
+      {CANDIDATE_PERKS.map((p, i) => (
+        <li key={p.title} className="cd-tile">
+          <span className="cd-ico">{p.icon}</span>
+          <span className="cd-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{p.title}</h3>
+          <p>{p.text}</p>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 function Candidate() {
   return (
     <section id="candidates" className="aud aud-cand">
@@ -46,14 +72,7 @@ function Candidate() {
           <Link to={CLIENT_ONLY_ROUTES.candidates} className="aud-btn solid">Browse jobs</Link>
           <Link to={CLIENT_ONLY_ROUTES.employeeSignup} className="aud-btn ghost">Create your profile</Link>
         </Intro>
-        <List
-          items={[
-            ['Verified openings', 'Jobs from hiring companies, across cities and categories.'],
-            ['One profile', 'Fill in your details and resume once, then apply in a few clicks.'],
-            ['Recommended jobs', 'Roles matched to your profile and skills.'],
-            ['Application tracking', 'See where each application stands.'],
-          ]}
-        />
+        <CandidatePerks />
       </div>
     </section>
   )
