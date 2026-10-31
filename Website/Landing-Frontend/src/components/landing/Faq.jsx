@@ -11,6 +11,7 @@ const QA = [
   { q: 'What if I am not selected?', a: 'Employers are encouraged to share feedback so you know where to improve. Mzobs reviews that feedback first, and you can ask a question or report a problem about it.' },
   { q: 'Where can I track my applications?', a: 'In one place. Every application you make on Mzobs shows up on your applications page.', link: { to: R.employeeApplications, label: 'Open my applications' } },
   { q: 'I am a student or a fresher. Is Mzobs for me?', a: 'Yes. Build your profile before you graduate and discover fresher-friendly roles and internships.' },
+  { q: 'Who do I contact for help?', a: 'Write to the Mzobs team from the contact page and we will get back to you.', link: { to: '/contact', label: 'Contact Mzobs' } },
 ]
 
 export default function Faq() {
