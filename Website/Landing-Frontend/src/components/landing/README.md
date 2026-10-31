@@ -24,3 +24,14 @@ an entry to the `QA` list at the top of the file:
 the product. The same list also feeds the FAQPage structured data, so the
 visible questions and the search-engine copy cannot drift apart. Styles are in
 `faq.css`, scoped to `.fq`.
+
+## Candidate stories
+
+The section itself is `src/components/mz/home/SuccessStoriesSection.jsx`. It shows
+approved testimonials from the API first. Only when there are none does the
+home page fall back to the drafts in `src/lib/candidateStories.js`.
+
+The drafts need each candidate's approval of their own words before they ship,
+and they must not carry `placementVerified` until Mzobs has confirmed that
+person's placement. To add one, add an entry to `DRAFT_CANDIDATE_STORIES` and
+put an approved image in `public/images/candidates/`.
