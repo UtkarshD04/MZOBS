@@ -32,10 +32,11 @@
 .lp .rf-steps li{position:relative}
 .lp .rf-steps button{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:48px;padding:0 6px 0 0;border:0;background:none;font:inherit;text-align:left;color:#98a2b3;cursor:pointer}
 .lp .rf-steps button:focus-visible{outline:2px solid var(--brand);outline-offset:3px;border-radius:6px}
-.lp .rf-dot{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;border:1.5px solid #cfe6df;background:#fff;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#98a2b3;transition:background-color .3s,color .3s,border-color .3s,transform .3s cubic-bezier(.2,.8,.2,1)}
+.lp .rf-dot{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;border:1.5px solid #cfe6df;background:#fff;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#98a2b3;transition:background-color .3s,color .3s,border-color .3s,transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
 .lp .rf-steps li.past .rf-dot{border-color:var(--brand);color:var(--brand)}
 .lp .rf-steps li.on .rf-dot{background:var(--brand);border-color:var(--brand);color:#fff;transform:scale(1.12)}
-.lp .rf-steps button:hover .rf-dot{border-color:var(--brand)}
+.lp .rf-steps button:hover .rf-dot{border-color:var(--brand);box-shadow:0 0 0 5px rgba(11,122,109,.12)}
+.lp .rf-steps button:hover .rf-step-label{color:var(--ink)}
 .lp .rf-step-label{font-size:12.5px;font-weight:600;transition:color .3s}
 .lp .rf-steps li.on .rf-step-label{color:var(--ink)}
 .lp .rf-caption{min-height:40px;margin:6px 0 0;padding:10px 14px;border-radius:12px;background:var(--tint);font-size:13.5px;line-height:1.45;color:#344054;animation:rfIn .35s cubic-bezier(.2,.8,.2,1)}
