@@ -144,6 +144,9 @@ function Ally() {
           <Link to={CLIENT_ONLY_ROUTES.ally} className="aud-btn dark">Become an Ally</Link>
         </Intro>
         <div data-r="" className="aud-who">
+          <span className="al-cap" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9l10-5 10 5-10 5z" /><path d="M6 11.5V16c0 1.2 2.7 3 6 3s6-1.8 6-3v-4.5" /><path d="M22 9v6" /></svg>
+          </span>
           <p className="k">Who can apply</p>
           <p className="big">3rd and 4th year students</p>
           <p>with at least 4 semesters completed for 8-semester courses, or the equivalent for your course length.</p>
