@@ -181,7 +181,7 @@ function Associate() {
           label="Associate with Mzobs"
           title={<>Join the hiring <span className="aud-em">network.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 25 1, 50 11, 98 3" pathLength="1" /></svg></span></>}
           lead="Connect your candidates with verified opportunities from employers across industries and cities."
-          note={<><b>Who can apply:</b> placement consultants, recruitment agencies, local hiring partners and career organisations.</>}
+          note={<><b>Who can apply</b><span className="as-chips"><span>Placement consultants</span><span>Recruitment agencies</span><span>Local hiring partners</span><span>Career organisations</span></span></>}
         >
           <Link to={CLIENT_ONLY_ROUTES.associateApply} className="aud-btn solid">Apply as Associate</Link>
           <Link to={CLIENT_ONLY_ROUTES.associate} className="aud-btn ghost">How it works</Link>
