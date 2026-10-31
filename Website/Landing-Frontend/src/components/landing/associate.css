@@ -48,7 +48,7 @@
 /* ---- bold teal panel ---- */
 .lp .aud-assoc{background:#fff;padding:0 24px clamp(24px,3vw,36px)}
 .lp .aud-assoc .as-panel{position:relative;overflow:hidden;isolation:isolate;max-width:1200px;margin:0 auto;border-radius:36px;background:#0b7a6d;color:#fff}
-.lp .aud-assoc .as-panel::before{content:'';position:absolute;left:-140px;bottom:-190px;width:480px;height:480px;border-radius:50%;border:1px solid rgba(255,255,255,.16);box-shadow:0 0 0 60px transparent,0 0 0 61px rgba(255,255,255,.1);pointer-events:none;z-index:-1}
+.lp .aud-assoc .as-panel::before{content:'';position:absolute;left:-140px;bottom:-190px;width:480px;height:480px;border-radius:50%;border:1px solid rgba(255,255,255,.16);outline:1px solid rgba(255,255,255,.1);outline-offset:60px;pointer-events:none;z-index:-1}
 .lp .aud-assoc .aud-inner{padding:clamp(28px,4.5vw,56px) clamp(24px,4.5vw,56px) clamp(20px,3vw,32px)}
 .lp .aud-assoc .aud-inner::before{display:none}
 .lp .aud-assoc .aud-label{color:#a8f0d8}
