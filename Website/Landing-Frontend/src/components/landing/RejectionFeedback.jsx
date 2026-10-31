@@ -62,6 +62,15 @@ export default function RejectionFeedback() {
     manual.current = true
     setStage(i)
   }
+  // Left / Right (and Home / End) move between stages from the keyboard.
+  const onStepKey = (e) => {
+    const last = STAGES.length - 1
+    const next = { ArrowRight: Math.min(stage + 1, last), ArrowDown: Math.min(stage + 1, last), ArrowLeft: Math.max(stage - 1, 0), ArrowUp: Math.max(stage - 1, 0), Home: 0, End: last }[e.key]
+    if (next === undefined) return
+    e.preventDefault()
+    pick(next)
+    e.currentTarget.querySelectorAll('button')[next]?.focus()
+  }
   const current = STAGES[stage]
   const selected = AREAS[area]
   const decided = stage >= 1
@@ -85,7 +94,7 @@ export default function RejectionFeedback() {
 
           <div className="rf-stage" data-r="">
             <div className="rf-card">
-              <ol className="rf-steps">
+              <ol className="rf-steps" onKeyDown={onStepKey}>
                 {STAGES.map((s, i) => (
                   <li key={s.key} className={i < stage ? 'past' : i === stage ? 'on' : ''}>
                     <button
