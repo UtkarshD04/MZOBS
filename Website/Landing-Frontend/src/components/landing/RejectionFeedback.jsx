@@ -18,6 +18,13 @@ const AREAS = [
   { key: 'comm', name: 'Communication & Interview Performance', short: 'Communication', level: 4, text: 'Clear, confident and easy to talk to. This was a real strength in your interview.' },
 ]
 
+const Bulb = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M9 18h6M10 21h4" />
+    <path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3Z" />
+  </svg>
+)
+
 export default function RejectionFeedback() {
   // Starts on the last stage so the prerendered / reduced-motion page shows the complete picture.
   const [stage, setStage] = useState(STAGES.length - 1)
@@ -59,6 +66,7 @@ export default function RejectionFeedback() {
   const selected = AREAS[area]
   const decided = stage >= 1
   const shared = stage >= 2
+  const guided = stage >= 3
 
   return (
     <section ref={rootRef} className="rf" aria-labelledby="rf-title">
@@ -127,6 +135,10 @@ export default function RejectionFeedback() {
                 </div>
               </div>
 
+              <div className={`rf-tip${guided ? ' is-on' : ''}`}>
+                <span className="rf-bulb"><Bulb /></span>
+                <p><b>How to improve:</b> contribute to one larger project, then add what you learned to your resume.</p>
+              </div>
             </div>
           </div>
         </div>

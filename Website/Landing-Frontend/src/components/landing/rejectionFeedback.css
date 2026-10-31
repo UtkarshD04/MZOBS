@@ -70,5 +70,12 @@
 .lp .rf-meter b.on{background:var(--brand)}
 .lp .rf-msg p{margin:4px 0 0;min-height:44px;font-size:14px;line-height:1.5;color:#344054}
 
+.lp .rf-tip{display:flex;gap:12px;align-items:center;margin-top:8px;padding:8px 4px 0;border-top:1px dashed #c9e4dc;transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.lp .rf-bulb{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;transition:box-shadow .5s}
+.lp .rf-tip.is-on .rf-bulb{box-shadow:0 0 0 6px rgba(11,122,109,.16)}
+.lp .rf-tip p{margin:0;font-size:13.5px;line-height:1.5;color:#344054}
+.lp .rf-tip b{color:var(--brand-d)}
+.lp .rf-tip:not(.is-on){opacity:.35;transform:translateY(6px)}
+
 @keyframes rfPulse{50%{opacity:.35;transform:scale(.8)}}
 @keyframes rfIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
