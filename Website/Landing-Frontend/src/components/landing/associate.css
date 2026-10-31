@@ -14,3 +14,12 @@
 .lp .aud-assoc .as-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid #e4ecf0}
 .lp .aud-assoc .as-top span{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#0b7a6d}
 .lp .aud-assoc .as-top b{font-size:17px;font-weight:800;letter-spacing:-.04em;color:#111827}
+
+/* route: your city to any city */
+.lp .aud-assoc .as-route{display:flex;align-items:center;gap:14px;padding:18px 0 16px}
+.lp .aud-assoc .as-route span{font-size:clamp(20px,2.2vw,26px);font-weight:800;letter-spacing:-.04em;line-height:1;color:#111827}
+.lp .aud-assoc .as-route span.to{text-align:right}
+.lp .aud-assoc .as-route small{display:block;margin-bottom:6px;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#98a2b3}
+.lp .aud-assoc .as-path{position:relative;flex:1;min-width:40px;height:22px;display:grid;place-items:center;color:#0b7a6d}
+.lp .aud-assoc .as-path::before{content:'';position:absolute;left:0;right:0;top:50%;border-top:2px dashed #9fd4bb}
+.lp .aud-assoc .as-path svg{position:relative;padding:0 3px;background:#fff;box-sizing:content-box}
