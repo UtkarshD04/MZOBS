@@ -133,14 +133,16 @@ export default function RejectionFeedback() {
                     </button>
                   ))}
                 </div>
-                <div key={selected.key} className="rf-msg" aria-live="polite">
-                  <div className="rf-msg-top">
-                    <span className="rf-msg-name">{selected.name}</span>
-                    <span className="rf-meter" role="img" aria-label={`${selected.level} out of 5`}>
-                      {[1, 2, 3, 4, 5].map((n) => <b key={n} className={n <= selected.level ? 'on' : ''} />)}
-                    </span>
+                <div aria-live="polite">
+                  <div key={selected.key} className="rf-msg">
+                    <div className="rf-msg-top">
+                      <span className="rf-msg-name">{selected.name}</span>
+                      <span className="rf-meter" role="img" aria-label={`${selected.level} out of 5`}>
+                        {[1, 2, 3, 4, 5].map((n) => <b key={n} className={n <= selected.level ? 'on' : ''} />)}
+                      </span>
+                    </div>
+                    <p>&ldquo;{selected.text}&rdquo;</p>
                   </div>
-                  <p>&ldquo;{selected.text}&rdquo;</p>
                 </div>
               </div>
 
