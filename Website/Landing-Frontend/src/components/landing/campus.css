@@ -25,7 +25,7 @@
 /* rings and a dot grid fill the empty right side, like a campus map */
 .lp .aud-camp .aud-inner{position:relative}
 .lp .aud-camp .aud-inner::before,.lp .aud-camp .aud-inner::after{content:'';position:absolute;pointer-events:none}
-.lp .aud-camp .aud-inner::before{right:40px;top:50%;width:300px;height:300px;margin-top:-170px;border-radius:50%;border:1px solid #c9e4dc;box-shadow:0 0 0 46px rgba(201,228,220,.18),0 0 0 47px #d6ebe4}
+.lp .aud-camp .aud-inner::before{right:40px;top:50%;width:300px;height:300px;margin-top:-170px;border-radius:50%;border:1px solid #c9e4dc;box-shadow:0 0 0 46px transparent,0 0 0 47px #d6ebe4}
 .lp .aud-camp .aud-inner::after{right:128px;top:50%;width:124px;height:124px;margin-top:-108px;border-radius:50%;background:#e7f5f1;box-shadow:inset 0 0 0 1.5px #0b7a6d}
 .lp .aud-camp .aud-intro{position:relative;z-index:1}
 
