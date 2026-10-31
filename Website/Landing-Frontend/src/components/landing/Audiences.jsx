@@ -204,6 +204,7 @@ function AssociatePerks() {
 function Associate() {
   return (
     <section id="associate" className="aud aud-assoc">
+      <div className="as-panel">
       <div className="aud-inner">
         <Intro
           label="Associate with Mzobs"
@@ -215,6 +216,7 @@ function Associate() {
           <Link to={CLIENT_ONLY_ROUTES.associate} className="aud-btn ghost">How it works</Link>
         </Intro>
         <AssociatePerks />
+      </div>
       </div>
     </section>
   )
