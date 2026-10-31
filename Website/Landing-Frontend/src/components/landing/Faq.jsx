@@ -14,6 +14,14 @@ const QA = [
   { q: 'Who do I contact for help?', a: 'Write to the Mzobs team from the contact page and we will get back to you.', link: { to: '/contact', label: 'Contact Mzobs' } },
 ]
 
+// Same questions and answers as the visible list, for search engines. "<" is
+// escaped so the JSON can never close the script tag.
+const FAQ_JSON_LD = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: QA.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+}).replace(/</g, '\u003c')
+
 export default function Faq() {
   const [active, setActive] = useState(0)
   const [typing, setTyping] = useState(false)
