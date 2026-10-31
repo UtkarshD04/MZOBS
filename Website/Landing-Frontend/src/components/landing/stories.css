@@ -1,0 +1,3 @@
+/* Candidate stories on the landing page: same ink and heading weight as the
+   other landing sections. Scoped to .lp-stories so CandidateHome is untouched. */
+.lp .lp-stories #stories-title{color:#111827!important;font-weight:800;letter-spacing:-.045em}

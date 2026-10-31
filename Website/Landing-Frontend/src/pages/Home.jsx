@@ -14,6 +14,7 @@ import RejectionFeedback from '../components/landing/RejectionFeedback'
 import Faq from '../components/landing/Faq'
 import { useLandingMotion } from '../components/landing/useLandingMotion'
 import '../components/landing/landing.css'
+import '../components/landing/stories.css'
 
 export default function Home() {
   const rootRef = useRef(null)
@@ -33,7 +34,7 @@ export default function Home() {
         <Audiences />
         <Companies onPick={onPick} />
         {/* Real, approved candidate testimonials; renders nothing until there are some. */}
-        <section style={{ background: '#f7f8fc' }}>
+        <section className="lp-stories" style={{ background: '#f7f8fc' }}>
           <SuccessStoriesSection />
         </section>
         <RejectionFeedback />
