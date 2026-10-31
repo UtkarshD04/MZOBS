@@ -5,6 +5,7 @@ import Seo from '../components/Seo'
 import { STATIC_PAGE_SEO } from '../lib/seoData'
 import Footer from '../components/layout/Footer'
 import SuccessStoriesSection from '../components/mz/home/SuccessStoriesSection'
+import { DRAFT_CANDIDATE_STORIES } from '../lib/candidateStories'
 import LandingNav from '../components/landing/LandingNav'
 import Hero from '../components/landing/Hero'
 import NextMove from '../components/landing/NextMove'
@@ -33,9 +34,9 @@ export default function Home() {
         <NextMove />
         <Audiences />
         <Companies onPick={onPick} />
-        {/* Real, approved candidate testimonials; renders nothing until there are some. */}
+        {/* Approved candidate testimonials; the editable drafts in lib/candidateStories.js show until there are some. */}
         <section className="lp-stories" style={{ background: '#f7f8fc' }}>
-          <SuccessStoriesSection />
+          <SuccessStoriesSection fallbackStories={DRAFT_CANDIDATE_STORIES} />
         </section>
         <RejectionFeedback />
         <Faq />
