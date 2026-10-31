@@ -1,0 +1,41 @@
+import { useState } from 'react'
+import { CLIENT_ONLY_ROUTES as R } from '../../lib/routes'
+import './faq.css'
+
+// Every answer restates something the site already says about the product.
+const QA = [
+  { q: 'Is Mzobs free for candidates?', a: 'Yes. Joining Mzobs is free, whether you are a fresher or changing jobs. Create a profile, get matched to roles and apply.', link: { to: R.employeeSignup, label: 'Create your free account' } },
+  { q: 'Are the jobs on Mzobs checked?', a: 'Every role is reviewed by Mzobs before it goes live, and verified companies carry a Verified mark on each listing.' },
+  { q: 'Who can see my contact details?', a: 'Candidate contact details stay hidden from employers until a profile is unlocked.' },
+  { q: 'What if I am not selected?', a: 'Employers are encouraged to share feedback so you know where to improve. Mzobs reviews that feedback first, and you can ask a question or report a problem about it.' },
+  { q: 'Where can I track my applications?', a: 'In one place. Every application you make on Mzobs shows up on your applications page.', link: { to: R.employeeApplications, label: 'Open my applications' } },
+  { q: 'I am a student or a fresher. Is Mzobs for me?', a: 'Yes. Build your profile before you graduate and discover fresher-friendly roles and internships.' },
+]
+
+export default function Faq() {
+  const [active, setActive] = useState(0)
+
+  return (
+    <section className="fq" aria-labelledby="fq-title">
+      <div className="fq-wrap">
+        <div className="fq-left" data-r="">
+          <p className="fq-eyebrow">Questions, answered</p>
+          <h2 id="fq-title" className="fq-h2">Ask away. <em>We&rsquo;ll keep it plain.</em></h2>
+          <p className="fq-sub">Pick a question and get a straight answer, no fine print.</p>
+
+          <ul className="fq-list">
+            {QA.map((item, i) => (
+              <li key={item.q} className={`fq-item${i === active ? ' on' : ''}`}>
+                <button type="button" className="fq-q" aria-pressed={i === active} onClick={() => setActive(i)}>
+                  <span className="fq-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <span>{item.q}</span>
+                  <svg className="fq-arr" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  )
+}
