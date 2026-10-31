@@ -11,6 +11,7 @@ import NextMove from '../components/landing/NextMove'
 import Companies from '../components/landing/Companies'
 import Audiences from '../components/landing/Audiences'
 import RejectionFeedback from '../components/landing/RejectionFeedback'
+import Faq from '../components/landing/Faq'
 import { useLandingMotion } from '../components/landing/useLandingMotion'
 import '../components/landing/landing.css'
 
@@ -32,6 +33,7 @@ export default function Home() {
         <Audiences />
         <Companies onPick={onPick} />
         <RejectionFeedback />
+        <Faq />
         {/* Last thing before the footer. */}
         <section style={{ background: '#f7f8fc' }}>
           <SuccessStoriesSection />
