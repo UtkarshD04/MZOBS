@@ -1,72 +1,11 @@
-/* "Associate" section: a bold teal panel with a "who can apply" network diagram
-   and a row of three benefits. Scoped to .aud-assoc so the other audience
-   sections are untouched. */
-.lp .aud-assoc{position:relative;overflow:hidden}
-.lp .aud-assoc .aud-inner{position:relative;align-items:center}
+/* "Associate" section: the offer drawn as a boarding pass. Scoped to
+   .aud-assoc so the other audience sections are untouched. */
+.lp .aud-assoc .aud-inner{align-items:center}
 .lp .aud-assoc .aud-em{position:relative;display:inline-block;font-style:normal;color:#0b7a6d}
 .lp .aud-assoc .aud-em svg{position:absolute;left:0;right:0;bottom:-.12em;width:100%;height:.28em;overflow:visible}
 .lp .aud-assoc .aud-em path{fill:none;stroke:#20c997;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
 
-
-
-
-/* the underline draws itself in once the section is revealed */
-.lp-js .aud-assoc [data-r] .aud-em path{stroke-dashoffset:1;transition:stroke-dashoffset .9s .5s cubic-bezier(.2,.8,.2,1)}
-.lp-js .aud-assoc [data-r].lp-in .aud-em path{stroke-dashoffset:0}
-
-@media (prefers-reduced-motion:reduce){
-  .lp-js .aud-assoc [data-r] .aud-em path{stroke-dashoffset:0;transition:none}
-}
-
-/* ---- bold teal panel ---- */
-.lp .aud-assoc{background:#fff;padding:0 24px clamp(24px,3vw,36px)}
-.lp .aud-assoc .as-panel{position:relative;overflow:hidden;isolation:isolate;max-width:1200px;margin:0 auto;border-radius:36px;background:#0b7a6d;color:#fff}
-.lp .aud-assoc .as-panel::before{content:'';position:absolute;left:-140px;bottom:-190px;width:480px;height:480px;border-radius:50%;border:1px solid rgba(255,255,255,.16);outline:1px solid rgba(255,255,255,.1);outline-offset:60px;pointer-events:none;z-index:-1}
-.lp .aud-assoc .aud-inner{padding:clamp(28px,4.5vw,56px) clamp(24px,4.5vw,56px) clamp(20px,3vw,32px)}
-.lp .aud-assoc .aud-label{color:#a8f0d8}
-.lp .aud-assoc .h2{color:#fff;font-size:clamp(34px,4.2vw,56px);text-wrap:balance}
-.lp .aud-assoc .aud-em{color:#a8f0d8}
-.lp .aud-assoc .aud-lead{color:#d4ede6;max-width:44ch}
-.lp .aud-assoc .aud-btn.solid{background:#fff;color:#075f55}
-.lp .aud-assoc .aud-btn.solid:hover{background:#e7f5f1}
-.lp .aud-assoc .aud-btn.ghost{color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55)}
-.lp .aud-assoc .aud-btn.ghost:hover{background:#fff;color:#075f55}
-
-/* three benefits as a clean row along the bottom */
-.lp .aud-assoc .as-perks{margin:0 clamp(24px,4.5vw,56px);padding:clamp(20px,2.6vw,28px) 0 clamp(26px,3.4vw,40px);list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,40px);border-top:1px solid rgba(255,255,255,.2)}
-.lp .aud-assoc .as-perks li{position:relative;padding-top:2px}
-.lp .aud-assoc .as-pno{display:block;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:#a8f0d8}
-.lp .aud-assoc .as-perks h3{margin:8px 0 6px;font-size:19px;font-weight:800;letter-spacing:-.03em;color:#fff}
-.lp .aud-assoc .as-perks p{margin:0;font-size:14.5px;line-height:1.55;color:#d4ede6}
-@media (max-width:760px){
-  .lp .aud-assoc .as-perks{grid-template-columns:1fr}
-}
-
-/* who can apply: a small network around a central Mzobs hub */
-.lp .aud-assoc .as-net{position:relative;flex:1 1 400px;max-width:500px;aspect-ratio:1.12/1;min-height:330px}
-.lp .aud-assoc .as-net-k{position:absolute;left:50%;bottom:0;margin:0;transform:translateX(-50%);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a8f0d8;white-space:nowrap}
-.lp .aud-assoc .as-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.lp .aud-assoc .as-lines line{stroke:rgba(255,255,255,.4);stroke-width:1.5;stroke-dasharray:5 6;vector-effect:non-scaling-stroke}
-.lp .aud-assoc .as-hub{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;background:#fff;color:#075f55;font-size:17px;font-weight:800;letter-spacing:-.04em;box-shadow:0 0 0 10px rgba(255,255,255,.14),0 18px 36px -14px rgba(0,0,0,.4)}
-.lp .aud-assoc .as-nodes{position:absolute;inset:0;margin:0;padding:0;list-style:none}
-.lp .aud-assoc .as-nodes li{position:absolute;transform:translate(-50%,-50%);padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4);font-size:14px;font-weight:600;white-space:nowrap;color:#fff;transition:background-color .25s,color .25s,transform .3s cubic-bezier(.2,.8,.2,1)}
-.lp .aud-assoc .as-nodes li:hover{background:#fff;color:#075f55;transform:translate(-50%,-50%) scale(1.06)}
-
-/* the dashed lines flow towards the hub, and the hub pulses */
-.lp .aud-assoc .as-lines line{animation:asFlow 1.6s linear infinite}
-.lp .aud-assoc .as-hub::after{content:'';position:absolute;inset:-10px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);animation:asPulse 2.4s ease-out infinite}
-@keyframes asFlow{to{stroke-dashoffset:-22}}
-@keyframes asPulse{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.5);opacity:0}}
-
-@media (max-width:560px){
-  .lp .aud-assoc{padding:0 12px 20px}
-  .lp .aud-assoc .as-panel{border-radius:26px}
-  .lp .aud-assoc .as-net{min-height:300px;max-width:100%}
-  .lp .aud-assoc .as-nodes li{padding:8px 12px;font-size:12.5px}
-  .lp .aud-assoc .as-hub{width:78px;height:78px;margin:-39px 0 0 -39px;font-size:15px}
-}
-@media (prefers-reduced-motion:reduce){
-  .lp .aud-assoc .as-lines line,.lp .aud-assoc .as-hub::after{animation:none}
-  .lp .aud-assoc .as-hub::after{display:none}
-  .lp .aud-assoc .as-nodes li:hover{transform:translate(-50%,-50%)}
-}
+/* the pass: a main part and a stub */
+.lp .aud-assoc .as-pass{flex:1 1 440px;max-width:560px;display:flex;border-radius:24px;background:#fff;box-shadow:0 0 0 1.5px #d6ebe4,0 28px 50px -30px rgba(11,122,109,.5)}
+.lp .aud-assoc .as-main{flex:1;min-width:0;padding:22px 24px}
+.lp .aud-assoc .as-stub{flex:none;width:176px;padding:22px 20px;border-left:2px dashed #c9e4dc;background:#f3fbf8;border-radius:0 24px 24px 0}

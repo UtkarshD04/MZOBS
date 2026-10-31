@@ -174,48 +174,47 @@ function Ally() {
   )
 }
 
-const AssociatePerk = ({ children }) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
-)
-
-const ASSOCIATE_PERKS = [
-  { title: 'Verified openings', text: 'Access openings from employers across industries and cities.', icon: <AssociatePerk><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" /><path d="M9 12l2.2 2.2L15.5 10" /></AssociatePerk> },
-  { title: 'Beyond your local network', text: 'Connect your candidates with jobs outside your own city.', icon: <AssociatePerk><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" /></AssociatePerk> },
-  { title: 'Work with our team', text: 'Every application is reviewed by the Mzobs team before onboarding.', icon: <AssociatePerk><circle cx="9" cy="8" r="3.2" /><path d="M3 20c.6-3.4 3-5 6-5s5.4 1.6 6 5" /><circle cx="17" cy="9" r="2.4" /><path d="M16.5 14.2c2.6.2 4.2 1.7 4.6 4.3" /></AssociatePerk> },
+const PASS_ROWS = [
+  ['Verified openings', 'Access openings from employers across industries and cities.'],
+  ['Beyond your local network', 'Connect your candidates with jobs outside your own city.'],
+  ['Work with our team', 'Every application is reviewed by the Mzobs team before onboarding.'],
 ]
 
-function AssociatePerks() {
-  return (
-    <ul data-r="" className="as-perks">
-      {ASSOCIATE_PERKS.map((p, i) => (
-        <li key={p.title}>
-          <span className="as-pno" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          <h3>{p.title}</h3>
-          <p>{p.text}</p>
-        </li>
-      ))}
-    </ul>
-  )
-}
+const PASS_WHO = ['Placement consultants', 'Recruitment agencies', 'Local hiring partners', 'Career organisations']
 
-const NETWORK_NODES = [
-  { label: 'Placement consultants', x: 28, y: 12 },
-  { label: 'Recruitment agencies', x: 72, y: 27 },
-  { label: 'Local hiring partners', x: 28, y: 84 },
-  { label: 'Career organisations', x: 72, y: 70 },
-]
-
-function AssociateNetwork() {
+// The Associate offer drawn as a boarding pass: a route from your city to any
+// city, the three benefits, and a perforated stub listing who can apply.
+function AssociatePass() {
   return (
-    <div data-r="" className="as-net">
-      <p className="as-net-k">Who can apply</p>
-      <svg className="as-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        {NETWORK_NODES.map((n) => <line key={n.label} x1="50" y1="50" x2={n.x} y2={n.y} />)}
-      </svg>
-      <span className="as-hub" aria-hidden="true">Mzobs</span>
-      <ul className="as-nodes" aria-label="Who can apply">
-        {NETWORK_NODES.map((n) => <li key={n.label} style={{ left: `${n.x}%`, top: `${n.y}%` }}>{n.label}</li>)}
-      </ul>
+    <div data-r="" className="as-pass">
+      <div className="as-main">
+        <div className="as-top">
+          <span>Associate pass</span>
+          <b>Mzobs</b>
+        </div>
+        <div className="as-route" aria-hidden="true">
+          <span><small>From</small>Your city</span>
+          <i className="as-path">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" /></svg>
+          </i>
+          <span className="to"><small>To</small>Any city</span>
+        </div>
+        <ul className="as-rows">
+          {PASS_ROWS.map(([t, p]) => (
+            <li key={t}>
+              <h3>{t}</h3>
+              <p>{p}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="as-stub">
+        <p className="as-stub-k">Who can apply</p>
+        <ul>
+          {PASS_WHO.map((w) => <li key={w}>{w}</li>)}
+        </ul>
+        <span className="as-bars" aria-hidden="true" />
+      </div>
     </div>
   )
 }
@@ -223,7 +222,6 @@ function AssociateNetwork() {
 function Associate() {
   return (
     <section id="associate" className="aud aud-assoc">
-      <div className="as-panel">
       <div className="aud-inner">
         <Intro
           label="Associate with Mzobs"
@@ -233,9 +231,7 @@ function Associate() {
           <Link to={CLIENT_ONLY_ROUTES.associateApply} className="aud-btn solid">Apply as Associate</Link>
           <Link to={CLIENT_ONLY_ROUTES.associate} className="aud-btn ghost">How it works</Link>
         </Intro>
-        <AssociateNetwork />
-      </div>
-        <AssociatePerks />
+        <AssociatePass />
       </div>
     </section>
   )
