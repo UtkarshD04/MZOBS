@@ -12,9 +12,16 @@ const STAGES = [
   { key: 'growth', label: 'Guidance', title: 'You get a next step', body: 'You see what to improve, so your next application starts stronger.' },
 ]
 
+const AREAS = [
+  { key: 'skills', name: 'Skills & Technical Knowledge', short: 'Skills', level: 3, text: 'A solid foundation. We wanted more depth in the tools this role uses day to day.' },
+  { key: 'exp', name: 'Relevant Experience', short: 'Experience', level: 2, text: 'Your projects show promise, but we needed more hands-on work on larger production products.' },
+  { key: 'comm', name: 'Communication & Interview Performance', short: 'Communication', level: 4, text: 'Clear, confident and easy to talk to. This was a real strength in your interview.' },
+]
+
 export default function RejectionFeedback() {
   // Starts on the last stage so the prerendered / reduced-motion page shows the complete picture.
   const [stage, setStage] = useState(STAGES.length - 1)
+  const [area, setArea] = useState(1)
   const rootRef = useRef(null)
   const manual = useRef(false)
 
@@ -49,6 +56,7 @@ export default function RejectionFeedback() {
     setStage(i)
   }
   const current = STAGES[stage]
+  const selected = AREAS[area]
   const decided = stage >= 1
   const shared = stage >= 2
 
@@ -97,6 +105,28 @@ export default function RejectionFeedback() {
                   <span className={`rf-pill rf-pill-fb${shared ? ' is-on' : ''}`}>Feedback Received</span>
                 </div>
               </div>
+
+              <p className="rf-else"><span>Elsewhere</span> &ldquo;We&rsquo;ve decided not to proceed.&rdquo; <em>That&rsquo;s all.</em></p>
+
+              <div className={`rf-fb${shared ? ' is-on' : ''}`}>
+                <div className="rf-chips" role="group" aria-label="Feedback categories">
+                  {AREAS.map((a, i) => (
+                    <button key={a.key} type="button" className={i === area ? 'on' : ''} aria-pressed={i === area} title={a.name} onClick={() => setArea(i)} onMouseEnter={() => setArea(i)}>
+                      {a.short}
+                    </button>
+                  ))}
+                </div>
+                <div key={selected.key} className="rf-msg">
+                  <div className="rf-msg-top">
+                    <span className="rf-msg-name">{selected.name}</span>
+                    <span className="rf-meter" role="img" aria-label={`${selected.level} out of 5`}>
+                      {[1, 2, 3, 4, 5].map((n) => <b key={n} className={n <= selected.level ? 'on' : ''} />)}
+                    </span>
+                  </div>
+                  <p>&ldquo;{selected.text}&rdquo;</p>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

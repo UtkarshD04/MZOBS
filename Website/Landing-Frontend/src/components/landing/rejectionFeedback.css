@@ -50,5 +50,25 @@
 .lp .rf-pill-fb{opacity:.45}
 .lp .rf-pill-fb.is-on{opacity:1;background:var(--tint);border-color:#c9e4dc;color:var(--brand-d)}
 
+/* what other portals say */
+.lp .rf-else{margin:8px 0 0;font-size:13px;color:#98a2b3}
+.lp .rf-else span{margin-right:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.lp .rf-else em{font-style:normal;font-weight:600;color:#667085}
+
+.lp .rf-fb{margin-top:8px;transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.lp .rf-fb:not(.is-on){opacity:.35;transform:translateY(6px)}
+.lp .rf-chips{display:flex;flex-wrap:wrap;gap:6px}
+.lp .rf-chips button{min-height:40px;padding:0 15px;border-radius:999px;border:1px solid var(--line);background:#fff;font:inherit;font-size:13.5px;font-weight:600;color:#344054;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
+.lp .rf-chips button:hover{border-color:var(--brand);color:var(--brand)}
+.lp .rf-chips button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.lp .rf-chips button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.lp .rf-msg{margin-top:8px;padding:10px 14px;border-radius:16px;background:#f7f8fc;animation:rfIn .35s cubic-bezier(.2,.8,.2,1)}
+.lp .rf-msg-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px}
+.lp .rf-msg-name{font-size:13px;font-weight:700;color:var(--ink)}
+.lp .rf-meter{display:inline-grid;grid-template-columns:repeat(5,18px);gap:3px}
+.lp .rf-meter b{height:5px;border-radius:3px;background:#e1e4ea}
+.lp .rf-meter b.on{background:var(--brand)}
+.lp .rf-msg p{margin:4px 0 0;min-height:44px;font-size:14px;line-height:1.5;color:#344054}
+
 @keyframes rfPulse{50%{opacity:.35;transform:scale(.8)}}
 @keyframes rfIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
