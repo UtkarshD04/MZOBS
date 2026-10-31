@@ -14,6 +14,9 @@ const QA = [
   { q: 'Who do I contact for help?', a: 'Write to the Mzobs team from the contact page and we will get back to you.', link: { to: '/contact', label: 'Contact Mzobs' } },
 ]
 
+// How long the typing dots show before a reply.
+const TYPING_MS = 700
+
 // Same questions and answers as the visible list, for search engines. "<" is
 // escaped so the JSON can never close the script tag.
 const FAQ_JSON_LD = JSON.stringify({
