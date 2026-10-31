@@ -47,3 +47,21 @@
 .lp .aud-assoc .as-pass:hover{transform:rotate(0deg) translateY(-4px);box-shadow:0 0 0 1.5px #9fd4bb,0 34px 56px -30px rgba(11,122,109,.55)}
 .lp-js .aud-assoc [data-r] .aud-em path{stroke-dashoffset:1;transition:stroke-dashoffset .9s .5s cubic-bezier(.2,.8,.2,1)}
 .lp-js .aud-assoc [data-r].lp-in .aud-em path{stroke-dashoffset:0}
+
+/* narrow screens: the stub drops under the main part, with a horizontal perforation */
+@media (max-width:640px){
+  .lp .aud-assoc .as-pass{flex-direction:column;max-width:100%;transform:none}
+  .lp .aud-assoc .as-pass:hover{transform:none}
+  .lp .aud-assoc .as-pass::before,.lp .aud-assoc .as-pass::after{display:none}
+  .lp .aud-assoc .as-main{padding:20px 20px 8px}
+  .lp .aud-assoc .as-stub{position:relative;width:auto;border-left:0;border-top:2px dashed #c9e4dc;border-radius:0 0 24px 24px;padding:20px}
+  .lp .aud-assoc .as-stub::before,.lp .aud-assoc .as-stub::after{content:'';position:absolute;top:-12px;width:22px;height:22px;border-radius:50%;background:#f7f8fc;box-shadow:inset 0 0 0 1.5px #d6ebe4}
+  .lp .aud-assoc .as-stub::before{left:-11px;clip-path:inset(0 50% 0 0)}
+  .lp .aud-assoc .as-stub::after{right:-11px;clip-path:inset(0 0 0 50%)}
+  .lp .aud-assoc .as-stub ul{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lp .aud-assoc .as-bars{margin-top:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  .lp .aud-assoc .as-pass,.lp .aud-assoc .as-pass:hover{transform:none;transition:none}
+  .lp-js .aud-assoc [data-r] .aud-em path{stroke-dashoffset:0;transition:none}
+}
