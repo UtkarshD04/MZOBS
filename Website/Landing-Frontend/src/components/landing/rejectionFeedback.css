@@ -83,3 +83,22 @@
 
 @keyframes rfPulse{50%{opacity:.35;transform:scale(.8)}}
 @keyframes rfIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+@media (max-width:1000px){
+  .lp .rf-wrap{grid-template-columns:1fr;gap:36px}
+  .lp .rf-lede{max-width:60ch}
+}
+@media (max-width:560px){
+  .lp .rf{padding:16px 12px 32px}
+  .lp .rf-panel{padding:28px 16px;border-radius:26px}
+  .lp .rf-card{border-radius:22px;padding:22px 16px 16px}
+  .lp .rf-step-label{font-size:12px}
+  .lp .rf-caption{min-height:62px}
+  .lp .rf-msg p{min-height:70px}
+  .lp .rf-btn{width:100%;justify-content:center}
+  .lp .rf-actions{width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  .lp .rf *,.lp .rf *::before{animation:none!important;transition:none!important}
+  .lp .rf-card:hover{transform:none}
+}
