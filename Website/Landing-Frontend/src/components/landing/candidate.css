@@ -28,3 +28,9 @@
 .lp .aud-cand .cd-tile:first-child p{color:#d4ede6}
 .lp .aud-cand .cd-tile:first-child:hover{box-shadow:0 30px 48px -24px rgba(11,122,109,.85)}
 .lp .aud-cand .cd-tile:first-child:hover .cd-ico{background:#fff;color:#0b7a6d}
+
+/* soft decorative rings behind the tiles */
+.lp .aud-cand .aud-inner::before,.lp .aud-cand .aud-inner::after{content:'';position:absolute;border-radius:50%;pointer-events:none;border:1px solid #d6ebe4;z-index:0}
+.lp .aud-cand .aud-inner::before{right:-60px;top:20px;width:340px;height:340px}
+.lp .aud-cand .aud-inner::after{right:30px;top:90px;width:200px;height:200px}
+.lp .aud-cand .aud-intro,.lp .aud-cand .cd-grid{position:relative;z-index:1}
