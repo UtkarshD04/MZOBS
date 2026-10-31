@@ -373,11 +373,18 @@ export default function SuccessStoriesSection({ fallbackStories = null }) {
     <section ref={sectionRef} data-reveal={reveal} id="success-stories" aria-labelledby="stories-title" className="relative scroll-mt-20 overflow-hidden border-t border-[#183451]/10 bg-white py-10 lg:py-14">
       <Container>
         <div className="story-head mx-auto max-w-2xl text-center">
-          <h2 id="stories-title" className="text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight" style={{ color: NAVY }}>
-            What candidates say
+          {usingFallback && (
+            <p className="text-[12px] font-semibold uppercase tracking-[0.18em]" style={{ color: NAVY }}>
+              Real stories. Real career journeys.
+            </p>
+          )}
+          <h2 id="stories-title" className={`${usingFallback ? 'mt-2 ' : ''}text-[28px] sm:text-[34px] lg:text-[40px] font-extrabold leading-[1.1] tracking-tight`} style={{ color: NAVY }}>
+            {usingFallback ? <>What Our <span style={{ color: TEAL }}>Candidates Say</span></> : 'What candidates say'}
           </h2>
           <p className="mx-auto mt-2.5 max-w-[30rem] text-balance text-[#475467] sm:max-w-none text-[16px] sm:text-[17px] font-normal leading-relaxed">
-            In their own words, from people who found work through Mzobs.
+            {usingFallback
+              ? 'Behind every career move is a story of ambition, growth, and new possibilities. Discover the journeys shaped with Mzobs.'
+              : 'In their own words, from people who found work through Mzobs.'}
           </p>
           {isFixture && (
             <p className="mt-4 inline-block rounded bg-amber-100 px-2.5 py-1 text-[12px] font-medium text-amber-900">
