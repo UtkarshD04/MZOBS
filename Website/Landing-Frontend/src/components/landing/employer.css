@@ -11,7 +11,7 @@
 
 /* hiring steps: compact rows joined by a line */
 .lp .aud-emp .aud-flow{position:relative;border-top:0}
-.lp .aud-emp .aud-flow::before{content:'';position:absolute;left:15px;top:22px;bottom:22px;width:1px;background:linear-gradient(#20c997,rgba(32,201,151,.12))}
+.lp .aud-emp .aud-flow::before{content:'';position:absolute;left:15px;top:38px;bottom:38px;width:1px;background:linear-gradient(#20c997,rgba(32,201,151,.12))}
 .lp .aud-emp .aud-flow li{position:relative;padding:8px 0;border-bottom:0}
 .lp .aud-emp .aud-flow .mk{background:#111827;z-index:1}
 .lp .aud-emp .aud-flow h3{font-size:17px}
