@@ -48,7 +48,7 @@ export default function RejectionFeedback() {
       if (manual.current) return
       i += 1
       setStage(i)
-      if (i < STAGES.length - 1) timer = setTimeout(tick, 1600)
+      if (i < STAGES.length - 1) timer = setTimeout(tick, STEP_MS)
     }
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return
