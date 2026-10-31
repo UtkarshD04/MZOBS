@@ -18,6 +18,10 @@ const AREAS = [
   { key: 'comm', name: 'Communication & Interview Performance', short: 'Communication', level: 4, text: 'Clear, confident and easy to talk to. This was a real strength in your interview.' },
 ]
 
+// Autoplay pacing: wait before the first stage change, then pause between stages.
+const START_MS = 1200
+const STEP_MS = 1600
+
 const Bulb = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M9 18h6M10 21h4" />
