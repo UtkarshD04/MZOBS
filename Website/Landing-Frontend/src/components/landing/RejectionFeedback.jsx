@@ -18,6 +18,8 @@ const AREAS = [
   { key: 'comm', name: 'Communication & Interview Performance', short: 'Communication', level: 4, text: 'Clear, confident and easy to talk to. This was a real strength in your interview.' },
 ]
 
+const prefersReducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
 // Autoplay pacing: wait before the first stage change, then pause between stages.
 const START_MS = 1200
 const STEP_MS = 1600
