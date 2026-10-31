@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
 import { DRAFT_CANDIDATE_STORIES as stories } from '../src/lib/candidateStories.js'
 
 test('there are draft stories to show', () => {
@@ -22,5 +23,12 @@ test('every story has a name, tagline and feedback', () => {
       assert.equal(typeof s[key], 'string', `${s.id}: ${key} must be a string`)
       assert.ok(s[key].trim().length > 0, `${s.id}: ${key} must not be empty`)
     }
+  }
+})
+
+test('every story photo points to a file that exists in public/', () => {
+  for (const s of stories) {
+    if (!s.photo) continue
+    assert.ok(existsSync(new URL(`../public${s.photo}`, import.meta.url)), `${s.id}: missing ${s.photo}`)
   }
 })
