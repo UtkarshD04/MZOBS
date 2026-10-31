@@ -22,19 +22,6 @@ function Intro({ label, title, lead, note, children }) {
   )
 }
 
-function List({ items }) {
-  return (
-    <ul data-r="" className="aud-list">
-      {items.map(([t, p]) => (
-        <li key={t}>
-          <h3>{t}</h3>
-          <p>{p}</p>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
 const Ico = ({ children }) => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
 )
